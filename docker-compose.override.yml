@@ -1,8 +1,13 @@
-# Local override: 国内服务器用镜像加速版Dockerfile 构建 API。
-# docker compose 会自动加载本文件（无需 -f 显式指定），仅覆盖 build.dockerfile 字段，
-# 其余（端口、卷、env_file）沿用 docker-compose.yml。
-# 若在境外机（如新加坡）部署且 deb.debian.org / npmjs 直连很快，可删除本文件用默认 Dockerfile。
+# Local override: 国内服务器用镜像加速版 Dockerfile 构建 API，并让容器出站HTTPS 走宿主机 Xray 代理。
+# docker compose 会自动加载本文件（无需 -f 显式指定），仅覆盖以下字段，其余沿用 docker-compose.yml。
+#   - build.dockerfile: 换成 deploy/Dockerfile.cn（apt -> 腾讯云镜像 / npm -> npmmirror），加速国内构建
+#   - extra_hosts: 让容器解析 host.docker.internal(host-gateway) 以访问宿主机 :10809 代理
+#     （配合 deploy/.env.production 里的 HTTPS_PROXY 使用，用于容器内出境访问 Gemini/Resend）
+# 若迁境外机且直连境外很快：可删除本文件改用默认 Dockerfile，并清空 .env.production 里的 HTTPS_PROXY。
+# 注意：本文件不含任何密钥，属通用运维配置，纳入git 便于服务器 git pull 后仍保留代理链路。
 services:
   api:
     build:
       dockerfile: deploy/Dockerfile.cn
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
