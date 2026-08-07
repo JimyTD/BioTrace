@@ -3,6 +3,8 @@ import { sqliteTable, text, integer, real, uniqueIndex } from "drizzle-orm/sqlit
 export const users = sqliteTable("users", {
   id: text("id").primaryKey(),
   email: text("email").notNull().unique(),
+  passwordHash: text("password_hash").notNull(),
+  displayName: text("display_name"),
   createdAt: integer("created_at", { mode: "timestamp_ms" }).notNull(),
 });
 
@@ -81,8 +83,8 @@ export const rarityCache = sqliteTable("rarity_cache", {
   fetchedAt: integer("fetched_at", { mode: "timestamp_ms" }).notNull(),
 });
 
-/** One-time email magic-link tokens (store hash only). */
-export const loginTokens = sqliteTable("login_tokens", {
+/** One-time password-reset OTP tokens (store hash only). */
+export const passwordResetTokens = sqliteTable("password_reset_tokens", {
   id: text("id").primaryKey(),
   email: text("email").notNull(),
   tokenHash: text("token_hash").notNull().unique(),
@@ -91,9 +93,26 @@ export const loginTokens = sqliteTable("login_tokens", {
   createdAt: integer("created_at", { mode: "timestamp_ms" }).notNull(),
 });
 
+/** User progress on configurable field volumes (套册). */
+export const volumeProgress = sqliteTable(
+  "volume_progress",
+  {
+    id: text("id").primaryKey(),
+    userId: text("user_id")
+      .notNull()
+      .references(() => users.id),
+    volumeId: text("volume_id").notNull(),
+    litSlotIdsJson: text("lit_slot_ids_json").notNull(),
+    completedAt: integer("completed_at", { mode: "timestamp_ms" }),
+    updatedAt: integer("updated_at", { mode: "timestamp_ms" }).notNull(),
+  },
+  (t) => [uniqueIndex("volume_progress_user_vol").on(t.userId, t.volumeId)],
+);
+
 export type User = typeof users.$inferSelect;
 export type Trip = typeof trips.$inferSelect;
 export type Observation = typeof observations.$inferSelect;
 export type CollectionEntry = typeof collectionEntries.$inferSelect;
 export type RarityCacheRow = typeof rarityCache.$inferSelect;
-export type LoginToken = typeof loginTokens.$inferSelect;
+export type PasswordResetToken = typeof passwordResetTokens.$inferSelect;
+export type VolumeProgress = typeof volumeProgress.$inferSelect;

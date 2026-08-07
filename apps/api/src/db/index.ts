@@ -20,6 +20,8 @@ export async function migrate() {
     CREATE TABLE IF NOT EXISTS users (
       id TEXT PRIMARY KEY NOT NULL,
       email TEXT NOT NULL UNIQUE,
+      password_hash TEXT NOT NULL,
+      display_name TEXT,
       created_at INTEGER NOT NULL
     );
     CREATE TABLE IF NOT EXISTS trips (
@@ -72,7 +74,7 @@ export async function migrate() {
       source TEXT NOT NULL,
       fetched_at INTEGER NOT NULL
     );
-    CREATE TABLE IF NOT EXISTS login_tokens (
+    CREATE TABLE IF NOT EXISTS password_reset_tokens (
       id TEXT PRIMARY KEY NOT NULL,
       email TEXT NOT NULL,
       token_hash TEXT NOT NULL UNIQUE,
@@ -80,7 +82,16 @@ export async function migrate() {
       consumed_at INTEGER,
       created_at INTEGER NOT NULL
     );
-    CREATE INDEX IF NOT EXISTS idx_login_tokens_email ON login_tokens(email);
+    CREATE INDEX IF NOT EXISTS idx_password_reset_email ON password_reset_tokens(email);
+    CREATE TABLE IF NOT EXISTS volume_progress (
+      id TEXT PRIMARY KEY NOT NULL,
+      user_id TEXT NOT NULL REFERENCES users(id),
+      volume_id TEXT NOT NULL,
+      lit_slot_ids_json TEXT NOT NULL,
+      completed_at INTEGER,
+      updated_at INTEGER NOT NULL
+    );
+    CREATE UNIQUE INDEX IF NOT EXISTS volume_progress_user_vol ON volume_progress(user_id, volume_id);
   `);
 
   await ensureColumn("observations", "blurb", "blurb TEXT");
@@ -103,6 +114,28 @@ export async function migrate() {
     await client.execute(`DELETE FROM rarity_cache WHERE source IN ('gbif', 'seed')`);
     await client.execute(`PRAGMA user_version = 3`);
   }
+
+  // Password auth: wipe test-era magic-link users (no migration) and rebuild users table.
+  if (userVersion < 4) {
+    await client.executeMultiple(`
+      DELETE FROM collection_entries;
+      DELETE FROM observations;
+      DELETE FROM trips;
+      DELETE FROM password_reset_tokens;
+      DROP TABLE IF EXISTS login_tokens;
+      DROP TABLE IF EXISTS users;
+      CREATE TABLE users (
+        id TEXT PRIMARY KEY NOT NULL,
+        email TEXT NOT NULL UNIQUE,
+        password_hash TEXT NOT NULL,
+        display_name TEXT,
+        created_at INTEGER NOT NULL
+      );
+      PRAGMA user_version = 4;
+    `);
+  }
+
+  await ensureColumn("users", "display_name", "display_name TEXT");
 
   // Cut 2: grandfather ready → settled
   await client.execute(`

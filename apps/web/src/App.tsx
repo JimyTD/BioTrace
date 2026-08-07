@@ -45,7 +45,12 @@ export default function App() {
           <Route path="/settle/:id" element={<ObservationSettlePage />} />
           <Route path="/map" element={<MapPage />} />
           <Route path="/collection" element={<CollectionPage />} />
-          <Route path="/me" element={<MePage user={user} onLogout={() => setUser(null)} />} />
+          <Route
+            path="/me"
+            element={
+              <MePage user={user} onLogout={() => setUser(null)} onUserUpdated={setUser} />
+            }
+          />
           <Route path="*" element={<Navigate to="/" replace />} />
         </Routes>
       </main>

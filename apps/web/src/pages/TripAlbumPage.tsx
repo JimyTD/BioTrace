@@ -7,7 +7,12 @@ import {
   identifyErrorPrimary,
   isNotCollectibleError,
 } from "../identifyErrors";
-import { canUseNativePicker, pickImageNative, type PickImageMode } from "../pickImage";
+import {
+  canUseNativePicker,
+  MAX_UPLOAD_BATCH,
+  pickImageNative,
+  type PickImageMode,
+} from "../pickImage";
 
 function statusBadge(obs: Observation) {
   if (obs.status === "analyzing") {
@@ -40,10 +45,14 @@ export default function TripAlbumPage() {
   const navigate = useNavigate();
   const [trip, setTrip] = useState<Trip | null>(null);
   const [observations, setObservations] = useState<Observation[]>([]);
-  const [file, setFile] = useState<File | null>(null);
+  const [files, setFiles] = useState<File[]>([]);
+  const [previewUrls, setPreviewUrls] = useState<string[]>([]);
   const [description, setDescription] = useState("");
   const [error, setError] = useState<string | null>(null);
   const [uploading, setUploading] = useState(false);
+  const [uploadProgress, setUploadProgress] = useState<{ current: number; total: number } | null>(
+    null,
+  );
   const [deletingId, setDeletingId] = useState<string | null>(null);
   const [pendingDeleteId, setPendingDeleteId] = useState<string | null>(null);
   const [titleDraft, setTitleDraft] = useState("");
@@ -77,6 +86,14 @@ export default function TripAlbumPage() {
     prevPending.current = pendingCount;
   }, [pendingCount]);
 
+  useEffect(() => {
+    const urls = files.map((f) => URL.createObjectURL(f));
+    setPreviewUrls(urls);
+    return () => {
+      for (const url of urls) URL.revokeObjectURL(url);
+    };
+  }, [files]);
+
   async function refresh() {
     const [tripRes, obsRes] = await Promise.all([
       api.getTrip(id),
@@ -99,16 +116,25 @@ export default function TripAlbumPage() {
     return () => window.clearInterval(timer);
   }, [analyzingIds.join(","), id]);
 
-  function applyPickedFiles(list: FileList | null) {
-    if (!list?.length) {
-      setFile(null);
+  function clearPickedInputs() {
+    if (fileInputRef.current) fileInputRef.current.value = "";
+    if (cameraInputRef.current) cameraInputRef.current.value = "";
+  }
+
+  function applyPickedFiles(list: File[] | FileList | null) {
+    if (!list || list.length === 0) {
+      setFiles([]);
+      setDescription("");
       return;
     }
-    if (list.length > 1) {
-      setToast(t("album.onePhotoOnly"));
+    const arr = Array.from(list);
+    if (arr.length > MAX_UPLOAD_BATCH) {
+      setToast(t("album.tooManyPhotos", { max: MAX_UPLOAD_BATCH }));
       window.setTimeout(() => setToast(null), 4000);
     }
-    setFile(list[0] ?? null);
+    const next = arr.slice(0, MAX_UPLOAD_BATCH);
+    setFiles(next);
+    if (next.length !== 1) setDescription("");
     setError(null);
   }
 
@@ -118,7 +144,7 @@ export default function TripAlbumPage() {
       setPicking(true);
       try {
         const picked = await pickImageNative(mode);
-        if (picked) setFile(picked);
+        if (picked.length) applyPickedFiles(picked);
       } catch {
         setError(t("album.pickFailed"));
       } finally {
@@ -135,19 +161,35 @@ export default function TripAlbumPage() {
 
   async function onUpload(e: FormEvent) {
     e.preventDefault();
-    if (!file) return;
+    if (files.length === 0) return;
     setUploading(true);
     setError(null);
+    const batch = [...files];
+    const desc = batch.length === 1 ? description : "";
+    let ok = 0;
+    let fail = 0;
     try {
-      await api.uploadObservation(id, file, description);
-      setFile(null);
+      for (let i = 0; i < batch.length; i++) {
+        setUploadProgress({ current: i + 1, total: batch.length });
+        try {
+          await api.uploadObservation(id, batch[i]!, desc);
+          ok += 1;
+        } catch {
+          fail += 1;
+        }
+      }
+      setFiles([]);
       setDescription("");
-      if (fileInputRef.current) fileInputRef.current.value = "";
-      if (cameraInputRef.current) cameraInputRef.current.value = "";
+      clearPickedInputs();
       await refresh();
-    } catch (err) {
-      setError(err instanceof Error ? err.message : t("album.uploadFailed"));
+      if (fail > 0 && ok === 0) {
+        setError(t("album.uploadAllFailed"));
+      } else if (fail > 0) {
+        setToast(t("album.uploadPartial", { ok, fail }));
+        window.setTimeout(() => setToast(null), 5000);
+      }
     } finally {
+      setUploadProgress(null);
       setUploading(false);
     }
   }
@@ -207,6 +249,15 @@ export default function TripAlbumPage() {
       setDeletingTrip(false);
     }
   }
+
+  const uploadLabel = uploading
+    ? uploadProgress
+      ? t("album.uploadingProgress", {
+          current: uploadProgress.current,
+          total: uploadProgress.total,
+        })
+      : t("album.uploading")
+    : t("album.upload");
 
   return (
     <div className="stack">
@@ -269,6 +320,7 @@ export default function TripAlbumPage() {
           className="file-input-hidden"
           type="file"
           accept="image/*"
+          multiple
           onChange={(e) => applyPickedFiles(e.target.files)}
         />
         <input
@@ -300,18 +352,28 @@ export default function TripAlbumPage() {
         <span className="muted">
           {picking
             ? t("album.picking")
-            : file
-              ? t("album.fileChosen", { name: file.name })
+            : files.length > 0
+              ? t("album.filesChosen", { count: files.length })
               : t("album.noFileChosen")}
         </span>
-        <textarea
-          className="textarea"
-          placeholder={t("album.descriptionPlaceholder")}
-          value={description}
-          onChange={(e) => setDescription(e.target.value)}
-        />
-        <button className="btn" type="submit" disabled={!file || uploading || picking}>
-          {uploading ? t("album.uploading") : t("album.upload")}
+        {previewUrls.length > 0 ? (
+          <div className="pick-thumbs" aria-hidden>
+            {previewUrls.map((url) => (
+              <img key={url} src={url} alt="" />
+            ))}
+          </div>
+        ) : null}
+        {files.length === 1 ? (
+          <textarea
+            className="textarea"
+            placeholder={t("album.descriptionPlaceholder")}
+            value={description}
+            onChange={(e) => setDescription(e.target.value)}
+            disabled={uploading}
+          />
+        ) : null}
+        <button className="btn" type="submit" disabled={files.length === 0 || uploading || picking}>
+          {uploadLabel}
         </button>
       </form>
 

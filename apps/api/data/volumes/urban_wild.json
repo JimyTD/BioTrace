@@ -1,0 +1,75 @@
+{
+  "id": "urban_wild",
+  "sort": 20,
+  "enabled": true,
+  "titleKey": "volume.urban_wild.title",
+  "ledeKey": "volume.urban_wild.lede",
+  "slots": [
+    {
+      "id": "songbird",
+      "titleKey": "volume.urban_wild.slot.songbird",
+      "rule": {
+        "type": "taxonomy_in",
+        "rank": "order",
+        "names": ["Passeriformes"],
+        "minReliableRank": "order"
+      }
+    },
+    {
+      "id": "wall_reptile",
+      "titleKey": "volume.urban_wild.slot.wall_reptile",
+      "rule": {
+        "type": "taxonomy_in",
+        "rank": "family",
+        "names": ["Gekkonidae", "Lacertidae", "Scincidae"],
+        "minReliableRank": "family"
+      }
+    },
+    {
+      "id": "spider",
+      "titleKey": "volume.urban_wild.slot.spider",
+      "rule": {
+        "type": "taxonomy_in",
+        "rank": "order",
+        "names": ["Araneae"],
+        "minReliableRank": "order"
+      }
+    },
+    {
+      "id": "flower_visitor",
+      "titleKey": "volume.urban_wild.slot.flower_visitor",
+      "rule": {
+        "type": "taxonomy_in",
+        "rank": "family",
+        "names": ["Apidae", "Vespidae", "Syrphidae", "Megachilidae"],
+        "minReliableRank": "family"
+      }
+    },
+    {
+      "id": "pond_frog",
+      "titleKey": "volume.urban_wild.slot.pond_frog",
+      "rule": {
+        "type": "taxonomy_in",
+        "rank": "order",
+        "names": ["Anura"],
+        "minReliableRank": "order"
+      }
+    },
+    {
+      "id": "land_snail",
+      "titleKey": "volume.urban_wild.slot.land_snail",
+      "rule": {
+        "type": "taxonomy_in",
+        "rank": "family",
+        "names": [
+          "Bradybaenidae",
+          "Camaenidae",
+          "Ariophantidae",
+          "Hygromiidae",
+          "Helicidae"
+        ],
+        "minReliableRank": "family"
+      }
+    }
+  ]
+}

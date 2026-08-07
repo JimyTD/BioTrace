@@ -1,7 +1,5 @@
-import { readFileSync } from "node:fs";
-import { dirname, join } from "node:path";
-import { fileURLToPath } from "node:url";
 import { TAXONOMY_RANKS } from "../identify/types.js";
+import { resolveIntroducedAlert } from "../introduced/index.js";
 import { resolveRarity } from "../rarity/index.js";
 import { countryFromLatLng } from "./country.js";
 import { buildTaxonKey, parseTaxonomy } from "./taxon.js";
@@ -17,18 +15,6 @@ export type SettleComputation = {
   taxonKey: string | null;
 };
 
-const root = join(dirname(fileURLToPath(import.meta.url)), "../../data");
-
-function loadJson<T>(name: string, fallback: T): T {
-  try {
-    return JSON.parse(readFileSync(join(root, name), "utf8")) as T;
-  } catch {
-    return fallback;
-  }
-}
-
-const introducedSeed = loadJson<Record<string, string[]>>("introduced-seed.json", {});
-
 function normalizeRank(rank: string | null | undefined): string {
   return (rank ?? "").trim().toLowerCase().replace(/[\s_-]+/g, "");
 }
@@ -42,19 +28,6 @@ export function settleTierFromRank(rank: string | null | undefined): SettleTier 
   }
   if (!r) return "none";
   return "none";
-}
-
-function matchIntroduced(taxonKey: string | null, scientificName: string | null, countryCode: string): boolean {
-  const list = introducedSeed[countryCode];
-  if (!list?.length) return false;
-  const candidates = [taxonKey, scientificName]
-    .filter(Boolean)
-    .map((s) => s!.trim().toLowerCase());
-  for (const item of list) {
-    const n = item.trim().toLowerCase();
-    if (candidates.some((c) => c === n || c === n.split(/\s+/)[0])) return true;
-  }
-  return false;
 }
 
 export async function computeSettle(input: {
@@ -108,16 +81,21 @@ export async function computeSettle(input: {
       })
     : { rarity: "R" as const };
 
-  const alertIntroduced =
-    Boolean(countryCode) &&
-    matchIntroduced(taxonKey, input.scientificName ?? null, countryCode!);
+  // Introduced alert: separate channel from rarity; species-level + country only.
+  const intro = resolveIntroducedAlert({
+    countryCode,
+    finestReliableRank: input.finestReliableRank,
+    scientificName: input.scientificName,
+    taxonKey,
+    matchNames,
+  });
 
   return {
     settleTier,
     rarity: resolved.rarity,
     countryCode,
     locationPrecise,
-    alertIntroduced,
+    alertIntroduced: intro.alert,
     taxonKey,
   };
 }

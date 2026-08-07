@@ -367,6 +367,21 @@ a {
   border: 0;
 }
 
+.pick-thumbs {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.pick-thumbs img {
+  width: 64px;
+  height: 64px;
+  object-fit: cover;
+  border-radius: 10px;
+  border: 1px solid var(--line);
+  background: rgba(28, 42, 34, 0.06);
+}
+
 .detail-hero {
   width: 100%;
   max-height: min(70vh, 520px);
@@ -546,9 +561,81 @@ a {
   width: min(420px, 100%);
 }
 
+.login-mode-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 0.5rem;
+}
+
+.login-mode-row .btn.active {
+  border-color: var(--text, #1a1a1a);
+  opacity: 1;
+}
+
 .taxonomy {
   margin: 0;
   padding-left: 18px;
   color: var(--muted);
   font-size: 0.85rem;
+}
+
+.section-title {
+  margin: 0 0 0.25rem;
+  font-size: 1.15rem;
+}
+
+.volumes-section {
+  margin-bottom: 0.5rem;
+}
+
+.volume-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+  gap: 12px;
+}
+
+.volume-card {
+  border: 1px solid var(--line);
+  border-radius: 14px;
+  padding: 12px 14px;
+  background: rgba(255, 255, 255, 0.7);
+  transition: filter 280ms ease, border-color 280ms ease, transform 200ms ease;
+}
+
+.volume-card-dim {
+  filter: grayscale(1);
+  opacity: 0.85;
+}
+
+.volume-card-lit {
+  filter: none;
+  border-color: rgba(47, 107, 79, 0.45);
+  box-shadow: var(--shadow);
+}
+
+.volume-card-head {
+  display: flex;
+  justify-content: space-between;
+  gap: 8px;
+  align-items: baseline;
+}
+
+.volume-lede {
+  margin: 0.35rem 0 0.5rem;
+  font-size: 0.9rem;
+}
+
+.volume-slots {
+  margin: 0;
+  padding-left: 1.1rem;
+  font-size: 0.88rem;
+}
+
+.volume-slots .slot-dim {
+  color: var(--muted);
+}
+
+.volume-slots .slot-lit {
+  color: var(--accent);
+  font-weight: 600;
 }

@@ -11,7 +11,7 @@ export type Taxonomy = {
   species: TaxonomyName;
 };
 
-export type User = { id: string; email: string; createdAt: string };
+export type User = { id: string; email: string; displayName: string | null; createdAt: string };
 export type Trip = { id: string; userId: string; title: string; createdAt: string };
 export type ObsStatus = "analyzing" | "pending_settle" | "settled" | "failed";
 export type SettleTier = "full" | "weak" | "none";
@@ -95,11 +95,41 @@ export type HealthResponse = {
 export const api = {
   health: () => request<HealthResponse>("/api/health"),
   me: () => request<{ user: User }>("/api/auth/me"),
-  requestMagicLink: (email: string) =>
-    request<{ ok: boolean; message: string }>("/api/auth/request-link", {
+  register: (email: string, password: string, displayName?: string) =>
+    request<{ user: User }>("/api/auth/register", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ email, password, displayName }),
+    }),
+  login: (email: string, password: string) =>
+    request<{ user: User }>("/api/auth/login", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ email, password }),
+    }),
+  requestPasswordReset: (email: string) =>
+    request<{ ok: boolean; message: string }>("/api/auth/request-reset", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ email }),
+    }),
+  resetPassword: (email: string, code: string, password: string) =>
+    request<{ ok: boolean; message: string }>("/api/auth/reset-password", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ email, code, password }),
+    }),
+  updateMe: (displayName: string) =>
+    request<{ user: User }>("/api/auth/me", {
+      method: "PATCH",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ displayName }),
+    }),
+  changePassword: (currentPassword: string, newPassword: string) =>
+    request<{ ok: boolean; message: string }>("/api/auth/change-password", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ currentPassword, newPassword }),
     }),
   devLogin: () =>
     request<{ user: User }>("/api/auth/dev-login", { method: "POST", body: "{}" }),
@@ -155,4 +185,23 @@ export const api = {
   listMappedObservations: () =>
     request<{ observations: Observation[] }>("/api/observations?mapped=1"),
   listCollection: () => request<{ entries: CollectionEntry[] }>("/api/collection"),
+  listVolumes: () => request<{ volumes: VolumeListItem[] }>("/api/volumes"),
+};
+
+export type VolumeSlotView = {
+  id: string;
+  titleKey: string;
+  lit: boolean;
+};
+
+export type VolumeListItem = {
+  id: string;
+  sort: number;
+  titleKey: string;
+  ledeKey: string;
+  completed: boolean;
+  completedAt: string | null;
+  litCount: number;
+  totalSlots: number;
+  slots: VolumeSlotView[];
 };

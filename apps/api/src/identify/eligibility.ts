@@ -1,3 +1,4 @@
+import { t } from "@biotrace/messages";
 import type { IdentifyResult, SubjectKind } from "./types.js";
 
 export type EligibilityErrorCode =
@@ -66,10 +67,10 @@ export function evaluateEligibility(result: IdentifyResult): EligibilityDecision
   const reasonZh =
     result.ineligibility_reason_zh.trim() ||
     (kind === "human"
-      ? "主体是人类"
+      ? t("error.identifyHumanReason")
       : kind === "artifact_or_toy" || kind === "depiction_or_media"
-        ? "像是玩具、模型或影像中的形象，不是现场活体"
-        : "图中不像可收集的现场生命观察");
+        ? t("error.identifyNotLivingReason")
+        : t("error.identifyNotOrganismReason"));
 
   return {
     ok: false,

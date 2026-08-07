@@ -1,21 +1,28 @@
 import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import { t, type MessageKey } from "@biotrace/messages";
-import { api, type CollectionEntry, type Rarity } from "../api";
+import { api, type CollectionEntry, type Rarity, type VolumeListItem } from "../api";
 
 function rarityLabel(r: Rarity) {
   return t(`rarity.${r}` as MessageKey);
 }
 
+function msg(key: string) {
+  return t(key as MessageKey);
+}
+
 export default function CollectionPage() {
   const [entries, setEntries] = useState<CollectionEntry[]>([]);
+  const [volumes, setVolumes] = useState<VolumeListItem[]>([]);
   const [error, setError] = useState<string | null>(null);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    api
-      .listCollection()
-      .then((r) => setEntries(r.entries))
+    Promise.all([api.listCollection(), api.listVolumes()])
+      .then(([col, vol]) => {
+        setEntries(col.entries);
+        setVolumes(vol.volumes);
+      })
       .catch((e) => setError(e instanceof Error ? e.message : t("collection.loadFailed")))
       .finally(() => setLoading(false));
   }, []);
@@ -29,6 +36,47 @@ export default function CollectionPage() {
 
       {loading ? <p className="muted">{t("app.loading")}</p> : null}
       {error ? <p className="error">{error}</p> : null}
+
+      {!loading ? (
+        <section className="stack volumes-section">
+          <div>
+            <h2 className="section-title">{t("collection.volumesTitle")}</h2>
+            <p className="muted">{t("collection.volumesLede")}</p>
+          </div>
+          {volumes.length === 0 ? (
+            <p className="muted">{t("collection.volumesEmpty")}</p>
+          ) : (
+            <div className="volume-grid">
+              {volumes.map((vol) => (
+                <article
+                  key={vol.id}
+                  className={`volume-card${vol.completed ? " volume-card-lit" : " volume-card-dim"}`}
+                >
+                  <div className="volume-card-head">
+                    <strong>{msg(vol.titleKey)}</strong>
+                    <span className="muted">
+                      {vol.completed
+                        ? t("collection.volumeDone")
+                        : t("collection.volumeProgress", {
+                            lit: vol.litCount,
+                            total: vol.totalSlots,
+                          })}
+                    </span>
+                  </div>
+                  <p className="muted volume-lede">{msg(vol.ledeKey)}</p>
+                  <ul className="volume-slots">
+                    {vol.slots.map((slot) => (
+                      <li key={slot.id} className={slot.lit ? "slot-lit" : "slot-dim"}>
+                        {msg(slot.titleKey)}
+                      </li>
+                    ))}
+                  </ul>
+                </article>
+              ))}
+            </div>
+          )}
+        </section>
+      ) : null}
 
       {!loading && entries.length === 0 ? (
         <div className="panel">

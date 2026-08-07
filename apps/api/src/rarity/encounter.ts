@@ -21,8 +21,11 @@ export type EncounterRarityResolution = {
   gbifUsageKey: number | null;
 };
 
+/** Bump when encounter rubric / formula semantics change enough to invalidate cache. */
+const ENCOUNTER_CACHE_VER = "enc2";
+
 function encounterCacheKey(countryCode: string | null, taxonKey: string): string {
-  return `enc|${taxonCacheKey(countryCode, taxonKey)}`;
+  return `${ENCOUNTER_CACHE_VER}|${taxonCacheKey(countryCode, taxonKey)}`;
 }
 
 function fetchInit(): RequestInit {

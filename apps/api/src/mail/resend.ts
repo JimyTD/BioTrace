@@ -10,7 +10,7 @@ function fetchInit(): RequestInit {
   return init;
 }
 
-export async function sendMagicLinkEmail(opts: { to: string; verifyUrl: string }) {
+export async function sendPasswordResetEmail(opts: { to: string; code: string }) {
   if (!env.resendApiKey) {
     throw new Error("RESEND_API_KEY is not set");
   }
@@ -25,9 +25,9 @@ export async function sendMagicLinkEmail(opts: { to: string; verifyUrl: string }
     body: JSON.stringify({
       from: env.mailFrom,
       to: [opts.to],
-      subject: t("auth.mailSubject"),
-      text: t("auth.mailText", { url: opts.verifyUrl }),
-      html: t("auth.mailHtml", { url: opts.verifyUrl }),
+      subject: t("auth.resetMailSubject"),
+      text: t("auth.resetMailText", { code: opts.code }),
+      html: t("auth.resetMailHtml", { code: opts.code }),
     }),
   });
 

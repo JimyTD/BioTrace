@@ -161,23 +161,36 @@ async function main() {
   console.log(`Provider: zhipu | mode=encounter_class | items=${list.length}`);
 
   const rows: Array<Record<string, unknown>> = [];
-  let exact = 0;
-  let within1 = 0;
+  let exactUser = 0;
+  let within1User = 0;
+  let exactAgent = 0;
+  let within1Agent = 0;
+  let nUser = 0;
 
   for (const row of list) {
     process.stdout.write(`#${row.id} ${row.label} ... `);
     try {
       const scored = await withRetry(() => scoreOne(row), `#${row.id}`);
       await sleep(args.delayMs);
-      const dist = tierDistance(scored.rarity, row.user);
-      if (dist === 0) exact += 1;
-      if (dist <= 1) within1 += 1;
+      const userTier = String(row.user ?? "").trim();
+      const agentTier = String(row.agent ?? "").trim();
+      const distUser = userTier ? tierDistance(scored.rarity, userTier) : null;
+      const distAgent = agentTier ? tierDistance(scored.rarity, agentTier) : null;
+      if (distUser != null) {
+        nUser += 1;
+        if (distUser === 0) exactUser += 1;
+        if (distUser <= 1) within1User += 1;
+      }
+      if (distAgent != null) {
+        if (distAgent === 0) exactAgent += 1;
+        if (distAgent <= 1) within1Agent += 1;
+      }
       rows.push({
         id: row.id,
         label: row.label,
         taxon: row.taxon,
-        user: row.user,
-        agent: row.agent,
+        user: userTier || "",
+        agent: agentTier || "",
         model: scored.rarity,
         base_tier: scored.baseTier,
         encounter_class: scored.encounterClass,
@@ -185,12 +198,19 @@ async function main() {
         swarm_or_habituated: scored.swarmOrHabituated,
         protection_level: scored.protectionLevel,
         hard_to_photograph: scored.hardToPhotograph,
-        dist_user: dist,
+        dist_user: distUser,
+        dist_agent: distAgent,
         reason: scored.reason,
         notes: row.notes ?? "",
       });
+      const ref =
+        distUser != null
+          ? `user ${userTier} Δ${distUser}`
+          : distAgent != null
+            ? `agent ${agentTier} Δ${distAgent}`
+            : "no ref";
       console.log(
-        `${scored.rarity} (user ${row.user}, Δ${dist}) class=${scored.encounterClass}` +
+        `${scored.rarity} (${ref}) class=${scored.encounterClass}` +
           (scored.adjustments.length ? ` [${scored.adjustments.join(",")}]` : ""),
       );
     } catch (err) {
@@ -210,7 +230,14 @@ async function main() {
         generatedAt: new Date().toISOString(),
         scheme: "encounter_class_veto",
         provider: "zhipu",
-        summary: { n: rows.length, exact_vs_user: exact, within1_vs_user: within1 },
+        summary: {
+          n: rows.length,
+          exact_vs_user: exactUser,
+          within1_vs_user: within1User,
+          n_with_user: nUser,
+          exact_vs_agent: exactAgent,
+          within1_vs_agent: within1Agent,
+        },
         rows,
       },
       null,
@@ -220,15 +247,17 @@ async function main() {
   );
 
   const csv = [
-    "id,label,user,model,encounter_class,dist_user,adjustments,protection_level,reason",
+    "id,label,user,agent,model,encounter_class,dist_user,dist_agent,adjustments,protection_level,reason",
     ...rows.map((r) =>
       [
         r.id,
         JSON.stringify(r.label ?? ""),
         r.user ?? "",
+        r.agent ?? "",
         r.model ?? "",
         r.encounter_class ?? "",
         r.dist_user ?? "",
+        r.dist_agent ?? "",
         JSON.stringify((r.adjustments as string[] | undefined)?.join("|") ?? ""),
         r.protection_level ?? "",
         JSON.stringify(r.reason ?? r.error ?? ""),
@@ -238,9 +267,13 @@ async function main() {
   const outCsv = join(outDir, `rarity-calibrate-${stamp}.csv`);
   writeFileSync(outCsv, csv, "utf8");
 
-  console.log("\n=== summary vs user ===");
-  console.log(`exact: ${exact}/${rows.length}`);
-  console.log(`within 1 tier: ${within1}/${rows.length}`);
+  console.log("\n=== summary ===");
+  if (nUser > 0) {
+    console.log(`vs user:  exact ${exactUser}/${nUser}, ≤1 ${within1User}/${nUser}`);
+  } else {
+    console.log("vs user:  (user 列为空，待填写)");
+  }
+  console.log(`vs agent: exact ${exactAgent}/${rows.length}, ≤1 ${within1Agent}/${rows.length}`);
   console.log(`json: ${outJson}`);
   console.log(`csv:  ${outCsv}`);
 }

@@ -15,6 +15,7 @@ import {
 } from "../services/collection.js";
 import { removeObservationFiles } from "../services/observationFiles.js";
 import { serializeObservation } from "../serialize.js";
+import { evaluateVolumesOnObservation } from "../volumes/index.js";
 
 export const observationRoutes = new Hono<{ Variables: Variables }>();
 
@@ -76,12 +77,15 @@ observationRoutes.post("/:id/settle", async (c) => {
   const updated = await db.query.observations.findFirst({
     where: eq(observations.id, row.id),
   });
+  let volumeEval = { newlyLit: [] as Array<{ volumeId: string; slotId: string }>, newlyCompletedVolumeIds: [] as string[] };
   if (updated) {
     await upsertCollectionFromObservation(updated);
+    volumeEval = await evaluateVolumesOnObservation(updated);
   }
 
   return c.json({
     observation: serializeObservation(updated!, { redactPending: false }),
+    volumes: volumeEval,
   });
 });
 

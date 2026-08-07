@@ -1,4 +1,5 @@
 {
+  "_comment": "Overlay on introduced-index.json (GRIIS). Product must-alert gaps / aliases only — not the main list.",
   "CN": [
     "Achatina fulica",
     "Lissachatina fulica",
@@ -18,6 +19,10 @@
     "Gambusia affinis",
     "Ictalurus punctatus",
     "Clarias gariepinus",
+    "Hypostomus plecostomus",
+    "Pterygoplichthys pardalis",
+    "Pterygoplichthys disjunctivus",
+    "Pterygoplichthys annectens",
     "Alternanthera philoxeroides",
     "Eichhornia crassipes",
     "Pontederia crassipes",

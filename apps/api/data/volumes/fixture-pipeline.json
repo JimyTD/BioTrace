@@ -1,0 +1,29 @@
+{
+  "id": "fixture_pipeline",
+  "sort": 9000,
+  "enabled": false,
+  "titleKey": "volume.fixture_pipeline.title",
+  "ledeKey": "volume.fixture_pipeline.lede",
+  "slots": [
+    {
+      "id": "passeriformes",
+      "titleKey": "volume.fixture_pipeline.slot.passeriformes",
+      "rule": {
+        "type": "taxonomy_in",
+        "rank": "order",
+        "names": ["Passeriformes"],
+        "minReliableRank": "order"
+      }
+    },
+    {
+      "id": "testudines",
+      "titleKey": "volume.fixture_pipeline.slot.testudines",
+      "rule": {
+        "type": "taxonomy_in",
+        "rank": "order",
+        "names": ["Testudines"],
+        "minReliableRank": "order"
+      }
+    }
+  ]
+}

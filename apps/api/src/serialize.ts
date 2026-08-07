@@ -2,7 +2,12 @@ import { normalizeTaxonomy } from "./identify/types.js";
 import type { CollectionEntry, Observation, Trip, User } from "./db/schema.js";
 
 export function serializeUser(user: User) {
-  return { id: user.id, email: user.email, createdAt: user.createdAt.toISOString() };
+  return {
+    id: user.id,
+    email: user.email,
+    displayName: user.displayName ?? null,
+    createdAt: user.createdAt.toISOString(),
+  };
 }
 
 export function serializeTrip(trip: Trip) {

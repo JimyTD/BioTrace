@@ -12,5 +12,5 @@
   },
   "vetoClasses": ["pest_weed", "everyday", "unobtainable"],
   "swarmDownshiftMin": 2.2,
-  "notes": "Priority/veto model — not ax+by+cz. pest_weed/everyday force N; unobtainable forces XR. Other classes map to base tier with at most ±1 adjustment."
+  "notes": "Priority/veto — not weighted sum. Model outputs encounter_class; local resolveFromEncounter maps + veto. Cache key prefix enc2. Rubric: encounter-rubric.ts (shared with calibrate)."
 }

@@ -1,0 +1,75 @@
+{
+  "id": "intertidal",
+  "sort": 10,
+  "enabled": true,
+  "titleKey": "volume.intertidal.title",
+  "ledeKey": "volume.intertidal.lede",
+  "slots": [
+    {
+      "id": "shore_crab",
+      "titleKey": "volume.intertidal.slot.shore_crab",
+      "rule": {
+        "type": "taxonomy_in",
+        "rank": "family",
+        "names": [
+          "Grapsidae",
+          "Varunidae",
+          "Ocypodidae",
+          "Sesarmidae",
+          "Dotillidae",
+          "Macrophthalmidae",
+          "Portunidae"
+        ],
+        "minReliableRank": "family"
+      }
+    },
+    {
+      "id": "hermit",
+      "titleKey": "volume.intertidal.slot.hermit",
+      "rule": {
+        "type": "taxonomy_in",
+        "rank": "family",
+        "names": ["Paguridae", "Diogenidae", "Coenobitidae", "Paguristidae"],
+        "minReliableRank": "family"
+      }
+    },
+    {
+      "id": "barnacle",
+      "titleKey": "volume.intertidal.slot.barnacle",
+      "rule": {
+        "type": "taxonomy_in",
+        "rank": "family",
+        "names": ["Balanidae", "Chthamalidae", "Tetraclitidae", "Pyrgomatidae"],
+        "minReliableRank": "family"
+      }
+    },
+    {
+      "id": "mudflat_fish",
+      "titleKey": "volume.intertidal.slot.mudflat_fish",
+      "rule": {
+        "type": "taxonomy_in",
+        "rank": "family",
+        "names": ["Oxudercidae", "Gobiidae"],
+        "minReliableRank": "family"
+      }
+    },
+    {
+      "id": "shore_mollusc",
+      "titleKey": "volume.intertidal.slot.shore_mollusc",
+      "rule": {
+        "type": "taxonomy_in",
+        "rank": "family",
+        "names": [
+          "Littorinidae",
+          "Neritidae",
+          "Mytilidae",
+          "Ostreidae",
+          "Patellidae",
+          "Nacellidae",
+          "Potamididae"
+        ],
+        "minReliableRank": "family"
+      }
+    }
+  ]
+}

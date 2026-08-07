@@ -1,0 +1,67 @@
+{
+  "id": "woodland_edge",
+  "sort": 30,
+  "enabled": true,
+  "titleKey": "volume.woodland_edge.title",
+  "ledeKey": "volume.woodland_edge.lede",
+  "slots": [
+    {
+      "id": "squirrel",
+      "titleKey": "volume.woodland_edge.slot.squirrel",
+      "rule": {
+        "type": "taxonomy_in",
+        "rank": "family",
+        "names": ["Sciuridae"],
+        "minReliableRank": "family"
+      }
+    },
+    {
+      "id": "small_carnivoran",
+      "titleKey": "volume.woodland_edge.slot.small_carnivoran",
+      "rule": {
+        "type": "taxonomy_in",
+        "rank": "family",
+        "names": ["Viverridae", "Mustelidae", "Felidae", "Canidae", "Procyonidae"],
+        "minReliableRank": "family"
+      }
+    },
+    {
+      "id": "forest_bird",
+      "titleKey": "volume.woodland_edge.slot.forest_bird",
+      "rule": {
+        "type": "taxonomy_in",
+        "rank": "family",
+        "names": [
+          "Corvidae",
+          "Paridae",
+          "Leiothrichidae",
+          "Phasianidae",
+          "Picidae",
+          "Pycnonotidae",
+          "Timaliidae"
+        ],
+        "minReliableRank": "family"
+      }
+    },
+    {
+      "id": "lepidoptera",
+      "titleKey": "volume.woodland_edge.slot.lepidoptera",
+      "rule": {
+        "type": "taxonomy_in",
+        "rank": "order",
+        "names": ["Lepidoptera"],
+        "minReliableRank": "order"
+      }
+    },
+    {
+      "id": "odonata",
+      "titleKey": "volume.woodland_edge.slot.odonata",
+      "rule": {
+        "type": "taxonomy_in",
+        "rank": "order",
+        "names": ["Odonata"],
+        "minReliableRank": "order"
+      }
+    }
+  ]
+}

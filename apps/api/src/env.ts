@@ -67,16 +67,12 @@ export const env = {
   identifyGeminiWaitMaxMs: Number(process.env.IDENTIFY_GEMINI_WAIT_MAX_MS ?? 90_000),
   /** Wall-clock budget for one observation identify (wait + calls). */
   identifyJobDeadlineMs: Number(process.env.IDENTIFY_JOB_DEADLINE_MS ?? 900_000),
-  /** Public site origin for magic links and post-login redirect (no trailing slash). */
+  /** Public site origin (no trailing slash). */
   appOrigin: (process.env.APP_ORIGIN ?? "http://127.0.0.1:5173").replace(/\/$/, ""),
   resendApiKey: process.env.RESEND_API_KEY?.trim() || "",
   mailFrom: process.env.MAIL_FROM?.trim() || "BioTrace <onboarding@resend.dev>",
-  magicLinkTtlMs: Number(process.env.MAGIC_LINK_TTL_MS ?? 15 * 60_000),
-  /**
-   * Grace window after a magic-link token is first consumed during which the same
-   * token still logs in. Absorbs email-client link prefetch/scanning (e.g. QQ Mail)
-   * that consumes the token before the real user click. Token stays effectively
-   * one-time; the window is short and does not extend on reuse.
-   */
-  magicLinkConsumeGraceMs: Number(process.env.MAGIC_LINK_CONSUME_GRACE_MS ?? 60_000),
+  /** Session cookie + token TTL (default 90 days); renewed on authenticated requests. */
+  sessionTtlMs: Number(process.env.SESSION_TTL_MS ?? 90 * 24 * 60 * 60_000),
+  /** Password-reset OTP TTL (default 15 minutes). */
+  passwordResetTtlMs: Number(process.env.PASSWORD_RESET_TTL_MS ?? 15 * 60_000),
 };

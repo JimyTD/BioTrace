@@ -13,6 +13,7 @@ import { collectionRoutes } from "./routes/collection.js";
 import { fileRoutes } from "./routes/files.js";
 import { observationRoutes } from "./routes/observations.js";
 import { tripRoutes } from "./routes/trips.js";
+import { volumeRoutes } from "./routes/volumes.js";
 
 const app = new Hono<{ Variables: Variables }>();
 
@@ -43,6 +44,7 @@ app.route("/api/auth", authRoutes);
 app.route("/api/trips", tripRoutes);
 app.route("/api/observations", observationRoutes);
 app.route("/api/collection", collectionRoutes);
+app.route("/api/volumes", volumeRoutes);
 app.route("/api/files", fileRoutes);
 
 app.onError((err, c) => {
