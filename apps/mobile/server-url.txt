@@ -1,0 +1,4 @@
+# BioTrace Android WebView 加载的公网源（无尾斜杠）
+# 改完后在仓库根执行：pnpm mobile:sync
+# 也可用环境变量 BIOTRACE_SERVER_URL 覆盖本文件
+http://106.53.188.20

@@ -1,0 +1,42 @@
+# BioTrace API - China build (mirrors for apt & npm). Same result as ../Dockerfile.
+# 用于国内服务器构建：把Debian apt 源换成腾讯云镜像、npm 走 npmmirror，
+# 避免 deb.debian.org / registry.npmjs.org 在国内龟速甚至卡死。
+# 由 docker-compose.override.yml 引用（compose 自动加载 override）。
+FROM node:22-bookworm-slim
+
+# Use Tencent Cloud Debian mirror to avoid slow deb.debian.org from CN.
+RUN set -eux; \
+  if [ -f /etc/apt/sources.list.d/debian.sources ]; then \
+    sed -i 's|deb.debian.org|mirrors.tencentyun.com|g' /etc/apt/sources.list.d/debian.sources; \
+  fi; \
+  if [ -f /etc/apt/sources.list ]; then \
+    sed -i 's|deb.debian.org|mirrors.tencentyun.com|g' /etc/apt/sources.list; \
+  fi; \
+  apt-get update; \
+  apt-get install -y --no-install-recommends ca-certificates; \
+  rm -rf /var/lib/apt/lists/*; \
+  corepack enable
+
+WORKDIR /app
+
+# Faster npm registry from CN
+ENV npm_config_registry=https://registry.npmmirror.com
+
+COPY package.json pnpm-workspace.yaml pnpm-lock.yaml ./
+COPY apps/api/package.json apps/api/
+COPY packages/messages/package.json packages/messages/
+
+RUN pnpm install --frozen-lockfile --filter @biotrace/api...
+
+COPY packages/messages packages/messages
+COPY apps/api apps/api
+
+ENV NODE_ENV=production \
+    HOST=0.0.0.0 \
+    PORT=8787 \
+    DATABASE_URL=file:/data/biotrace.db \
+    UPLOAD_DIR=/data/uploads
+
+EXPOSE 8787
+
+CMD ["pnpm", "--filter", "@biotrace/api", "start"]

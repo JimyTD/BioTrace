@@ -1,0 +1,41 @@
+# secrets
+.env
+**/.env
+**/deploy/.env.production
+*.pem
+
+# app runtime data (repo root only — not apps/api/data seeds)
+/data/
+!/data/.gitkeep
+
+# node
+node_modules/
+dist/
+*.tsbuildinfo
+.turbo/
+
+# python
+.venv/
+**/__pycache__/
+*.pyc
+.Python
+
+# rarity calibration script outputs
+apps/api/scripts/out/
+
+# bakeoff outputs & local caches
+model-bakeoff/results/
+model-bakeoff/images/*.jpg
+model-bakeoff/images/*.jpeg
+model-bakeoff/images/*.png
+model-bakeoff/images/*.webp
+model-bakeoff/images/*.heic
+!model-bakeoff/images/.gitkeep
+!model-bakeoff/images/manifest.example.yaml
+
+# OS / editor
+.DS_Store
+Thumbs.db
+.idea/
+.vscode/
+*.log

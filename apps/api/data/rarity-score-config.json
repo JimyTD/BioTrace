@@ -1,0 +1,16 @@
+{
+  "tiers": ["XR", "LR", "UR", "SSR", "SR", "R", "N"],
+  "classBaseTier": {
+    "pest_weed": "N",
+    "everyday": "N",
+    "place_common": "R",
+    "noteworthy": "SR",
+    "scarce": "SSR",
+    "hard": "UR",
+    "legend": "LR",
+    "unobtainable": "XR"
+  },
+  "vetoClasses": ["pest_weed", "everyday", "unobtainable"],
+  "swarmDownshiftMin": 2.2,
+  "notes": "Priority/veto model — not ax+by+cz. pest_weed/everyday force N; unobtainable forces XR. Other classes map to base tier with at most ±1 adjustment."
+}

@@ -1,0 +1,24 @@
+---
+description: 用户可见文案必须进 packages/messages 术语表，禁止写死在业务代码里
+alwaysApply: true
+---
+
+# 术语文案（强制）
+
+面向用户的中文（及日后其它语言）**必须**落在 [`packages/messages`](packages/messages)（当前主表 [`packages/messages/src/zh.ts`](packages/messages/src/zh.ts)），通过 `t()` / `formatRank()` 使用。
+
+## 必须
+
+- 新增或改 UI 文案：先加/改 message key，再在 Web/API 引用 key
+- 状态名、按钮、空态、错误提示、确认语、稀有度标签、结算文案等同理
+- API 返回给前端的用户可读错误：优先稳定 **code**（如 `identify_unavailable`），由 messages 翻译；不要把长中文硬编码进路由
+
+## 禁止
+
+- 在 `apps/web` / `apps/api` 业务代码里直接写死用户可见中文句子（日志、内部注释除外）
+- 为省事复制一份同义中文绕过术语表
+
+## 例外
+
+- 模型 Prompt、开发者日志、纯技术错误原文（落库前应尽量映射为 code）
+- 用户自己输入的内容（旅途标题、描述等）

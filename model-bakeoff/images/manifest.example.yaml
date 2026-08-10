@@ -1,0 +1,14 @@
+# 可选。不写本文件也可以：脚本会扫描 images/ 下所有图片，并从 EXIF 读日期/GPS。
+# 地名：有 GPS 时默认用 Nominatim 逆地理；一般不必手填。
+# 仅当你想覆盖 EXIF、或补 expected_hint 时才需要本文件。
+
+samples:
+  - id: crane-fly-jinggang
+    path: crane-fly.jpg
+    # 下列字段通常留空，由 EXIF 自动填：
+    # place_name / lat / lon / date
+    expected_hint: "大蚊科 Tipulidae，属倾向 Tipula"
+
+  - id: mudskipper
+    path: mudskipper.jpg
+    expected_hint: "弹涂鱼相关"

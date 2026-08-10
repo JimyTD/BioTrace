@@ -1,0 +1,39 @@
+﻿<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8" />
+  <title>BioTrace map look samples</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <link href="https://unpkg.com/maplibre-gl@5/dist/maplibre-gl.css" rel="stylesheet" />
+  <script src="https://unpkg.com/maplibre-gl@5/dist/maplibre-gl.js"></script>
+  <style>
+    body { margin: 0; font-family: system-ui, sans-serif; background: #111; color: #eee; }
+    h1 { font-size: 16px; margin: 12px 16px; font-weight: 600; }
+    .grid { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; padding: 0 8px 16px; }
+    .card { background: #1a1a1a; border-radius: 8px; overflow: hidden; }
+    .card h2 { font-size: 13px; margin: 8px 10px; font-weight: 500; color: #ccc; }
+    .map { height: 360px; width: 100%; }
+    .note { margin: 0 16px 16px; font-size: 13px; line-height: 1.5; color: #aaa; max-width: 900px; }
+  </style>
+</head>
+<body>
+  <h1>OpenFreeMap + MapLibre — BioTrace 视觉样张（同引擎不同城市）</h1>
+  <p class="note">样式：liberty。左列偏「旅行散点」观感参考；右列同款样式换地点。标注语言随 OSM 数据与本地化字段变化，中国区域中文标签往往不如高德密。</p>
+  <div class="grid">
+    <div class="card"><h2>柏林（海外 · liberty）</h2><div id="m1" class="map"></div></div>
+    <div class="card"><h2>井冈山（国内山野 · liberty）</h2><div id="m2" class="map"></div></div>
+    <div class="card"><h2>东京（海外城市 · liberty）</h2><div id="m3" class="map"></div></div>
+    <div class="card"><h2>上海（国内城市 · liberty）</h2><div id="m4" class="map"></div></div>
+  </div>
+  <script>
+    const style = 'https://tiles.openfreemap.org/styles/liberty';
+    function mk(id, center, zoom) {
+      return new maplibregl.Map({ container: id, style, center, zoom, attributionControl: true });
+    }
+    mk('m1', [13.405, 52.52], 11);
+    mk('m2', [114.17, 26.58], 11);
+    mk('m3', [139.69, 35.68], 11);
+    mk('m4', [121.47, 31.23], 11);
+  </script>
+</body>
+</html>

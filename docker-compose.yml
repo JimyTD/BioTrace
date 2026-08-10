@@ -1,0 +1,20 @@
+# BioTrace API — bind to localhost; Nginx on the host terminates TLS and proxies /api.
+services:
+  api:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: biotrace-api
+    restart: unless-stopped
+    env_file:
+      - ./deploy/.env.production
+    environment:
+      NODE_ENV: production
+      HOST: "0.0.0.0"
+      PORT: "8787"
+      DATABASE_URL: file:/data/biotrace.db
+      UPLOAD_DIR: /data/uploads
+    volumes:
+      - ./data:/data
+    ports:
+      - "127.0.0.1:8787:8787"

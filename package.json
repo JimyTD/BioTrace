@@ -1,0 +1,14 @@
+{
+  "name": "biotrace",
+  "private": true,
+  "packageManager": "pnpm@11.20.0",
+  "scripts": {
+    "dev": "pnpm -r --parallel --filter @biotrace/api --filter @biotrace/web dev",
+    "dev:api": "pnpm --filter @biotrace/api dev",
+    "dev:web": "pnpm --filter @biotrace/web dev",
+    "build": "pnpm -r --filter @biotrace/api --filter @biotrace/web build",
+    "db:push": "pnpm --filter @biotrace/api db:push",
+    "mobile:sync": "pnpm --filter @biotrace/mobile sync",
+    "mobile:open": "pnpm --filter @biotrace/mobile open"
+  }
+}
