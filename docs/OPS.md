@@ -1,7 +1,8 @@
 # BioTrace 部署实操手册（持续维护）
 
 > **这是 BioTrace 上线与运维的唯一操作手册**，反映真实落地方案，随版本更新持续维护。
-> 架构背景与设计约定见 [`docs/07`](./07-部署-腾讯云轻量.md)；业务功能见 [`docs/06`](./06-实现与功能规格.md)。
+> **本文件是运维真源。** 架构背景与设计约定见文末[附录 A](#附录-a架构背景与设计约定)；业务功能见 [`SPEC.md`](./SPEC.md)。  
+> 原路径 `docs/08-部署实操手册.md`（2026-08-10 改名）。
 >
 > 最后更新：2026-08-10 · 当前阶段：**第二阶段（IP + HTTP + Resend 真实邮箱登录）已上线**；`DEV_AUTH=0`、Resend 走自有验证域名 `jettechdog.icu` 发信；已接入**境外出网代理（广州→新加坡 Xray）**保障 Resend/Gemini 出境；运维通道改为 Cursor MCP `tencent-lighthouse`（见 §2.1）
 >
@@ -22,7 +23,7 @@ BioTrace 是个人向「旅行自然观察」Web 应用（上传照片 → 云�
 
 **为什么这么分**：大陆服务器上，未备案域名的 80/443 会被腾讯云拦截（合规硬性要求）；用 IP 直连不受限。套安卓壳后 API 地址内置、用户不可见，IP 直连体验无损。故先用 IP 跑起来，域名/HTTPS 放到迁移或备案后处理。
 
-**Android 壳（Cut 6）**：见 [`docs/09-Android套壳.md`](./09-Android套壳.md)。壳内 `server.url` 必须等于本表「访问方式」同源（当前 `http://106.53.188.20`）。HTTP 阶段服务器侧保持 `COOKIE_SECURE=0`，否则 WebView 会话会掉。改壳地址：`apps/mobile/server-url.txt` → `pnpm mobile:sync`。侧载包发布见 [§7.2](#72-发布-android-侧载包github-actions)。
+**Android 壳（Cut 6）**：见 [`features/Android套壳.md`](./features/Android套壳.md)。壳内 `server.url` 必须等于本表「访问方式」同源（当前 `http://106.53.188.20`）。HTTP 阶段服务器侧保持 `COOKIE_SECURE=0`，否则 WebView 会话会掉。改壳地址：`apps/mobile/server-url.txt` → `pnpm mobile:sync`。侧载包发布见 [§7.2](#72-发布-android-侧载包github-actions)。
 
 ---
 
@@ -444,7 +445,7 @@ sudo docker compose exec -T api sh -c 'echo $HTTPS_PROXY; getent hosts host.dock
 
 ### 7.2 发布 Android 侧载包（GitHub Actions）
 
-> 服务器更新（§7.1）只覆盖 Web/API。Android 薄壳是**独立制品**：用 GitHub Actions 打签名 release APK，挂到 GitHub Release 供侧载。细节与本机构建见 [`docs/09`](./09-Android套壳.md)。
+> 服务器更新（§7.1）只覆盖 Web/API。Android 薄壳是**独立制品**：用 GitHub Actions 打签名 release APK，挂到 GitHub Release 供侧载。细节与本机构建见 [`features/Android套壳.md`](./features/Android套壳.md)。
 
 **何时需要重打 APK**
 
@@ -554,12 +555,12 @@ sudo tar czf /root/biotrace-data.tgz -C /opt/biotrace data
 - [x] `POST /api/auth/dev-login` 成功种`bt_session`（非 Secure），认证链路通
 - [x] `docker compose restart` 后数据仍在（`/opt/biotrace/data`）
 - [x] 出境代理：`curl -x http://127.0.0.1:10809 https://api.ipify.org` 返回 SG1 公网 IP；xray `enabled`+`active`；真实发信压测 200（§6.5）
-- [ ] Android 侧载 APK 打开同源站点且登录不掉会话（见 [`docs/09`](./09-Android套壳.md)）
+- [ ] Android 侧载 APK 打开同源站点且登录不掉会话（见 [`features/Android套壳.md`](./features/Android套壳.md)）
 
 **第二/三阶段（切换后再核对）**
 - [ ] 邮箱魔法链接登录成功；界面无「开发登录」；`devAuth=false`
 - [ ] 创建旅途 → 上传 → 专家鉴定中 → 鉴定完成 → 请过目/收下 → 图鉴
-- [ ] 有 GPS 的点出现在地图；瓦片正常。**底图已改为天地图**（见 [`docs/04f`](./04f-世界地图选型.md) §12）：
+- [ ] 有 GPS 的点出现在地图；瓦片正常。**底图已改为天地图**（见 [`planning/04f-世界地图选型.md`](./planning/04f-世界地图选型.md) §12）：
       需在服务器构建前设`VITE_TIANDITU_KEY`（浏览器端 key，**Vite 是构建时内联，改后必须重新build**），
       并在天地图控制台把生产域名加入白名单；未配置则回落 OpenFreeMap（**不合规，仅兜底**）
 - [ ] 后端逆地理：设 `TIANDITU_SERVER_KEY`（**服务端** key，与上面那个不可混用）；未配置则国别判定走离线国界数据
@@ -567,7 +568,7 @@ sudo tar czf /root/biotrace-data.tgz -C /opt/biotrace data
       （已实现运行时回落：瓦片连续失败 6 次自动切 OpenFreeMap，控制台有 `[map]` 开头的 warn。**看到该warn 说明当天已跑在不合规底图上**）
 - [ ] ⚠️ **上架/ 开放公网注册前必办：补地图审图号**。当前 `MapPage.tsx` 的 attribution 只有「天地图 · 国家地理信息公共服务平台」，
       **缺审图号**（形如 `GS(20XX)XXXX号`）。原文只能从天地图官网页底或控制台使用规范抄取，**不可自行编写**。
-      落地时同步搬进 `packages/messages/src/zh.ts` 走 `t()`（现为硬编码，违反术语表规则）。详见 [`docs/map-geo-compliance-notes.md`](./map-geo-compliance-notes.md)
+      落地时同步搬进 `packages/messages/src/zh.ts` 走 `t()`（现为硬编码，违反术语表规则）。详见 [`archive/地图国别实测.md`](./archive/地图国别实测.md)
 - [ ] HTTPS 阶段：`COOKIE_SECURE=1` 且登录会话稳定
 - [ ] 识图：Gemini 可调用或日额尽自动切 GLM
 
@@ -616,3 +617,43 @@ sudo tar czf /root/biotrace-data.tgz -C /opt/biotrace data
 | `deploy/nginx.biotrace.conf.example` | HTTPS + 域名版 Nginx 模板（第三阶段用） |
 | `.github/workflows/android-release.yml` | Android 签名 APK 构建与 GitHub Release（§7.2） |
 | `D:/Fun/BioTrace-secrets/`（仓库外） | Android release `.jks` 与凭据备份（**勿入库**） |
+
+---
+
+## 附录 A：架构背景与设计约定
+
+> 原 `docs/07-部署-腾讯云轻量.md` 的仍然有效部分（2026-08-10 并入，该文已删）。  
+> 那篇的「上机步骤」写的是理想终态（域名 + HTTPS），**已被本文正文取代**，不再保留。
+
+### A.1 目标架构
+
+```text
+Browser ──HTTP(S)──► Nginx（宿主机）
+                      ├── 静态 /var/www/biotrace  ← apps/web/dist
+                      └── /api/* ──► 127.0.0.1:8787  ← Docker biotrace-api
+                                         volume: ./data → /data
+                                           ├── biotrace.db
+                                           └── uploads/
+API ──HTTPS_PROXY──► 新加坡代理 ──► Gemini / Resend
+API ──直连──► 智谱 GLM、天地图（国内服务，勿走代理）
+Browser ──直连──► 天地图瓦片（缺 key 回落 OpenFreeMap）
+```
+
+### A.2 机器规格（已拍板）
+
+腾讯云轻量应用服务器，**2 核 / 2G / 40G**，Ubuntu 22.04 或 24.04 LTS x86_64，放行 22/80/443，**不需要 GPU**。2G 内存需 swap——当前机器自带 2G，`deploy/setup-swap.sh` 可跳过。
+
+### A.3 不可违反的约定
+
+- API **不对公网暴露 8787**，只给本机 Nginx 反代。
+- Web **不是** Docker 服务：在宿主机或 CI 跑 `pnpm --filter @biotrace/web build`，产物同步到 `/var/www/biotrace`。
+- 前端请求走相对路径 `/api/...`，故 Nginx 必须**同源**反代 `/api`。
+- `APP_ORIGIN` 与 `CORS_ORIGIN` 必须和地址栏完全一致（含 Android WebView），无尾斜杠。
+- 容器内固定 `DATABASE_URL=file:/data/biotrace.db`、`UPLOAD_DIR=/data/uploads`（compose 已写死，勿改成相对路径）。
+- HTTP 阶段 `COOKIE_SECURE=0`，HTTPS 阶段改 `1`；写反了会立刻掉会话。
+- 数据留在 SQLite + 本地盘，**不上** COS / 云数据库。
+- 地图瓦片由浏览器直连，**不要**在服务器反代瓦片。
+
+### A.4 需向所有者索取、且不得入库的秘密
+
+`SESSION_SECRET`（长随机）、`GEMINI_API_KEY`、`ZHIPU_API_KEY`、`RESEND_API_KEY` + 已验证 `MAIL_FROM`、`HTTPS_PROXY` 完整 URL、`TIANDITU_SERVER_KEY`（服务端）与 `VITE_TIANDITU_KEY`（浏览器端，构建时内联）。

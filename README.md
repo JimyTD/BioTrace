@@ -2,10 +2,9 @@
 
 个人向「旅行自然观察」：选图识别 → 落入旅途相册与地图。
 
-**当前 Android 侧载包版本：`0.1.0`**（[Release](https://github.com/JimyTD/BioTrace/releases/tag/android-v0.1.0) · 发版见 [`docs/08` §7.2](docs/08-部署实操手册.md)）
+**当前 Android 侧载包版本：`0.1.0`**（[Release](https://github.com/JimyTD/BioTrace/releases/tag/android-v0.1.0) · 发版见 [`docs/OPS.md` §7.2](docs/OPS.md)）
 
-> Cut 1–3 已收口。Cut 4（上云）制品在仓库内；**上机步骤见 [`docs/07`](docs/07-部署-腾讯云轻量.md)**。  
-> 筹划 [`docs/00`](docs/00-讨论进程与决策.md) · 规格 [`docs/06`](docs/06-实现与功能规格.md)。
+> 文档导航 [`docs/README.md`](docs/README.md)：功能真源 [`docs/SPEC.md`](docs/SPEC.md) · 运维真源 [`docs/OPS.md`](docs/OPS.md) · 专题 [`docs/features/`](docs/features/) · 规划与归档 [`docs/planning/`](docs/planning/)、[`docs/archive/`](docs/archive/)。
 
 ## 本机启动
 
@@ -51,7 +50,7 @@ HTTPS_PROXY=http://127.0.0.1:7890
 > ⚠️ **合规提示**：OpenFreeMap 使用 OSM 数据，其国界与地名表达在中国大陆法规下**不合规**（例如台湾被标为国家级要素），仅作开发与兜底用途。
 > 天地图由自然资源部主管，为官方审核版本；`VITE_TIANDITU_KEY` 是构建时内联的，**改后必须重新 build**。
 > **将本项目部署到公网者，需自行确认所在地对地图服务的合规要求**（在中国大陆公开提供地图服务通常需使用具备审图号的服务并在界面标注）。
-> 选型经过见 [`docs/04f` §12](docs/04f-世界地图选型.md)。
+> 选型经过见 [`docs/planning/04f-世界地图选型.md`](docs/planning/04f-世界地图选型.md) §12。
 
 ## 仓库结构
 
@@ -64,16 +63,16 @@ deploy/              生产 env / Nginx 模板
 Dockerfile           API 镜像
 docker-compose.yml   本机环回 8787
 data/                本地库与上传图（gitignore）
-docs/                筹划 + 实现规格 + 07 部署
+docs/                SPEC 功能真源 / OPS 运维真源 / features 专题 / planning·archive 留档
 model-bakeoff/       多模型对照脚本（独立）
 ```
 
 表现层：文案 → `packages/messages`；皮肤 → `apps/web/src/themes/`；流程页不写死品牌色。  
-加皮肤步骤见 [`docs/06` §10](docs/06-实现与功能规格.md)。
+加皮肤步骤见 [`docs/features/皮肤主题.md`](docs/features/皮肤主题.md)。
 
 ## 云部署
 
-见 [`docs/07-部署-腾讯云轻量.md`](docs/07-部署-腾讯云轻量.md)。
+见 [`docs/OPS.md`](docs/OPS.md)（架构背景在其附录 A）。
 
 ## model-bakeoff
 

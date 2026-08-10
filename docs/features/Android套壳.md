@@ -1,13 +1,13 @@
-# BioTrace Cut 6：Android 薄壳（侧载）
+﻿# BioTrace Cut 6：Android 薄壳（侧载）
 
-> Capacitor WebView 加载已部署的站点；**不上架应用商店**。架构见 [`docs/05`](./05-技术方案.md)；HTTP/IP 运维见 [`docs/08`](./08-部署实操手册.md)。
+> Capacitor WebView 加载已部署的站点；**不上架应用商店**。架构见 [`planning/05-技术方案.md`](../planning/05-技术方案.md)；HTTP/IP 运维见 [`OPS.md`](../OPS.md)。
 
 ## 1. 形态与约束
 
 | 项 | 结论 |
 |----|------|
 | 形态 | **Capacitor** Android WebView，`server.url` 指向公网站点（非 TWA） |
-| 当前源 | `http://106.53.188.20`（见 [`apps/mobile/server-url.txt`](../apps/mobile/server-url.txt)） |
+| 当前源 | `http://106.53.188.20`（见 [`apps/mobile/server-url.txt`](../../apps/mobile/server-url.txt)） |
 | 分发 | 侧载 debug/release APK；不上 Play |
 | 与后端 | 只读已部署站点；不改 API 契约 |
 | 服务器配合 | HTTP 阶段必须 `COOKIE_SECURE=0`；`APP_ORIGIN`/`CORS_ORIGIN` 与地址栏一致 |
@@ -53,7 +53,7 @@ cd apps/mobile/android
 ### Cleartext / 权限
 
 - `capacitor.config.js`：`server.cleartext: true`、`android.allowMixedContent: true`
-- Manifest：`usesCleartextTraffic` + [`network_security_config.xml`](../apps/mobile/android/app/src/main/res/xml/network_security_config.xml)
+- Manifest：`usesCleartextTraffic` + [`network_security_config.xml`](../../apps/mobile/android/app/src/main/res/xml/network_security_config.xml)
 - 权限：`INTERNET`、`CAMERA`、读写图片（相册上传）
 - 插件：`@capacitor/camera`（相册页「拍照 / 从相册选择」；Web 部署后壳内生效）
 
@@ -61,11 +61,11 @@ cd apps/mobile/android
 
 ## 4. GitHub Actions 发布（签名 release）
 
-运维入口见 [`docs/08` §7.2](./08-部署实操手册.md)。技术要点如下。
+运维入口见 [`OPS.md` §7.2](../OPS.md)。技术要点如下。
 
 | 项 | 说明 |
 |----|------|
-| Workflow | [`.github/workflows/android-release.yml`](../.github/workflows/android-release.yml) |
+| Workflow | [`.github/workflows/android-release.yml`](../../.github/workflows/android-release.yml) |
 | 触发 | 推送 tag `android-vX.Y.Z`，或 Actions 手动 Run |
 | 产物 | 签名 `BioTrace-X.Y.Z.apk` → Artifact +（默认）GitHub Release |
 | 版本 | tag / 输入的 `X.Y.Z` → `versionName`；`versionCode = X*10000 + Y*100 + Z`（`-PbiotraceVersion*`） |
@@ -110,6 +110,6 @@ cd apps/mobile/android
 
 ## 变更记录
 
-- 2026-08-05：Cut 6 Capacitor Android 壳初版；默认 IP HTTP；文档与 `docs/08` 对齐。
+- 2026-08-05：Cut 6 Capacitor Android 壳初版；默认 IP HTTP；文档与运维手册（现 `OPS.md`）对齐。
 - 2026-08-07：接入 `@capacitor/camera`；相册页原生拍照 / 从相册选择。
-- 2026-08-10：GitHub Actions 签名 release APK + Release；`docs/08` §7.2 发布 SOP。
+- 2026-08-10：GitHub Actions 签名 release APK + Release；`OPS.md` §7.2 发布 SOP。

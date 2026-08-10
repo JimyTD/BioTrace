@@ -7,7 +7,7 @@ alwaysApply: true
 
 表现层三分离：**文案** `packages/messages` · **皮肤** `apps/web/src/themes/` · **流程 UI** `pages/` + `styles.css`。
 
-完整清单与 token 表见 [`docs/06-实现与功能规格.md`](docs/06-实现与功能规格.md) §10。
+完整清单与 token 表见 [`docs/features/皮肤主题.md`](docs/features/皮肤主题.md)。
 
 ## 必须
 

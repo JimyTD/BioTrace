@@ -1,7 +1,8 @@
 # BioTrace 实现与功能规格
 
-> 承接筹划文档（`00`–`05`）与可测竖切 Plan。  
-> **本文件是实现侧持久规格**：已做 / 本期要做 / 明确后置，避免只留在对话或 Plan 里。  
+> **本文件是功能真源**：已做 / 本期要做 / 明确后置。查「某能力做没做」以此为准。  
+> 部署与线上现状看 [`OPS.md`](./OPS.md)；专题手册在 [`features/`](./features/)；当初的取舍理由在 [`planning/`](./planning/)。  
+> 原路径 `docs/06-实现与功能规格.md`（2026-08-10 改名）。  
 > 更新日期：2026-08-10
 
 ## 0. 当前阶段
@@ -11,11 +12,12 @@
 | Cut 1 / 1.1 | 已完成 | 假登录、旅途、识图、相册、地图、删除、详情、术语表 |
 | Cut 2 | 已完成 | 待开包 → 抽卡结算、图鉴、引入警示 UI |
 | Cut 3 | 已收口 | 引入名录/识图韧性；稀有度 = encounter 分桶+否决（§3.1），已接结算 |
-| Cut 4 | 制品就绪 / 上机交部署 agent | 腾讯云轻量；手册 [`docs/07`](./07-部署-腾讯云轻量.md) |
+| Cut 4 | 已上线 | 腾讯云轻量；手册 [`OPS.md`](./OPS.md) |
 | Cut 5 | 迭代中 | 邮箱+密码主路径（取代魔法链接）；Resend 用于找回；持久会话；见 §5 |
-| Cut 6 | 制品就绪 | Capacitor Android 侧载壳；手册 [`docs/09`](./09-Android套壳.md) |
-| 套册成就 | 引擎+三本内容已通 | 配置驱动；拓展手册 [`docs/10`](./10-旅行套册.md) |
-| 地图补标 | 交独立 agent | 无 GPS 事后点选落点；规格 [`docs/11`](./11-地图补标.md) |
+| Cut 6 | 制品就绪 | Capacitor Android 侧载壳；手册 [`features/Android套壳.md`](./features/Android套壳.md) |
+| 套册成就 | 引擎+三本内容已通 | 配置驱动；拓展手册 [`features/旅行套册.md`](./features/旅行套册.md) |
+| 皮肤主题 | 已落地 | 默认 `daylight`；手册 [`features/皮肤主题.md`](./features/皮肤主题.md) |
+| 地图补标 | 已完成 | 详情准星补标；`PATCH …/location` 重算国别/引入/稀有度；规格 [`features/地图补标.md`](./features/地图补标.md) |
 | 后置 | 未做 | 旅途元数据、全量灌库、iOS/上架；更多套册策展 |
 
 本机：`pnpm.cmd dev` → Web `http://127.0.0.1:5173/` · API `http://127.0.0.1:8787`
@@ -69,6 +71,17 @@ docs/        筹划 + 本实现规格
 - 详情可点进：不合格不渲染分类链，不因脏字段报错。
 
 验收：书 / 卡通人 / 玩具熊 → 不可收集 + 梗句 + 无分类；真鸟可开包；过粗仍「未理想识别」。
+
+## 1.3 无 GPS 地图补标（已收口）
+
+照片无 EXIF GPS 时，事后在地图补点；**不挡上传/识图**（维持 planning/05 B.6）；**不重跑识图**。交接背景见 [`features/地图补标.md`](./features/地图补标.md)。
+
+- **API**：`PATCH /api/observations/:id/location`，body `{ lat, lng }`（有限、纬 ±90、经 ±180）。写坐标后，若已有 `finestReliableRank` 则复用 `computeSettle` 重算 `countryCode` / `countrySource` / `locationPrecise` / `alertIntroduced` / `rarity`（及 settle 同类字段）；**不改** `status`、不开包、不 `enqueueIdentify`。已 `settled` 时 `upsertCollectionFromObservation` 刷新图鉴档位。
+- **analyzing 竞态**：允许补标只写坐标；[`jobs/identify.ts`](../apps/api/src/jobs/identify.ts) 在 `computeSettle` 前再读库内最新 lat/lng（Prompt 仍可用上传闭包坐标）。
+- **UI**：观察详情「设位置 / 改位置」→ `/observations/:id/pin`；**挪地图 + 中心准星 +「确认此处」**（不手打地址）。底图与足迹图共用 [`map/style.ts`](../apps/web/src/map/style.ts)（缩放上限、瓦片失败回落 OpenFreeMap）。
+- **文案**：`detail.setLocation` 等，均在 `packages/messages`。
+
+验收：无 GPS 可识图开包；补标后上地图；海外点国别正确（如福冈→JP）；俗名/分类不变。
 
 ---
 
@@ -168,7 +181,7 @@ docs/        筹划 + 本实现规格
 
 ### 3.5 引入/关注种警示（与稀有度分通道）
 
-产品原则（见 [`docs/05` C.4](./05-技术方案.md)）：结算揭示；文案「当地引入/关注种」；国家级；无国家不警示；**仅种/亚种可靠鉴定**才警示；**不**折进稀有度。  
+产品原则（见 [`planning/05-技术方案.md`](./planning/05-技术方案.md) C.4）：结算揭示；文案「当地引入/关注种」；国家级；无国家不警示；**仅种/亚种可靠鉴定**才警示；**不**折进稀有度。  
 （相对 05 旧表述「弱结算能对上名录仍可警示」：已废止，以本节与代码种级闸门为准。）
 
 ```text
@@ -201,6 +214,7 @@ computeSettle
 - [x] 引入警示：GRIIS 索引 + seed overlay；种级匹配；与稀有度分通道
 - [x] 引入主索引全球灌入（Compendium）+ GBIF CN 覆盖；图鉴「曾警示」轻标
 - [ ] 灭绝级 XR（白鲟等）偶发标成 legend；中档继续靠判定键拧，不加物种名单
+- [ ] **无国家时稀有度按 CN 评**：`rarity/encounter.ts` 的 `input.countryCode?.trim() || "CN"` 与界面「无定位」文案不一致（说的和做的两样）。地图补标上线后此路径变少，但仍需定：回落 CN 还是走全球口径
 
 ~~GBIF 稀有度主路径 / 常见种封顶表 / novelty 加权~~：已否决。  
 ~~引入种靠手写名单当主路径 / 属名模糊匹配~~：已否决。
@@ -209,7 +223,7 @@ computeSettle
 
 ## 4. Cut 4：腾讯云部署
 
-- **操作手册（部署 agent 唯一入口）**：[`docs/07-部署-腾讯云轻量.md`](./07-部署-腾讯云轻量.md)
+- **操作手册（唯一入口）**：[`OPS.md`](./OPS.md)（架构背景见其附录 A）
 - 仓库已含：`Dockerfile`、`docker-compose.yml`、`deploy/*`；生产项 `CORS_ORIGIN` / `COOKIE_SECURE`
 - 规格：2C2G40G、Ubuntu 22.04/24.04；假登录可先用；SQLite + 本地盘；不上 COS
 - **主线不再代劳上机**；购机/DNS/证书/compose 按 07 由部署侧完成并勾验收清单
@@ -225,16 +239,16 @@ computeSettle
 
 ## 6. Cut 6：Android 薄壳（侧载）
 
-- **手册**：[`docs/09-Android套壳.md`](./09-Android套壳.md)
+- **手册**：[`features/Android套壳.md`](./features/Android套壳.md)
 - 形态：Capacitor WebView，`apps/mobile`；`server-url.txt` / `BIOTRACE_SERVER_URL` 指向线上站点（当前 `http://公网IP`）
 - cleartext + 相机/相册权限已配；**不上架**；与后端部署不冲突（只读站点）
-- 服务器侧 HTTP 阶段保持 `COOKIE_SECURE=0`，`APP_ORIGIN`/`CORS_ORIGIN` 与壳内地址一致（见 `docs/08`）
+- 服务器侧 HTTP 阶段保持 `COOKIE_SECURE=0`，`APP_ORIGIN`/`CORS_ORIGIN` 与壳内地址一致（见 [`OPS.md`](./OPS.md)）
 
 ## 7. 旅行套册成就
 
 与稀有度 / 引入分通道。叙事：主题套册、规则槽点亮、**整册灰→彩**；不做凑数里程碑。
 
-**完整手册（策展原则 / 当前目录 / 加册步骤）：[`docs/10-旅行套册.md`](./10-旅行套册.md)**
+**完整手册（策展原则 / 当前目录 / 加册步骤）：[`features/旅行套册.md`](./features/旅行套册.md)**
 
 | 原则 | 含义 |
 |------|------|
@@ -251,10 +265,8 @@ computeSettle
 
 ## 8. 后置
 
-- **无 GPS 地图补标**：见 [`docs/11`](./11-地图补标.md)（交独立 agent；非本表「已收口」项）
 - 套册：更多主题册策展（内容 only）；美术封面；可选详情页
-- 皮肤：潜水/潮间带主题（`tide`，在 §10 登记；勿改流程页硬编码色）
-- 「我的」里主题切换 UI（底层 `applyTheme` 已可扩）
+- 皮肤：潜水/潮间带主题 `tide`；「我的」里主题切换 UI（见 [`features/皮肤主题.md`](./features/皮肤主题.md) §5）
 - 稀有度：灭绝级 XR 稳定性；中档继续靠判定键微调（禁止物种名单）
 - 旅途元数据增强（封面 / 时间 / 地点摘要）
 - 完整分类树动态够格、全量名录灌库；对象存储
@@ -271,54 +283,13 @@ computeSettle
 
 ---
 
-## 10. Web 皮肤主题（给后续 agent）
+## 10. Web 皮肤主题
 
-> 与文案包同思路：**表现集中、流程页不写死品牌色**。旅游默认皮肤为「日光胶片」`daylight`；潜水/海洋皮肤后置为 `tide`。  
-> 皮肤不只换 token：版式 class（顶栏、封面旅途卡、相册 film-grid、细底栏）属 [`styles.css`](../apps/web/src/styles.css) 结构层；换皮改 token，**不要**复制 `pages/*`。
+已拆为独立专题：**[`features/皮肤主题.md`](./features/皮肤主题.md)**（token 表、加皮肤清单、明确不做）。
 
-### 10.1 文件职责
+要点只留一句：色/字/圆角写在 `apps/web/src/themes/<id>.css`，结构样式只用语义 `var(--*)`，**流程页不写死品牌色**。
 
-| 路径 | 职责 |
-|------|------|
-| [`apps/web/src/themes/index.ts`](../apps/web/src/themes/index.ts) | `ThemeId`、默认皮肤、`initTheme` / `applyTheme`、localStorage `bt_theme` |
-| [`apps/web/src/themes/daylight.css`](../apps/web/src/themes/daylight.css) | `[data-theme="daylight"]` 下全部设计 token |
-| （未来）`apps/web/src/themes/tide.css` | `[data-theme="tide"]` 潜水皮肤 token |
-| [`apps/web/src/styles.css`](../apps/web/src/styles.css) | 布局与组件 **结构**；只引用 `var(--*)`，不写品牌色十六进制 |
-| [`apps/web/src/main.tsx`](../apps/web/src/main.tsx) | `import` 各皮肤 CSS + `initTheme()` |
-| [`apps/web/index.html`](../apps/web/index.html) | `data-theme="daylight"` 首屏兜底；字体 link 随默认皮肤 |
-
-页面与组件（`pages/*`、`components/*`）只使用语义 class（如 `.btn`、`.panel`）或已有 token；**禁止**在 TSX 里写死主题色（地图点等用 CSS class + token）。
-
-### 10.2 语义 token（皮肤必须覆盖）
-
-新增皮肤时，至少提供与 `daylight.css` 同名的变量，否则结构样式会缺色：
-
-- 字：`--font-sans`、`--font-brand`
-- 底与字色：`--bg0`、`--bg1`、`--ink`、`--muted`、`--line`、`--bg-atmosphere`
-- 品牌与行动：`--accent`、`--accent-soft`、`--accent-border`、`--accent-border-strong`、`--cta`、`--cta-ink`、`--secondary`
-- 底栏：`--nav-bg`、`--nav-active-bg`、`--nav-active-ink`（激活态勿复用冷绿 soft）
-- 状态：`--warn`、`--danger` 及 soft/line/badge 配套
-- 表面：`--card`、`--card-muted`、`--input-bg`、`--surface-wash`、`--modal-bg`、`--modal-scrim`、`--shadow`
-- 圆角：`--radius-sm` / `--md` / `--lg` / `--btn`
-- 地图：`--map-dot`、`--map-dot-selected`、`--map-dot-ring`、`--map-dot-border`
-- 稀有度：`--rarity-{N,R,SR,SSR,UR,LR}-{bg,fg}`（若档位扩展，结构 CSS 与皮肤同步加）
-
-若结构样式需要新视觉维度，**先**在 `styles.css` 改用新 `var(--…)`，**再**在每个已登记皮肤里赋值——不要只在某一皮肤或某一页面写死。
-
-### 10.3 如何新增皮肤（清单）
-
-1. 新建 `apps/web/src/themes/<id>.css`，选择器 `[data-theme="<id>"] { … }`，填满 §10.2 变量。  
-2. 在 `themes/index.ts`：把 `"<id>"` 加入 `ThemeId` 与 `THEME_IDS`。  
-3. 在 `main.tsx`：`import "./themes/<id>.css"`。  
-4. 若该皮肤要专用 Web 字体：改 `index.html` 的 fonts link（或多皮肤时按需加载，避免无关字体）。  
-5. 需要用户可切换时：在「我的」等页调用 `applyTheme(id)`（文案 key 进 `packages/messages`）；**不要**为换皮复制页面组件。  
-6. 验收：默认 `daylight` 仍正常；切到新皮肤后按钮/导航/稀有度徽章/地图点/弹层均有色且无大片未定义回退。
-
-### 10.4 明确不做
-
-- 不为换皮分叉 `pages/*` 业务逻辑或复制整页。  
-- 不把长中文或品牌色写进 API 路由。  
-- 不在未登记皮肤 id 时写入 `localStorage`（`isThemeId` 会拒掉）。
+---
 
 ## 变更记录
 
@@ -330,21 +301,21 @@ computeSettle
 - 2026-08-06：鉴定专家署名；稀有度六档；加固 GBIF 歧义名解析（禁 default 永久缓存）。
 - 2026-08-06：记录 §3.6——GBIF 非唯一信源；常见种封顶/实感底板交独立 agent（蟑螂反例）。
 - 2026-08-06：Cut 3 用户向收口。
-- 2026-08-06：Cut 4 改为腾讯云轻量部署；落地 Docker/Nginx 模板与 `docs/07`。
-- 2026-08-06：`docs/07` 写清项目描述与部署 agent 交接；上机不归主线。
+- 2026-08-06：Cut 4 改为腾讯云轻量部署；落地 Docker/Nginx 模板与部署手册（现 `OPS.md`）。
 - 2026-08-06：Cut 5 邮箱魔法链接（Resend）落地规格。
-- 2026-08-05：Cut 6 Capacitor Android 侧载壳（`apps/mobile` + `docs/09`）。
+- 2026-08-05：Cut 6 Capacitor Android 侧载壳（`apps/mobile` + [`features/Android套壳.md`](./features/Android套壳.md)）。
 - 2026-08-07：稀有度换维——废除 novelty/GBIF 主路径；`encounter_class` 分桶+否决接结算；共享 rubric；缓存 `enc2`；新锚点 vs 用户 exact 15/20、≤1 20/20；流程写入 §3。
 - 2026-08-07：引入警示——GRIIS CN 主索引 + seed overlay；`introduced/` 模块；种级精确匹配；冒烟脚本。
 - 2026-08-07：套册成就引擎——配置驱动 volumes；开包推进；图鉴灰→彩壳；正式内容另配。
 - 2026-08-10：套册匹配前 GBIF 临时锚定 taxonomy（species→genus→family→order）；不改观察落库。
 - 2026-08-10：开包收下后套册短反馈（成册优先 / 点亮槽 / 无则静默）。
 - 2026-08-10：三本套册正式内容定稿（赶海/城市/林缘；科目条件 + 难度分层）。
-- 2026-08-10：新增 [`docs/10-旅行套册.md`](./10-旅行套册.md)（成就拓展手册）。
+- 2026-08-10：新增旅行套册成就拓展手册（现 [`features/旅行套册.md`](./features/旅行套册.md)）。
 - 2026-08-07：识图合格性闸门——非活体/人/玩具等不可收集；文案「东西是真的，但没用。」；清空分类不进图鉴。
 - 2026-08-07：Cut 5 改为邮箱+密码；魔法链接下线；邮件仅找回（OTP）。
-- 2026-08-10：Web 皮肤主题架构——`apps/web/src/themes/`（默认日光胶片 `daylight`）；结构样式与 token 分离；§10 供后续 agent 加 `tide` 等皮肤。
+- 2026-08-10：Web 皮肤主题架构——`apps/web/src/themes/`（默认日光胶片 `daylight`）；结构样式与 token 分离；细则见 [`features/皮肤主题.md`](./features/皮肤主题.md)。
 - 2026-08-10：日光胶片版式——顶栏字标、细底栏、旅途封面卡（列表 API 附 `coverDisplayUrl`）、相册照片优先；登录/图鉴/结算版式另开。
-- 2026-08-10：与 [`docs/05`](./05-技术方案.md) 对齐——§3.5 写明仅种/亚种警示；废止 05 旧「弱结算仍可警示」表述。
-- 2026-08-10：无 GPS 地图补标交独立 agent；新增 [`docs/11`](./11-地图补标.md)；§0 / §8 登记。
+- 2026-08-10：与 [`planning/05-技术方案.md`](./planning/05-技术方案.md) 对齐——§3.5 写明仅种/亚种警示；废止 05 旧「弱结算仍可警示」表述。
+- 2026-08-10：无 GPS 地图补标交独立 agent；出交接规格（现 [`features/地图补标.md`](./features/地图补标.md)）。
+- 2026-08-10：地图补标已落地——详情准星选点、`PATCH …/location`、identify 结算前读库坐标；§0 / §1.3 收口；交接文迁 [`features/地图补标.md`](./features/地图补标.md)。
 - 2026-08-10：引入名录全灌——GRIIS Country Compendium + GBIF China 覆盖；图鉴曾警示轻标；冒烟含 JP/US。

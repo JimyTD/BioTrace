@@ -5,7 +5,7 @@ import { countryCodeFromZhName } from "./iso3166.js";
 /**
  * 天地图逆地理编码 → 国家 alpha-2。
  *
- * 实测要点（见 docs/map-geo-compliance-notes.md）：
+ * 实测要点（见 docs/archive/地图国别实测.md）：
  * - `postStr` 必须百分号编码，否则返回 `{"msg":"参数格式错误","status":400}`
  * - 取值字段是 `result.addressComponent.nation`，返回**中文常用简称**（美国/英国/韩国）
  * - 境外坐标同样返回 nation（省市为空），故可全局使用而不必按区域分流
