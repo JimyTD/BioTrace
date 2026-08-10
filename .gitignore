@@ -26,6 +26,9 @@ dist/
 # rarity calibration script outputs
 apps/api/scripts/out/
 
+# introduced-index build cache (GRIIS Compendium CSV ~24MB)
+apps/api/data/_cache/
+
 # bakeoff outputs & local caches
 model-bakeoff/results/
 model-bakeoff/images/*.jpg

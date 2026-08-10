@@ -5,6 +5,9 @@ data
 # 运行时 ./data（库/uploads）继续排除；放行仓库内静态配置
 !apps/api/data
 !apps/api/data/**
+# 构建缓存（GRIIS Compendium CSV ~24MB）勿打进镜像；运行时只用瘦索引 JSON
+apps/api/data/_cache
+apps/api/data/_cache/**
 dist
 **/dist
 .git

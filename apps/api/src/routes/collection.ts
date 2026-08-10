@@ -1,5 +1,5 @@
 import { Hono } from "hono";
-import { desc, eq } from "drizzle-orm";
+import { and, desc, eq } from "drizzle-orm";
 import { requireUser, type Variables } from "../auth.js";
 import { db } from "../db/index.js";
 import { collectionEntries, observations } from "../db/schema.js";
@@ -18,6 +18,18 @@ collectionRoutes.get("/", async (c) => {
     orderBy: [desc(collectionEntries.updatedAt)],
   });
 
+  const alertedObs = await db.query.observations.findMany({
+    where: and(
+      eq(observations.userId, user.id),
+      eq(observations.status, "settled"),
+      eq(observations.alertIntroduced, true),
+    ),
+    columns: { taxonKey: true },
+  });
+  const alertedTaxa = new Set(
+    alertedObs.map((o) => o.taxonKey).filter((k): k is string => Boolean(k)),
+  );
+
   const payload = await Promise.all(
     rows.map(async (entry) => {
       let coverUrl: string | null = null;
@@ -29,7 +41,9 @@ collectionRoutes.get("/", async (c) => {
           coverUrl = `/api/files/${obs.displayPath.replace(/\\/g, "/")}`;
         }
       }
-      return serializeCollectionEntry(entry, coverUrl);
+      return serializeCollectionEntry(entry, coverUrl, {
+        alertIntroduced: alertedTaxa.has(entry.taxonKey),
+      });
     }),
   );
 

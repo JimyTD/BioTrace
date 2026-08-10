@@ -103,9 +103,14 @@ export default function CollectionPage() {
                 <div className="card-placeholder" />
               )}
               <div className="meta">
-                <span className={`rarity-badge rarity-${entry.rarity}`}>
-                  {rarityLabel(entry.rarity)}
-                </span>
+                <div className="card-tags">
+                  <span className={`rarity-badge rarity-${entry.rarity}`}>
+                    {rarityLabel(entry.rarity)}
+                  </span>
+                  {entry.alertIntroduced ? (
+                    <span className="intro-tag">{t("settle.alertIntroduced")}</span>
+                  ) : null}
+                </div>
                 <strong>
                   {entry.commonName || entry.scientificName || entry.taxonKey || t("detail.unnamed")}
                 </strong>

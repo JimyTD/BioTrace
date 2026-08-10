@@ -35,6 +35,7 @@ function buildLookup(byCountry: Record<string, string[]>): Map<string, Set<strin
   return map;
 }
 
+/** Public index: GRIIS Country Compendium (global) + GBIF GRIIS-China overlay. */
 const indexFile = loadJson<IntroducedIndexFile>("introduced-index.json", { byCountry: {} });
 /** Hand-curated overlay (gaps / product must-alert). Merged on top of public index. */
 const seedFile = loadJson<Record<string, string[]>>("introduced-seed.json", {});

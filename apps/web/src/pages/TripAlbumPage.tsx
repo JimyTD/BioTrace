@@ -456,6 +456,11 @@ export default function TripAlbumPage() {
                     <strong>
                       {obs.commonName || obs.scientificName || t("detail.unnamed")}
                     </strong>
+                    {obs.alertIntroduced ? (
+                      <span className="intro-tag intro-tag-sm">
+                        {t("settle.alertIntroduced")}
+                      </span>
+                    ) : null}
                     <span className="muted">
                       {t("album.reliableTo", {
                         rank: formatRank(obs.finestReliableRank),

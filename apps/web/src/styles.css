@@ -478,6 +478,33 @@ a {
   font-size: 0.9rem;
 }
 
+.card-tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  align-items: center;
+}
+
+.intro-tag {
+  display: inline-flex;
+  width: fit-content;
+  padding: 3px 8px;
+  border-radius: var(--radius-sm);
+  font-size: 0.72rem;
+  font-weight: 600;
+  letter-spacing: 0.01em;
+  background: var(--warn-soft);
+  color: var(--warn);
+  border: 1px solid var(--warn-line);
+}
+
+/* 相册格更挤：再收一档，避免抢状态 badge */
+.intro-tag-sm {
+  padding: 1px 6px;
+  font-size: 0.65rem;
+  font-weight: 600;
+}
+
 .settle-card {
   border-radius: var(--radius-lg);
   border: 1px solid var(--line);

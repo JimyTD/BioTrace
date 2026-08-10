@@ -62,6 +62,8 @@ export type CollectionEntry = {
   commonName: string | null;
   scientificName: string | null;
   rarity: Rarity;
+  /** 该种任意已结算观察曾命中引入警示。 */
+  alertIntroduced?: boolean;
   coverObservationId: string | null;
   coverDisplayUrl: string | null;
   firstCollectedAt: string;

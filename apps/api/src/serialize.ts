@@ -78,6 +78,7 @@ export function serializeObservation(
 export function serializeCollectionEntry(
   entry: CollectionEntry,
   coverDisplayUrl?: string | null,
+  opts?: { alertIntroduced?: boolean },
 ) {
   return {
     id: entry.id,
@@ -85,6 +86,8 @@ export function serializeCollectionEntry(
     commonName: entry.commonName,
     scientificName: entry.scientificName,
     rarity: entry.rarity,
+    /** 该种任意已结算观察曾命中引入警示（图鉴轻标；详情仍看单条观察）。 */
+    alertIntroduced: Boolean(opts?.alertIntroduced),
     coverObservationId: entry.coverObservationId,
     coverDisplayUrl: coverDisplayUrl ?? null,
     firstCollectedAt: entry.firstCollectedAt.toISOString(),

@@ -1,8 +1,13 @@
 /**
  * Quick introduced-alert regression (no network).
- *   node scripts/smoke-introduced.mjs
+ *   pnpm --filter @biotrace/api introduced:smoke
  */
-import { resolveIntroducedAlert } from "../src/introduced/index.ts";
+import { resolveIntroducedAlert, introducedIndexMeta } from "../src/introduced/index.ts";
+
+const meta = introducedIndexMeta();
+console.log(
+  `index countries=${meta.countries.length} CN=${meta.sizes?.CN ?? "?"} JP=${meta.sizes?.JP ?? "?"} US=${meta.sizes?.US ?? "?"}`,
+);
 
 const cases = [
   {
@@ -60,6 +65,33 @@ const cases = [
     },
     expect: true,
   },
+  {
+    name: "牛蛙 JP → alert (compendium/seed)",
+    input: {
+      countryCode: "JP",
+      finestReliableRank: "species",
+      scientificName: "Lithobates catesbeianus",
+    },
+    expect: true,
+  },
+  {
+    name: "斑马贻贝 US → alert",
+    input: {
+      countryCode: "US",
+      finestReliableRank: "species",
+      scientificName: "Dreissena polymorpha",
+    },
+    expect: true,
+  },
+  {
+    name: "麻雀 JP → no alert",
+    input: {
+      countryCode: "JP",
+      finestReliableRank: "species",
+      scientificName: "Passer montanus",
+    },
+    expect: false,
+  },
 ];
 
 let fail = 0;
@@ -69,4 +101,10 @@ for (const c of cases) {
   console.log(`${ok ? "OK" : "FAIL"} ${c.name} → ${got}`);
   if (!ok) fail += 1;
 }
+
+if ((meta.countries?.length ?? 0) < 50) {
+  console.log("FAIL expected global index (≥50 countries)");
+  fail += 1;
+}
+
 process.exit(fail ? 1 : 0);
