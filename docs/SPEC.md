@@ -2,7 +2,7 @@
 
 > **本文件是功能真源**：已做 / 本期要做 / 明确后置。查「某能力做没做」以此为准。  
 > 部署与线上现状看 [`OPS.md`](./OPS.md)；专题手册在 [`features/`](./features/)；当初的取舍理由在 [`planning/`](./planning/)。  
-> 原路径 `docs/06-实现与功能规格.md`（2026-08-10 改名）。  
+> 变更历史看 git log，本文不留手抄变更记录。  
 > 更新日期：2026-08-10
 
 ## 0. 当前阶段
@@ -17,7 +17,7 @@
 | Cut 6 | 制品就绪 | Capacitor Android 侧载壳；手册 [`features/Android套壳.md`](./features/Android套壳.md) |
 | 套册成就 | 引擎+三本内容已通 | 配置驱动；拓展手册 [`features/旅行套册.md`](./features/旅行套册.md) |
 | 皮肤主题 | 已落地 | 默认 `daylight`；手册 [`features/皮肤主题.md`](./features/皮肤主题.md) |
-| 地图补标 | 已完成 | 详情准星补标；`PATCH …/location` 重算国别/引入/稀有度；规格 [`features/地图补标.md`](./features/地图补标.md) |
+| 地图补标 | 已完成 | 详情准星补标；`PATCH …/location` 重算国别/引入/稀有度（见 §1.3） |
 | 后置 | 未做 | 旅途元数据、全量灌库、iOS/上架；更多套册策展 |
 
 本机：`pnpm.cmd dev` → Web `http://127.0.0.1:5173/` · API `http://127.0.0.1:8787`
@@ -74,7 +74,7 @@ docs/        筹划 + 本实现规格
 
 ## 1.3 无 GPS 地图补标（已收口）
 
-照片无 EXIF GPS 时，事后在地图补点；**不挡上传/识图**（维持 planning/05 B.6）；**不重跑识图**。交接背景见 [`features/地图补标.md`](./features/地图补标.md)。
+照片无 EXIF GPS 时，事后在地图补点；**不挡上传/识图**（维持 planning/05 B.6）；**不重跑识图**。
 
 - **API**：`PATCH /api/observations/:id/location`，body `{ lat, lng }`（有限、纬 ±90、经 ±180）。写坐标后，若已有 `finestReliableRank` 则复用 `computeSettle` 重算 `countryCode` / `countrySource` / `locationPrecise` / `alertIntroduced` / `rarity`（及 settle 同类字段）；**不改** `status`、不开包、不 `enqueueIdentify`。已 `settled` 时 `upsertCollectionFromObservation` 刷新图鉴档位。
 - **analyzing 竞态**：允许补标只写坐标；[`jobs/identify.ts`](../apps/api/src/jobs/identify.ts) 在 `computeSettle` 前再读库内最新 lat/lng（Prompt 仍可用上传闭包坐标）。
@@ -90,7 +90,7 @@ docs/        筹划 + 本实现规格
 主路径：上传 → `analyzing` → `pending_settle` → 开包 → `settled` → 图鉴。  
 待开包 redact；弱结算不降稀有度；引入警示 UI 已有（名录命中才显示）。
 
-验收见对话与历史清单；用户已确认收口。
+**重识别与删除（易踩）**：重识别**必须**填修正文本（`POST /:id/reidentify`，前端 `ReidentifyDialog` 强制），结果**覆盖同一条观察、不另存**；重识别开始与删除都要先 `detachFromCollection`，否则图鉴留残档。
 
 ---
 
@@ -207,12 +207,12 @@ computeSettle
 
 验收锚点（种级 + 有国家）：CN 红耳龟 / 福寿螺 / 非洲大蜗牛类 → 警示；JP 牛蛙、US 斑马贻贝 → 警示；无 GPS、仅科/属、麻雀等本土常见 → 不警示。
 
-### 3.6 验收 / 已否决
+### 3.6 未决 / 已否决
 
-- [x] 分桶+否决主路径；结算已接线；rubric 与标定共用
-- [x] 新锚点 vs 用户：exact 15/20、≤1 全中
-- [x] 引入警示：GRIIS 索引 + seed overlay；种级匹配；与稀有度分通道
-- [x] 引入主索引全球灌入（Compendium）+ GBIF CN 覆盖；图鉴「曾警示」轻标
+已验收：分桶+否决主路径接线、新锚点 vs 用户 exact 15/20（±1 全中）、GRIIS 全球主索引 + seed overlay 种级匹配与稀有度分通道、图鉴「曾警示」轻标。
+
+仍未定：
+
 - [ ] 灭绝级 XR（白鲟等）偶发标成 legend；中档继续靠判定键拧，不加物种名单
 - [ ] **无国家时稀有度按 CN 评**：`rarity/encounter.ts` 的 `input.countryCode?.trim() || "CN"` 与界面「无定位」文案不一致（说的和做的两样）。地图补标上线后此路径变少，但仍需定：回落 CN 还是走全球口径
 
@@ -289,35 +289,3 @@ computeSettle
 已拆为独立专题：**[`features/皮肤主题.md`](./features/皮肤主题.md)**（token 表、加皮肤清单、明确不做）。
 
 要点只留一句：色/字/圆角写在 `apps/web/src/themes/<id>.css`，结构样式只用语义 `var(--*)`，**流程页不写死品牌色**。
-
----
-
-## 变更记录
-
-- 2026-08-06：初版 Cut 1；Cut 1.1；Cut 2 结算/图鉴/警示落地记录。
-- 2026-08-06：修图鉴删除/重识别后残留；重识别必须填修正文本（同条观察覆盖，不另存）。
-- 2026-08-06：Cut 2 用户验收通过，正式收口。
-- 2026-08-05：Cut 3：独立 rarity 模块、GBIF 按需缓存、阈值配置、引入名录扩容。
-- 2026-08-06：识图韧性：Provider 健康态、串行排队、短冷等待、智谱 GLM 回退。
-- 2026-08-06：鉴定专家署名；稀有度六档；加固 GBIF 歧义名解析（禁 default 永久缓存）。
-- 2026-08-06：记录 §3.6——GBIF 非唯一信源；常见种封顶/实感底板交独立 agent（蟑螂反例）。
-- 2026-08-06：Cut 3 用户向收口。
-- 2026-08-06：Cut 4 改为腾讯云轻量部署；落地 Docker/Nginx 模板与部署手册（现 `OPS.md`）。
-- 2026-08-06：Cut 5 邮箱魔法链接（Resend）落地规格。
-- 2026-08-05：Cut 6 Capacitor Android 侧载壳（`apps/mobile` + [`features/Android套壳.md`](./features/Android套壳.md)）。
-- 2026-08-07：稀有度换维——废除 novelty/GBIF 主路径；`encounter_class` 分桶+否决接结算；共享 rubric；缓存 `enc2`；新锚点 vs 用户 exact 15/20、≤1 20/20；流程写入 §3。
-- 2026-08-07：引入警示——GRIIS CN 主索引 + seed overlay；`introduced/` 模块；种级精确匹配；冒烟脚本。
-- 2026-08-07：套册成就引擎——配置驱动 volumes；开包推进；图鉴灰→彩壳；正式内容另配。
-- 2026-08-10：套册匹配前 GBIF 临时锚定 taxonomy（species→genus→family→order）；不改观察落库。
-- 2026-08-10：开包收下后套册短反馈（成册优先 / 点亮槽 / 无则静默）。
-- 2026-08-10：三本套册正式内容定稿（赶海/城市/林缘；科目条件 + 难度分层）。
-- 2026-08-10：新增旅行套册成就拓展手册（现 [`features/旅行套册.md`](./features/旅行套册.md)）。
-- 2026-08-07：识图合格性闸门——非活体/人/玩具等不可收集；文案「东西是真的，但没用。」；清空分类不进图鉴。
-- 2026-08-07：Cut 5 改为邮箱+密码；魔法链接下线；邮件仅找回（OTP）。
-- 2026-08-10：Web 皮肤主题架构——`apps/web/src/themes/`（默认日光胶片 `daylight`）；结构样式与 token 分离；细则见 [`features/皮肤主题.md`](./features/皮肤主题.md)。
-- 2026-08-10：日光胶片版式——顶栏字标、细底栏、旅途封面卡（列表 API 附 `coverDisplayUrl`）、相册照片优先；登录/图鉴/结算版式另开。
-- 2026-08-10：与 [`planning/05-技术方案.md`](./planning/05-技术方案.md) 对齐——§3.5 写明仅种/亚种警示；废止 05 旧「弱结算仍可警示」表述。
-- 2026-08-10：无 GPS 地图补标交独立 agent；出交接规格（现 [`features/地图补标.md`](./features/地图补标.md)）。
-- 2026-08-10：地图补标已落地——详情准星选点、`PATCH …/location`、identify 结算前读库坐标；§0 / §1.3 收口；交接文迁 [`features/地图补标.md`](./features/地图补标.md)。
-- 2026-08-10：引入名录全灌——GRIIS Country Compendium + GBIF China 覆盖；图鉴曾警示轻标；冒烟含 JP/US。
-- 2026-08-10：套册成就表现——进度带 observationId；图鉴弹层邮票墙；开包点亮/成册仪式弹层。

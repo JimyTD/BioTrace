@@ -1,4 +1,4 @@
-﻿# BioTrace Cut 6：Android 薄壳（侧载）
+# BioTrace Cut 6：Android 薄壳（侧载）
 
 > Capacitor WebView 加载已部署的站点；**不上架应用商店**。架构见 [`planning/05-技术方案.md`](../planning/05-技术方案.md)；HTTP/IP 运维见 [`OPS.md`](../OPS.md)。
 
@@ -107,9 +107,3 @@ cd apps/mobile/android
 - iOS / TWA / 应用商店上架
 - App Links 深链回收魔法链接到 App 内（邮件仍可能外开浏览器）
 - 批量多图上传（产品上一次一张观察）
-
-## 变更记录
-
-- 2026-08-05：Cut 6 Capacitor Android 壳初版；默认 IP HTTP；文档与运维手册（现 `OPS.md`）对齐。
-- 2026-08-07：接入 `@capacitor/camera`；相册页原生拍照 / 从相册选择。
-- 2026-08-10：GitHub Actions 签名 release APK + Release；`OPS.md` §7.2 发布 SOP。

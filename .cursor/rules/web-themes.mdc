@@ -1,5 +1,5 @@
 ---
-description: Web 皮肤主题与流程页分离；加主题按 docs/06 §10，禁止在页面写死品牌色
+description: Web 皮肤主题与流程页分离；加主题按 docs/features/皮肤主题.md，禁止在页面写死品牌色
 alwaysApply: true
 ---
 
@@ -25,4 +25,4 @@ alwaysApply: true
 ## 当前与后置
 
 - 默认：`daylight`（日光胶片 · 旅游）
-- 后置示例：`tide`（潜水/潮间带）— 按 §10.3 清单加，勿改核心流程
+- 后置示例：`tide`（潜水/潮间带）— 按皮肤主题手册 §3 清单加，勿改核心流程

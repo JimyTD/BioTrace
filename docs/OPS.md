@@ -1,8 +1,7 @@
 # BioTrace 部署实操手册（持续维护）
 
 > **这是 BioTrace 上线与运维的唯一操作手册**，反映真实落地方案，随版本更新持续维护。
-> **本文件是运维真源。** 架构背景与设计约定见文末[附录 A](#附录-a架构背景与设计约定)；业务功能见 [`SPEC.md`](./SPEC.md)。  
-> 原路径 `docs/08-部署实操手册.md`（2026-08-10 改名）。
+> **本文件是运维真源。** 架构背景、设计约定与天地图接入坑见文末[附录 A](#附录-a架构背景与设计约定)；业务功能见 [`SPEC.md`](./SPEC.md)。
 >
 > 最后更新：2026-08-10 · 当前阶段：**第二阶段（IP + HTTP + Resend 真实邮箱登录）已上线**；`DEV_AUTH=0`、Resend 走自有验证域名 `jettechdog.icu` 发信；已接入**境外出网代理（广州→新加坡 Xray）**保障 Resend/Gemini 出境；运维通道改为 Cursor MCP `tencent-lighthouse`（见 §2.1）
 >
@@ -549,28 +548,23 @@ sudo tar czf /root/biotrace-data.tgz -C /opt/biotrace data
 
 ## 10. 验收清单
 
-**第一阶段（当前）**
-- [x] `http://106.53.188.20/` 前端加载（HTTP 200）
-- [x] `http://106.53.188.20/api/health` 返回 `{"ok":true}`
-- [x] `POST /api/auth/dev-login` 成功种`bt_session`（非 Secure），认证链路通
-- [x] `docker compose restart` 后数据仍在（`/opt/biotrace/data`）
-- [x] 出境代理：`curl -x http://127.0.0.1:10809 https://api.ipify.org` 返回 SG1 公网 IP；xray `enabled`+`active`；真实发信压测 200（§6.5）
-- [ ] Android 侧载 APK 打开同源站点且登录不掉会话（见 [`features/Android套壳.md`](./features/Android套壳.md)）
+**每次发布后冒烟**（无状态，逐次重跑；§7.1 步骤 4 引此）
 
-**第二/三阶段（切换后再核对）**
-- [ ] 邮箱魔法链接登录成功；界面无「开发登录」；`devAuth=false`
-- [ ] 创建旅途 → 上传 → 专家鉴定中 → 鉴定完成 → 请过目/收下 → 图鉴
-- [ ] 有 GPS 的点出现在地图；瓦片正常。**底图已改为天地图**（见 [`planning/04f-世界地图选型.md`](./planning/04f-世界地图选型.md) §12）：
-      需在服务器构建前设`VITE_TIANDITU_KEY`（浏览器端 key，**Vite 是构建时内联，改后必须重新build**），
-      并在天地图控制台把生产域名加入白名单；未配置则回落 OpenFreeMap（**不合规，仅兜底**）
-- [ ] 后端逆地理：设 `TIANDITU_SERVER_KEY`（**服务端** key，与上面那个不可混用）；未配置则国别判定走离线国界数据
-- [ ] 天地图配额：矢量底图与注记各 **10000 次/日，超量当天拒绝访问**、次日恢复。上线后留意地图是否变灰
-      （已实现运行时回落：瓦片连续失败 6 次自动切 OpenFreeMap，控制台有 `[map]` 开头的 warn。**看到该warn 说明当天已跑在不合规底图上**）
-- [ ] ⚠️ **上架/ 开放公网注册前必办：补地图审图号**。当前 `MapPage.tsx` 的 attribution 只有「天地图 · 国家地理信息公共服务平台」，
-      **缺审图号**（形如 `GS(20XX)XXXX号`）。原文只能从天地图官网页底或控制台使用规范抄取，**不可自行编写**。
-      落地时同步搬进 `packages/messages/src/zh.ts` 走 `t()`（现为硬编码，违反术语表规则）。详见 [`archive/地图国别实测.md`](./archive/地图国别实测.md)
+1. `http://106.53.188.20/` 前端加载 HTTP 200
+2. `http://106.53.188.20/api/health` 返回 `{"ok":true}`
+3. 登录成功并种下 `bt_session`（HTTP 阶段非 Secure）
+4. 创建旅途 → 上传 → 专家鉴定中 → 鉴定完成 → 请过目/收下 → 图鉴
+5. 有 GPS 的点出现在地图，瓦片正常（控制台无 `[map]` warn）
+6. 识图：Gemini 可调用，或日额尽自动切 GLM
+7. `docker compose restart` 后数据仍在（`/opt/biotrace/data`）
+8. 出境代理：`curl -x http://127.0.0.1:10809 https://api.ipify.org` 返回 SG1 公网 IP（§6.5）
+
+**尚未完成 / 切 HTTPS 后再核对**
+- [ ] Android 侧载 APK 打开同源站点且登录不掉会话（见 [`features/Android套壳.md`](./features/Android套壳.md)）
+- [ ] 生产两个天地图 key 都已配：构建前设 `VITE_TIANDITU_KEY`（浏览器端，且控制台加了生产域名白名单）、服务端设 `TIANDITU_SERVER_KEY`。缺前者回落 OpenFreeMap（**不合规，仅兜底**），缺后者国别判定走离线国界数据。细节见[附录 A.5](#a5-天地图接入要点踩过的坑)
+- [ ] 上线后留意地图是否变灰：配额 10000 次/日，超量当天拒绝、次日恢复。连续失败 6 次自动切 OpenFreeMap 并打 `[map]` warn，**看到该 warn 说明当天已跑在不合规底图上**
+- [ ] ⚠️ **上架 / 开放公网注册前必办：补地图审图号**。当前 `MapPage.tsx` 的 attribution 只有「天地图 · 国家地理信息公共服务平台」，**缺审图号**（形如 `GS(20XX)XXXX号`）。原文只能从天地图官网页底或控制台使用规范抄取，**不可自行编写**；落地时同步搬进 `packages/messages/src/zh.ts` 走 `t()`（现为硬编码，违反术语表规则）
 - [ ] HTTPS 阶段：`COOKIE_SECURE=1` 且登录会话稳定
-- [ ] 识图：Gemini 可调用或日额尽自动切 GLM
 
 ---
 
@@ -657,3 +651,14 @@ Browser ──直连──► 天地图瓦片（缺 key 回落 OpenFreeMap）
 ### A.4 需向所有者索取、且不得入库的秘密
 
 `SESSION_SECRET`（长随机）、`GEMINI_API_KEY`、`ZHIPU_API_KEY`、`RESEND_API_KEY` + 已验证 `MAIL_FROM`、`HTTPS_PROXY` 完整 URL、`TIANDITU_SERVER_KEY`（服务端）与 `VITE_TIANDITU_KEY`（浏览器端，构建时内联）。
+
+### A.5 天地图接入要点（踩过的坑）
+
+- **两个 key，不可混用**：瓦片用**浏览器端** key（配域名白名单，构建时内联，改后必须重新 build）；逆地理用**服务端** key（不需白名单）。
+- 瓦片必须用 `_w` 后缀（EPSG:3857，与 MapLibre 一致）；`_c` 是经纬度投影，接进去会错位。
+- 浏览器端 key 只校验 User-Agent 像不像浏览器，**不强制 Referer**——泄露后伪造 UA 即可用，而配额仅 10000/日，**视为敏感信息并定期轮换**。
+- 逆地理：`GET https://api.tianditu.gov.cn/geocoder?postStr={'lon':X,'lat':Y,'ver':1}&type=geocode&tk=KEY`，`postStr` **必须百分号编码**，取 `result.addressComponent.nation`（返回**中文常用简称**，需映射 ISO alpha-2）。
+- 「成功但无国家」（海上，`status:"0"` + `nation` 为空串）与「调用失败」**必须分开**：前者直接采信 `null`，不触发离线兜底。
+- 天地图是国内服务，**必须显式直连**：`identify/gemini.ts` 用 `setGlobalDispatcher` 装了出境代理，沿用全局 dispatcher 会把国内请求绕去境外。
+- 坐标系 CGCS2000 ≈ WGS-84（民用精度），**EXIF 坐标直接用**，无需 GCJ-02 转换（若换高德/腾讯则必须转）。
+- 配额实测：瓦片带 5 天浏览器缓存，首屏 18 次、一轮典型浏览累计 64 次，两层各有独立 10000/日额度。**费用与配额风险在瓦片，不在逆地理**（每张照片仅 1 次）。
