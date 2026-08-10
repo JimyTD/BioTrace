@@ -6,6 +6,36 @@
   "ledeKey": "volume.intertidal.lede",
   "slots": [
     {
+      "id": "rock_snail",
+      "titleKey": "volume.intertidal.slot.rock_snail",
+      "rule": {
+        "type": "taxonomy_in",
+        "rank": "family",
+        "names": ["Littorinidae", "Neritidae", "Patellidae", "Nacellidae"],
+        "minReliableRank": "family"
+      }
+    },
+    {
+      "id": "barnacle",
+      "titleKey": "volume.intertidal.slot.barnacle",
+      "rule": {
+        "type": "taxonomy_in",
+        "rank": "family",
+        "names": ["Balanidae", "Chthamalidae", "Tetraclitidae"],
+        "minReliableRank": "family"
+      }
+    },
+    {
+      "id": "sea_roach",
+      "titleKey": "volume.intertidal.slot.sea_roach",
+      "rule": {
+        "type": "taxonomy_in",
+        "rank": "family",
+        "names": ["Ligiidae"],
+        "minReliableRank": "family"
+      }
+    },
+    {
       "id": "shore_crab",
       "titleKey": "volume.intertidal.slot.shore_crab",
       "rule": {
@@ -17,10 +47,19 @@
           "Ocypodidae",
           "Sesarmidae",
           "Dotillidae",
-          "Macrophthalmidae",
-          "Portunidae"
+          "Macrophthalmidae"
         ],
         "minReliableRank": "family"
+      }
+    },
+    {
+      "id": "anemone",
+      "titleKey": "volume.intertidal.slot.anemone",
+      "rule": {
+        "type": "taxonomy_in",
+        "rank": "order",
+        "names": ["Actiniaria"],
+        "minReliableRank": "order"
       }
     },
     {
@@ -29,46 +68,18 @@
       "rule": {
         "type": "taxonomy_in",
         "rank": "family",
-        "names": ["Paguridae", "Diogenidae", "Coenobitidae", "Paguristidae"],
+        "names": ["Paguridae", "Diogenidae", "Coenobitidae"],
         "minReliableRank": "family"
       }
     },
     {
-      "id": "barnacle",
-      "titleKey": "volume.intertidal.slot.barnacle",
+      "id": "echinoderm",
+      "titleKey": "volume.intertidal.slot.echinoderm",
       "rule": {
         "type": "taxonomy_in",
-        "rank": "family",
-        "names": ["Balanidae", "Chthamalidae", "Tetraclitidae", "Pyrgomatidae"],
-        "minReliableRank": "family"
-      }
-    },
-    {
-      "id": "mudflat_fish",
-      "titleKey": "volume.intertidal.slot.mudflat_fish",
-      "rule": {
-        "type": "taxonomy_in",
-        "rank": "family",
-        "names": ["Oxudercidae", "Gobiidae"],
-        "minReliableRank": "family"
-      }
-    },
-    {
-      "id": "shore_mollusc",
-      "titleKey": "volume.intertidal.slot.shore_mollusc",
-      "rule": {
-        "type": "taxonomy_in",
-        "rank": "family",
-        "names": [
-          "Littorinidae",
-          "Neritidae",
-          "Mytilidae",
-          "Ostreidae",
-          "Patellidae",
-          "Nacellidae",
-          "Potamididae"
-        ],
-        "minReliableRank": "family"
+        "rank": "class",
+        "names": ["Asteroidea", "Echinoidea"],
+        "minReliableRank": "class"
       }
     }
   ]

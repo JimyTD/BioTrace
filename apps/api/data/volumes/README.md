@@ -1,8 +1,9 @@
 # 套册配置（与引擎分离）
 
 - 每个 `*.json`（非 `_` 前缀）= 一本套册；热加册只需加文件 + `packages/messages` 文案，**不必改 TypeScript**。
-- 正式册：`intertidal` / `urban_wild` / `woodland_edge`（可继续追加 JSON）。
+- 正式册：`intertidal`（潮间带）/ `urban_wild`（城市野趣）/ `woodland_edge`（林缘遇见）。
 - `fixture-pipeline.json` 默认 `enabled: false`，仅开发验收用。
+- 槽条件用拉丁科/目/纲名单（见各 JSON）；文案在 `packages/messages`。
 
 ## 槽规则（当前 DSL）
 

@@ -16,12 +16,12 @@
       }
     },
     {
-      "id": "wall_reptile",
-      "titleKey": "volume.urban_wild.slot.wall_reptile",
+      "id": "flower_bee",
+      "titleKey": "volume.urban_wild.slot.flower_bee",
       "rule": {
         "type": "taxonomy_in",
         "rank": "family",
-        "names": ["Gekkonidae", "Lacertidae", "Scincidae"],
+        "names": ["Apidae", "Megachilidae", "Halictidae"],
         "minReliableRank": "family"
       }
     },
@@ -36,23 +36,13 @@
       }
     },
     {
-      "id": "flower_visitor",
-      "titleKey": "volume.urban_wild.slot.flower_visitor",
+      "id": "gecko",
+      "titleKey": "volume.urban_wild.slot.gecko",
       "rule": {
         "type": "taxonomy_in",
         "rank": "family",
-        "names": ["Apidae", "Vespidae", "Syrphidae", "Megachilidae"],
+        "names": ["Gekkonidae"],
         "minReliableRank": "family"
-      }
-    },
-    {
-      "id": "pond_frog",
-      "titleKey": "volume.urban_wild.slot.pond_frog",
-      "rule": {
-        "type": "taxonomy_in",
-        "rank": "order",
-        "names": ["Anura"],
-        "minReliableRank": "order"
       }
     },
     {
@@ -69,6 +59,32 @@
           "Helicidae"
         ],
         "minReliableRank": "family"
+      }
+    },
+    {
+      "id": "butterfly",
+      "titleKey": "volume.urban_wild.slot.butterfly",
+      "rule": {
+        "type": "taxonomy_in",
+        "rank": "family",
+        "names": [
+          "Papilionidae",
+          "Pieridae",
+          "Nymphalidae",
+          "Lycaenidae",
+          "Hesperiidae"
+        ],
+        "minReliableRank": "family"
+      }
+    },
+    {
+      "id": "frog",
+      "titleKey": "volume.urban_wild.slot.frog",
+      "rule": {
+        "type": "taxonomy_in",
+        "rank": "order",
+        "names": ["Anura"],
+        "minReliableRank": "order"
       }
     }
   ]

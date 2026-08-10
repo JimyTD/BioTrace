@@ -6,39 +6,18 @@
   "ledeKey": "volume.woodland_edge.lede",
   "slots": [
     {
-      "id": "squirrel",
-      "titleKey": "volume.woodland_edge.slot.squirrel",
-      "rule": {
-        "type": "taxonomy_in",
-        "rank": "family",
-        "names": ["Sciuridae"],
-        "minReliableRank": "family"
-      }
-    },
-    {
-      "id": "small_carnivoran",
-      "titleKey": "volume.woodland_edge.slot.small_carnivoran",
-      "rule": {
-        "type": "taxonomy_in",
-        "rank": "family",
-        "names": ["Viverridae", "Mustelidae", "Felidae", "Canidae", "Procyonidae"],
-        "minReliableRank": "family"
-      }
-    },
-    {
       "id": "forest_bird",
       "titleKey": "volume.woodland_edge.slot.forest_bird",
       "rule": {
         "type": "taxonomy_in",
         "rank": "family",
         "names": [
-          "Corvidae",
-          "Paridae",
-          "Leiothrichidae",
-          "Phasianidae",
-          "Picidae",
           "Pycnonotidae",
-          "Timaliidae"
+          "Leiothrichidae",
+          "Paridae",
+          "Corvidae",
+          "Timaliidae",
+          "Zosteropidae"
         ],
         "minReliableRank": "family"
       }
@@ -61,6 +40,36 @@
         "rank": "order",
         "names": ["Odonata"],
         "minReliableRank": "order"
+      }
+    },
+    {
+      "id": "squirrel",
+      "titleKey": "volume.woodland_edge.slot.squirrel",
+      "rule": {
+        "type": "taxonomy_in",
+        "rank": "family",
+        "names": ["Sciuridae"],
+        "minReliableRank": "family"
+      }
+    },
+    {
+      "id": "cicada",
+      "titleKey": "volume.woodland_edge.slot.cicada",
+      "rule": {
+        "type": "taxonomy_in",
+        "rank": "family",
+        "names": ["Cicadidae"],
+        "minReliableRank": "family"
+      }
+    },
+    {
+      "id": "small_carnivoran",
+      "titleKey": "volume.woodland_edge.slot.small_carnivoran",
+      "rule": {
+        "type": "taxonomy_in",
+        "rank": "family",
+        "names": ["Mustelidae", "Viverridae", "Canidae", "Felidae", "Procyonidae"],
+        "minReliableRank": "family"
       }
     }
   ]

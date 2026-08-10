@@ -11,29 +11,36 @@ console.log(`loaded volumes: ${vols.map((v) => v.id).join(", ") || "(none)"}`);
 
 const urban = vols.find((v) => v.id === "urban_wild");
 const intertidal = vols.find((v) => v.id === "intertidal");
-if (!urban || !intertidal) {
-  console.error("FAIL missing urban_wild / intertidal");
+const woodland = vols.find((v) => v.id === "woodland_edge");
+if (!urban || !intertidal || !woodland) {
+  console.error("FAIL missing urban_wild / intertidal / woodland_edge");
   process.exit(1);
 }
 
 const songbird = urban.slots.find((s) => s.id === "songbird");
 const shore = intertidal.slots.find((s) => s.id === "shore_crab");
-if (!songbird || !shore) {
-  console.error("FAIL missing songbird / shore_crab slots");
+const echinoderm = intertidal.slots.find((s) => s.id === "echinoderm");
+const squirrel = woodland.slots.find((s) => s.id === "squirrel");
+if (!songbird || !shore || !echinoderm || !squirrel) {
+  console.error("FAIL missing expected slots");
   process.exit(1);
 }
 
 const bird = emptyTaxonomy();
-bird.order = { name_la: "Passeriformes", name_zh: "雀形目" };
+bird.order = { name_la: "Passeriformes", name_zh: null };
 bird.family = { name_la: "Passeridae", name_zh: null };
-bird.genus = { name_la: "Passer", name_zh: null };
-bird.species = { name_la: "Passer montanus", name_zh: null };
 
 const crab = emptyTaxonomy();
 crab.order = { name_la: "Decapoda", name_zh: null };
 crab.family = { name_la: "Varunidae", name_zh: null };
-crab.genus = { name_la: "Eriocheir", name_zh: null };
-crab.species = { name_la: "Eriocheir sinensis", name_zh: null };
+
+const star = emptyTaxonomy();
+star.class = { name_la: "Asteroidea", name_zh: null };
+star.order = { name_la: "Forcipulatida", name_zh: null };
+
+const squirrelTax = emptyTaxonomy();
+squirrelTax.family = { name_la: "Sciuridae", name_zh: null };
+squirrelTax.genus = { name_la: "Callosciurus", name_zh: null };
 
 const cases = [
   {
@@ -55,7 +62,7 @@ const cases = [
     expect: false,
   },
   {
-    name: "crab lights shore_crab",
+    name: "varunid lights shore_crab",
     ok: slotMatches({
       rule: shore.rule,
       taxonomy: crab,
@@ -64,7 +71,25 @@ const cases = [
     expect: true,
   },
   {
-    name: "too-coarse rank does not light",
+    name: "asteroidea lights echinoderm",
+    ok: slotMatches({
+      rule: echinoderm.rule,
+      taxonomy: star,
+      finestReliableRank: "class",
+    }),
+    expect: true,
+  },
+  {
+    name: "sciuridae lights squirrel",
+    ok: slotMatches({
+      rule: squirrel.rule,
+      taxonomy: squirrelTax,
+      finestReliableRank: "family",
+    }),
+    expect: true,
+  },
+  {
+    name: "too-coarse rank does not light songbird",
     ok: slotMatches({
       rule: songbird.rule,
       taxonomy: bird,
@@ -80,4 +105,8 @@ for (const c of cases) {
   console.log(`${pass ? "OK" : "FAIL"} ${c.name} → ${c.ok}`);
   if (!pass) fail += 1;
 }
+
+console.log(
+  `slot counts: intertidal=${intertidal.slots.length} urban=${urban.slots.length} woodland=${woodland.slots.length}`,
+);
 process.exit(fail ? 1 : 0);
