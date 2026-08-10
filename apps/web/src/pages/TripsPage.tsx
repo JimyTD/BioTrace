@@ -34,45 +34,58 @@ export default function TripsPage() {
   }
 
   return (
-    <div className="stack">
-      <div>
-        <h1 className="brand">{t("trips.title")}</h1>
-        <p className="lede">{t("trips.lede")}</p>
-      </div>
+    <div className="stack page-trips">
+      <header className="page-head">
+        <h1 className="page-title">{t("trips.title")}</h1>
+      </header>
 
-      <form className="panel stack" onSubmit={onCreate}>
-        <label className="muted" htmlFor="trip-title">
+      <form className="trip-create-inline" onSubmit={onCreate}>
+        <label className="sr-only" htmlFor="trip-title">
           {t("trips.createLabel")}
         </label>
-        <div className="row">
-          <input
-            id="trip-title"
-            className="input"
-            placeholder={t("trips.createPlaceholder")}
-            value={title}
-            onChange={(e) => setTitle(e.target.value)}
-          />
-          <button className="btn" type="submit">
-            {t("trips.createAction")}
-          </button>
-        </div>
+        <input
+          id="trip-title"
+          className="input"
+          placeholder={t("trips.createPlaceholder")}
+          value={title}
+          onChange={(e) => setTitle(e.target.value)}
+        />
+        <button className="btn" type="submit" disabled={!title.trim()}>
+          {t("trips.createAction")}
+        </button>
       </form>
 
       {error ? <p className="error">{error}</p> : null}
       {loading ? <p className="muted">{t("trips.loading")}</p> : null}
 
       {!loading && trips.length === 0 ? (
-        <div className="panel">
-          <p className="muted">{t("trips.empty")}</p>
-        </div>
+        <p className="muted empty-hint">{t("trips.empty")}</p>
       ) : (
-        <div className="trip-list">
-          {trips.map((trip) => (
-            <Link className="trip-item" key={trip.id} to={`/trips/${trip.id}`}>
-              <strong>{trip.title}</strong>
-              <span className="muted">{new Date(trip.createdAt).toLocaleString()}</span>
-            </Link>
-          ))}
+        <div className="trip-cover-list">
+          {trips.map((trip) => {
+            const count = trip.observationCount ?? 0;
+            return (
+              <Link className="trip-cover" key={trip.id} to={`/trips/${trip.id}`}>
+                <div className="trip-cover-media">
+                  {trip.coverDisplayUrl ? (
+                    <img src={trip.coverDisplayUrl} alt="" />
+                  ) : (
+                    <div className="trip-cover-placeholder" aria-hidden />
+                  )}
+                </div>
+                <div className="trip-cover-meta">
+                  <strong>{trip.title}</strong>
+                  <span className="muted">
+                    {count > 0
+                      ? t("trips.photoCount", { count })
+                      : t("trips.noPhotosYet")}
+                    {" · "}
+                    {new Date(trip.createdAt).toLocaleDateString()}
+                  </span>
+                </div>
+              </Link>
+            );
+          })}
         </div>
       )}
     </div>

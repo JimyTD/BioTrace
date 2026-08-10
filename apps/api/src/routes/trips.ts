@@ -1,5 +1,5 @@
 import { Hono } from "hono";
-import { and, desc, eq } from "drizzle-orm";
+import { and, desc, eq, inArray, sql } from "drizzle-orm";
 import { z } from "zod";
 import { t } from "@biotrace/messages";
 import { requireUser, type Variables } from "../auth.js";
@@ -10,7 +10,11 @@ import { enqueueIdentify } from "../jobs/identify.js";
 import { readExif, saveDisplayImage } from "../services/media.js";
 import { repairCollectionAfterObservationDeleted } from "../services/collection.js";
 import { removeObservationFiles } from "../services/observationFiles.js";
-import { serializeObservation, serializeTrip } from "../serialize.js";
+import {
+  observationDisplayUrl,
+  serializeObservation,
+  serializeTrip,
+} from "../serialize.js";
 
 export const tripRoutes = new Hono<{ Variables: Variables }>();
 
@@ -22,7 +26,41 @@ tripRoutes.get("/", async (c) => {
     where: eq(trips.userId, user.id),
     orderBy: [desc(trips.createdAt)],
   });
-  return c.json({ trips: rows.map(serializeTrip) });
+  if (rows.length === 0) {
+    return c.json({ trips: [] });
+  }
+
+  const tripIds = rows.map((r) => r.id);
+  const countRows = await db
+    .select({
+      tripId: observations.tripId,
+      count: sql<number>`count(*)`.mapWith(Number),
+    })
+    .from(observations)
+    .where(and(eq(observations.userId, user.id), inArray(observations.tripId, tripIds)))
+    .groupBy(observations.tripId);
+  const countByTrip = new Map(countRows.map((r) => [r.tripId, r.count]));
+
+  const coverByTrip = new Map<string, string>();
+  const obsRows = await db.query.observations.findMany({
+    where: and(eq(observations.userId, user.id), inArray(observations.tripId, tripIds)),
+    orderBy: [desc(observations.createdAt)],
+    columns: { tripId: true, displayPath: true },
+  });
+  for (const obs of obsRows) {
+    if (!coverByTrip.has(obs.tripId)) {
+      coverByTrip.set(obs.tripId, observationDisplayUrl(obs.displayPath));
+    }
+  }
+
+  return c.json({
+    trips: rows.map((trip) =>
+      serializeTrip(trip, {
+        coverDisplayUrl: coverByTrip.get(trip.id) ?? null,
+        observationCount: countByTrip.get(trip.id) ?? 0,
+      }),
+    ),
+  });
 });
 
 tripRoutes.post("/", async (c) => {

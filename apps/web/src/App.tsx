@@ -37,6 +37,9 @@ export default function App() {
 
   return (
     <div className="app-shell">
+      <header className="app-topbar">
+        <span className="app-wordmark">{t("app.name")}</span>
+      </header>
       <main className="content">
         <Routes>
           <Route path="/" element={<TripsPage />} />
@@ -54,7 +57,7 @@ export default function App() {
           <Route path="*" element={<Navigate to="/" replace />} />
         </Routes>
       </main>
-      <nav className="nav">
+      <nav className="nav" aria-label={t("app.name")}>
         <NavLink to="/" end>
           {t("nav.trips")}
         </NavLink>

@@ -60,6 +60,8 @@ export default function TripAlbumPage() {
   const [deletePhrase, setDeletePhrase] = useState("");
   const [deletingTrip, setDeletingTrip] = useState(false);
   const [showManage, setShowManage] = useState(false);
+  const [showUploader, setShowUploader] = useState(false);
+  const [loaded, setLoaded] = useState(false);
   const [picking, setPicking] = useState(false);
   const fileInputRef = useRef<HTMLInputElement | null>(null);
   const cameraInputRef = useRef<HTMLInputElement | null>(null);
@@ -75,6 +77,8 @@ export default function TripAlbumPage() {
   );
   const [toast, setToast] = useState<string | null>(null);
   const prevPending = useRef(0);
+
+  const uploaderOpen = showUploader || files.length > 0 || uploading;
 
   useEffect(() => {
     if (pendingCount > prevPending.current) {
@@ -102,11 +106,25 @@ export default function TripAlbumPage() {
     setTrip(tripRes.trip);
     setTitleDraft(tripRes.trip.title);
     setObservations(obsRes.observations);
+    setLoaded(true);
   }
 
   useEffect(() => {
-    refresh().catch((e) => setError(e instanceof Error ? e.message : t("trips.loadFailed")));
+    setLoaded(false);
+    setShowUploader(false);
+    refresh()
+      .then(() => undefined)
+      .catch((e) => {
+        setError(e instanceof Error ? e.message : t("trips.loadFailed"));
+        setLoaded(true);
+      });
   }, [id]);
+
+  useEffect(() => {
+    if (loaded && observations.length === 0) {
+      setShowUploader(true);
+    }
+  }, [loaded, observations.length]);
 
   useEffect(() => {
     if (analyzingIds.length === 0) return;
@@ -134,6 +152,7 @@ export default function TripAlbumPage() {
     }
     const next = arr.slice(0, MAX_UPLOAD_BATCH);
     setFiles(next);
+    setShowUploader(true);
     if (next.length !== 1) setDescription("");
     setError(null);
   }
@@ -181,6 +200,7 @@ export default function TripAlbumPage() {
       setFiles([]);
       setDescription("");
       clearPickedInputs();
+      setShowUploader(false);
       await refresh();
       if (fail > 0 && ok === 0) {
         setError(t("album.uploadAllFailed"));
@@ -260,19 +280,22 @@ export default function TripAlbumPage() {
     : t("album.upload");
 
   return (
-    <div className="stack">
-      <div className="row">
-        <Link className="btn secondary" to="/">
-          {t("album.back")}
-        </Link>
-        <button className="btn secondary" type="button" onClick={() => setShowManage((v) => !v)}>
-          {t("trips.manage")}
-        </button>
-      </div>
-      <div>
-        <h1 className="brand">{trip?.title ?? t("nav.trips")}</h1>
-        <p className="lede">{t("album.lede")}</p>
-      </div>
+    <div className="stack page-album">
+      <header className="album-head">
+        <div className="album-head-row">
+          <Link className="text-link" to="/">
+            ← {t("album.back")}
+          </Link>
+          <button
+            className="text-link"
+            type="button"
+            onClick={() => setShowManage((v) => !v)}
+          >
+            {t("trips.manage")}
+          </button>
+        </div>
+        <h1 className="page-title">{trip?.title ?? t("nav.trips")}</h1>
+      </header>
 
       {showManage ? (
         <div className="panel stack">
@@ -314,91 +337,122 @@ export default function TripAlbumPage() {
         </div>
       ) : null}
 
-      <form className="panel stack" onSubmit={onUpload}>
-        <input
-          ref={fileInputRef}
-          className="file-input-hidden"
-          type="file"
-          accept="image/*"
-          multiple
-          onChange={(e) => applyPickedFiles(e.target.files)}
-        />
-        <input
-          ref={cameraInputRef}
-          className="file-input-hidden"
-          type="file"
-          accept="image/*"
-          capture="environment"
-          onChange={(e) => applyPickedFiles(e.target.files)}
-        />
-        <div className="row">
+      <div className="album-toolbar">
+        {!uploaderOpen ? (
           <button
-            className="btn secondary"
+            className="btn"
             type="button"
-            disabled={picking || uploading}
-            onClick={() => void onPick("camera")}
+            onClick={() => setShowUploader(true)}
           >
-            {t("album.takePhoto")}
+            {t("album.addPhotos")}
           </button>
-          <button
-            className="btn secondary"
-            type="button"
-            disabled={picking || uploading}
-            onClick={() => void onPick("gallery")}
-          >
-            {t("album.pickGallery")}
-          </button>
-        </div>
-        <span className="muted">
-          {picking
-            ? t("album.picking")
-            : files.length > 0
-              ? t("album.filesChosen", { count: files.length })
-              : t("album.noFileChosen")}
-        </span>
-        {previewUrls.length > 0 ? (
-          <div className="pick-thumbs" aria-hidden>
-            {previewUrls.map((url) => (
-              <img key={url} src={url} alt="" />
-            ))}
-          </div>
         ) : null}
-        {files.length === 1 ? (
-          <textarea
-            className="textarea"
-            placeholder={t("album.descriptionPlaceholder")}
-            value={description}
-            onChange={(e) => setDescription(e.target.value)}
-            disabled={uploading}
+      </div>
+
+      {uploaderOpen ? (
+        <form className="album-uploader stack" onSubmit={onUpload}>
+          <input
+            ref={fileInputRef}
+            className="file-input-hidden"
+            type="file"
+            accept="image/*"
+            multiple
+            onChange={(e) => applyPickedFiles(e.target.files)}
           />
-        ) : null}
-        <button className="btn" type="submit" disabled={files.length === 0 || uploading || picking}>
-          {uploadLabel}
-        </button>
-      </form>
+          <input
+            ref={cameraInputRef}
+            className="file-input-hidden"
+            type="file"
+            accept="image/*"
+            capture="environment"
+            onChange={(e) => applyPickedFiles(e.target.files)}
+          />
+          <div className="row">
+            <button
+              className="btn secondary"
+              type="button"
+              disabled={picking || uploading}
+              onClick={() => void onPick("camera")}
+            >
+              {t("album.takePhoto")}
+            </button>
+            <button
+              className="btn secondary"
+              type="button"
+              disabled={picking || uploading}
+              onClick={() => void onPick("gallery")}
+            >
+              {t("album.pickGallery")}
+            </button>
+            {files.length === 0 && !uploading ? (
+              <button
+                className="text-link"
+                type="button"
+                onClick={() => setShowUploader(false)}
+              >
+                {t("common.cancel")}
+              </button>
+            ) : null}
+          </div>
+          <span className="muted">
+            {picking
+              ? t("album.picking")
+              : files.length > 0
+                ? t("album.filesChosen", { count: files.length })
+                : t("album.noFileChosen")}
+          </span>
+          {previewUrls.length > 0 ? (
+            <div className="pick-thumbs" aria-hidden>
+              {previewUrls.map((url) => (
+                <img key={url} src={url} alt="" />
+              ))}
+            </div>
+          ) : null}
+          {files.length === 1 ? (
+            <textarea
+              className="textarea"
+              placeholder={t("album.descriptionPlaceholder")}
+              value={description}
+              onChange={(e) => setDescription(e.target.value)}
+              disabled={uploading}
+            />
+          ) : null}
+          <button className="btn" type="submit" disabled={files.length === 0 || uploading || picking}>
+            {uploadLabel}
+          </button>
+        </form>
+      ) : null}
 
       {toast ? <p className="toast">{toast}</p> : null}
       {error ? <p className="error">{error}</p> : null}
 
-      <div className="album">
+      {loaded && observations.length === 0 ? (
+        <p className="muted empty-hint">{t("album.empty")}</p>
+      ) : null}
+
+      <div className="album film-grid">
         {observations.map((obs) => (
-          <div className="card" key={obs.id}>
-            <Link className="card-link-inner" to={obsHref(obs)}>
-              <img
-                src={obs.displayUrl}
-                alt={
-                  obs.status === "pending_settle"
-                    ? t("status.pending_settle")
-                    : isNotCollectibleError(obs.error)
-                      ? t("status.notCollectible")
-                      : obs.commonName || t("map.observationFallback")
-                }
-              />
-              <div className="meta">
-                {statusBadge(obs)}
+          <article
+            className={`film-tile${obs.status === "pending_settle" ? " is-pending" : ""}`}
+            key={obs.id}
+          >
+            <Link className="film-tile-link" to={obsHref(obs)}>
+              <div className="film-tile-media">
+                <img
+                  src={obs.displayUrl}
+                  alt={
+                    obs.status === "pending_settle"
+                      ? t("status.pending_settle")
+                      : isNotCollectibleError(obs.error)
+                        ? t("status.notCollectible")
+                        : obs.commonName || t("map.observationFallback")
+                  }
+                />
+                <div className="film-tile-badge">{statusBadge(obs)}</div>
+              </div>
+              <div className="film-tile-meta">
                 {obs.status === "settled" ? (
                   <>
-                    {/* 缩略图：有中文用中文；无中文才用英文/拉丁。对照留给详情页 */}
                     <strong>
                       {obs.commonName || obs.scientificName || t("detail.unnamed")}
                     </strong>
@@ -412,37 +466,25 @@ export default function TripAlbumPage() {
                 {obs.status === "pending_settle" ? (
                   <span className="muted">{t("album.pendingHint")}</span>
                 ) : null}
+                {obs.status === "analyzing" ? (
+                  <span className="muted">{t("status.analyzing")}</span>
+                ) : null}
                 {obs.status === "failed" ? (
                   <span className="error">{identifyErrorPrimary(obs.error)}</span>
                 ) : null}
-                {obs.lat != null && obs.lng != null ? (
-                  <span className="muted">
-                    {obs.lat.toFixed(4)}, {obs.lng.toFixed(4)}
-                  </span>
-                ) : (
-                  <span className="muted">{t("album.noGps")}</span>
-                )}
               </div>
             </Link>
-            <div className="card-actions">
-              <button
-                className="btn danger small"
-                type="button"
-                disabled={deletingId === obs.id}
-                onClick={(ev) => askDeleteOne(obs.id, ev)}
-              >
-                {deletingId === obs.id ? t("album.deleting") : t("album.delete")}
-              </button>
-            </div>
-          </div>
+            <button
+              className="film-tile-delete"
+              type="button"
+              disabled={deletingId === obs.id}
+              onClick={(ev) => askDeleteOne(obs.id, ev)}
+            >
+              {deletingId === obs.id ? t("album.deleting") : t("album.delete")}
+            </button>
+          </article>
         ))}
       </div>
-
-      {observations.length === 0 ? (
-        <div className="panel">
-          <p className="muted">{t("album.empty")}</p>
-        </div>
-      ) : null}
 
       <ConfirmDialog
         open={pendingDeleteId != null}

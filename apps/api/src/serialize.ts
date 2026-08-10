@@ -10,13 +10,22 @@ export function serializeUser(user: User) {
   };
 }
 
-export function serializeTrip(trip: Trip) {
+export function serializeTrip(
+  trip: Trip,
+  extras?: { coverDisplayUrl?: string | null; observationCount?: number },
+) {
   return {
     id: trip.id,
     userId: trip.userId,
     title: trip.title,
     createdAt: trip.createdAt.toISOString(),
+    coverDisplayUrl: extras?.coverDisplayUrl ?? null,
+    observationCount: extras?.observationCount ?? 0,
   };
+}
+
+export function observationDisplayUrl(displayPath: string) {
+  return `/api/files/${displayPath.replace(/\\/g, "/")}`;
 }
 
 export function serializeObservation(
@@ -43,7 +52,7 @@ export function serializeObservation(
     capturedAt: obs.capturedAt ? obs.capturedAt.toISOString() : null,
     lat: obs.lat,
     lng: obs.lng,
-    displayUrl: `/api/files/${obs.displayPath.replace(/\\/g, "/")}`,
+    displayUrl: observationDisplayUrl(obs.displayPath),
     commonName: redact ? null : obs.commonName,
     scientificName: redact ? null : obs.scientificName,
     finestReliableRank: redact ? null : obs.finestReliableRank,

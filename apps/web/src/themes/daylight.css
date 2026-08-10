@@ -12,16 +12,19 @@
   --muted: #6b6258;
   --line: rgba(42, 64, 51, 0.14);
 
-  --accent: #2a4033;
-  --accent-soft: #e0e6df;
-  --accent-border: rgba(42, 64, 51, 0.35);
-  --accent-border-strong: rgba(42, 64, 51, 0.45);
+  /* 深字色偏暖褐，软底用沙色——避免底栏/徽章再冒旧薄荷绿 */
+  --accent: #3a322c;
+  --accent-soft: #ebe3d6;
+  --accent-border: rgba(58, 50, 44, 0.32);
+  --accent-border-strong: rgba(58, 50, 44, 0.45);
 
   /* 主按钮 / 开包等行动色 */
   --cta: #d3543c;
   --cta-ink: #fffaf7;
 
   --secondary: #8b6f4e;
+  --nav-active-bg: #f0ddd4;
+  --nav-active-ink: #9a4030;
   --warn: #9a6b24;
   --danger: #8b2e2e;
   --danger-soft: rgba(139, 46, 46, 0.08);
@@ -34,10 +37,10 @@
   --card: #faf8f3;
   --card-muted: rgba(250, 248, 243, 0.92);
   --input-bg: #fffdf9;
-  --surface-wash: rgba(42, 64, 51, 0.06);
+  --surface-wash: rgba(58, 50, 44, 0.06);
   --modal-bg: #f7f3eb;
   --modal-scrim: rgba(31, 42, 36, 0.48);
-  --nav-bg: rgba(243, 239, 231, 0.94);
+  --nav-bg: #f3efe7;
   --shadow: 0 8px 22px rgba(42, 36, 28, 0.07);
 
   --radius-sm: 8px;
@@ -50,7 +53,7 @@
     radial-gradient(700px 420px at 100% 0%, rgba(168, 186, 168, 0.18) 0%, transparent 50%),
     linear-gradient(180deg, var(--bg0), var(--bg1));
 
-  --map-dot: #2a4033;
+  --map-dot: #3a322c;
   --map-dot-selected: #d3543c;
   --map-dot-ring: rgba(211, 84, 60, 0.3);
   --map-dot-border: #fffdf9;

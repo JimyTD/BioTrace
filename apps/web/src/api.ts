@@ -12,7 +12,14 @@ export type Taxonomy = {
 };
 
 export type User = { id: string; email: string; displayName: string | null; createdAt: string };
-export type Trip = { id: string; userId: string; title: string; createdAt: string };
+export type Trip = {
+  id: string;
+  userId: string;
+  title: string;
+  createdAt: string;
+  coverDisplayUrl?: string | null;
+  observationCount?: number;
+};
 export type ObsStatus = "analyzing" | "pending_settle" | "settled" | "failed";
 export type SettleTier = "full" | "weak" | "none";
 /** Tier codes from API (default N/R/SR/UR; may grow via config). */
