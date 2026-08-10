@@ -2,6 +2,9 @@ node_modules
 **/node_modules
 data
 **/data
+# 运行时 ./data（库/uploads）继续排除；放行仓库内静态配置
+!apps/api/data
+!apps/api/data/**
 dist
 **/dist
 .git
