@@ -77,7 +77,16 @@ observationRoutes.post("/:id/settle", async (c) => {
   const updated = await db.query.observations.findFirst({
     where: eq(observations.id, row.id),
   });
-  let volumeEval = { newlyLit: [] as Array<{ volumeId: string; slotId: string }>, newlyCompletedVolumeIds: [] as string[] };
+  let volumeEval = {
+    newlyLit: [] as Array<{
+      volumeId: string;
+      slotId: string;
+      volumeTitleKey: string;
+      slotTitleKey: string;
+    }>,
+    newlyCompletedVolumeIds: [] as string[],
+    newlyCompleted: [] as Array<{ volumeId: string; titleKey: string }>,
+  };
   if (updated) {
     await upsertCollectionFromObservation(updated);
     volumeEval = await evaluateVolumesOnObservation(updated);

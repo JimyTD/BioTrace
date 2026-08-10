@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import { Link, useNavigate, useParams } from "react-router-dom";
-import { formatRank, t, type MessageKey } from "@biotrace/messages";
-import { api, type Observation, type Rarity } from "../api";
+import { formatRank, hasMessage, t, type MessageKey } from "@biotrace/messages";
+import { api, type Observation, type Rarity, type SettleVolumesResult } from "../api";
 
 function rarityLabel(r: Rarity | null) {
   if (!r) return "—";
@@ -15,13 +15,45 @@ function identifyByLine(provider: string | null | undefined) {
   return t("identify.by", { name: name === key ? provider : name });
 }
 
+function msgKey(key: string): string {
+  return hasMessage(key) ? t(key) : key;
+}
+
+/** Prefer completed-volume copy; else slot-lit. Empty = stay silent. */
+function volumeFeedbackLine(volumes: SettleVolumesResult): string | null {
+  const completed = volumes.newlyCompleted ?? [];
+  if (completed.length > 0) {
+    const volume = msgKey(completed[0]!.titleKey);
+    if (completed.length === 1) {
+      return t("settle.volumeCompleted", { volume });
+    }
+    return t("settle.volumeCompletedMore", { volume, count: completed.length });
+  }
+
+  const lit = volumes.newlyLit ?? [];
+  if (lit.length === 0) return null;
+  const first = lit[0]!;
+  const volume = msgKey(first.volumeTitleKey);
+  const slot = msgKey(first.slotTitleKey);
+  if (lit.length === 1) {
+    return t("settle.volumeSlotLit", { volume, slot });
+  }
+  return t("settle.volumeSlotLitMore", {
+    volume,
+    slot,
+    count: lit.length - 1,
+  });
+}
+
 export default function ObservationSettlePage() {
   const { id = "" } = useParams();
   const navigate = useNavigate();
   const [obs, setObs] = useState<Observation | null>(null);
   const [error, setError] = useState<string | null>(null);
-  const [phase, setPhase] = useState<"sealed" | "revealing" | "open">("sealed");
+  const [phase, setPhase] = useState<"sealed" | "revealing" | "open" | "claimed">("sealed");
   const [claiming, setClaiming] = useState(false);
+  const [volumeLine, setVolumeLine] = useState<string | null>(null);
+  const [showCollectionLink, setShowCollectionLink] = useState(false);
 
   useEffect(() => {
     api
@@ -54,8 +86,21 @@ export default function ObservationSettlePage() {
     setClaiming(true);
     setError(null);
     try {
-      await api.settleObservation(obs.id);
-      navigate(`/trips/${obs.tripId}`, { replace: true });
+      const res = await api.settleObservation(obs.id);
+      const volumes = res.volumes ?? {
+        newlyLit: [],
+        newlyCompletedVolumeIds: [],
+        newlyCompleted: [],
+      };
+      const line = volumeFeedbackLine(volumes);
+      if (!line) {
+        navigate(`/trips/${obs.tripId}`, { replace: true });
+        return;
+      }
+      setVolumeLine(line);
+      setShowCollectionLink((volumes.newlyCompleted?.length ?? 0) > 0);
+      setPhase("claimed");
+      setClaiming(false);
     } catch (e) {
       setError(e instanceof Error ? e.message : t("settle.failed"));
       setClaiming(false);
@@ -129,9 +174,24 @@ export default function ObservationSettlePage() {
                     </div>
                   ) : null}
                   {obs.blurb ? <p className="blurb">{obs.blurb}</p> : null}
-                  <button className="btn" type="button" disabled={claiming} onClick={onClaim}>
-                    {claiming ? t("settle.claiming") : t("settle.claim")}
-                  </button>
+
+                  {phase === "claimed" && volumeLine ? (
+                    <div className="settle-volume-note stack">
+                      <p className="settle-volume-line">{volumeLine}</p>
+                      <Link className="btn" to={`/trips/${obs.tripId}`} replace>
+                        {t("settle.backAlbum")}
+                      </Link>
+                      {showCollectionLink ? (
+                        <Link className="btn secondary" to="/collection" replace>
+                          {t("settle.volumeToCollection")}
+                        </Link>
+                      ) : null}
+                    </div>
+                  ) : (
+                    <button className="btn" type="button" disabled={claiming} onClick={onClaim}>
+                      {claiming ? t("settle.claiming") : t("settle.claim")}
+                    </button>
+                  )}
                 </>
               )}
             </div>
@@ -140,9 +200,11 @@ export default function ObservationSettlePage() {
       </div>
 
       {error ? <p className="error">{error}</p> : null}
-      <Link className="btn secondary" to={`/trips/${obs.tripId}`}>
-        {t("settle.backAlbum")}
-      </Link>
+      {phase !== "claimed" ? (
+        <Link className="btn secondary" to={`/trips/${obs.tripId}`}>
+          {t("settle.backAlbum")}
+        </Link>
+      ) : null}
     </div>
   );
 }

@@ -44,20 +44,82 @@ function rankParam(rank: string | null | undefined): string | null {
   return map[r] ?? null;
 }
 
-async function matchOnce(name: string, rank?: string | null): Promise<number | null> {
-  const params = new URLSearchParams({ name });
-  const rp = rankParam(rank);
+export type GbifMatchType = "EXACT" | "FUZZY" | "HIGHERRANK" | "NONE" | string;
+
+export type GbifMatchResult = {
+  usageKey: number | null;
+  matchType: GbifMatchType;
+  confidence: number;
+  canonicalName: string | null;
+  rank: string | null;
+  kingdom: string | null;
+  phylum: string | null;
+  class: string | null;
+  order: string | null;
+  family: string | null;
+  genus: string | null;
+  species: string | null;
+};
+
+type MatchQuery = {
+  name: string;
+  rank?: string | null;
+  kingdom?: string | null;
+  phylum?: string | null;
+  class?: string | null;
+  order?: string | null;
+  family?: string | null;
+  genus?: string | null;
+};
+
+function asTrimmed(v: unknown): string | null {
+  if (typeof v !== "string") return null;
+  const s = v.trim();
+  return s || null;
+}
+
+function parseMatchPayload(data: Record<string, unknown>): GbifMatchResult {
+  const usageKeyRaw = data.usageKey ?? data.acceptedUsageKey;
+  const usageKey =
+    typeof usageKeyRaw === "number" && Number.isFinite(usageKeyRaw) ? usageKeyRaw : null;
+  const confidenceRaw = data.confidence;
+  const confidence =
+    typeof confidenceRaw === "number" && Number.isFinite(confidenceRaw) ? confidenceRaw : 0;
+  return {
+    usageKey,
+    matchType: asTrimmed(data.matchType) ?? "NONE",
+    confidence,
+    canonicalName: asTrimmed(data.canonicalName),
+    rank: asTrimmed(data.rank),
+    kingdom: asTrimmed(data.kingdom),
+    phylum: asTrimmed(data.phylum),
+    class: asTrimmed(data.class),
+    order: asTrimmed(data.order),
+    family: asTrimmed(data.family),
+    genus: asTrimmed(data.genus),
+    species: asTrimmed(data.species),
+  };
+}
+
+/** Full `/species/match` (classification + matchType). Used by volumes taxonomy resolve. */
+export async function gbifMatchName(query: MatchQuery): Promise<GbifMatchResult> {
+  const params = new URLSearchParams({ name: query.name });
+  const rp = rankParam(query.rank);
   if (rp) params.set("rank", rp);
+  for (const key of ["kingdom", "phylum", "class", "order", "family", "genus"] as const) {
+    const v = query[key]?.trim();
+    if (v) params.set(key, v);
+  }
   const res = await undiciFetch(`${BASE}/species/match?${params}`, fetchInit());
   if (!res.ok) throw new Error(`GBIF match HTTP ${res.status}`);
-  const data = (await res.json()) as {
-    usageKey?: number;
-    acceptedUsageKey?: number;
-    matchType?: string;
-    note?: string;
-  };
+  const data = (await res.json()) as Record<string, unknown>;
+  return parseMatchPayload(data);
+}
+
+async function matchOnce(name: string, rank?: string | null): Promise<number | null> {
+  const data = await gbifMatchName({ name, rank });
   if (data.matchType === "NONE") return null;
-  return data.usageKey ?? data.acceptedUsageKey ?? null;
+  return data.usageKey;
 }
 
 /** Exact name lookup; prefer ACCEPTED backbone when match API is ambiguous. */

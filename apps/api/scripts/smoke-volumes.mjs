@@ -1,5 +1,5 @@
 /**
- * Volume engine smoke (no DB): config load + slot match.
+ * Volume engine smoke (no DB / no network): config load + slot match.
  *   pnpm exec tsx scripts/smoke-volumes.mjs
  */
 import { emptyTaxonomy } from "../src/identify/types.ts";
@@ -9,9 +9,17 @@ import { slotMatches } from "../src/volumes/match.ts";
 const vols = loadVolumeConfigs(true);
 console.log(`loaded volumes: ${vols.map((v) => v.id).join(", ") || "(none)"}`);
 
-const fixture = vols.find((v) => v.id === "fixture_pipeline");
-if (!fixture) {
-  console.error("FAIL missing fixture_pipeline");
+const urban = vols.find((v) => v.id === "urban_wild");
+const intertidal = vols.find((v) => v.id === "intertidal");
+if (!urban || !intertidal) {
+  console.error("FAIL missing urban_wild / intertidal");
+  process.exit(1);
+}
+
+const songbird = urban.slots.find((s) => s.id === "songbird");
+const shore = intertidal.slots.find((s) => s.id === "shore_crab");
+if (!songbird || !shore) {
+  console.error("FAIL missing songbird / shore_crab slots");
   process.exit(1);
 }
 
@@ -21,47 +29,44 @@ bird.family = { name_la: "Passeridae", name_zh: null };
 bird.genus = { name_la: "Passer", name_zh: null };
 bird.species = { name_la: "Passer montanus", name_zh: null };
 
-const turtle = emptyTaxonomy();
-turtle.order = { name_la: "Testudines", name_zh: null };
-turtle.family = { name_la: "Emydidae", name_zh: null };
-turtle.genus = { name_la: "Trachemys", name_zh: null };
-turtle.species = { name_la: "Trachemys scripta", name_zh: null };
-
-const passSlot = fixture.slots.find((s) => s.id === "passeriformes");
-const testSlot = fixture.slots.find((s) => s.id === "testudines");
+const crab = emptyTaxonomy();
+crab.order = { name_la: "Decapoda", name_zh: null };
+crab.family = { name_la: "Varunidae", name_zh: null };
+crab.genus = { name_la: "Eriocheir", name_zh: null };
+crab.species = { name_la: "Eriocheir sinensis", name_zh: null };
 
 const cases = [
   {
-    name: "sparrow lights passeriformes",
+    name: "sparrow lights songbird",
     ok: slotMatches({
-      rule: passSlot.rule,
+      rule: songbird.rule,
       taxonomy: bird,
       finestReliableRank: "species",
     }),
     expect: true,
   },
   {
-    name: "sparrow does not light testudines",
+    name: "sparrow does not light shore_crab",
     ok: slotMatches({
-      rule: testSlot.rule,
+      rule: shore.rule,
       taxonomy: bird,
       finestReliableRank: "species",
     }),
     expect: false,
   },
   {
-    name: "turtle lights testudines",
+    name: "crab lights shore_crab",
     ok: slotMatches({
-      rule: testSlot.rule,
-      taxonomy: turtle,
-      finestReliableRank: "genus",
+      rule: shore.rule,
+      taxonomy: crab,
+      finestReliableRank: "family",
     }),
     expect: true,
   },
   {
     name: "too-coarse rank does not light",
     ok: slotMatches({
-      rule: passSlot.rule,
+      rule: songbird.rule,
       taxonomy: bird,
       finestReliableRank: "class",
     }),

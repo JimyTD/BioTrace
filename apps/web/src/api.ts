@@ -170,10 +170,13 @@ export const api = {
       `/api/observations/${id}${forSettle ? "?forSettle=1" : ""}`,
     ),
   settleObservation: (id: string) =>
-    request<{ observation: Observation }>(`/api/observations/${id}/settle`, {
-      method: "POST",
-      body: "{}",
-    }),
+    request<{ observation: Observation; volumes: SettleVolumesResult }>(
+      `/api/observations/${id}/settle`,
+      {
+        method: "POST",
+        body: "{}",
+      },
+    ),
   deleteObservation: (id: string) =>
     request<{ ok: boolean; id: string }>(`/api/observations/${id}`, { method: "DELETE" }),
   reidentifyObservation: (id: string, description: string) =>
@@ -186,6 +189,17 @@ export const api = {
     request<{ observations: Observation[] }>("/api/observations?mapped=1"),
   listCollection: () => request<{ entries: CollectionEntry[] }>("/api/collection"),
   listVolumes: () => request<{ volumes: VolumeListItem[] }>("/api/volumes"),
+};
+
+export type SettleVolumesResult = {
+  newlyLit: Array<{
+    volumeId: string;
+    slotId: string;
+    volumeTitleKey: string;
+    slotTitleKey: string;
+  }>;
+  newlyCompletedVolumeIds: string[];
+  newlyCompleted: Array<{ volumeId: string; titleKey: string }>;
 };
 
 export type VolumeSlotView = {

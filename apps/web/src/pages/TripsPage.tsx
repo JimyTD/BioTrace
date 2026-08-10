@@ -38,7 +38,6 @@ export default function TripsPage() {
       <div>
         <h1 className="brand">{t("trips.title")}</h1>
         <p className="lede">{t("trips.lede")}</p>
-        <p className="muted">{t("trips.metaTodo")}</p>
       </div>
 
       <form className="panel stack" onSubmit={onCreate}>

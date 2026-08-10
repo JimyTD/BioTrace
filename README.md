@@ -35,6 +35,7 @@ HTTPS_PROXY=http://127.0.0.1:7890
 ```text
 apps/api             Node + Hono + SQLite(libsql) + Gemini/GLM
 apps/web             Vite + React + MapLibre
+  src/themes/        皮肤主题（配色/字体；默认 daylight）
 packages/messages    统一界面/术语文案（默认 zh）
 deploy/              生产 env / Nginx 模板
 Dockerfile           API 镜像
@@ -43,6 +44,9 @@ data/                本地库与上传图（gitignore）
 docs/                筹划 + 实现规格 + 07 部署
 model-bakeoff/       多模型对照脚本（独立）
 ```
+
+表现层：文案 → `packages/messages`；皮肤 → `apps/web/src/themes/`；流程页不写死品牌色。  
+加皮肤步骤见 [`docs/06` §10](docs/06-实现与功能规格.md)。
 
 ## 云部署
 

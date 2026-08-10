@@ -9,7 +9,8 @@
     "db:push": "drizzle-kit push",
     "introduced:build": "tsx scripts/build-introduced-index.ts",
     "introduced:smoke": "tsx scripts/smoke-introduced.mjs",
-    "volumes:smoke": "tsx scripts/smoke-volumes.mjs"
+    "volumes:smoke": "tsx scripts/smoke-volumes.mjs",
+    "volumes:resolve-smoke": "tsx scripts/smoke-volumes-resolve.mjs"
   },
   "dependencies": {
     "@biotrace/messages": "workspace:*",

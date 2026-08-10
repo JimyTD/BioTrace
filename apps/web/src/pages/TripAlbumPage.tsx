@@ -409,9 +409,6 @@ export default function TripAlbumPage() {
                     </span>
                   </>
                 ) : null}
-                {obs.status === "analyzing" ? (
-                  <span className="muted">{t("album.analyzingHint")}</span>
-                ) : null}
                 {obs.status === "pending_settle" ? (
                   <span className="muted">{t("album.pendingHint")}</span>
                 ) : null}

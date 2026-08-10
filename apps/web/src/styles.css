@@ -1,21 +1,11 @@
+/**
+ * 结构与组件样式（主题无关）。
+ * 品牌色 / 字体 / 圆角等一律用 var(--*)，由 themes/*.css 注入。
+ */
 :root {
-  --bg0: #e8f0ea;
-  --bg1: #f7faf6;
-  --ink: #1c2a22;
-  --muted: #5a6b60;
-  --line: rgba(28, 42, 34, 0.12);
-  --accent: #2f6b4f;
-  --accent-soft: #d7ebe0;
-  --warn: #8a5a12;
-  --danger: #8b2e2e;
-  --card: rgba(255, 255, 255, 0.72);
-  --shadow: 0 10px 30px rgba(28, 42, 34, 0.08);
-  font-family: "DM Sans", system-ui, sans-serif;
   color: var(--ink);
-  background:
-    radial-gradient(1200px 600px at 10% -10%, #cfe3d4 0%, transparent 55%),
-    radial-gradient(900px 500px at 100% 0%, #d9e7ef 0%, transparent 50%),
-    linear-gradient(180deg, var(--bg0), var(--bg1));
+  background: var(--bg-atmosphere);
+  font-family: var(--font-sans);
   line-height: 1.45;
 }
 
@@ -58,10 +48,10 @@ a {
 }
 
 .brand {
-  font-family: "Source Serif 4", Georgia, serif;
-  font-size: 1.55rem;
+  font-family: var(--font-brand);
+  font-size: 1.65rem;
   font-weight: 700;
-  letter-spacing: -0.02em;
+  letter-spacing: -0.03em;
   margin: 0 0 4px;
 }
 
@@ -74,9 +64,8 @@ a {
 .panel {
   background: var(--card);
   border: 1px solid var(--line);
-  border-radius: 18px;
+  border-radius: var(--radius-lg);
   box-shadow: var(--shadow);
-  backdrop-filter: blur(8px);
   padding: 16px;
 }
 
@@ -94,10 +83,10 @@ a {
 
 .btn {
   border: 0;
-  border-radius: 999px;
+  border-radius: var(--radius-btn);
   padding: 10px 16px;
-  background: var(--accent);
-  color: white;
+  background: var(--cta);
+  color: var(--cta-ink);
   cursor: pointer;
 }
 
@@ -116,9 +105,9 @@ a {
 .textarea {
   width: 100%;
   border: 1px solid var(--line);
-  border-radius: 12px;
+  border-radius: var(--radius-md);
   padding: 10px 12px;
-  background: rgba(255, 255, 255, 0.85);
+  background: var(--input-bg);
 }
 
 .textarea {
@@ -143,15 +132,15 @@ a {
 .trip-item {
   display: block;
   padding: 14px 16px;
-  border-radius: 14px;
+  border-radius: var(--radius-md);
   border: 1px solid var(--line);
-  background: rgba(255, 255, 255, 0.65);
+  background: var(--card-muted);
   transition: transform 160ms ease, border-color 160ms ease;
 }
 
 .trip-item:hover {
   transform: translateY(-1px);
-  border-color: rgba(47, 107, 79, 0.35);
+  border-color: var(--accent-border);
 }
 
 .trip-item strong {
@@ -167,9 +156,9 @@ a {
 
 .card {
   border: 1px solid var(--line);
-  border-radius: 14px;
+  border-radius: var(--radius-md);
   overflow: hidden;
-  background: rgba(255, 255, 255, 0.7);
+  background: var(--card);
 }
 
 .card-link,
@@ -181,7 +170,7 @@ a {
 
 .card-link:hover,
 .card:hover {
-  border-color: rgba(47, 107, 79, 0.35);
+  border-color: var(--accent-border);
 }
 
 .card-actions {
@@ -195,14 +184,14 @@ a {
 
 .danger-zone {
   padding-top: 8px;
-  border-top: 1px dashed rgba(139, 46, 46, 0.35);
+  border-top: 1px dashed var(--danger-line);
 }
 
 .confirm-phrase {
   margin: 0;
   padding: 10px 12px;
-  border-radius: 10px;
-  background: rgba(139, 46, 46, 0.08);
+  border-radius: var(--radius-sm);
+  background: var(--danger-soft);
   color: var(--danger);
   font-weight: 600;
   word-break: break-all;
@@ -215,23 +204,22 @@ a {
   display: grid;
   place-items: center;
   padding: 20px;
-  background: rgba(28, 42, 34, 0.45);
-  backdrop-filter: blur(2px);
+  background: var(--modal-scrim);
 }
 
 .modal-panel {
   width: min(420px, 100%);
   padding: 18px;
-  border-radius: 18px;
+  border-radius: var(--radius-lg);
   border: 1px solid var(--line);
-  background: #f7faf6;
+  background: var(--modal-bg);
   box-shadow: var(--shadow);
 }
 
 .toast {
   margin: 0;
   padding: 10px 14px;
-  border-radius: 12px;
+  border-radius: var(--radius-md);
   background: var(--accent-soft);
   color: var(--accent);
   font-weight: 600;
@@ -241,35 +229,35 @@ a {
   display: inline-flex;
   width: fit-content;
   padding: 3px 10px;
-  border-radius: 999px;
+  border-radius: var(--radius-sm);
   font-size: 0.78rem;
   font-weight: 700;
   letter-spacing: 0.02em;
 }
 
 .rarity-N {
-  background: #e4ebe6;
-  color: #3d5246;
+  background: var(--rarity-N-bg);
+  color: var(--rarity-N-fg);
 }
 .rarity-R {
-  background: #d7e8f5;
-  color: #1f4f73;
+  background: var(--rarity-R-bg);
+  color: var(--rarity-R-fg);
 }
 .rarity-SR {
-  background: #efe0f7;
-  color: #5a2d75;
+  background: var(--rarity-SR-bg);
+  color: var(--rarity-SR-fg);
 }
 .rarity-SSR {
-  background: #e8d4f5;
-  color: #4a1f6b;
+  background: var(--rarity-SSR-bg);
+  color: var(--rarity-SSR-fg);
 }
 .rarity-UR {
-  background: #f7e2c4;
-  color: #8a4b00;
+  background: var(--rarity-UR-bg);
+  color: var(--rarity-UR-fg);
 }
 .rarity-LR {
-  background: #f5d0d6;
-  color: #7a1f32;
+  background: var(--rarity-LR-bg);
+  color: var(--rarity-LR-fg);
 }
 
 .identify-by {
@@ -279,9 +267,9 @@ a {
 
 .alert-banner {
   padding: 12px;
-  border-radius: 12px;
-  background: rgba(138, 90, 18, 0.1);
-  border: 1px solid rgba(138, 90, 18, 0.25);
+  border-radius: var(--radius-md);
+  background: var(--warn-soft);
+  border: 1px solid var(--warn-line);
 }
 
 .alert-banner p {
@@ -291,9 +279,9 @@ a {
 }
 
 .settle-card {
-  border-radius: 20px;
+  border-radius: var(--radius-lg);
   border: 1px solid var(--line);
-  background: rgba(255, 255, 255, 0.75);
+  background: var(--card);
   box-shadow: var(--shadow);
   overflow: hidden;
 }
@@ -312,8 +300,8 @@ a {
   width: 100%;
   max-height: 320px;
   object-fit: cover;
-  border-radius: 14px;
-  filter: blur(14px) saturate(0.8);
+  border-radius: var(--radius-md);
+  filter: blur(14px) saturate(0.85);
   transform: scale(1.05);
 }
 
@@ -321,16 +309,43 @@ a {
   width: 100%;
   max-height: 360px;
   object-fit: contain;
-  border-radius: 14px;
-  background: rgba(28, 42, 34, 0.06);
+  border-radius: var(--radius-md);
+  background: var(--surface-wash);
 }
 
 .settle-name {
-  font-size: 1.35rem;
+  font-family: var(--font-brand);
+  font-size: 1.4rem;
+  letter-spacing: -0.02em;
 }
 
 .settle-card.revealing .settle-hero {
   animation: settlePop 700ms ease;
+}
+
+.settle-volume-note {
+  margin-top: 4px;
+  padding-top: 12px;
+  border-top: 1px solid var(--line);
+}
+
+.settle-volume-line {
+  margin: 0;
+  font-family: var(--font-brand);
+  font-size: 1.05rem;
+  letter-spacing: -0.01em;
+  animation: settleVolumeIn 420ms ease;
+}
+
+@keyframes settleVolumeIn {
+  from {
+    opacity: 0;
+    transform: translateY(6px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
 }
 
 @keyframes settlePop {
@@ -351,7 +366,7 @@ a {
 }
 
 .btn.danger {
-  background: #8b2e2e;
+  background: var(--danger);
   color: #fff;
 }
 
@@ -377,17 +392,17 @@ a {
   width: 64px;
   height: 64px;
   object-fit: cover;
-  border-radius: 10px;
+  border-radius: var(--radius-sm);
   border: 1px solid var(--line);
-  background: rgba(28, 42, 34, 0.06);
+  background: var(--surface-wash);
 }
 
 .detail-hero {
   width: 100%;
   max-height: min(70vh, 520px);
   object-fit: contain;
-  border-radius: 18px;
-  background: rgba(28, 42, 34, 0.06);
+  border-radius: var(--radius-lg);
+  background: var(--surface-wash);
   border: 1px solid var(--line);
 }
 
@@ -445,19 +460,19 @@ a {
   display: inline-flex;
   width: fit-content;
   padding: 2px 8px;
-  border-radius: 999px;
+  border-radius: var(--radius-sm);
   font-size: 0.75rem;
   background: var(--accent-soft);
   color: var(--accent);
 }
 
 .badge.warn {
-  background: #f3e3c4;
+  background: var(--warn-badge-bg);
   color: var(--warn);
 }
 
 .badge.danger {
-  background: #f3d4d4;
+  background: var(--danger-badge-bg);
   color: var(--danger);
 }
 
@@ -468,15 +483,14 @@ a {
   grid-template-columns: repeat(4, 1fr);
   gap: 4px;
   padding: 10px 12px calc(10px + env(safe-area-inset-bottom));
-  background: rgba(247, 250, 246, 0.92);
+  background: var(--nav-bg);
   border-top: 1px solid var(--line);
-  backdrop-filter: blur(10px);
 }
 
 .nav a {
   text-align: center;
   padding: 10px 6px;
-  border-radius: 12px;
+  border-radius: var(--radius-md);
   color: var(--muted);
   font-size: 0.9rem;
 }
@@ -489,7 +503,7 @@ a {
 
 .map-wrap {
   height: min(70vh, 560px);
-  border-radius: 18px;
+  border-radius: var(--radius-lg);
   overflow: hidden;
   border: 1px solid var(--line);
   box-shadow: var(--shadow);
@@ -504,9 +518,9 @@ a {
   width: 18px;
   height: 18px;
   padding: 0;
-  border: 2px solid #fff;
+  border: 2px solid var(--map-dot-border);
   border-radius: 50%;
-  background: #2f6b4f;
+  background: var(--map-dot);
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.28);
   cursor: pointer;
 }
@@ -514,8 +528,8 @@ a {
 .map-dot.is-selected {
   width: 22px;
   height: 22px;
-  background: #c45c26;
-  box-shadow: 0 0 0 4px rgba(196, 92, 38, 0.28);
+  background: var(--map-dot-selected);
+  box-shadow: 0 0 0 4px var(--map-dot-ring);
 }
 
 .map-popup {
@@ -528,8 +542,8 @@ a {
   width: 100%;
   height: 96px;
   object-fit: cover;
-  border-radius: 8px;
-  background: #d7ebe0;
+  border-radius: var(--radius-sm);
+  background: var(--accent-soft);
 }
 
 .map-popup strong {
@@ -537,7 +551,7 @@ a {
 }
 
 .map-popup span {
-  color: #5a6b60;
+  color: var(--muted);
   font-size: 0.8rem;
 }
 
@@ -545,7 +559,7 @@ a {
   width: 88px;
   height: 88px;
   object-fit: cover;
-  border-radius: 12px;
+  border-radius: var(--radius-md);
   background: var(--accent-soft);
   flex-shrink: 0;
 }
@@ -568,7 +582,9 @@ a {
 }
 
 .login-mode-row .btn.active {
-  border-color: var(--text, #1a1a1a);
+  border-color: var(--accent);
+  background: var(--accent-soft);
+  color: var(--accent);
   opacity: 1;
 }
 
@@ -596,9 +612,9 @@ a {
 
 .volume-card {
   border: 1px solid var(--line);
-  border-radius: 14px;
+  border-radius: var(--radius-md);
   padding: 12px 14px;
-  background: rgba(255, 255, 255, 0.7);
+  background: var(--card);
   transition: filter 280ms ease, border-color 280ms ease, transform 200ms ease;
 }
 
@@ -609,7 +625,7 @@ a {
 
 .volume-card-lit {
   filter: none;
-  border-color: rgba(47, 107, 79, 0.45);
+  border-color: var(--accent-border-strong);
   box-shadow: var(--shadow);
 }
 

@@ -9,7 +9,7 @@ const known: Record<string, MessageKey> = {
   "GEMINI_API_KEY is not set": "error.geminiKeyMissing",
   "confirm phrase mismatch": "error.confirmPhraseMismatch",
   identify_too_coarse: "error.identifyTooCoarse",
-  identify_quota: "error.identifyUnavailable",
+  identify_quota: "error.identifyQuota",
   identify_unavailable: "error.identifyUnavailable",
   identify_not_organism: "error.identifyNotCollectible",
   identify_human: "error.identifyNotCollectible",

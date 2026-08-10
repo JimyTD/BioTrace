@@ -1,0 +1,70 @@
+/**
+ * 日光胶片 · 旅游默认皮肤
+ * 暖米灰底、深柏绿、胶片橙 CTA；照片优先、少毛玻璃。
+ */
+[data-theme="daylight"] {
+  --font-sans: "Outfit", system-ui, sans-serif;
+  --font-brand: "Outfit", system-ui, sans-serif;
+
+  --bg0: #f3efe7;
+  --bg1: #ebe6dc;
+  --ink: #1f2a24;
+  --muted: #6b6258;
+  --line: rgba(42, 64, 51, 0.14);
+
+  --accent: #2a4033;
+  --accent-soft: #e0e6df;
+  --accent-border: rgba(42, 64, 51, 0.35);
+  --accent-border-strong: rgba(42, 64, 51, 0.45);
+
+  /* 主按钮 / 开包等行动色 */
+  --cta: #d3543c;
+  --cta-ink: #fffaf7;
+
+  --secondary: #8b6f4e;
+  --warn: #9a6b24;
+  --danger: #8b2e2e;
+  --danger-soft: rgba(139, 46, 46, 0.08);
+  --danger-line: rgba(139, 46, 46, 0.35);
+  --danger-badge-bg: #f3d4d4;
+  --warn-badge-bg: #f3e3c4;
+  --warn-soft: rgba(154, 107, 36, 0.12);
+  --warn-line: rgba(154, 107, 36, 0.28);
+
+  --card: #faf8f3;
+  --card-muted: rgba(250, 248, 243, 0.92);
+  --input-bg: #fffdf9;
+  --surface-wash: rgba(42, 64, 51, 0.06);
+  --modal-bg: #f7f3eb;
+  --modal-scrim: rgba(31, 42, 36, 0.48);
+  --nav-bg: rgba(243, 239, 231, 0.94);
+  --shadow: 0 8px 22px rgba(42, 36, 28, 0.07);
+
+  --radius-sm: 8px;
+  --radius-md: 11px;
+  --radius-lg: 14px;
+  --radius-btn: 10px;
+
+  --bg-atmosphere:
+    radial-gradient(900px 480px at 8% -8%, rgba(212, 168, 120, 0.22) 0%, transparent 55%),
+    radial-gradient(700px 420px at 100% 0%, rgba(168, 186, 168, 0.18) 0%, transparent 50%),
+    linear-gradient(180deg, var(--bg0), var(--bg1));
+
+  --map-dot: #2a4033;
+  --map-dot-selected: #d3543c;
+  --map-dot-ring: rgba(211, 84, 60, 0.3);
+  --map-dot-border: #fffdf9;
+
+  --rarity-N-bg: #e5e2db;
+  --rarity-N-fg: #4a534c;
+  --rarity-R-bg: #d9e6ef;
+  --rarity-R-fg: #2a5470;
+  --rarity-SR-bg: #e8ddd0;
+  --rarity-SR-fg: #6b4a2e;
+  --rarity-SSR-bg: #e4d4c4;
+  --rarity-SSR-fg: #5c3a1f;
+  --rarity-UR-bg: #f0dcc0;
+  --rarity-UR-fg: #8a4b00;
+  --rarity-LR-bg: #f0cfc8;
+  --rarity-LR-fg: #7a2a28;
+}

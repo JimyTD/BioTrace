@@ -15,9 +15,8 @@ export function identifyErrorPrimary(code: string | null | undefined): string {
   if (!code) return t("error.identifyGenericFailed");
   if (isNotCollectibleError(code)) return t("error.identifyNotCollectible");
   if (code === "identify_too_coarse") return t("error.identifyTooCoarse");
-  if (code === "identify_unavailable" || code === "identify_quota") {
-    return t("error.identifyUnavailable");
-  }
+  if (code === "identify_quota") return t("error.identifyQuota");
+  if (code === "identify_unavailable") return t("error.identifyUnavailable");
   // Localized server messages are already Chinese sentences; keep them.
   if (/[\u4e00-\u9fff]/.test(code)) return code;
   return t("error.identifyGenericFailed");
