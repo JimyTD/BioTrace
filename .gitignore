@@ -4,6 +4,8 @@
 **/.env.local
 **/deploy/.env.production
 *.pem
+*.jks
+*.keystore
 
 # app runtime data (repo root only — not apps/api/data seeds)
 /data/
@@ -40,3 +42,6 @@ Thumbs.db
 .idea/
 .vscode/
 *.log
+
+# Cursor MCP 本地凭据（只提交 mcp.json.example）
+.cursor/mcp.json

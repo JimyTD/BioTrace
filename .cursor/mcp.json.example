@@ -1,0 +1,14 @@
+{
+  "mcpServers": {
+    "tencent-lighthouse": {
+      "command": "C:/Users/jimygong/.workbuddy/binaries/node/versions/22.22.2/node.exe",
+      "args": ["D:/Fun/tencent-lighthouse-mcp/src/index.js"],
+      "env": {
+        "TENCENTCLOUD_SECRET_ID": "replace-me",
+        "TENCENTCLOUD_SECRET_KEY": "replace-me",
+        "TCMCP_ALLOWED_REGIONS": "ap-guangzhou",
+        "TCMCP_ALLOWED_INSTANCES": "lhins-a3h64ndx"
+      }
+    }
+  }
+}
