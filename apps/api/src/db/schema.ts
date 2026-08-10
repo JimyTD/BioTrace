@@ -45,6 +45,12 @@ export const observations = sqliteTable("observations", {
   /** Tier code from rarity module (default N/R/SR/UR; not hard-capped to four). */
   rarity: text("rarity"),
   countryCode: text("country_code"),
+  /**
+   * 国别判定来源，仅用于诊断与日后定向重跑，不参与业务逻辑。
+   * `tianditu` 线上权威| `offline` 离线国界兜底 | `none` 判定执行过但坐标缺失/非法
+   * | `null` 尚未判定（刚上传，或在识别闸门就被拦下）
+   */
+  countrySource: text("country_source"),
   locationPrecise: integer("location_precise", { mode: "boolean" }),
   alertIntroduced: integer("alert_introduced", { mode: "boolean" }),
   taxonKey: text("taxon_key"),

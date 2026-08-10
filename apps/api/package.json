@@ -9,6 +9,8 @@
     "db:push": "drizzle-kit push",
     "introduced:build": "tsx scripts/build-introduced-index.ts",
     "introduced:smoke": "tsx scripts/smoke-introduced.mjs",
+    "country:smoke": "tsx scripts/smoke-country.mjs",
+    "geocode:smoke": "tsx scripts/smoke-geocode.mjs",
     "volumes:smoke": "tsx scripts/smoke-volumes.mjs",
     "volumes:resolve-smoke": "tsx scripts/smoke-volumes-resolve.mjs"
   },

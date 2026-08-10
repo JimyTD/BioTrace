@@ -1,7 +1,7 @@
 import { TAXONOMY_RANKS } from "../identify/types.js";
 import { resolveIntroducedAlert } from "../introduced/index.js";
 import { resolveRarity } from "../rarity/index.js";
-import { countryFromLatLng } from "./country.js";
+import { resolveCountry, type CountrySource } from "./country.js";
 import { buildTaxonKey, parseTaxonomy } from "./taxon.js";
 
 export type SettleTier = "full" | "weak" | "none";
@@ -10,6 +10,8 @@ export type SettleComputation = {
   settleTier: SettleTier;
   rarity: string | null;
   countryCode: string | null;
+  /** 国别判定来源，仅用于诊断与日后定向重跑，不参与业务逻辑。 */
+  countrySource: CountrySource;
   locationPrecise: boolean;
   alertIntroduced: boolean;
   taxonKey: string | null;
@@ -38,7 +40,8 @@ export async function computeSettle(input: {
   commonName?: string | null;
   taxonomyJson?: string | null;
 }): Promise<SettleComputation> {
-  const countryCode = countryFromLatLng(input.lat, input.lng);
+  const country = await resolveCountry(input.lat, input.lng);
+  const countryCode = country.code;
   const locationPrecise = Boolean(countryCode);
   const settleTier = settleTierFromRank(input.finestReliableRank);
   const taxonomy = parseTaxonomy(input.taxonomyJson);
@@ -53,6 +56,7 @@ export async function computeSettle(input: {
       settleTier,
       rarity: null,
       countryCode,
+      countrySource: country.source,
       locationPrecise,
       alertIntroduced: false,
       taxonKey,
@@ -94,6 +98,7 @@ export async function computeSettle(input: {
     settleTier,
     rarity: resolved.rarity,
     countryCode,
+    countrySource: country.source,
     locationPrecise,
     alertIntroduced: intro.alert,
     taxonKey,

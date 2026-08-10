@@ -211,6 +211,8 @@ tripRoutes.post("/:id/observations", async (c) => {
     settleTier: null,
     rarity: null,
     countryCode: null,
+    // null = 尚未做过国别判定（此刻刚上传，鉴定还没跑）
+    countrySource: null,
     locationPrecise: null,
     alertIntroduced: false,
     taxonKey: null,

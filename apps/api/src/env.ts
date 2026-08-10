@@ -59,6 +59,11 @@ export const env = {
   zhipuBaseUrl: process.env.ZHIPU_BASE_URL?.trim() || "https://open.bigmodel.cn/api/paas/v4",
   displayMaxEdge: Number(process.env.DISPLAY_MAX_EDGE ?? 1600),
   httpsProxy: process.env.HTTPS_PROXY?.trim() || process.env.HTTP_PROXY?.trim() || "",
+  /**
+   * 天地图**服务端** key（逆地理编码用，非前端瓦片的浏览器端 key）。
+   * 留空则国别判定只走离线国界数据。
+   */
+  tiandituServerKey: process.env.TIANDITU_SERVER_KEY?.trim() || "",
   /** On-demand GBIF occurrence counts for rarity; disable for offline/dev. */
   gbifEnabled: (process.env.GBIF_ENABLED ?? "1") === "1",
   rarityCacheTtlDays: Number(process.env.RARITY_CACHE_TTL_DAYS ?? 30),
