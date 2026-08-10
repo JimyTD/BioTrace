@@ -2,6 +2,8 @@
 
 个人向「旅行自然观察」：选图识别 → 落入旅途相册与地图。
 
+**当前 Android 侧载包版本：`0.1.0`**（[Release](https://github.com/JimyTD/BioTrace/releases/tag/android-v0.1.0) · 发版见 [`docs/08` §7.2](docs/08-部署实操手册.md)）
+
 > Cut 1–3 已收口。Cut 4（上云）制品在仓库内；**上机步骤见 [`docs/07`](docs/07-部署-腾讯云轻量.md)**。  
 > 筹划 [`docs/00`](docs/00-讨论进程与决策.md) · 规格 [`docs/06`](docs/06-实现与功能规格.md)。
 
