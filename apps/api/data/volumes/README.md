@@ -1,5 +1,7 @@
 # 套册配置（与引擎分离）
 
+> 产品 / 策展 / 当前目录总表：[`docs/10-旅行套册.md`](../../../docs/10-旅行套册.md)
+
 - 每个 `*.json`（非 `_` 前缀）= 一本套册；热加册只需加文件 + `packages/messages` 文案，**不必改 TypeScript**。
 - 正式册：`intertidal`（潮间带）/ `urban_wild`（城市野趣）/ `woodland_edge`（林缘遇见）。
 - `fixture-pipeline.json` 默认 `enabled: false`，仅开发验收用。
