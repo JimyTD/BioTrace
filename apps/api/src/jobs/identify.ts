@@ -63,9 +63,14 @@ export function enqueueIdentify(opts: {
       }
 
       const taxonomyJson = JSON.stringify(result.taxonomy);
+      // 识图 Prompt 可用上传时闭包坐标；地理结算读库内最新 lat/lng（支持 analyzing 期间补标）。
+      const fresh = await db.query.observations.findFirst({
+        where: eq(observations.id, opts.observationId),
+        columns: { lat: true, lng: true },
+      });
       const settle = await computeSettle({
-        lat: opts.lat,
-        lng: opts.lng,
+        lat: fresh?.lat ?? opts.lat,
+        lng: fresh?.lng ?? opts.lng,
         finestReliableRank: result.finest_reliable_rank,
         scientificName: result.scientific_name,
         commonName: result.common_name_zh,

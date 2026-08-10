@@ -15,6 +15,7 @@ import {
 } from "../services/collection.js";
 import { removeObservationFiles } from "../services/observationFiles.js";
 import { serializeObservation } from "../serialize.js";
+import { computeSettle } from "../settle/rules.js";
 import { evaluateVolumesOnObservation } from "../volumes/index.js";
 
 export const observationRoutes = new Hono<{ Variables: Variables }>();
@@ -48,6 +49,79 @@ observationRoutes.get("/:id", async (c) => {
   const redactPending = !(forSettle && row.status === "pending_settle");
   return c.json({
     observation: serializeObservation(row, { redactPending }),
+  });
+});
+
+observationRoutes.patch("/:id/location", async (c) => {
+  const user = c.get("user");
+  const row = await db.query.observations.findFirst({
+    where: and(eq(observations.id, c.req.param("id")), eq(observations.userId, user.id)),
+  });
+  if (!row) {
+    const err = apiError("not found", 404);
+    return c.json(err.body, err.status);
+  }
+
+  const parsed = z
+    .object({
+      lat: z.number().finite().gte(-90).lte(90),
+      lng: z.number().finite().gte(-180).lte(180),
+    })
+    .safeParse(await c.req.json().catch(() => null));
+  if (!parsed.success) {
+    return c.json({ error: t("detail.locationInvalid"), code: "location_invalid" }, 400);
+  }
+
+  const { lat, lng } = parsed.data;
+  const now = new Date();
+  const hasIdentity = Boolean(row.finestReliableRank);
+
+  let derived: Awaited<ReturnType<typeof computeSettle>> | null = null;
+  if (hasIdentity) {
+    derived = await computeSettle({
+      lat,
+      lng,
+      finestReliableRank: row.finestReliableRank,
+      scientificName: row.scientificName,
+      commonName: row.commonName,
+      taxonomyJson: row.taxonomyJson,
+    });
+  }
+
+  await db
+    .update(observations)
+    .set({
+      lat,
+      lng,
+      updatedAt: now,
+      ...(derived
+        ? {
+            countryCode: derived.countryCode,
+            countrySource: derived.countrySource,
+            locationPrecise: derived.locationPrecise,
+            alertIntroduced: derived.alertIntroduced,
+            rarity: derived.rarity,
+            settleTier: derived.settleTier,
+            taxonKey: derived.taxonKey,
+          }
+        : {}),
+    })
+    .where(eq(observations.id, row.id));
+
+  const updated = await db.query.observations.findFirst({
+    where: eq(observations.id, row.id),
+  });
+  if (!updated) {
+    const err = apiError("not found", 404);
+    return c.json(err.body, err.status);
+  }
+
+  if (updated.status === "settled") {
+    await upsertCollectionFromObservation(updated);
+  }
+
+  return c.json({
+    observation: serializeObservation(updated, { redactPending: true }),
   });
 });
 

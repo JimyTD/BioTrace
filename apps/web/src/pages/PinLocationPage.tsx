@@ -1,0 +1,128 @@
+import { useEffect, useRef, useState } from "react";
+import { Link, useNavigate, useParams } from "react-router-dom";
+import maplibregl, { Map } from "maplibre-gl";
+import "maplibre-gl/dist/maplibre-gl.css";
+import { t } from "@biotrace/messages";
+import { api } from "../api";
+import {
+  DEFAULT_MAP_CENTER,
+  DEFAULT_MAP_ZOOM,
+  MAP_STYLE,
+  PIN_EXISTING_ZOOM,
+  USER_MAX_ZOOM,
+  attachTiandituFallback,
+} from "../map/style";
+
+export default function PinLocationPage() {
+  const { id = "" } = useParams();
+  const navigate = useNavigate();
+  const containerRef = useRef<HTMLDivElement | null>(null);
+  const mapRef = useRef<Map | null>(null);
+  const [error, setError] = useState<string | null>(null);
+  const [mapReady, setMapReady] = useState(false);
+  const [saving, setSaving] = useState(false);
+  const [centerLabel, setCenterLabel] = useState("");
+
+  useEffect(() => {
+    let cancelled = false;
+    let detachFallback: (() => void) | undefined;
+    let map: Map | null = null;
+
+    async function boot() {
+      try {
+        const { observation } = await api.getObservation(id);
+        if (cancelled || !containerRef.current) return;
+
+        const hasPoint = observation.lat != null && observation.lng != null;
+        const center: [number, number] = hasPoint
+          ? [observation.lng!, observation.lat!]
+          : DEFAULT_MAP_CENTER;
+        const zoom = hasPoint ? PIN_EXISTING_ZOOM : DEFAULT_MAP_ZOOM;
+
+        map = new maplibregl.Map({
+          container: containerRef.current,
+          style: MAP_STYLE,
+          center,
+          zoom,
+          maxZoom: USER_MAX_ZOOM,
+        });
+        map.addControl(new maplibregl.NavigationControl({ visualizePitch: false }), "top-right");
+        detachFallback = attachTiandituFallback(map);
+
+        const refreshCenter = () => {
+          const c = map!.getCenter();
+          setCenterLabel(`${c.lat.toFixed(5)}, ${c.lng.toFixed(5)}`);
+        };
+        map.on("load", () => {
+          refreshCenter();
+          if (!cancelled) setMapReady(true);
+        });
+        map.on("move", refreshCenter);
+
+        mapRef.current = map;
+      } catch (e) {
+        if (!cancelled) {
+          setError(e instanceof Error ? e.message : t("detail.loadFailed"));
+        }
+      }
+    }
+
+    void boot();
+    return () => {
+      cancelled = true;
+      detachFallback?.();
+      map?.remove();
+      mapRef.current = null;
+      setMapReady(false);
+    };
+  }, [id]);
+
+  async function confirmHere() {
+    const map = mapRef.current;
+    if (!map || saving) return;
+    const { lat, lng } = map.getCenter();
+    setSaving(true);
+    setError(null);
+    try {
+      await api.setObservationLocation(id, lat, lng);
+      navigate(`/observations/${id}`, { replace: true, state: { locationSaved: true } });
+    } catch (e) {
+      setError(e instanceof Error ? e.message : t("detail.locationSaveFailed"));
+      setSaving(false);
+    }
+  }
+
+  return (
+    <div className="stack pin-page">
+      <div className="row">
+        <Link className="btn secondary" to={`/observations/${id}`}>
+          {t("detail.pinCancel")}
+        </Link>
+      </div>
+
+      <div>
+        <h1 className="brand">{t("detail.pinTitle")}</h1>
+        <p className="lede">{t("detail.pinLede")}</p>
+      </div>
+
+      <div className="map-wrap map-wrap-pin">
+        <div ref={containerRef} className="map-pin-canvas" />
+        <div className="map-pin-crosshair" aria-hidden="true">
+          <span className="map-pin-crosshair-dot" />
+        </div>
+      </div>
+
+      {centerLabel ? <p className="muted pin-center-label">{centerLabel}</p> : null}
+      {error ? <p className="error">{error}</p> : null}
+
+      <div className="row">
+        <button className="btn" disabled={!mapReady || saving} onClick={confirmHere}>
+          {saving ? t("detail.pinSaving") : t("detail.pinConfirm")}
+        </button>
+        <Link className="btn secondary" to={`/observations/${id}`}>
+          {t("detail.pinCancel")}
+        </Link>
+      </div>
+    </div>
+  );
+}

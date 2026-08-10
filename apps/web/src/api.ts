@@ -194,6 +194,12 @@ export const api = {
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ description }),
     }),
+  setObservationLocation: (id: string, lat: number, lng: number) =>
+    request<{ observation: Observation }>(`/api/observations/${id}/location`, {
+      method: "PATCH",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ lat, lng }),
+    }),
   listMappedObservations: () =>
     request<{ observations: Observation[] }>("/api/observations?mapped=1"),
   listCollection: () => request<{ entries: CollectionEntry[] }>("/api/collection"),

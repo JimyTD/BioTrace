@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { Link, useNavigate, useParams } from "react-router-dom";
+import { Link, useLocation, useNavigate, useParams } from "react-router-dom";
 import { formatRank, t, type MessageKey } from "@biotrace/messages";
 import { api, type Observation, type Taxonomy } from "../api";
 import ConfirmDialog from "../components/ConfirmDialog";
@@ -51,11 +51,21 @@ function TaxonomyList({ taxonomy }: { taxonomy: Taxonomy }) {
 export default function ObservationDetailPage() {
   const { id = "" } = useParams();
   const navigate = useNavigate();
+  const location = useLocation();
   const [obs, setObs] = useState<Observation | null>(null);
   const [error, setError] = useState<string | null>(null);
+  const [notice, setNotice] = useState<string | null>(null);
   const [deleting, setDeleting] = useState(false);
   const [reidentifying, setReidentifying] = useState(false);
   const [confirmKind, setConfirmKind] = useState<"delete" | "reidentify" | null>(null);
+
+  useEffect(() => {
+    const state = location.state as { locationSaved?: boolean } | null;
+    if (state?.locationSaved) {
+      setNotice(t("detail.locationSaved"));
+      navigate(location.pathname, { replace: true, state: null });
+    }
+  }, [location.state, location.pathname, navigate]);
 
   useEffect(() => {
     let cancelled = false;
@@ -264,12 +274,22 @@ export default function ObservationDetailPage() {
             {t("detail.capturedAt")}：
             {obs.capturedAt ? new Date(obs.capturedAt).toLocaleString() : "—"}
           </span>
-          <span>
-            {t("detail.location")}：
-            {obs.lat != null && obs.lng != null
-              ? `${obs.lat.toFixed(5)}, ${obs.lng.toFixed(5)}`
-              : t("detail.noGps")}
-          </span>
+          <div className="row" style={{ alignItems: "center" }}>
+            <span>
+              {t("detail.location")}：
+              {obs.lat != null && obs.lng != null
+                ? `${obs.lat.toFixed(5)}, ${obs.lng.toFixed(5)}`
+                : t("detail.noGps")}
+            </span>
+            <Link
+              className={obs.lat != null && obs.lng != null ? "btn secondary" : "btn"}
+              to={`/observations/${obs.id}/pin`}
+            >
+              {obs.lat != null && obs.lng != null
+                ? t("detail.changeLocation")
+                : t("detail.setLocation")}
+            </Link>
+          </div>
         </div>
       </div>
 
@@ -291,6 +311,7 @@ export default function ObservationDetailPage() {
           {deleting ? t("detail.deleting") : t("detail.delete")}
         </button>
       </div>
+      {notice ? <p className="muted">{notice}</p> : null}
       {error ? <p className="error">{error}</p> : null}
 
       <ConfirmDialog

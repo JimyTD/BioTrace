@@ -8,6 +8,7 @@ import MapPage from "./pages/MapPage";
 import MePage from "./pages/MePage";
 import ObservationDetailPage from "./pages/ObservationDetailPage";
 import ObservationSettlePage from "./pages/ObservationSettlePage";
+import PinLocationPage from "./pages/PinLocationPage";
 import TripAlbumPage from "./pages/TripAlbumPage";
 import TripsPage from "./pages/TripsPage";
 
@@ -44,6 +45,7 @@ export default function App() {
         <Routes>
           <Route path="/" element={<TripsPage />} />
           <Route path="/trips/:id" element={<TripAlbumPage />} />
+          <Route path="/observations/:id/pin" element={<PinLocationPage />} />
           <Route path="/observations/:id" element={<ObservationDetailPage />} />
           <Route path="/settle/:id" element={<ObservationSettlePage />} />
           <Route path="/map" element={<MapPage />} />
