@@ -2,7 +2,11 @@ import type { Observation } from "../db/schema.js";
 import { parseTaxonomy } from "../settle/taxon.js";
 import { loadVolumeConfigs } from "./load.js";
 import { slotMatches } from "./match.js";
-import { readVolumeProgress, writeVolumeProgress } from "./progress.js";
+import {
+  readVolumeProgress,
+  writeVolumeProgress,
+  type LitSlotEntry,
+} from "./progress.js";
 import { resolveTaxonomyForVolumes } from "./taxonomy-resolve.js";
 
 export type VolumeEvalResult = {
@@ -41,18 +45,20 @@ export async function evaluateVolumesOnObservation(obs: Observation): Promise<Vo
 
   for (const vol of volumes) {
     const prev = await readVolumeProgress(obs.userId, vol.id);
-    const lit = new Set(prev.litSlotIds);
+    const litSlots: Record<string, LitSlotEntry> = { ...prev.litSlots };
     const wasComplete = Boolean(prev.completedAt);
+    let changed = false;
 
     for (const slot of vol.slots) {
-      if (lit.has(slot.id)) continue;
+      if (litSlots[slot.id]) continue;
       const ok = slotMatches({
         rule: slot.rule,
         taxonomy,
         finestReliableRank: obs.finestReliableRank,
       });
       if (ok) {
-        lit.add(slot.id);
+        litSlots[slot.id] = { observationId: obs.id };
+        changed = true;
         newlyLit.push({
           volumeId: vol.id,
           slotId: slot.id,
@@ -62,20 +68,20 @@ export async function evaluateVolumesOnObservation(obs: Observation): Promise<Vo
       }
     }
 
-    const litSlotIds = [...lit];
-    const complete = vol.slots.every((s) => lit.has(s.id));
+    const complete = vol.slots.every((s) => Boolean(litSlots[s.id]));
     let completedAt = prev.completedAt;
     if (complete && !wasComplete) {
       completedAt = new Date();
       newlyCompletedVolumeIds.push(vol.id);
       newlyCompleted.push({ volumeId: vol.id, titleKey: vol.titleKey });
+      changed = true;
     }
 
-    if (newlyLit.some((x) => x.volumeId === vol.id) || (complete && !wasComplete)) {
+    if (changed) {
       await writeVolumeProgress({
         userId: obs.userId,
         volumeId: vol.id,
-        litSlotIds,
+        litSlots,
         completedAt,
       });
     }

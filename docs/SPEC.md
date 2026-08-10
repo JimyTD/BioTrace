@@ -258,14 +258,15 @@ computeSettle
 - 模块：[`apps/api/src/volumes/`](../apps/api/src/volumes/)
 - 进度表：`volume_progress`
 - 开包后：`evaluateVolumesOnObservation`（先 GBIF 临时锚定 taxonomy，再 `taxonomy_in`）
-- API：`GET /api/volumes`；settle 响应带 `volumes.newlyLit / newlyCompleted*`；收下后有反馈则叠一层（成册优先于点亮槽，无则静默）
-- UI：图鉴页套册区（CSS 灰阶占位）
+- API：`GET /api/volumes`；settle 响应带 `volumes.newlyLit / newlyCompleted*`；收下后有反馈则弹出仪式层（成册优先于点亮槽，无则静默回相册）
+- 进度 `lit_slot_ids_json`：兼容旧 `string[]`；新写 `Record<slotId,{observationId}>`，供邮票封面
+- UI：图鉴页紧凑册卡 → **弹层邮票墙**；开包点亮/成册用独立弹层（非页内挤排）
 - 已配三本：`intertidal` / `urban_wild` / `woodland_edge`；`fixture-pipeline` 默认关闭
 - DSL 摘要：[`data/volumes/README.md`](../apps/api/data/volumes/README.md)
 
 ## 8. 后置
 
-- 套册：更多主题册策展（内容 only）；美术封面；可选详情页
+- 套册：更多主题册策展（内容 only）；可选独立路由详情 / 手绘册皮
 - 皮肤：潜水/潮间带主题 `tide`；「我的」里主题切换 UI（见 [`features/皮肤主题.md`](./features/皮肤主题.md) §5）
 - 稀有度：灭绝级 XR 稳定性；中档继续靠判定键微调（禁止物种名单）
 - 旅途元数据增强（封面 / 时间 / 地点摘要）
@@ -319,3 +320,4 @@ computeSettle
 - 2026-08-10：无 GPS 地图补标交独立 agent；出交接规格（现 [`features/地图补标.md`](./features/地图补标.md)）。
 - 2026-08-10：地图补标已落地——详情准星选点、`PATCH …/location`、identify 结算前读库坐标；§0 / §1.3 收口；交接文迁 [`features/地图补标.md`](./features/地图补标.md)。
 - 2026-08-10：引入名录全灌——GRIIS Country Compendium + GBIF China 覆盖；图鉴曾警示轻标；冒烟含 JP/US。
+- 2026-08-10：套册成就表现——进度带 observationId；图鉴弹层邮票墙；开包点亮/成册仪式弹层。

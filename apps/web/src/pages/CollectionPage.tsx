@@ -1,14 +1,15 @@
 import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
-import { t, type MessageKey } from "@biotrace/messages";
+import { hasMessage, t, type MessageKey } from "@biotrace/messages";
 import { api, type CollectionEntry, type Rarity, type VolumeListItem } from "../api";
+import VolumeBookDialog from "../components/VolumeBookDialog";
 
 function rarityLabel(r: Rarity) {
   return t(`rarity.${r}` as MessageKey);
 }
 
 function msg(key: string) {
-  return t(key as MessageKey);
+  return hasMessage(key) ? t(key) : key;
 }
 
 export default function CollectionPage() {
@@ -16,6 +17,7 @@ export default function CollectionPage() {
   const [volumes, setVolumes] = useState<VolumeListItem[]>([]);
   const [error, setError] = useState<string | null>(null);
   const [loading, setLoading] = useState(true);
+  const [openVolumeId, setOpenVolumeId] = useState<string | null>(null);
 
   useEffect(() => {
     Promise.all([api.listCollection(), api.listVolumes()])
@@ -27,12 +29,14 @@ export default function CollectionPage() {
       .finally(() => setLoading(false));
   }, []);
 
+  const openVolume = volumes.find((v) => v.id === openVolumeId) ?? null;
+
   return (
-    <div className="stack">
-      <div>
-        <h1 className="brand">{t("collection.title")}</h1>
+    <div className="stack page-collection">
+      <header className="page-head">
+        <h1 className="page-title">{t("collection.title")}</h1>
         <p className="lede">{t("collection.lede")}</p>
-      </div>
+      </header>
 
       {loading ? <p className="muted">{t("app.loading")}</p> : null}
       {error ? <p className="error">{error}</p> : null}
@@ -46,15 +50,21 @@ export default function CollectionPage() {
           {volumes.length === 0 ? (
             <p className="muted">{t("collection.volumesEmpty")}</p>
           ) : (
-            <div className="volume-grid">
+            <div className="volume-rail">
               {volumes.map((vol) => (
-                <article
+                <button
                   key={vol.id}
-                  className={`volume-card${vol.completed ? " volume-card-lit" : " volume-card-dim"}`}
+                  type="button"
+                  className={`volume-tile${vol.completed ? " is-complete" : ""}`}
+                  onClick={() => setOpenVolumeId(vol.id)}
                 >
-                  <div className="volume-card-head">
-                    <strong>{msg(vol.titleKey)}</strong>
-                    <span className="muted">
+                  <div className="volume-tile-cover">
+                    {vol.coverDisplayUrl ? (
+                      <img src={vol.coverDisplayUrl} alt="" />
+                    ) : (
+                      <div className="volume-tile-placeholder" aria-hidden />
+                    )}
+                    <span className="volume-tile-progress">
                       {vol.completed
                         ? t("collection.volumeDone")
                         : t("collection.volumeProgress", {
@@ -63,62 +73,66 @@ export default function CollectionPage() {
                           })}
                     </span>
                   </div>
-                  <p className="muted volume-lede">{msg(vol.ledeKey)}</p>
-                  <ul className="volume-slots">
-                    {vol.slots.map((slot) => (
-                      <li key={slot.id} className={slot.lit ? "slot-lit" : "slot-dim"}>
-                        {msg(slot.titleKey)}
-                      </li>
-                    ))}
-                  </ul>
-                </article>
+                  <strong>{msg(vol.titleKey)}</strong>
+                  <span className="muted volume-tile-open">{t("collection.volumeOpen")}</span>
+                </button>
               ))}
             </div>
           )}
         </section>
       ) : null}
 
-      {!loading && entries.length === 0 ? (
-        <div className="panel">
-          <p className="muted">{t("collection.empty")}</p>
-        </div>
-      ) : (
-        <div className="album">
-          {entries.map((entry) => (
-            <Link
-              className="card card-link"
-              key={entry.id}
-              to={
-                entry.coverObservationId
-                  ? `/observations/${entry.coverObservationId}`
-                  : "/collection"
-              }
-            >
-              {entry.coverDisplayUrl ? (
-                <img
-                  src={entry.coverDisplayUrl}
-                  alt={entry.commonName || entry.scientificName || entry.taxonKey}
-                />
-              ) : (
-                <div className="card-placeholder" />
-              )}
-              <div className="meta">
-                <div className="card-tags">
-                  <span className={`rarity-badge rarity-${entry.rarity}`}>
-                    {rarityLabel(entry.rarity)}
-                  </span>
-                  {entry.alertIntroduced ? (
-                    <span className="intro-tag">{t("settle.alertIntroduced")}</span>
-                  ) : null}
-                </div>
-                <strong>
-                  {entry.commonName || entry.scientificName || entry.taxonKey || t("detail.unnamed")}
-                </strong>
-              </div>
-            </Link>
-          ))}
-        </div>
-      )}
+      {!loading ? (
+        <section className="stack">
+          <h2 className="section-title">{t("collection.speciesTitle")}</h2>
+          {entries.length === 0 ? (
+            <p className="muted empty-hint">{t("collection.empty")}</p>
+          ) : (
+            <div className="album film-grid">
+              {entries.map((entry) => (
+                <Link
+                  className="film-tile-link"
+                  key={entry.id}
+                  to={
+                    entry.coverObservationId
+                      ? `/observations/${entry.coverObservationId}`
+                      : "/collection"
+                  }
+                >
+                  <div className="film-tile-media">
+                    {entry.coverDisplayUrl ? (
+                      <img
+                        src={entry.coverDisplayUrl}
+                        alt={entry.commonName || entry.scientificName || entry.taxonKey}
+                      />
+                    ) : (
+                      <div className="card-placeholder" />
+                    )}
+                  </div>
+                  <div className="film-tile-meta">
+                    <div className="card-tags">
+                      <span className={`rarity-badge rarity-${entry.rarity}`}>
+                        {rarityLabel(entry.rarity)}
+                      </span>
+                      {entry.alertIntroduced ? (
+                        <span className="intro-tag">{t("settle.alertIntroduced")}</span>
+                      ) : null}
+                    </div>
+                    <strong>
+                      {entry.commonName ||
+                        entry.scientificName ||
+                        entry.taxonKey ||
+                        t("detail.unnamed")}
+                    </strong>
+                  </div>
+                </Link>
+              ))}
+            </div>
+          )}
+        </section>
+      ) : null}
+
+      <VolumeBookDialog volume={openVolume} onClose={() => setOpenVolumeId(null)} />
     </div>
   );
 }

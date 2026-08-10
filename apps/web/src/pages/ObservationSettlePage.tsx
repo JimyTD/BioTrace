@@ -19,15 +19,20 @@ function msgKey(key: string): string {
   return hasMessage(key) ? t(key) : key;
 }
 
-/** Prefer completed-volume copy; else slot-lit. Empty = stay silent. */
-function volumeFeedbackLine(volumes: SettleVolumesResult): string | null {
+type CeremonyKind = "complete" | "slot";
+
+function buildCeremony(volumes: SettleVolumesResult): {
+  kind: CeremonyKind;
+  line: string;
+} | null {
   const completed = volumes.newlyCompleted ?? [];
   if (completed.length > 0) {
     const volume = msgKey(completed[0]!.titleKey);
-    if (completed.length === 1) {
-      return t("settle.volumeCompleted", { volume });
-    }
-    return t("settle.volumeCompletedMore", { volume, count: completed.length });
+    const line =
+      completed.length === 1
+        ? t("settle.volumeCompleted", { volume })
+        : t("settle.volumeCompletedMore", { volume, count: completed.length });
+    return { kind: "complete", line };
   }
 
   const lit = volumes.newlyLit ?? [];
@@ -35,14 +40,15 @@ function volumeFeedbackLine(volumes: SettleVolumesResult): string | null {
   const first = lit[0]!;
   const volume = msgKey(first.volumeTitleKey);
   const slot = msgKey(first.slotTitleKey);
-  if (lit.length === 1) {
-    return t("settle.volumeSlotLit", { volume, slot });
-  }
-  return t("settle.volumeSlotLitMore", {
-    volume,
-    slot,
-    count: lit.length - 1,
-  });
+  const line =
+    lit.length === 1
+      ? t("settle.volumeSlotLit", { volume, slot })
+      : t("settle.volumeSlotLitMore", {
+          volume,
+          slot,
+          count: lit.length - 1,
+        });
+  return { kind: "slot", line };
 }
 
 export default function ObservationSettlePage() {
@@ -52,8 +58,7 @@ export default function ObservationSettlePage() {
   const [error, setError] = useState<string | null>(null);
   const [phase, setPhase] = useState<"sealed" | "revealing" | "open" | "claimed">("sealed");
   const [claiming, setClaiming] = useState(false);
-  const [volumeLine, setVolumeLine] = useState<string | null>(null);
-  const [showCollectionLink, setShowCollectionLink] = useState(false);
+  const [ceremony, setCeremony] = useState<{ kind: CeremonyKind; line: string } | null>(null);
 
   useEffect(() => {
     api
@@ -92,13 +97,12 @@ export default function ObservationSettlePage() {
         newlyCompletedVolumeIds: [],
         newlyCompleted: [],
       };
-      const line = volumeFeedbackLine(volumes);
-      if (!line) {
+      const next = buildCeremony(volumes);
+      if (!next) {
         navigate(`/trips/${obs.tripId}`, { replace: true });
         return;
       }
-      setVolumeLine(line);
-      setShowCollectionLink((volumes.newlyCompleted?.length ?? 0) > 0);
+      setCeremony(next);
       setPhase("claimed");
       setClaiming(false);
     } catch (e) {
@@ -125,7 +129,7 @@ export default function ObservationSettlePage() {
   return (
     <div className="stack settle-page">
       <div>
-        <h1 className="brand">{t("settle.title")}</h1>
+        <h1 className="page-title">{t("settle.title")}</h1>
         <p className="lede">{t("settle.lede")}</p>
       </div>
 
@@ -175,23 +179,11 @@ export default function ObservationSettlePage() {
                   ) : null}
                   {obs.blurb ? <p className="blurb">{obs.blurb}</p> : null}
 
-                  {phase === "claimed" && volumeLine ? (
-                    <div className="settle-volume-note stack">
-                      <p className="settle-volume-line">{volumeLine}</p>
-                      <Link className="btn" to={`/trips/${obs.tripId}`} replace>
-                        {t("settle.backAlbum")}
-                      </Link>
-                      {showCollectionLink ? (
-                        <Link className="btn secondary" to="/collection" replace>
-                          {t("settle.volumeToCollection")}
-                        </Link>
-                      ) : null}
-                    </div>
-                  ) : (
+                  {phase !== "claimed" ? (
                     <button className="btn" type="button" disabled={claiming} onClick={onClaim}>
                       {claiming ? t("settle.claiming") : t("settle.claim")}
                     </button>
-                  )}
+                  ) : null}
                 </>
               )}
             </div>
@@ -204,6 +196,32 @@ export default function ObservationSettlePage() {
         <Link className="btn secondary" to={`/trips/${obs.tripId}`}>
           {t("settle.backAlbum")}
         </Link>
+      ) : null}
+
+      {phase === "claimed" && ceremony ? (
+        <div className="modal-backdrop volume-ceremony-backdrop" role="presentation">
+          <div
+            className={`modal-panel volume-ceremony stack${
+              ceremony.kind === "complete" ? " is-complete" : ""
+            }`}
+            role="dialog"
+            aria-modal="true"
+            aria-labelledby="volume-ceremony-title"
+          >
+            <p className="muted section-kicker" id="volume-ceremony-title">
+              {ceremony.kind === "complete"
+                ? t("settle.volumeCeremonyCompleteTitle")
+                : t("settle.volumeCeremonyTitle")}
+            </p>
+            <p className="volume-ceremony-line">{ceremony.line}</p>
+            <Link className="btn" to="/collection" replace>
+              {t("settle.volumeToCollection")}
+            </Link>
+            <Link className="btn secondary" to={`/trips/${obs.tripId}`} replace>
+              {t("settle.volumeContinue")}
+            </Link>
+          </div>
+        </div>
       ) : null}
     </div>
   );

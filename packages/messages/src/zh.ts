@@ -130,6 +130,9 @@ export const zh = {
   "settle.volumeCompleted": "「{volume}」整册点亮",
   "settle.volumeCompletedMore": "「{volume}」等 {count} 本整册点亮",
   "settle.volumeToCollection": "去图鉴看看",
+  "settle.volumeCeremonyTitle": "套册进展",
+  "settle.volumeCeremonyCompleteTitle": "整册点亮",
+  "settle.volumeContinue": "继续旅途",
 
   "rarity.N": "N · 常见",
   "rarity.R": "R · 少见",
@@ -148,11 +151,16 @@ export const zh = {
   "collection.empty": "还没有遇见。去旅途里拍点什么。",
   "collection.loadFailed": "加载图鉴失败",
   "collection.volumesTitle": "旅行套册",
-  "collection.volumesLede": "主题图鉴：一格一格点亮，整册转彩。",
+  "collection.volumesLede": "点开一本，看邮票一点一点盖上。",
   "collection.volumesEmpty": "还没有套册。",
   "collection.volumesLoadFailed": "加载套册失败",
   "collection.volumeProgress": "{lit}/{total}",
-  "collection.volumeDone": "已点亮",
+  "collection.volumeDone": "整册点亮",
+  "collection.volumeOpen": "打开套册",
+  "collection.volumeClose": "关闭",
+  "collection.volumeStampEmpty": "未点亮",
+  "collection.volumeStampsTitle": "邮票",
+  "collection.speciesTitle": "已收录",
 
   // dev fixture only：配置里 enabled:false，正式环境不加载；待分层重构时移出主表
   "volume.fixture_pipeline.title": "管道验收册",

@@ -70,4 +70,11 @@
   --rarity-UR-fg: #8a4b00;
   --rarity-LR-bg: #f0cfc8;
   --rarity-LR-fg: #7a2a28;
+
+  /* 套册 / 邮票 */
+  --volume-cover-empty: #e7dfd2;
+  --volume-stamp-empty-line: rgba(58, 50, 44, 0.28);
+  --volume-complete-line: #d3543c;
+  --volume-complete-soft: #f0ddd4;
+  --volume-complete-ink: #9a4030;
 }

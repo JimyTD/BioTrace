@@ -221,6 +221,8 @@ export type VolumeSlotView = {
   id: string;
   titleKey: string;
   lit: boolean;
+  coverObservationId: string | null;
+  coverDisplayUrl: string | null;
 };
 
 export type VolumeListItem = {
@@ -232,5 +234,6 @@ export type VolumeListItem = {
   completedAt: string | null;
   litCount: number;
   totalSlots: number;
+  coverDisplayUrl: string | null;
   slots: VolumeSlotView[];
 };

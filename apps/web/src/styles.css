@@ -885,58 +885,198 @@ a {
   font-size: 1.15rem;
 }
 
+.section-kicker {
+  margin: 0;
+  font-size: 0.8rem;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+}
+
 .volumes-section {
-  margin-bottom: 0.5rem;
+  margin-bottom: 0.75rem;
 }
 
-.volume-grid {
+.volume-rail {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
-  gap: 12px;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 10px;
 }
 
-.volume-card {
-  border: 1px solid var(--line);
+@media (max-width: 560px) {
+  .volume-rail {
+    grid-template-columns: 1fr;
+  }
+}
+
+.volume-tile {
+  display: grid;
+  gap: 6px;
+  padding: 0;
+  border: 0;
+  background: transparent;
+  text-align: left;
+  color: inherit;
+  font: inherit;
+  cursor: pointer;
+}
+
+.volume-tile-cover {
+  position: relative;
+  aspect-ratio: 4 / 3;
   border-radius: var(--radius-md);
-  padding: 12px 14px;
-  background: var(--card);
-  transition: filter 280ms ease, border-color 280ms ease, transform 200ms ease;
+  overflow: hidden;
+  border: 1px solid var(--line);
+  background: var(--volume-cover-empty, var(--surface-wash));
 }
 
-.volume-card-dim {
-  filter: grayscale(1);
-  opacity: 0.85;
+.volume-tile-cover img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+  filter: saturate(0.92);
 }
 
-.volume-card-lit {
-  filter: none;
-  border-color: var(--accent-border-strong);
-  box-shadow: var(--shadow);
+.volume-tile-placeholder {
+  width: 100%;
+  height: 100%;
+  background:
+    linear-gradient(145deg, rgba(211, 84, 60, 0.14), transparent 50%),
+    linear-gradient(180deg, #e7dfd2, #d5cbbd);
 }
 
-.volume-card-head {
+.volume-tile-progress {
+  position: absolute;
+  left: 8px;
+  bottom: 8px;
+  padding: 3px 8px;
+  border-radius: var(--radius-sm);
+  background: rgba(250, 248, 243, 0.92);
+  color: var(--ink);
+  font-size: 0.75rem;
+  font-weight: 700;
+}
+
+.volume-tile.is-complete .volume-tile-cover {
+  border-color: var(--volume-complete-line, var(--cta));
+  box-shadow: 0 0 0 1px var(--volume-complete-line, var(--cta));
+}
+
+.volume-tile strong {
+  font-size: 1rem;
+  letter-spacing: -0.02em;
+}
+
+.volume-tile-open {
+  font-size: 0.82rem;
+}
+
+.volume-book-panel {
+  width: min(520px, 100%);
+  max-height: min(86vh, 720px);
+  overflow: auto;
+}
+
+.volume-book-head {
   display: flex;
   justify-content: space-between;
-  gap: 8px;
-  align-items: baseline;
+  gap: 12px;
+  align-items: flex-start;
 }
 
 .volume-lede {
-  margin: 0.35rem 0 0.5rem;
+  margin: 0.35rem 0 0;
   font-size: 0.9rem;
 }
 
-.volume-slots {
-  margin: 0;
-  padding-left: 1.1rem;
-  font-size: 0.88rem;
-}
-
-.volume-slots .slot-dim {
-  color: var(--muted);
-}
-
-.volume-slots .slot-lit {
+.volume-progress-pill {
+  flex-shrink: 0;
+  padding: 4px 10px;
+  border-radius: 999px;
+  background: var(--accent-soft);
   color: var(--accent);
+  font-size: 0.78rem;
+  font-weight: 700;
+}
+
+.volume-progress-pill.is-done {
+  background: var(--volume-complete-soft, #f0ddd4);
+  color: var(--volume-complete-ink, var(--cta));
+}
+
+.stamp-grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 10px;
+}
+
+.stamp {
+  display: grid;
+  gap: 4px;
+  color: inherit;
+  text-decoration: none;
+}
+
+.stamp-lit,
+.stamp-empty,
+.stamp-no-photo {
+  position: relative;
+}
+
+.stamp img,
+.stamp-placeholder {
+  width: 100%;
+  aspect-ratio: 1;
+  border-radius: var(--radius-sm);
+  display: block;
+  object-fit: cover;
+  border: 1px solid var(--line);
+  background: var(--surface-wash);
+}
+
+.stamp-empty .stamp-placeholder {
+  border-style: dashed;
+  border-color: var(--volume-stamp-empty-line, rgba(58, 50, 44, 0.28));
+  background:
+    repeating-linear-gradient(
+      -45deg,
+      transparent,
+      transparent 5px,
+      rgba(58, 50, 44, 0.04) 5px,
+      rgba(58, 50, 44, 0.04) 6px
+    );
+}
+
+.stamp-caption {
+  font-size: 0.78rem;
+  color: var(--muted);
+  line-height: 1.25;
+}
+
+.stamp-lit .stamp-caption {
+  color: var(--ink);
   font-weight: 600;
+}
+
+.volume-ceremony-backdrop {
+  z-index: 50;
+}
+
+.volume-ceremony {
+  width: min(400px, 100%);
+  text-align: center;
+  animation: settleVolumeIn 420ms ease;
+}
+
+.volume-ceremony.is-complete {
+  border-color: var(--volume-complete-line, var(--cta));
+  box-shadow: 0 12px 36px rgba(211, 84, 60, 0.16);
+}
+
+.volume-ceremony-line {
+  margin: 0;
+  font-family: var(--font-brand);
+  font-size: 1.25rem;
+  letter-spacing: -0.02em;
+  line-height: 1.35;
 }
