@@ -1,7 +1,7 @@
 /**
  * Encounter-class rarity calibration (no images, no weighted sum).
  *
- *   pnpm exec tsx scripts/rarity-calibrate.ts --provider=zhipu
+ *   pnpm exec tsx scripts/rarity-calibrate.ts --model=glm-4.7-flash --thinking=off --delay-ms=3000
  */
 import { readFileSync, writeFileSync, mkdirSync } from "node:fs";
 import { dirname, join } from "node:path";
@@ -39,9 +39,13 @@ const RUBRIC = ENCOUNTER_RUBRIC;
 function parseArgs() {
   const limitArg = process.argv.find((a) => a.startsWith("--limit="));
   const delayArg = process.argv.find((a) => a.startsWith("--delay-ms="));
+  const modelArg = process.argv.find((a) => a.startsWith("--model="));
+  const thinkingArg = process.argv.find((a) => a.startsWith("--thinking="));
   return {
     limit: limitArg ? Number(limitArg.split("=")[1]) : undefined,
     delayMs: delayArg ? Number(delayArg.split("=")[1]) : 500,
+    model: modelArg?.split("=")[1]?.trim() || process.env.ZHIPU_TEXT_MODEL?.trim() || "glm-4-flash",
+    thinking: /^(1|on|true|enabled)$/i.test(thinkingArg?.split("=")[1]?.trim() ?? ""),
   };
 }
 
@@ -49,7 +53,7 @@ function sleep(ms: number) {
   return new Promise((r) => setTimeout(r, ms));
 }
 
-async function withRetry<T>(fn: () => Promise<T>, label: string, attempts = 4): Promise<T> {
+async function withRetry<T>(fn: () => Promise<T>, label: string, attempts = 6): Promise<T> {
   let last: unknown;
   for (let i = 1; i <= attempts; i++) {
     try {
@@ -60,7 +64,8 @@ async function withRetry<T>(fn: () => Promise<T>, label: string, attempts = 4): 
       if (!/429|quota|rate|Too Many|timeout|ECONNRESET|503|fetch failed/i.test(msg) || i === attempts) {
         throw err;
       }
-      const wait = Math.min(60_000, 4_000 * i);
+      // Zhipu free tier allows ~1 req/s on a single connection; back off hard on 1302.
+      const wait = Math.min(90_000, 6_000 * 2 ** (i - 1));
       console.log(`retry ${label} (${i}/${attempts}) in ${wait}ms`);
       await sleep(wait);
     }
@@ -96,9 +101,8 @@ function zhipuFetchInit(): RequestInit {
   return init;
 }
 
-async function callZhipu(prompt: string): Promise<string> {
+async function callZhipu(prompt: string, opts: { model: string; thinking: boolean }): Promise<string> {
   if (!env.zhipuApiKey) throw new Error("ZHIPU_API_KEY missing");
-  const model = process.env.ZHIPU_TEXT_MODEL?.trim() || "glm-4-flash";
   const url = `${env.zhipuBaseUrl.replace(/\/$/, "")}/chat/completions`;
   const res = await undiciFetch(url, {
     ...zhipuFetchInit(),
@@ -108,8 +112,12 @@ async function callZhipu(prompt: string): Promise<string> {
       "Content-Type": "application/json",
     },
     body: JSON.stringify({
-      model,
+      model: opts.model,
       temperature: 0,
+      // Only hybrid-thinking models (glm-4.5+) accept this field.
+      ...(/glm-(4\.[5-9]|[5-9])/i.test(opts.model)
+        ? { thinking: { type: opts.thinking ? "enabled" : "disabled" } }
+        : {}),
       messages: [
         { role: "system", content: "只输出合法 JSON 对象。" },
         { role: "user", content: prompt },
@@ -124,7 +132,7 @@ async function callZhipu(prompt: string): Promise<string> {
   return content;
 }
 
-async function scoreOne(row: TaxonRow) {
+async function scoreOne(row: TaxonRow, opts: { model: string; thinking: boolean }) {
   const prompt = `${RUBRIC}
 
 对象：
@@ -134,7 +142,7 @@ async function scoreOne(row: TaxonRow) {
 - country: CN
 - context: wild field encounter`;
 
-  const parsed = extractJson(await callZhipu(prompt));
+  const parsed = extractJson(await callZhipu(prompt, opts));
   const cls = parseEncounterClass(parsed.encounter_class);
   if (!cls) throw new Error(`bad encounter_class: ${String(parsed.encounter_class)}`);
   const iconicAppeal = parseIconicAppeal(parsed.iconic_appeal);
@@ -167,7 +175,9 @@ async function main() {
   const args = parseArgs();
   const taxa = JSON.parse(readFileSync(taxaPath, "utf8")) as TaxonRow[];
   const list = args.limit ? taxa.slice(0, args.limit) : taxa;
-  console.log(`Provider: zhipu | mode=encounter_class+offset | items=${list.length}`);
+  console.log(
+    `Provider: zhipu | model=${args.model} | thinking=${args.thinking ? "on" : "off"} | mode=encounter_class+offset | items=${list.length}`,
+  );
 
   const rows: Array<Record<string, unknown>> = [];
   let exactUser = 0;
@@ -179,7 +189,10 @@ async function main() {
   for (const row of list) {
     process.stdout.write(`#${row.id} ${row.label} ... `);
     try {
-      const scored = await withRetry(() => scoreOne(row), `#${row.id}`);
+      const scored = await withRetry(
+        () => scoreOne(row, { model: args.model, thinking: args.thinking }),
+        `#${row.id}`,
+      );
       await sleep(args.delayMs);
       const userTier = String(row.user ?? "").trim();
       const agentTier = String(row.agent ?? "").trim();
@@ -234,7 +247,8 @@ async function main() {
 
   mkdirSync(outDir, { recursive: true });
   const stamp = new Date().toISOString().replace(/[:.]/g, "-");
-  const outJson = join(outDir, `rarity-calibrate-${stamp}.json`);
+  const slug = `${args.model.replace(/[^a-z0-9.]+/gi, "-")}-think-${args.thinking ? "on" : "off"}`;
+  const outJson = join(outDir, `rarity-calibrate-${slug}-${stamp}.json`);
   writeFileSync(
     outJson,
     JSON.stringify(
@@ -242,6 +256,8 @@ async function main() {
         generatedAt: new Date().toISOString(),
         scheme: "encounter_class_offset",
         provider: "zhipu",
+        model: args.model,
+        thinking: args.thinking,
         summary: {
           n: rows.length,
           exact_vs_user: exactUser,
@@ -280,7 +296,7 @@ async function main() {
       ].join(","),
     ),
   ].join("\n");
-  const outCsv = join(outDir, `rarity-calibrate-${stamp}.csv`);
+  const outCsv = join(outDir, `rarity-calibrate-${slug}-${stamp}.csv`);
   writeFileSync(outCsv, csv, "utf8");
 
   console.log("\n=== summary ===");
