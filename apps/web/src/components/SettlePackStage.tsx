@@ -18,12 +18,17 @@ type Props = {
 /** 单开包视觉舞台：封缄壳 / 启封 / 展出（稀有度引子叠字） */
 export function SettlePackStage({ phase, photoUrl, photoAlt = "", rarity = null }: Props) {
   const sealed = phase === "sealed";
-  const showingPack = sealed || phase === "revealing";
+  const revealing = phase === "revealing";
+  const showingPack = sealed || revealing;
   const showFrame = !sealed;
   const showSeal = phase === "open" && rarity;
+  // 揭示中仍占封缄窗位；勿挂 is-open，否则会与展出 inset 抢样式
+  const stageMode = phase === "open" ? "is-open" : "is-sealed";
 
   return (
-    <div className={`settle-stage ${phase}`}>
+    <div
+      className={`settle-stage ${stageMode}${revealing ? " is-revealing" : ""}`}
+    >
       <img className="settle-pack-bg" src={settlePackBgUrl()} alt="" aria-hidden />
 
       <div className="settle-photo-mat">

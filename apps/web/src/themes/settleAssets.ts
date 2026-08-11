@@ -24,7 +24,10 @@ export function settlePhotoFrameUrl(theme?: ThemeId): string {
   return themeSettleAsset("photo-frame.svg", theme ?? getActiveTheme());
 }
 
-/** 稀有度章引子（透明 SVG mask）；XR 用异形六角章 */
+/**
+ * 稀有度章 SVG 路径（备用）。UI 已改内联 path 填色，勿再拿去 CSS mask。
+ * XR 用异形六角章。
+ */
 export function settleRaritySealUrl(theme?: ThemeId, rarity?: string | null): string {
   const id = theme ?? getActiveTheme();
   if (rarity === "XR") return themeSettleAsset("rarity-seal-xr.svg", id);
