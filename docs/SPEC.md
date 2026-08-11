@@ -3,7 +3,7 @@
 > **本文件是功能真源**：已做 / 本期要做 / 明确后置。查「某能力做没做」以此为准。  
 > 部署与线上现状看 [`OPS.md`](./OPS.md)；专题手册在 [`features/`](./features/)；当初的取舍理由在 [`planning/`](./planning/)。  
 > 变更历史看 git log，本文不留手抄变更记录。  
-> 更新日期：2026-08-10
+> 更新日期：2026-08-11
 
 ## 0. 当前阶段
 
@@ -98,6 +98,8 @@ docs/        筹划 + 本实现规格
 
 **重识别与删除（易踩）**：重识别**必须**填修正文本（`POST /:id/reidentify`，前端 `ReidentifyDialog` 强制），结果**覆盖同一条观察、不另存**；重识别开始与删除都要先 `detachFromCollection`，否则图鉴留残档。
 
+**纠正口径（已定 · 对应 early W3）**：认错只走「修正线索 → 重识别」。文字是辅助，**以照片为准、模型再判**。**不做**用户直接改学名 / 阶元 / taxonomy 并落库（那会砸识图与抽卡根基；见 `planning/03` Out `X8`）。早期「手改分类」措辞已废止，勿再当成待办。
+
 ---
 
 ## 3. Cut 3：稀有度与名录
@@ -158,8 +160,9 @@ docs/        筹划 + 本实现规格
       → 国家码 / settleTier / taxonKey / 引入警示
       → resolveRarity（rarity/index.ts）
           → resolveEncounterRarity（rarity/encounter.ts）
-              → 读缓存 enc2|国家|taxon（source=encounter）
-              → 未命中：ZHIPU 文本模型 + ENCOUNTER_RUBRIC
+              → 有效国家 = countryCode || CN（无国家按中国常见度）
+              → 读缓存 enc2|有效国家|taxon（source=encounter）
+              → 未命中：ZHIPU 文本模型 + ENCOUNTER_RUBRIC（Prompt 同有效国家）
               → resolveFromEncounter → 写缓存
               → 失败：seed → 默认 R（默认不缓存）
   → 观测写入 rarity，状态 pending_settle → 开包
@@ -225,7 +228,10 @@ computeSettle
 仍未定：
 
 - [ ] 灭绝级 XR（白鲟等）偶发标成 legend；中档继续靠判定键拧，不加物种名单
-- [ ] **无国家时稀有度按 CN 评**：`rarity/encounter.ts` 的 `input.countryCode?.trim() || "CN"` 与界面「无定位」文案不一致（说的和做的两样）。地图补标上线后此路径变少，但仍需定：回落 CN 还是走全球口径
+
+已定（无国家稀有度）：
+
+- [x] **无国家 → 按 CN 评**：Prompt / 缓存键 / seed 查找同一回落；结算文案 `settle.locationImprecise`（「无定位时按中国常见度评定」）。不强制地图补标；不改全球口径。旧 `GLOBAL|…` 缓存行可忽略，新键为 `enc2|CN|…`。
 
 ~~GBIF 稀有度主路径 / 常见种封顶表 / novelty 加权~~：已否决。  
 ~~引入种靠手写名单当主路径 / 属名模糊匹配~~：已否决。

@@ -117,11 +117,17 @@ function loadSeed(): Record<string, string> {
 }
 
 let seedCache: Record<string, string> | null = null;
-function seedLookup(taxonKey: string, countryCode: string | null): string | null {
+/** Seed keys may still use GLOBAL as last-resort overlay; scoring country is never null here. */
+function seedLookup(taxonKey: string, countryCode: string): string | null {
   if (!seedCache) seedCache = loadSeed();
-  if (countryCode && seedCache[`${countryCode}|${taxonKey}`]) return seedCache[`${countryCode}|${taxonKey}`]!;
+  if (seedCache[`${countryCode}|${taxonKey}`]) return seedCache[`${countryCode}|${taxonKey}`]!;
   if (seedCache[`GLOBAL|${taxonKey}`]) return seedCache[`GLOBAL|${taxonKey}`]!;
   return null;
+}
+
+/** 无国家 → CN，与 cacheKey / Prompt / 结算文案一致。 */
+function effectiveCountry(countryCode: string | null | undefined): string {
+  return countryCode?.trim().toUpperCase() || "CN";
 }
 
 export async function scoreEncounterClass(input: {
@@ -137,7 +143,7 @@ export async function scoreEncounterClass(input: {
   hardToPhotograph: boolean;
   reason: string;
 }> {
-  const country = input.countryCode?.trim() || "CN";
+  const country = effectiveCountry(input.countryCode);
   const prompt = `${ENCOUNTER_RUBRIC}
 
 对象：
@@ -170,7 +176,8 @@ export async function resolveEncounterRarity(input: {
   scientificName?: string | null;
   finestReliableRank?: string | null;
 }): Promise<EncounterRarityResolution> {
-  const key = encounterCacheKey(input.countryCode, input.taxonKey);
+  const countryCode = effectiveCountry(input.countryCode);
+  const key = encounterCacheKey(countryCode, input.taxonKey);
   const cached = await readRarityCache(key);
   if (cached && cached.source === "encounter") {
     return {
@@ -187,7 +194,7 @@ export async function resolveEncounterRarity(input: {
     console.warn("[rarity] encounter skipped: ZHIPU_API_KEY missing");
   } else {
     try {
-      const scored = await scoreEncounterClass(input);
+      const scored = await scoreEncounterClass({ ...input, countryCode });
       const resolved = resolveFromEncounter({
         encounterClass: scored.encounterClass,
         swarmOrHabituated: scored.swarmOrHabituated,
@@ -222,7 +229,7 @@ export async function resolveEncounterRarity(input: {
     }
   }
 
-  const fromSeed = seedLookup(input.taxonKey, input.countryCode);
+  const fromSeed = seedLookup(input.taxonKey, countryCode);
   if (fromSeed) {
     return {
       rarity: fromSeed,

@@ -87,8 +87,13 @@ export function rankBandFromFinest(rank: string | null | undefined): RankBand {
   return "family";
 }
 
+/**
+ * 无国家时与 encounter Prompt 一致回落 CN（产品：中国优先，可无 GPS 开包）。
+ * 不再用 GLOBAL 键——避免「键写全球、分按中国」的语义分叉。
+ */
 export function cacheKey(countryCode: string | null, taxonKey: string): string {
-  return `${countryCode ?? "GLOBAL"}|${taxonKey}`;
+  const cc = countryCode?.trim().toUpperCase() || "CN";
+  return `${cc}|${taxonKey}`;
 }
 
 /** Higher = rarer (collectible value). Unknown tiers rank as 0. */
