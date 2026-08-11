@@ -472,8 +472,12 @@ a {
   color: var(--rarity-UR-fg);
 }
 .rarity-LR {
-  background: var(--rarity-LR-bg);
+  background: linear-gradient(135deg, #e0c4ff 0%, #ffe566 48%, #ffb0d8 100%);
   color: var(--rarity-LR-fg);
+}
+.rarity-XR {
+  background: var(--rarity-XR-bg);
+  color: var(--rarity-XR-fg);
 }
 
 .identify-by {
@@ -531,29 +535,340 @@ a {
 
 .settle-card-inner {
   padding: 16px;
-}
-
-.settle-sealed {
   display: grid;
   gap: 14px;
-  justify-items: center;
+}
+
+/* 单开包舞台：底 → 照片窗 → 框/壳 → 稀有度引子 */
+.settle-stage {
+  position: relative;
+  width: 100%;
+  aspect-ratio: 4 / 3;
+  border-radius: var(--radius-md);
+  overflow: hidden;
+  background: var(--surface-wash);
+}
+
+.settle-pack-bg {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  z-index: 0;
+}
+
+.settle-stage.sealed .settle-pack-bg {
+  filter: saturate(0.85) brightness(0.92);
+}
+
+/* 与 daylight pack-sealed.png 卡心窗对齐（色键后量得） */
+.settle-photo-window {
+  position: absolute;
+  z-index: 1;
+  inset: 23.9% 36.1% 24.6% 16.3%;
+  overflow: hidden;
+  background: var(--surface-wash);
+}
+
+.settle-stage:not(.sealed) .settle-photo-window {
+  inset: 6%;
+}
+
+.settle-photo-window .settle-blur,
+.settle-photo-window .settle-hero {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+  border-radius: 0;
+  max-height: none;
 }
 
 .settle-blur {
-  width: 100%;
-  max-height: 320px;
-  object-fit: cover;
-  border-radius: var(--radius-md);
-  filter: blur(14px) saturate(0.85);
-  transform: scale(1.05);
+  filter: blur(12px) saturate(0.85);
+  transform: scale(1.08);
 }
 
-.settle-hero {
+.settle-photo-frame {
+  position: absolute;
+  inset: 6%;
+  width: calc(100% - 12%);
+  height: calc(100% - 12%);
+  object-fit: fill;
+  z-index: 2;
+  pointer-events: none;
+}
+
+.settle-pack-shell {
+  position: absolute;
+  inset: 0;
   width: 100%;
-  max-height: 360px;
-  object-fit: contain;
-  border-radius: var(--radius-md);
-  background: var(--surface-wash);
+  height: 100%;
+  object-fit: fill;
+  z-index: 3;
+  pointer-events: none;
+}
+
+.settle-stage.revealing .settle-pack-shell {
+  animation: settleShellLift 700ms ease forwards;
+}
+
+.settle-rarity-seal {
+  --seal-wax: var(--rarity-N-seal);
+  --seal-ink: var(--rarity-N-seal-ink);
+  position: absolute;
+  z-index: 4;
+  right: 3%;
+  bottom: 5%;
+  width: min(30%, 8rem);
+  aspect-ratio: 1;
+  pointer-events: none;
+  filter: drop-shadow(0 2px 4px rgba(42, 36, 28, 0.28));
+}
+
+.settle-rarity-seal.rarity-N {
+  --seal-wax: var(--rarity-N-seal);
+  --seal-ink: var(--rarity-N-seal-ink);
+}
+.settle-rarity-seal.rarity-R {
+  --seal-wax: var(--rarity-R-seal);
+  --seal-ink: var(--rarity-R-seal-ink);
+}
+.settle-rarity-seal.rarity-SR {
+  --seal-wax: var(--rarity-SR-seal);
+  --seal-ink: var(--rarity-SR-seal-ink);
+}
+.settle-rarity-seal.rarity-SSR {
+  --seal-wax: var(--rarity-SSR-seal);
+  --seal-ink: var(--rarity-SSR-seal-ink);
+}
+.settle-rarity-seal.rarity-UR {
+  --seal-wax: var(--rarity-UR-seal);
+  --seal-ink: var(--rarity-UR-seal-ink);
+}
+.settle-rarity-seal.rarity-LR {
+  --seal-wax: var(--rarity-LR-seal);
+  --seal-ink: var(--rarity-LR-seal-ink);
+}
+.settle-rarity-seal.rarity-XR {
+  --seal-wax: var(--rarity-XR-seal);
+  --seal-ink: var(--rarity-XR-seal-ink);
+}
+
+/* 印章外形用 mask；「亮」靠高光/纹理层次，不是把底色刷浅 */
+.settle-rarity-seal-motif {
+  position: absolute;
+  inset: 0;
+  background: var(--seal-wax);
+  -webkit-mask-image: var(--seal-mask);
+  mask-image: var(--seal-mask);
+  -webkit-mask-size: contain;
+  mask-size: contain;
+  -webkit-mask-repeat: no-repeat;
+  mask-repeat: no-repeat;
+  -webkit-mask-position: center;
+  mask-position: center;
+}
+
+.settle-rarity-letter {
+  position: absolute;
+  inset: 0;
+  display: grid;
+  place-items: center;
+  font-family: var(--font-brand);
+  font-weight: 800;
+  font-size: clamp(1.15rem, 5.2vw, 1.7rem);
+  letter-spacing: 0.04em;
+  color: var(--seal-ink);
+  z-index: 1;
+  text-shadow:
+    0 0 0.5px var(--seal-ink),
+    0 1px 0 color-mix(in srgb, var(--seal-wax) 55%, #000);
+}
+
+.settle-rarity-letter::before {
+  content: "";
+  position: absolute;
+  width: 42%;
+  height: 42%;
+  border-radius: 50%;
+  background: color-mix(in srgb, var(--seal-wax) 88%, #1a1200);
+  box-shadow: inset 0 0 0 1px color-mix(in srgb, var(--seal-ink) 22%, transparent);
+  z-index: -1;
+}
+
+/*
+ * 高光/辉光分档（并排一眼能分）：
+ * N 哑光 → R 轻釉 → SR 中釉+晕 → SSR 金属 → UR 强釉 → LR 彩虹扫光 → XR 最强霓虹
+ */
+.settle-rarity-seal.rarity-N {
+  filter: drop-shadow(0 1px 2px rgba(42, 36, 28, 0.22));
+}
+.settle-rarity-seal.rarity-N .settle-rarity-seal-motif {
+  background: linear-gradient(
+    160deg,
+    color-mix(in srgb, var(--seal-wax) 88%, #fff) 0%,
+    var(--seal-wax) 55%,
+    color-mix(in srgb, var(--seal-wax) 82%, #000) 100%
+  );
+}
+
+.settle-rarity-seal.rarity-R {
+  filter:
+    drop-shadow(0 2px 3px rgba(42, 36, 28, 0.26))
+    drop-shadow(0 0 4px color-mix(in srgb, var(--seal-wax) 28%, transparent));
+}
+.settle-rarity-seal.rarity-R .settle-rarity-seal-motif {
+  background:
+    radial-gradient(ellipse 42% 30% at 34% 28%, rgba(255, 255, 255, 0.42) 0%, transparent 60%),
+    linear-gradient(
+      155deg,
+      color-mix(in srgb, var(--seal-wax) 65%, #fff) 0%,
+      var(--seal-wax) 48%,
+      color-mix(in srgb, var(--seal-wax) 75%, #000) 100%
+    );
+}
+
+.settle-rarity-seal.rarity-SR {
+  filter:
+    drop-shadow(0 2px 4px rgba(42, 36, 28, 0.3))
+    drop-shadow(0 0 8px color-mix(in srgb, var(--seal-wax) 48%, transparent));
+}
+.settle-rarity-seal.rarity-SR .settle-rarity-seal-motif {
+  background:
+    radial-gradient(ellipse 52% 38% at 30% 24%, rgba(255, 255, 255, 0.78) 0%, transparent 54%),
+    linear-gradient(118deg, transparent 42%, rgba(255, 255, 255, 0.42) 50%, transparent 58%),
+    linear-gradient(
+      155deg,
+      color-mix(in srgb, var(--seal-wax) 50%, #fff) 0%,
+      var(--seal-wax) 40%,
+      color-mix(in srgb, var(--seal-wax) 65%, #000) 100%
+    );
+}
+.settle-rarity-seal.rarity-SR .settle-rarity-letter::before {
+  box-shadow:
+    inset 0 0 0 1px color-mix(in srgb, var(--seal-ink) 28%, transparent),
+    0 0 5px color-mix(in srgb, var(--seal-wax) 35%, transparent);
+}
+
+/* SSR 亮金：金属拉丝 + 高光带 + 暖色辉光 */
+.settle-rarity-seal.rarity-SSR {
+  filter:
+    drop-shadow(0 2px 5px rgba(90, 55, 0, 0.45))
+    drop-shadow(0 0 12px rgba(255, 196, 40, 0.65));
+}
+.settle-rarity-seal.rarity-SSR .settle-rarity-seal-motif {
+  background:
+    radial-gradient(ellipse 55% 40% at 30% 24%, rgba(255, 255, 255, 0.92) 0%, transparent 52%),
+    linear-gradient(
+      118deg,
+      transparent 36%,
+      rgba(255, 255, 255, 0.78) 47%,
+      rgba(255, 240, 160, 0.4) 51%,
+      transparent 62%
+    ),
+    repeating-linear-gradient(
+      -22deg,
+      rgba(255, 255, 255, 0.28) 0 1px,
+      transparent 1px 3px
+    ),
+    linear-gradient(
+      155deg,
+      #fff6c8 0%,
+      #ffd54a 18%,
+      #f0c400 38%,
+      #b87800 58%,
+      #ffcc33 76%,
+      #a86f00 100%
+    );
+}
+.settle-rarity-seal.rarity-SSR .settle-rarity-letter::before {
+  background: linear-gradient(160deg, #fff4c4, #e8b020 55%, #c48900);
+  box-shadow:
+    inset 0 0 0 1px rgba(90, 55, 0, 0.28),
+    0 0 8px rgba(255, 210, 80, 0.55);
+}
+
+/* UR 刺红：强釉面 + 红晕 */
+.settle-rarity-seal.rarity-UR {
+  filter:
+    drop-shadow(0 2px 5px rgba(120, 0, 20, 0.42))
+    drop-shadow(0 0 14px rgba(255, 40, 70, 0.58));
+}
+.settle-rarity-seal.rarity-UR .settle-rarity-seal-motif {
+  background:
+    radial-gradient(ellipse 54% 40% at 30% 24%, rgba(255, 255, 255, 0.7) 0%, transparent 52%),
+    linear-gradient(118deg, transparent 38%, rgba(255, 230, 230, 0.62) 49%, transparent 60%),
+    linear-gradient(155deg, #ff8a96 0%, #ff1f3a 38%, #b00018 100%);
+}
+.settle-rarity-seal.rarity-UR .settle-rarity-letter::before {
+  box-shadow:
+    inset 0 0 0 1px rgba(255, 240, 240, 0.35),
+    0 0 7px rgba(255, 60, 80, 0.45);
+}
+
+/* LR 彩虹：双扫光 + 彩晕（明显高于 UR 的「材质复杂度」） */
+.settle-rarity-seal.rarity-LR {
+  filter:
+    drop-shadow(0 2px 6px rgba(60, 20, 80, 0.4))
+    drop-shadow(0 0 16px rgba(255, 160, 220, 0.5))
+    drop-shadow(0 0 22px rgba(120, 180, 255, 0.28));
+}
+.settle-rarity-seal.rarity-LR .settle-rarity-seal-motif {
+  background:
+    radial-gradient(ellipse 55% 40% at 28% 22%, rgba(255, 255, 255, 0.88) 0%, transparent 50%),
+    linear-gradient(118deg, transparent 34%, rgba(255, 255, 255, 0.75) 48%, transparent 58%),
+    linear-gradient(55deg, transparent 45%, rgba(255, 255, 255, 0.35) 52%, transparent 60%),
+    var(--rarity-LR-seal-rainbow);
+}
+.settle-rarity-seal.rarity-LR .settle-rarity-letter::before {
+  background: color-mix(in srgb, #fff8f0 82%, #e0c4ff);
+  box-shadow:
+    inset 0 0 0 1px rgba(90, 40, 120, 0.2),
+    0 0 8px rgba(255, 180, 230, 0.5);
+}
+
+/* XR：最强霓虹（晕最大、高光最尖） */
+.settle-rarity-seal.rarity-XR {
+  filter:
+    drop-shadow(0 2px 6px rgba(120, 0, 80, 0.48))
+    drop-shadow(0 0 18px rgba(255, 0, 168, 0.72))
+    drop-shadow(0 0 28px rgba(255, 100, 220, 0.35));
+}
+.settle-rarity-seal.rarity-XR .settle-rarity-seal-motif {
+  background:
+    radial-gradient(ellipse 58% 42% at 28% 22%, rgba(255, 255, 255, 0.92) 0%, transparent 48%),
+    linear-gradient(118deg, transparent 34%, rgba(255, 220, 250, 0.75) 48%, transparent 60%),
+    linear-gradient(155deg, #ff9ae0 0%, #ff00a8 40%, #b00070 100%);
+}
+.settle-rarity-seal.rarity-XR .settle-rarity-letter::before {
+  box-shadow:
+    inset 0 0 0 1px rgba(255, 245, 250, 0.45),
+    0 0 10px rgba(255, 0, 168, 0.65);
+}
+
+.settle-actions {
+  display: grid;
+  justify-items: center;
+}
+
+.settle-preview-phases {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.settle-preview-phases .btn.is-active {
+  border-color: var(--cta);
+  color: var(--cta);
+  background: color-mix(in srgb, var(--cta) 12%, var(--card));
+}
+
+.settle-preview-ceremony {
+  position: relative;
+  width: min(400px, 100%);
+  margin: 0;
 }
 
 .settle-name {
@@ -564,6 +879,17 @@ a {
 
 .settle-card.revealing .settle-hero {
   animation: settlePop 700ms ease;
+}
+
+@keyframes settleShellLift {
+  from {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+  to {
+    opacity: 0;
+    transform: translateY(-6%) scale(1.03);
+  }
 }
 
 .settle-volume-note {

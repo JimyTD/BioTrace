@@ -58,18 +58,46 @@
   --map-dot-ring: rgba(211, 84, 60, 0.3);
   --map-dot-border: #fffdf9;
 
-  --rarity-N-bg: #e5e2db;
-  --rarity-N-fg: #4a534c;
-  --rarity-R-bg: #d9e6ef;
-  --rarity-R-fg: #2a5470;
-  --rarity-SR-bg: #e8ddd0;
-  --rarity-SR-fg: #6b4a2e;
-  --rarity-SSR-bg: #e4d4c4;
-  --rarity-SSR-fg: #5c3a1f;
-  --rarity-UR-bg: #f0dcc0;
-  --rarity-UR-fg: #8a4b00;
-  --rarity-LR-bg: #f0cfc8;
-  --rarity-LR-fg: #7a2a28;
+  /* 稀有度：灰→亮蓝→亮紫→亮金→刺红→彩虹→霓虹洋红(+XR异形章) */
+  --rarity-N-bg: #ebe9e3;
+  --rarity-N-fg: #4a4f48;
+  --rarity-R-bg: #c8e8ff;
+  --rarity-R-fg: #0b6aa8;
+  --rarity-SR-bg: #f0d8ff;
+  --rarity-SR-fg: #7a22c8;
+  --rarity-SSR-bg: #ffe566;
+  --rarity-SSR-fg: #6b4200;
+  --rarity-UR-bg: #ffb8b4;
+  --rarity-UR-fg: #b00018;
+  --rarity-LR-bg: #f3e2ff; /* 徽章再用 styles 叠彩虹渐变 */
+  --rarity-LR-fg: #5a1a6e;
+  --rarity-XR-bg: #ffc2f0;
+  --rarity-XR-fg: #9a0070;
+
+  --rarity-N-seal: #7a7e78;
+  --rarity-N-seal-ink: #f7f5f0;
+  --rarity-R-seal: #2eb0f0;
+  --rarity-R-seal-ink: #f0faff;
+  --rarity-SR-seal: #b14ef0;
+  --rarity-SR-seal-ink: #fcf4ff;
+  --rarity-SSR-seal: #f0c400;
+  --rarity-SSR-seal-ink: #3a2800;
+  --rarity-UR-seal: #ff1f3a;
+  --rarity-UR-seal-ink: #fff0f0;
+  --rarity-LR-seal: #f0c400; /* 回退色；实际用 conic 彩虹 */
+  --rarity-LR-seal-ink: #1a1028;
+  --rarity-XR-seal: #ff00a8;
+  --rarity-XR-seal-ink: #fff5fb;
+
+  --rarity-LR-seal-rainbow: conic-gradient(
+    from 210deg,
+    #b14ef0 0deg,
+    #2eb0f0 60deg,
+    #f0c400 120deg,
+    #ff1f3a 200deg,
+    #ff00a8 280deg,
+    #b14ef0 360deg
+  );
 
   /* 套册 / 邮票 */
   --volume-cover-empty: #e7dfd2;

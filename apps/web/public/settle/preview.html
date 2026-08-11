@@ -1,0 +1,430 @@
+<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>开包美术预览 · BioTrace</title>
+    <style>
+      :root {
+        --card: #f7f2e8;
+        --ink: #2a241c;
+        --muted: #6b6358;
+        --line: #d9d0c2;
+        --cta: #c45c3a;
+        --surface-wash: #efe6d6;
+        --font-brand: "Segoe UI", "PingFang SC", "Microsoft YaHei", sans-serif;
+        --rarity-N-bg: #ebe9e3;
+        --rarity-N-fg: #4a4f48;
+        --rarity-R-bg: #c8e8ff;
+        --rarity-R-fg: #0b6aa8;
+        --rarity-SR-bg: #f0d8ff;
+        --rarity-SR-fg: #7a22c8;
+        --rarity-SSR-bg: #ffe566;
+        --rarity-SSR-fg: #6b4200;
+        --rarity-UR-bg: #ffb8b4;
+        --rarity-UR-fg: #b00018;
+        --rarity-LR-bg: #f3e2ff;
+        --rarity-LR-fg: #5a1a6e;
+        --rarity-XR-bg: #ffc2f0;
+        --rarity-XR-fg: #9a0070;
+        --rarity-N-seal: #7a7e78;
+        --rarity-N-seal-ink: #f7f5f0;
+        --rarity-R-seal: #2eb0f0;
+        --rarity-R-seal-ink: #f0faff;
+        --rarity-SR-seal: #b14ef0;
+        --rarity-SR-seal-ink: #fcf4ff;
+        --rarity-SSR-seal: #f0c400;
+        --rarity-SSR-seal-ink: #3a2800;
+        --rarity-UR-seal: #ff1f3a;
+        --rarity-UR-seal-ink: #fff0f0;
+        --rarity-LR-seal: #f0c400;
+        --rarity-LR-seal-ink: #1a1028;
+        --rarity-XR-seal: #ff00a8;
+        --rarity-XR-seal-ink: #fff5fb;
+        --rarity-LR-seal-rainbow: conic-gradient(
+          from 210deg, #b14ef0, #2eb0f0, #f0c400, #ff1f3a, #ff00a8, #b14ef0
+        );
+      }
+      * { box-sizing: border-box; }
+      body {
+        margin: 0;
+        padding: 20px 16px 48px;
+        font-family: var(--font-brand);
+        color: var(--ink);
+        background:
+          radial-gradient(120% 80% at 10% 0%, #fff8ec 0%, transparent 55%),
+          linear-gradient(180deg, #f3ebe0, #e7ddd0);
+      }
+      h1 { margin: 0 0 6px; font-size: 1.55rem; letter-spacing: -0.02em; }
+      .lede { margin: 0 0 16px; color: var(--muted); line-height: 1.45; }
+      .row { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 14px; }
+      button {
+        border: 1px solid var(--line);
+        background: #fffaf2;
+        color: var(--ink);
+        border-radius: 10px;
+        padding: 8px 12px;
+        cursor: pointer;
+        font: inherit;
+      }
+      button.active, button.primary {
+        border-color: var(--cta);
+        color: var(--cta);
+        background: color-mix(in srgb, var(--cta) 12%, #fffaf2);
+      }
+      button.primary {
+        background: var(--cta);
+        color: #fffaf2;
+        min-width: 8rem;
+      }
+      .card {
+        background: var(--card);
+        border: 1px solid var(--line);
+        border-radius: 16px;
+        padding: 16px;
+        box-shadow: 0 10px 28px rgba(42, 36, 28, 0.08);
+        max-width: 520px;
+      }
+      .stage {
+        position: relative;
+        width: 100%;
+        aspect-ratio: 4 / 3;
+        border-radius: 12px;
+        overflow: hidden;
+        background: var(--surface-wash);
+      }
+      .pack-bg {
+        position: absolute; inset: 0; width: 100%; height: 100%;
+        object-fit: cover; z-index: 0;
+      }
+      .stage.sealed .pack-bg { filter: saturate(0.85) brightness(0.92); }
+      .photo-window {
+        position: absolute; z-index: 1; overflow: hidden;
+        background: var(--surface-wash);
+        inset: 23.9% 36.1% 24.6% 16.3%;
+      }
+      .stage:not(.sealed) .photo-window { inset: 6%; }
+      .photo-window img {
+        width: 100%; height: 100%; object-fit: cover; display: block;
+      }
+      .blur {
+        filter: blur(12px) saturate(0.85);
+        transform: scale(1.08);
+      }
+      .frame, .shell {
+        position: absolute; pointer-events: none;
+      }
+      .frame {
+        inset: 6%; width: calc(100% - 12%); height: calc(100% - 12%);
+        object-fit: fill; z-index: 2;
+      }
+      .shell {
+        inset: 0; width: 100%; height: 100%; object-fit: fill; z-index: 3;
+      }
+      .stage.revealing .shell {
+        animation: shellLift 700ms ease forwards;
+      }
+      @keyframes shellLift {
+        to { opacity: 0; transform: translateY(-6%) scale(1.03); }
+      }
+      .seal {
+        --seal-wax: var(--rarity-SR-seal);
+        --seal-ink: var(--rarity-SR-seal-ink);
+        position: absolute; z-index: 4; right: 3%; bottom: 5%;
+        width: min(30%, 8rem); aspect-ratio: 1;
+        filter: drop-shadow(0 2px 4px rgba(42, 36, 28, 0.28));
+      }
+      .seal-motif {
+        position: absolute; inset: 0;
+        background: var(--seal-wax);
+        --seal-mask-url: url("./daylight/rarity-seal.svg");
+        -webkit-mask: var(--seal-mask-url) center / contain no-repeat;
+        mask: var(--seal-mask-url) center / contain no-repeat;
+      }
+      /* 高光分档：N哑 → R轻 → SR中 → SSR金 → UR红 → LR彩虹 → XR霓虹 */
+      .seal.r, .seal-chip.r {
+        filter: drop-shadow(0 2px 3px rgba(42,36,28,0.26)) drop-shadow(0 0 4px color-mix(in srgb, var(--seal-wax) 28%, transparent));
+      }
+      .seal.r .seal-motif, .seal-chip.r .seal-motif {
+        background:
+          radial-gradient(ellipse 42% 30% at 34% 28%, rgba(255,255,255,0.42) 0%, transparent 60%),
+          linear-gradient(155deg, color-mix(in srgb, var(--seal-wax) 65%, #fff) 0%, var(--seal-wax) 48%, color-mix(in srgb, var(--seal-wax) 75%, #000) 100%);
+      }
+      .seal.sr, .seal-chip.sr {
+        filter: drop-shadow(0 2px 4px rgba(42,36,28,0.3)) drop-shadow(0 0 8px color-mix(in srgb, var(--seal-wax) 48%, transparent));
+      }
+      .seal.sr .seal-motif, .seal-chip.sr .seal-motif {
+        background:
+          radial-gradient(ellipse 52% 38% at 30% 24%, rgba(255,255,255,0.78) 0%, transparent 54%),
+          linear-gradient(118deg, transparent 42%, rgba(255,255,255,0.42) 50%, transparent 58%),
+          linear-gradient(155deg, color-mix(in srgb, var(--seal-wax) 50%, #fff) 0%, var(--seal-wax) 40%, color-mix(in srgb, var(--seal-wax) 65%, #000) 100%);
+      }
+      .seal.gold, .seal-chip.gold {
+        filter: drop-shadow(0 2px 5px rgba(90,55,0,0.45)) drop-shadow(0 0 12px rgba(255,196,40,0.65));
+      }
+      .seal.gold .seal-motif, .seal-chip.gold .seal-motif {
+        background:
+          radial-gradient(ellipse 55% 40% at 30% 24%, rgba(255,255,255,0.92) 0%, transparent 52%),
+          linear-gradient(118deg, transparent 36%, rgba(255,255,255,0.78) 47%, rgba(255,240,160,0.4) 51%, transparent 62%),
+          repeating-linear-gradient(-22deg, rgba(255,255,255,0.28) 0 1px, transparent 1px 3px),
+          linear-gradient(155deg, #fff6c8 0%, #ffd54a 18%, #f0c400 38%, #b87800 58%, #ffcc33 76%, #a86f00 100%);
+      }
+      .seal.gold span::before, .seal-chip.gold span::before {
+        background: linear-gradient(160deg, #fff4c4, #e8b020 55%, #c48900);
+        box-shadow: inset 0 0 0 1px rgba(90,55,0,0.28), 0 0 8px rgba(255,210,80,0.55);
+      }
+      .seal.ur, .seal-chip.ur {
+        filter: drop-shadow(0 2px 5px rgba(120,0,20,0.42)) drop-shadow(0 0 14px rgba(255,40,70,0.58));
+      }
+      .seal.ur .seal-motif, .seal-chip.ur .seal-motif {
+        background:
+          radial-gradient(ellipse 54% 40% at 30% 24%, rgba(255,255,255,0.7) 0%, transparent 52%),
+          linear-gradient(118deg, transparent 38%, rgba(255,230,230,0.62) 49%, transparent 60%),
+          linear-gradient(155deg, #ff8a96 0%, #ff1f3a 38%, #b00018 100%);
+      }
+      .seal.rainbow, .seal-chip.rainbow {
+        filter: drop-shadow(0 2px 6px rgba(60,20,80,0.4)) drop-shadow(0 0 16px rgba(255,160,220,0.5)) drop-shadow(0 0 22px rgba(120,180,255,0.28));
+      }
+      .seal.rainbow .seal-motif, .seal-chip.rainbow .seal-motif {
+        background:
+          radial-gradient(ellipse 55% 40% at 28% 22%, rgba(255,255,255,0.88) 0%, transparent 50%),
+          linear-gradient(118deg, transparent 34%, rgba(255,255,255,0.75) 48%, transparent 58%),
+          linear-gradient(55deg, transparent 45%, rgba(255,255,255,0.35) 52%, transparent 60%),
+          var(--rarity-LR-seal-rainbow);
+      }
+      .seal.rainbow span::before, .seal-chip.rainbow span::before {
+        background: color-mix(in srgb, #fff8f0 82%, #e0c4ff);
+      }
+      .seal.xr, .seal-chip.xr {
+        filter: drop-shadow(0 2px 6px rgba(120,0,80,0.48)) drop-shadow(0 0 18px rgba(255,0,168,0.72)) drop-shadow(0 0 28px rgba(255,100,220,0.35));
+      }
+      .seal.xr .seal-motif, .seal-chip.xr .seal-motif {
+        --seal-mask-url: url("./daylight/rarity-seal-xr.svg");
+        background:
+          radial-gradient(ellipse 58% 42% at 28% 22%, rgba(255,255,255,0.92) 0%, transparent 48%),
+          linear-gradient(118deg, transparent 34%, rgba(255,220,250,0.75) 48%, transparent 60%),
+          linear-gradient(155deg, #ff9ae0 0%, #ff00a8 40%, #b00070 100%);
+      }
+      .seal span, .seal-chip span {
+        position: absolute; inset: 0; display: grid; place-items: center;
+        font-weight: 800; letter-spacing: 0.04em;
+        color: var(--seal-ink); z-index: 1;
+        text-shadow: 0 0 0.5px var(--seal-ink), 0 1px 0 rgba(0,0,0,0.25);
+      }
+      .seal span { font-size: clamp(1.15rem, 5.2vw, 1.7rem); }
+      .seal span::before, .seal-chip span::before {
+        content: "";
+        position: absolute;
+        width: 42%; height: 42%;
+        border-radius: 50%;
+        background: color-mix(in srgb, var(--seal-wax) 88%, #1a1200);
+        box-shadow: inset 0 0 0 1px color-mix(in srgb, var(--seal-ink) 22%, transparent);
+        z-index: -1;
+      }
+      .badge-strip, .seal-strip {
+        display: flex; flex-wrap: wrap; gap: 10px; align-items: center;
+        margin-bottom: 10px;
+      }
+      .badge {
+        display: inline-flex; align-items: center;
+        padding: 4px 10px; border-radius: 999px;
+        font-size: 0.82rem; font-weight: 700; letter-spacing: 0.02em;
+      }
+      .badge.lr {
+        background: linear-gradient(135deg, #e0c4ff 0%, #ffe566 48%, #ffb0d8 100%) !important;
+      }
+      .seal-chip {
+        --seal-wax: var(--rarity-N-seal);
+        --seal-ink: var(--rarity-N-seal-ink);
+        position: relative; width: 72px; height: 72px;
+        filter: drop-shadow(0 1px 3px rgba(42, 36, 28, 0.25));
+      }
+      .seal-chip .seal-motif { inset: 0; }
+      .seal-chip span { font-size: 1.15rem; }
+      .actions { display: grid; justify-items: center; margin-top: 14px; }
+      .name { display: block; margin-top: 12px; font-size: 1.35rem; font-weight: 700; }
+      .muted { color: var(--muted); font-size: 0.92rem; }
+      .kicker { margin: 28px 0 10px; color: var(--muted); font-size: 0.8rem; letter-spacing: 0.04em; }
+      .ceremony {
+        position: relative; max-width: 400px; border: 1px solid var(--line);
+        border-radius: 16px; overflow: hidden; background: var(--card);
+        box-shadow: 0 12px 36px rgba(211, 84, 60, 0.16);
+      }
+      .ceremony-bg { display: block; width: 100%; aspect-ratio: 4/3; object-fit: cover; }
+      .ceremony-seal {
+        position: absolute; top: 10px; right: 10px; width: 26%; max-width: 88px;
+        filter: drop-shadow(0 2px 6px rgba(42, 36, 28, 0.3));
+      }
+      .ceremony-body { padding: 14px 16px 16px; text-align: center; }
+      .hidden { display: none !important; }
+    </style>
+  </head>
+  <body>
+    <h1>开包美术预览</h1>
+    <p class="lede">色阶：灰→亮蓝→亮紫→亮金→刺红(UR)→彩虹(LR)→霓虹洋红；XR 六角异形章。</p>
+
+    <div class="row" id="phases">
+      <button type="button" data-phase="sealed" class="active">封缄</button>
+      <button type="button" data-phase="revealing">揭示中</button>
+      <button type="button" data-phase="open">展出</button>
+    </div>
+
+    <div class="card">
+      <div class="stage sealed" id="stage">
+        <img class="pack-bg" src="./daylight/pack-bg.png" alt="" />
+        <div class="photo-window">
+          <img id="photo" class="blur" src="../volumes/daylight/cover-intertidal.png" alt="示例标本" />
+        </div>
+        <img class="frame hidden" id="frame" src="./daylight/photo-frame.svg" alt="" />
+        <img class="shell" id="shell" src="./daylight/pack-sealed.png" alt="" />
+        <div class="seal hidden" id="seal">
+          <div class="seal-motif" aria-hidden></div>
+          <span id="rank">SR</span>
+        </div>
+      </div>
+      <div class="actions" id="openWrap">
+        <button type="button" class="primary" id="openBtn">请过目</button>
+      </div>
+      <p class="muted hidden" id="opening">请稍候…</p>
+      <div id="openCopy" class="hidden">
+        <strong class="name">示例标本</strong>
+        <p class="muted" id="rankLabel">SR · 稀有</p>
+      </div>
+    </div>
+
+    <p class="kicker">徽章（列表/详情同色）</p>
+    <div class="badge-strip" id="badgeStrip"></div>
+    <p class="kicker">火漆印章</p>
+    <div class="seal-strip" id="sealStrip"></div>
+    <div class="row" id="rarities">
+      <button type="button" data-r="N">N</button>
+      <button type="button" data-r="R">R</button>
+      <button type="button" data-r="SR" class="active">SR</button>
+      <button type="button" data-r="SSR">SSR</button>
+      <button type="button" data-r="UR">UR</button>
+      <button type="button" data-r="LR">LR</button>
+      <button type="button" data-r="XR">XR</button>
+    </div>
+
+    <p class="kicker">套册成册章引子</p>
+    <div class="ceremony">
+      <img class="ceremony-bg" src="../volumes/daylight/ceremony-complete.png" alt="" />
+      <img class="ceremony-seal" src="../volumes/daylight/seal-complete.svg" alt="" />
+      <div class="ceremony-body">
+        <p class="muted">整册点亮</p>
+        <p>「潮间带」整册点亮（预览）</p>
+      </div>
+    </div>
+
+    <script>
+      const labels = {
+        N: "N · 常见", R: "R · 少见", SR: "SR · 稀有",
+        SSR: "SSR · 非常稀有", UR: "UR · 极稀有", LR: "LR · 传说",
+        XR: "XR · 近乎不可能",
+      };
+      const seals = {
+        N: ["var(--rarity-N-seal)", "var(--rarity-N-seal-ink)"],
+        R: ["var(--rarity-R-seal)", "var(--rarity-R-seal-ink)"],
+        SR: ["var(--rarity-SR-seal)", "var(--rarity-SR-seal-ink)"],
+        SSR: ["var(--rarity-SSR-seal)", "var(--rarity-SSR-seal-ink)"],
+        UR: ["var(--rarity-UR-seal)", "var(--rarity-UR-seal-ink)"],
+        LR: ["var(--rarity-LR-seal)", "var(--rarity-LR-seal-ink)"],
+        XR: ["var(--rarity-XR-seal)", "var(--rarity-XR-seal-ink)"],
+      };
+      let phase = "sealed";
+      let rarity = "SR";
+      const stage = document.getElementById("stage");
+      const photo = document.getElementById("photo");
+      const frame = document.getElementById("frame");
+      const shell = document.getElementById("shell");
+      const seal = document.getElementById("seal");
+      const openWrap = document.getElementById("openWrap");
+      const opening = document.getElementById("opening");
+      const openCopy = document.getElementById("openCopy");
+
+      function pick(r) {
+        rarity = r;
+        document.querySelectorAll("#rarities button").forEach((x) => {
+          x.classList.toggle("active", x.dataset.r === r);
+        });
+        phase = "open";
+        render();
+      }
+
+      const badgeStrip = document.getElementById("badgeStrip");
+      const strip = document.getElementById("sealStrip");
+      Object.keys(seals).forEach((r) => {
+        const badge = document.createElement("span");
+        badge.className = "badge" + (r === "LR" ? " lr" : "");
+        badge.textContent = labels[r];
+        badge.style.background = "var(--rarity-" + r + "-bg)";
+        badge.style.color = "var(--rarity-" + r + "-fg)";
+        badge.addEventListener("click", () => pick(r));
+        badgeStrip.appendChild(badge);
+
+        const chip = document.createElement("div");
+        chip.className =
+          "seal-chip" +
+          (r === "R" ? " r" : "") +
+          (r === "SR" ? " sr" : "") +
+          (r === "SSR" ? " gold" : "") +
+          (r === "UR" ? " ur" : "") +
+          (r === "LR" ? " rainbow" : "") +
+          (r === "XR" ? " xr" : "");
+        chip.style.setProperty("--seal-wax", seals[r][0]);
+        chip.style.setProperty("--seal-ink", seals[r][1]);
+        chip.innerHTML = '<div class="seal-motif"></div><span>' + r + "</span>";
+        chip.title = labels[r];
+        chip.addEventListener("click", () => pick(r));
+        strip.appendChild(chip);
+      });
+
+      function render() {
+        stage.className = "stage " + phase;
+        photo.className = phase === "open" ? "" : "blur";
+        frame.classList.toggle("hidden", phase === "sealed");
+        shell.classList.toggle("hidden", phase === "open");
+        seal.classList.toggle("hidden", phase !== "open");
+        openWrap.classList.toggle("hidden", phase !== "sealed");
+        opening.classList.toggle("hidden", phase !== "revealing");
+        openCopy.classList.toggle("hidden", phase !== "open");
+        document.querySelectorAll("#phases button").forEach((b) => {
+          b.classList.toggle("active", b.dataset.phase === phase);
+        });
+        const [wax, ink] = seals[rarity];
+        seal.style.setProperty("--seal-wax", wax);
+        seal.style.setProperty("--seal-ink", ink);
+        seal.classList.toggle("r", rarity === "R");
+        seal.classList.toggle("sr", rarity === "SR");
+        seal.classList.toggle("gold", rarity === "SSR");
+        seal.classList.toggle("ur", rarity === "UR");
+        seal.classList.toggle("rainbow", rarity === "LR");
+        seal.classList.toggle("xr", rarity === "XR");
+        document.getElementById("rank").textContent = rarity;
+        document.getElementById("rankLabel").textContent = labels[rarity];
+        document.getElementById("rankLabel").style.color = "var(--rarity-" + rarity + "-fg)";
+      }
+
+      document.getElementById("phases").addEventListener("click", (e) => {
+        const b = e.target.closest("button[data-phase]");
+        if (!b) return;
+        phase = b.dataset.phase;
+        render();
+      });
+      document.getElementById("rarities").addEventListener("click", (e) => {
+        const b = e.target.closest("button[data-r]");
+        if (!b) return;
+        pick(b.dataset.r);
+      });
+      document.getElementById("openBtn").addEventListener("click", () => {
+        phase = "revealing";
+        render();
+        setTimeout(() => {
+          phase = "open";
+          render();
+        }, 700);
+      });
+      render();
+    </script>
+  </body>
+</html>

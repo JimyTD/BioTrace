@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import { Link, useNavigate, useParams } from "react-router-dom";
 import { formatRank, hasMessage, t, type MessageKey } from "@biotrace/messages";
 import { api, type Observation, type Rarity, type SettleVolumesResult } from "../api";
+import { SettlePackStage } from "../components/SettlePackStage";
 import { volumeCeremonyBgUrl, volumeSealCompleteUrl } from "../themes";
 
 function rarityLabel(r: Rarity | null) {
@@ -126,6 +127,8 @@ export default function ObservationSettlePage() {
   if (!obs) return <p className="muted">{t("app.loading")}</p>;
 
   const title = obs.commonName || obs.scientificName || t("detail.unnamed");
+  const sealed = phase === "sealed";
+  const stagePhase = phase === "claimed" ? "open" : phase;
 
   return (
     <div className="stack settle-page">
@@ -136,24 +139,27 @@ export default function ObservationSettlePage() {
 
       <div className={`settle-card ${phase}`}>
         <div className="settle-card-inner">
-          {phase === "sealed" ? (
-            <div className="settle-sealed">
-              <img src={obs.displayUrl} alt="" className="settle-blur" />
+          <SettlePackStage
+            phase={stagePhase}
+            photoUrl={obs.displayUrl}
+            photoAlt={sealed ? "" : title}
+            rarity={obs.rarity}
+          />
+
+          {sealed ? (
+            <div className="settle-actions">
               <button className="btn" type="button" onClick={onOpen}>
                 {t("settle.open")}
               </button>
             </div>
           ) : (
             <div className="settle-reveal stack">
-              <img src={obs.displayUrl} alt={title} className="settle-hero" />
               {phase === "revealing" ? (
                 <p className="muted">{t("settle.opening")}</p>
               ) : (
                 <>
                   {obs.rarity ? (
-                    <span className={`rarity-badge rarity-${obs.rarity}`}>
-                      {rarityLabel(obs.rarity)}
-                    </span>
+                    <span className="sr-only">{rarityLabel(obs.rarity)}</span>
                   ) : null}
                   <strong className="settle-name">{title}</strong>
                   {obs.scientificName ? <span className="muted">{obs.scientificName}</span> : null}

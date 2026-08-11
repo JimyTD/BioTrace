@@ -24,7 +24,7 @@ export function volumeStampFrameUrl(theme?: ThemeId): string {
 }
 
 export function volumeSealCompleteUrl(theme?: ThemeId): string {
-  return themeVolumeAsset("seal-complete.png", theme ?? getActiveTheme());
+  return themeVolumeAsset("seal-complete.svg", theme ?? getActiveTheme());
 }
 
 export function volumeCeremonyBgUrl(

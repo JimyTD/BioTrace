@@ -29,7 +29,7 @@
 | 文件 | 内容 |
 |------|------|
 | [`features/旅行套册.md`](./features/旅行套册.md) | 套册成就：策展原则、当前目录、加册步骤 |
-| [`features/套册美术分层.md`](./features/套册美术分层.md) | 套册美术：一图一职责、相框 SVG、禁止复合图 |
+| [`features/套册美术分层.md`](./features/套册美术分层.md) | 套册美术：一图一职责、相框 SVG、禁止复合图；§7.2 静态 HTML 叠层预览 |
 | [`features/皮肤主题.md`](./features/皮肤主题.md) | 皮肤 token 与新增皮肤清单 |
 | [`features/Android套壳.md`](./features/Android套壳.md) | Capacitor 侧载壳与签名发布 |
 

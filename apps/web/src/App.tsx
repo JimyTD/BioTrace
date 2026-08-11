@@ -9,6 +9,7 @@ import MePage from "./pages/MePage";
 import ObservationDetailPage from "./pages/ObservationDetailPage";
 import ObservationSettlePage from "./pages/ObservationSettlePage";
 import PinLocationPage from "./pages/PinLocationPage";
+import SettleArtPreviewPage from "./pages/SettleArtPreviewPage";
 import TripAlbumPage from "./pages/TripAlbumPage";
 import TripsPage from "./pages/TripsPage";
 
@@ -48,6 +49,7 @@ export default function App() {
           <Route path="/observations/:id/pin" element={<PinLocationPage />} />
           <Route path="/observations/:id" element={<ObservationDetailPage />} />
           <Route path="/settle/:id" element={<ObservationSettlePage />} />
+          <Route path="/dev/settle-art" element={<SettleArtPreviewPage />} />
           <Route path="/map" element={<MapPage />} />
           <Route path="/collection" element={<CollectionPage />} />
           <Route
