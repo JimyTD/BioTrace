@@ -8,9 +8,11 @@ interface ImportMetaEnv {
   readonly VITE_TIANDITU_KEY?: string;
   /**
    * 天地图「浏览器端」备用 key。主 key 瓦片连续失败时切换。
-   * 可逗号分隔多个；服务端 key 不要写在这里。
+   * 可逗号分隔多个；也可与 FALLBACK_2 各写一把。
    */
   readonly VITE_TIANDITU_KEY_FALLBACK?: string;
+  /** 第二把浏览器端备用 key（可选）。 */
+  readonly VITE_TIANDITU_KEY_FALLBACK_2?: string;
 }
 
 interface ImportMeta {

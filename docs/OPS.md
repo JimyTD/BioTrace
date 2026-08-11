@@ -574,7 +574,7 @@ sudo tar czf /root/biotrace-data.tgz -C /opt/biotrace data
 
 **尚未完成 / 切 HTTPS 后再核对**
 - [ ] Android 侧载 APK 打开同源站点且登录不掉会话（见 [`features/Android套壳.md`](./features/Android套壳.md)）
-- [ ] 生产天地图 key 已配：构建前设 `VITE_TIANDITU_KEY`（浏览器端，白名单含生产域名）、可选 `VITE_TIANDITU_KEY_FALLBACK`（同账号再开的浏览器端备用 key，可逗号分隔多个）、服务端设 `TIANDITU_SERVER_KEY`。缺浏览器端 key 则直接用内置简图；缺服务端 key 则国别判定走离线国界数据。细节见[附录 A.5](#a5-天地图接入要点踩过的坑)
+- [ ] 生产天地图 key 已配：构建前设 `VITE_TIANDITU_KEY`（浏览器端，白名单含生产域名）、可选 `VITE_TIANDITU_KEY_FALLBACK` / `VITE_TIANDITU_KEY_FALLBACK_2`（浏览器端备用）、服务端设 `TIANDITU_SERVER_KEY`。缺浏览器端 key 则直接用内置简图；缺服务端 key 则国别判定走离线国界数据。细节见[附录 A.5](#a5-天地图接入要点踩过的坑)
 - [ ] 上线后留意控制台 `[map]` warn：配额 10000 次/日/key，超量当天拒绝、次日恢复。连续失败 6 次先切备用浏览器端 key，全部失败再切内置简图（国界 / China POV，无国名注记）
 - [ ] ⚠️ **上架 / 开放公网注册前必办：补地图审图号**。当前 `MapPage.tsx` 的 attribution 只有「天地图 · 国家地理信息公共服务平台」，**缺审图号**（形如 `GS(20XX)XXXX号`）。原文只能从天地图官网页底或控制台使用规范抄取，**不可自行编写**；落地时同步搬进 `packages/messages/src/zh.ts` 走 `t()`（现为硬编码，违反术语表规则）
 - [ ] HTTPS 阶段：`COOKIE_SECURE=1` 且登录会话稳定
@@ -663,12 +663,12 @@ Browser ──直连──► 天地图瓦片（失败：备用浏览器端 key 
 
 ### A.4 需向所有者索取、且不得入库的秘密
 
-`SESSION_SECRET`（长随机）、`GEMINI_API_KEY`、`ZHIPU_API_KEY`、`RESEND_API_KEY` + 已验证 `MAIL_FROM`、`HTTPS_PROXY` 完整 URL、`TIANDITU_SERVER_KEY`（服务端）、`VITE_TIANDITU_KEY`（浏览器端主 key，构建时内联）、可选 `VITE_TIANDITU_KEY_FALLBACK`（浏览器端备用）。
+`SESSION_SECRET`（长随机）、`GEMINI_API_KEY`、`ZHIPU_API_KEY`、`RESEND_API_KEY` + 已验证 `MAIL_FROM`、`HTTPS_PROXY` 完整 URL、`TIANDITU_SERVER_KEY`（服务端）、`VITE_TIANDITU_KEY`（浏览器端主 key，构建时内联）、可选 `VITE_TIANDITU_KEY_FALLBACK` / `VITE_TIANDITU_KEY_FALLBACK_2`（浏览器端备用）。
 
 ### A.5 天地图接入要点（踩过的坑）
 
 - **浏览器端 / 服务端不可混用**：瓦片用浏览器端 key（配域名白名单，构建时内联，改后必须重新 build）；逆地理用服务端 key（不需白名单）。
-- **备用底图 key**：同账号再创建浏览器端应用即可（不必新账号）；写入 `VITE_TIANDITU_KEY_FALLBACK`（可逗号分隔）。回落链为 **主 key → 备用 key → 内置简图**（`apps/web/public/map/ne_50m_countries_chn_pov.geojson`，1:50m 国界 / China POV，无国名注记）。已移除 OpenFreeMap。
+- **备用底图 key**：同账号再创建浏览器端应用即可（不必新账号）；写入 `VITE_TIANDITU_KEY_FALLBACK` / `VITE_TIANDITU_KEY_FALLBACK_2`（前者也可逗号分隔多把）。回落链为 **主 key → 备用1 → 备用2 → 内置简图**（`apps/web/public/map/ne_50m_countries_chn_pov.geojson`，1:50m 国界 / China POV，无国名注记）。已移除 OpenFreeMap。构建 Web 时必须把这些 `VITE_*` 传进 build 环境（Vite 构建时内联），改完需重新 build / 同步 `/var/www/biotrace`。
 - 瓦片必须用 `_w` 后缀（EPSG:3857，与 MapLibre 一致）；`_c` 是经纬度投影，接进去会错位。
 - 浏览器端 key 只校验 User-Agent 像不像浏览器，**不强制 Referer**——泄露后伪造 UA 即可用，而配额仅 10000/日/key，**视为敏感信息并定期轮换**。
 - 逆地理：`GET https://api.tianditu.gov.cn/geocoder?postStr={'lon':X,'lat':Y,'ver':1}&type=geocode&tk=KEY`，`postStr` **必须百分号编码**，取 `result.addressComponent.nation`（返回**中文常用简称**，需映射 ISO alpha-2）。

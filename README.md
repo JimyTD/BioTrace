@@ -39,7 +39,7 @@ HTTPS_PROXY=http://127.0.0.1:7890
 | 链路 | 用途 |变量 | key 类型 |
 |---|---|---|---|
 | 底图瓦片 | 地图页显示 | `VITE_TIANDITU_KEY`（放`apps/web/.env.local`） | **浏览器端**，需配域名白名单 |
-| 底图备用（可选） | 主 key 瓦片失败时切换 | `VITE_TIANDITU_KEY_FALLBACK`（可逗号分隔多个浏览器端 key） | **浏览器端** |
+| 底图备用（可选） | 主 key 瓦片失败时切换 | `VITE_TIANDITU_KEY_FALLBACK` / `VITE_TIANDITU_KEY_FALLBACK_2`（也可在前者逗号分隔多把） | **浏览器端** |
 | 逆地理编码 | 坐标 → 国家，喂给稀有度与引入种判定 | `TIANDITU_SERVER_KEY`（放 `apps/api/.env`） | **服务端** |
 
 浏览器端与服务端**不可混用**。申请：<https://console.tianditu.gov.cn/> → 应用管理 → 创建应用，个人实名即可；备用底图同账号再开浏览器端应用即可，不必新账号。

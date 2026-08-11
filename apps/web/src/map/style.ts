@@ -21,6 +21,7 @@ function parseKeys(...chunks: Array<string | undefined>): string[] {
 export const TIANDITU_KEYS = parseKeys(
   import.meta.env.VITE_TIANDITU_KEY,
   import.meta.env.VITE_TIANDITU_KEY_FALLBACK,
+  import.meta.env.VITE_TIANDITU_KEY_FALLBACK_2,
 );
 
 /** @deprecated 兼容旧引用；等价于 TIANDITU_KEYS[0] */
