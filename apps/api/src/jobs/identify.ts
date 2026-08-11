@@ -61,7 +61,7 @@ export function enqueueIdentify(opts: {
             confidence: null,
             taxonomyJson: JSON.stringify(emptyTaxonomy()),
             blurb: null,
-            notes: gate.reasonZh || null,
+            notes: [gate.reasonZh, result.notes].filter(Boolean).join(" · ") || null,
             error: gate.code,
             settleTier: "none",
             rarity: null,

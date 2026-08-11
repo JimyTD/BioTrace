@@ -383,7 +383,6 @@ export default function TripAlbumPage() {
                   className="input"
                   value={manualDate}
                   onChange={(e) => setManualDate(e.target.value)}
-                  placeholder={t("trips.manualDatePlaceholder")}
                 />
                 <label className="muted" htmlFor="trip-manual-place">
                   {t("trips.manualPlace")}
@@ -393,7 +392,6 @@ export default function TripAlbumPage() {
                   className="input"
                   value={manualPlace}
                   onChange={(e) => setManualPlace(e.target.value)}
-                  placeholder={t("trips.manualPlacePlaceholder")}
                 />
               </>
             ) : null}
@@ -410,7 +408,6 @@ export default function TripAlbumPage() {
             <p className="confirm-phrase">{t("trips.deleteConfirmPhrase")}</p>
             <input
               className="input"
-              placeholder={t("trips.deleteConfirmPlaceholder")}
               value={deletePhrase}
               onChange={(e) => setDeletePhrase(e.target.value)}
               autoComplete="off"
@@ -500,7 +497,6 @@ export default function TripAlbumPage() {
           {files.length === 1 ? (
             <textarea
               className="textarea"
-              placeholder={t("album.descriptionPlaceholder")}
               value={description}
               onChange={(e) => setDescription(e.target.value)}
               disabled={uploading}

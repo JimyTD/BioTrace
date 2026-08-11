@@ -47,7 +47,6 @@ export default function TripsPage() {
         <input
           id="trip-title"
           className="input"
-          placeholder={t("trips.createPlaceholder")}
           value={title}
           onChange={(e) => setTitle(e.target.value)}
         />

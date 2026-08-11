@@ -192,7 +192,6 @@ export default function MePage({
               className="input"
               type="text"
               maxLength={40}
-              placeholder={t("me.displayNamePlaceholder")}
               value={displayName}
               onChange={(ev) => setDisplayName(ev.target.value)}
               disabled={profileBusy}
@@ -227,7 +226,6 @@ export default function MePage({
               autoComplete="new-password"
               required
               minLength={8}
-              placeholder={t("auth.passwordPlaceholder")}
               value={newPassword}
               onChange={(ev) => setNewPassword(ev.target.value)}
               disabled={pwBusy}
@@ -274,7 +272,6 @@ export default function MePage({
             <input
               className="input"
               type="url"
-              placeholder={t("me.identifyBaseUrlPlaceholder")}
               value={baseUrl}
               onChange={(ev) => setBaseUrl(ev.target.value)}
               disabled={keyBusy}
@@ -285,7 +282,6 @@ export default function MePage({
             <input
               className="input"
               type="text"
-              placeholder={t("me.identifyModelPlaceholder")}
               value={model}
               onChange={(ev) => setModel(ev.target.value)}
               disabled={keyBusy}
@@ -297,7 +293,6 @@ export default function MePage({
               className="input"
               type="password"
               autoComplete="off"
-              placeholder={t("me.identifyApiKeyPlaceholder")}
               value={apiKey}
               onChange={(ev) => setApiKey(ev.target.value)}
               disabled={keyBusy}

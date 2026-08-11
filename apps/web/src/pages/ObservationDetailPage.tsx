@@ -269,7 +269,7 @@ export default function ObservationDetailPage() {
           </div>
         ) : null}
 
-        {!notCollectible && obs.notes ? (
+        {obs.notes ? (
           <div>
             <h2 className="section-title">{t("detail.notes")}</h2>
             <p className="muted">{obs.notes}</p>

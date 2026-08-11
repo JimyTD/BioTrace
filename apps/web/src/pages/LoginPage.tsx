@@ -131,7 +131,6 @@ export default function LoginPage({ onLoggedIn }: { onLoggedIn: (user: User) => 
               type="email"
               autoComplete="email"
               required
-              placeholder={t("auth.emailPlaceholder")}
               value={email}
               onChange={(ev) => setEmail(ev.target.value)}
               disabled={busy}
@@ -146,7 +145,6 @@ export default function LoginPage({ onLoggedIn }: { onLoggedIn: (user: User) => 
                 type="text"
                 autoComplete="nickname"
                 maxLength={40}
-                placeholder={t("auth.displayNamePlaceholder")}
                 value={displayName}
                 onChange={(ev) => setDisplayName(ev.target.value)}
                 disabled={busy}
@@ -164,7 +162,6 @@ export default function LoginPage({ onLoggedIn }: { onLoggedIn: (user: User) => 
                 autoComplete="one-time-code"
                 pattern="\d{6}"
                 required
-                placeholder={t("auth.resetCodePlaceholder")}
                 value={resetCode}
                 onChange={(ev) => setResetCode(ev.target.value)}
                 disabled={busy}
@@ -183,7 +180,6 @@ export default function LoginPage({ onLoggedIn }: { onLoggedIn: (user: User) => 
                 autoComplete={mode === "login" ? "current-password" : "new-password"}
                 required={mode !== "reset" || resetCodeSent}
                 minLength={8}
-                placeholder={t("auth.passwordPlaceholder")}
                 value={password}
                 onChange={(ev) => setPassword(ev.target.value)}
                 disabled={busy}
