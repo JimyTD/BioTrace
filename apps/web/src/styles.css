@@ -929,26 +929,47 @@ a {
   background: var(--volume-cover-empty, var(--surface-wash));
 }
 
-.volume-tile-cover img {
+.volume-tile-art,
+.volume-tile-placeholder {
+  position: absolute;
+  inset: 0;
   width: 100%;
   height: 100%;
-  object-fit: cover;
   display: block;
+  object-fit: cover;
+}
+
+.volume-tile-art {
   filter: saturate(0.92);
 }
 
 .volume-tile-placeholder {
-  width: 100%;
-  height: 100%;
   background:
     linear-gradient(145deg, rgba(211, 84, 60, 0.14), transparent 50%),
     linear-gradient(180deg, #e7dfd2, #d5cbbd);
+}
+
+.volume-tile-placeholder[hidden] {
+  display: none;
+}
+
+.volume-tile-seal {
+  position: absolute;
+  right: 6px;
+  top: 6px;
+  width: 28%;
+  max-width: 56px;
+  height: auto;
+  object-fit: contain;
+  pointer-events: none;
+  filter: drop-shadow(0 2px 4px rgba(42, 36, 28, 0.25));
 }
 
 .volume-tile-progress {
   position: absolute;
   left: 8px;
   bottom: 8px;
+  z-index: 1;
   padding: 3px 8px;
   border-radius: var(--radius-sm);
   background: rgba(250, 248, 243, 0.92);
@@ -975,6 +996,32 @@ a {
   width: min(520px, 100%);
   max-height: min(86vh, 720px);
   overflow: auto;
+}
+
+.volume-book-cover-wrap {
+  position: relative;
+  border-radius: var(--radius-md);
+  overflow: hidden;
+  border: 1px solid var(--line);
+  background: var(--volume-cover-empty, var(--surface-wash));
+}
+
+.volume-book-cover {
+  display: block;
+  width: 100%;
+  aspect-ratio: 4 / 3;
+  object-fit: cover;
+}
+
+.volume-book-seal {
+  position: absolute;
+  right: 8px;
+  top: 8px;
+  width: 22%;
+  max-width: 72px;
+  height: auto;
+  pointer-events: none;
+  filter: drop-shadow(0 2px 6px rgba(42, 36, 28, 0.28));
 }
 
 .volume-book-head {
@@ -1017,34 +1064,50 @@ a {
   text-decoration: none;
 }
 
-.stamp-lit,
-.stamp-empty,
-.stamp-no-photo {
+/* 照片窗 8% inset，与 stamp-frame.svg 内窗一致 */
+.stamp-face {
   position: relative;
-}
-
-.stamp img,
-.stamp-placeholder {
-  width: 100%;
   aspect-ratio: 1;
-  border-radius: var(--radius-sm);
-  display: block;
-  object-fit: cover;
-  border: 1px solid var(--line);
-  background: var(--surface-wash);
+  width: 100%;
 }
 
-.stamp-empty .stamp-placeholder {
-  border-style: dashed;
-  border-color: var(--volume-stamp-empty-line, rgba(58, 50, 44, 0.28));
+.stamp-photo {
+  position: absolute;
+  inset: 8%;
+  overflow: hidden;
+  background: var(--volume-cover-empty, var(--surface-wash));
+}
+
+.stamp-photo img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: center;
+  display: block;
+}
+
+.stamp-photo-empty {
+  display: block;
+  width: 100%;
+  height: 100%;
   background:
     repeating-linear-gradient(
       -45deg,
       transparent,
       transparent 5px,
-      rgba(58, 50, 44, 0.04) 5px,
-      rgba(58, 50, 44, 0.04) 6px
+      rgba(58, 50, 44, 0.05) 5px,
+      rgba(58, 50, 44, 0.05) 6px
     );
+}
+
+.stamp-frame {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: fill;
+  pointer-events: none;
+  user-select: none;
 }
 
 .stamp-caption {
@@ -1063,7 +1126,10 @@ a {
 }
 
 .volume-ceremony {
+  position: relative;
   width: min(400px, 100%);
+  overflow: hidden;
+  padding: 0;
   text-align: center;
   animation: settleVolumeIn 420ms ease;
 }
@@ -1071,6 +1137,32 @@ a {
 .volume-ceremony.is-complete {
   border-color: var(--volume-complete-line, var(--cta));
   box-shadow: 0 12px 36px rgba(211, 84, 60, 0.16);
+}
+
+.ceremony-bg {
+  display: block;
+  width: 100%;
+  aspect-ratio: 4 / 3;
+  object-fit: cover;
+}
+
+.ceremony-seal {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  width: 26%;
+  max-width: 88px;
+  height: auto;
+  pointer-events: none;
+  filter: drop-shadow(0 2px 6px rgba(42, 36, 28, 0.3));
+  z-index: 1;
+}
+
+.ceremony-body {
+  position: relative;
+  z-index: 1;
+  padding: 14px 16px 16px;
+  background: var(--modal-bg);
 }
 
 .volume-ceremony-line {

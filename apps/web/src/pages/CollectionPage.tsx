@@ -3,6 +3,7 @@ import { Link } from "react-router-dom";
 import { hasMessage, t, type MessageKey } from "@biotrace/messages";
 import { api, type CollectionEntry, type Rarity, type VolumeListItem } from "../api";
 import VolumeBookDialog from "../components/VolumeBookDialog";
+import { volumeCoverUrl, volumeSealCompleteUrl } from "../themes";
 
 function rarityLabel(r: Rarity) {
   return t(`rarity.${r}` as MessageKey);
@@ -59,11 +60,26 @@ export default function CollectionPage() {
                   onClick={() => setOpenVolumeId(vol.id)}
                 >
                   <div className="volume-tile-cover">
-                    {vol.coverDisplayUrl ? (
-                      <img src={vol.coverDisplayUrl} alt="" />
-                    ) : (
-                      <div className="volume-tile-placeholder" aria-hidden />
-                    )}
+                    <img
+                      className="volume-tile-art"
+                      src={volumeCoverUrl(vol.id)}
+                      alt=""
+                      onError={(e) => {
+                        const el = e.currentTarget;
+                        el.style.display = "none";
+                        const fallback = el.nextElementSibling;
+                        if (fallback instanceof HTMLElement) fallback.hidden = false;
+                      }}
+                    />
+                    <div className="volume-tile-placeholder" hidden aria-hidden />
+                    {vol.completed ? (
+                      <img
+                        className="volume-tile-seal"
+                        src={volumeSealCompleteUrl()}
+                        alt=""
+                        aria-hidden
+                      />
+                    ) : null}
                     <span className="volume-tile-progress">
                       {vol.completed
                         ? t("collection.volumeDone")

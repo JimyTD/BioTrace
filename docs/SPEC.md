@@ -277,7 +277,8 @@ computeSettle
 - 开包后：`evaluateVolumesOnObservation`（先 GBIF 临时锚定 taxonomy，再 `taxonomy_in`）
 - API：`GET /api/volumes`；settle 响应带 `volumes.newlyLit / newlyCompleted*`；收下后有反馈则弹出仪式层（成册优先于点亮槽，无则静默回相册）
 - 进度 `lit_slot_ids_json`：兼容旧 `string[]`；新写 `Record<slotId,{observationId}>`，供邮票封面
-- UI：图鉴页紧凑册卡 → **弹层邮票墙**；开包点亮/成册用独立弹层（非页内挤排）
+- UI：图鉴页紧凑册卡（主题册皮）→ **弹层邮票墙**（照片+几何框分层）；开包点亮/成册仪式弹层（氛围底+火漆分层）
+- 主题资源：`public/volumes/<themeId>/` + `themes/volumeAssets`；见 [`套册美术分层.md`](./features/套册美术分层.md)
 - 已配三本：`intertidal` / `urban_wild` / `woodland_edge`；`fixture-pipeline` 默认关闭
 - DSL 摘要：[`data/volumes/README.md`](../apps/api/data/volumes/README.md)
 

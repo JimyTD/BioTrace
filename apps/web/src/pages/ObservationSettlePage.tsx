@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import { Link, useNavigate, useParams } from "react-router-dom";
 import { formatRank, hasMessage, t, type MessageKey } from "@biotrace/messages";
 import { api, type Observation, type Rarity, type SettleVolumesResult } from "../api";
+import { volumeCeremonyBgUrl, volumeSealCompleteUrl } from "../themes";
 
 function rarityLabel(r: Rarity | null) {
   if (!r) return "—";
@@ -201,25 +202,41 @@ export default function ObservationSettlePage() {
       {phase === "claimed" && ceremony ? (
         <div className="modal-backdrop volume-ceremony-backdrop" role="presentation">
           <div
-            className={`modal-panel volume-ceremony stack${
+            className={`modal-panel volume-ceremony${
               ceremony.kind === "complete" ? " is-complete" : ""
             }`}
             role="dialog"
             aria-modal="true"
             aria-labelledby="volume-ceremony-title"
           >
-            <p className="muted section-kicker" id="volume-ceremony-title">
-              {ceremony.kind === "complete"
-                ? t("settle.volumeCeremonyCompleteTitle")
-                : t("settle.volumeCeremonyTitle")}
-            </p>
-            <p className="volume-ceremony-line">{ceremony.line}</p>
-            <Link className="btn" to="/collection" replace>
-              {t("settle.volumeToCollection")}
-            </Link>
-            <Link className="btn secondary" to={`/trips/${obs.tripId}`} replace>
-              {t("settle.volumeContinue")}
-            </Link>
+            <img
+              className="ceremony-bg"
+              src={volumeCeremonyBgUrl(ceremony.kind === "complete" ? "complete" : "slot")}
+              alt=""
+              aria-hidden
+            />
+            {ceremony.kind === "complete" ? (
+              <img
+                className="ceremony-seal"
+                src={volumeSealCompleteUrl()}
+                alt=""
+                aria-hidden
+              />
+            ) : null}
+            <div className="ceremony-body stack">
+              <p className="muted section-kicker" id="volume-ceremony-title">
+                {ceremony.kind === "complete"
+                  ? t("settle.volumeCeremonyCompleteTitle")
+                  : t("settle.volumeCeremonyTitle")}
+              </p>
+              <p className="volume-ceremony-line">{ceremony.line}</p>
+              <Link className="btn" to="/collection" replace>
+                {t("settle.volumeToCollection")}
+              </Link>
+              <Link className="btn secondary" to={`/trips/${obs.tripId}`} replace>
+                {t("settle.volumeContinue")}
+              </Link>
+            </div>
           </div>
         </div>
       ) : null}

@@ -12,15 +12,17 @@ alwaysApply: true
 ## 必须
 
 - 配色 / 字体 / 圆角 / 氛围底 / 稀有度徽章色：写在 `apps/web/src/themes/<id>.css` 的 `[data-theme="<id>"]` 下
+- 套册位图：`public/volumes/<id>/`，经 `themes/volumeAssets` helper 引用（见 [`套册美术分层.md`](docs/features/套册美术分层.md)）
 - 结构样式只使用语义 `var(--*)`（见 `apps/web/src/styles.css`）
-- 新增皮肤：加 CSS → 登记 `themes/index.ts` 的 `ThemeId` / `THEME_IDS` → `main.tsx` import →（可选）`applyTheme` 切换 UI
+- 新增皮肤：加 CSS → 加 `volumes/<id>/` 资源包 → 登记 `ThemeId` / `THEME_IDS` → `main.tsx` import →（可选）`applyTheme`
 - 切换皮肤用 `applyTheme`；不要复制整页组件换皮
 
 ## 禁止
 
-- 在 `pages/*` / `components/*` 里写死主题十六进制色或为换皮分叉业务流程
+- 在 `pages/*` / `components/*` 里写死主题十六进制色、写死 `/volumes/daylight/`，或为换皮分叉业务流程
 - 只改某一皮肤、却在 `styles.css` 留下硬编码品牌色
 - 未在 `THEME_IDS` 登记的 id 当作可用皮肤
+- 用不规则复合 PNG 当邮票相框（相框用几何 SVG）
 
 ## 当前与后置
 
