@@ -2,6 +2,7 @@ import { useEffect, useState, type FormEvent } from "react";
 import { Link } from "react-router-dom";
 import { t } from "@biotrace/messages";
 import { api, type Trip } from "../api";
+import { tripMetaLine } from "../tripMeta";
 
 export default function TripsPage() {
   const [trips, setTrips] = useState<Trip[]>([]);
@@ -62,9 +63,7 @@ export default function TripsPage() {
         <p className="muted empty-hint">{t("trips.empty")}</p>
       ) : (
         <div className="trip-cover-list">
-          {trips.map((trip) => {
-            const count = trip.observationCount ?? 0;
-            return (
+          {trips.map((trip) => (
               <Link className="trip-cover" key={trip.id} to={`/trips/${trip.id}`}>
                 <div className="trip-cover-media">
                   {trip.coverDisplayUrl ? (
@@ -75,17 +74,10 @@ export default function TripsPage() {
                 </div>
                 <div className="trip-cover-meta">
                   <strong>{trip.title}</strong>
-                  <span className="muted">
-                    {count > 0
-                      ? t("trips.photoCount", { count })
-                      : t("trips.noPhotosYet")}
-                    {" · "}
-                    {new Date(trip.createdAt).toLocaleDateString()}
-                  </span>
+                  <span className="muted">{tripMetaLine(trip)}</span>
                 </div>
               </Link>
-            );
-          })}
+            ))}
         </div>
       )}
     </div>

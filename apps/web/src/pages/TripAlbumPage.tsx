@@ -13,6 +13,7 @@ import {
   pickImageNative,
   type PickImageMode,
 } from "../pickImage";
+import { tripMetaLine } from "../tripMeta";
 
 function statusBadge(obs: Observation) {
   if (obs.status === "analyzing") {
@@ -57,6 +58,11 @@ export default function TripAlbumPage() {
   const [pendingDeleteId, setPendingDeleteId] = useState<string | null>(null);
   const [titleDraft, setTitleDraft] = useState("");
   const [savingTitle, setSavingTitle] = useState(false);
+  const [metaManual, setMetaManual] = useState(false);
+  const [manualDate, setManualDate] = useState("");
+  const [manualPlace, setManualPlace] = useState("");
+  const [savingMeta, setSavingMeta] = useState(false);
+  const [metaSavedFlash, setMetaSavedFlash] = useState(false);
   const [deletePhrase, setDeletePhrase] = useState("");
   const [deletingTrip, setDeletingTrip] = useState(false);
   const [showManage, setShowManage] = useState(false);
@@ -105,6 +111,9 @@ export default function TripAlbumPage() {
     ]);
     setTrip(tripRes.trip);
     setTitleDraft(tripRes.trip.title);
+    setMetaManual(Boolean(tripRes.trip.metaManualEnabled));
+    setManualDate(tripRes.trip.manualDateText ?? "");
+    setManualPlace(tripRes.trip.manualPlaceText ?? "");
     setObservations(obsRes.observations);
     setLoaded(true);
   }
@@ -242,13 +251,37 @@ export default function TripAlbumPage() {
     setSavingTitle(true);
     setError(null);
     try {
-      const { trip: updated } = await api.updateTrip(id, titleDraft.trim());
+      const { trip: updated } = await api.updateTrip(id, { title: titleDraft.trim() });
       setTrip(updated);
       setTitleDraft(updated.title);
     } catch (err) {
       setError(err instanceof Error ? err.message : t("trips.renameFailed"));
     } finally {
       setSavingTitle(false);
+    }
+  }
+
+  async function onSaveMeta(e: FormEvent) {
+    e.preventDefault();
+    setSavingMeta(true);
+    setError(null);
+    setMetaSavedFlash(false);
+    try {
+      const { trip: updated } = await api.updateTrip(id, {
+        metaManualEnabled: metaManual,
+        manualDateText: manualDate.trim() ? manualDate.trim() : null,
+        manualPlaceText: manualPlace.trim() ? manualPlace.trim() : null,
+      });
+      setTrip(updated);
+      setMetaManual(Boolean(updated.metaManualEnabled));
+      setManualDate(updated.manualDateText ?? "");
+      setManualPlace(updated.manualPlaceText ?? "");
+      setMetaSavedFlash(true);
+      window.setTimeout(() => setMetaSavedFlash(false), 2000);
+    } catch (err) {
+      setError(err instanceof Error ? err.message : t("trips.metaSaveFailed"));
+    } finally {
+      setSavingMeta(false);
     }
   }
 
@@ -295,6 +328,7 @@ export default function TripAlbumPage() {
           </button>
         </div>
         <h1 className="page-title">{trip?.title ?? t("nav.trips")}</h1>
+        {trip ? <p className="muted album-meta-line">{tripMetaLine(trip)}</p> : null}
       </header>
 
       {showManage ? (
@@ -313,6 +347,56 @@ export default function TripAlbumPage() {
               <button className="btn" type="submit" disabled={savingTitle}>
                 {savingTitle ? t("trips.savingTitle") : t("trips.saveTitle")}
               </button>
+            </div>
+          </form>
+
+          <form className="stack" onSubmit={onSaveMeta}>
+            <label className="row trip-meta-toggle">
+              <input
+                type="checkbox"
+                checked={metaManual}
+                onChange={(e) => setMetaManual(e.target.checked)}
+              />
+              <span>{t("trips.metaManual")}</span>
+            </label>
+            <p className="muted">{t("trips.metaManualHint")}</p>
+            <p className="muted">
+              {trip?.autoDateSummary || trip?.autoPlaceSummary
+                ? t("trips.autoPreview", {
+                    date: trip.autoDateSummary || "—",
+                    place: trip.autoPlaceSummary || "—",
+                  })
+                : t("trips.autoPreviewEmpty")}
+            </p>
+            {metaManual ? (
+              <>
+                <label className="muted" htmlFor="trip-manual-date">
+                  {t("trips.manualDate")}
+                </label>
+                <input
+                  id="trip-manual-date"
+                  className="input"
+                  value={manualDate}
+                  onChange={(e) => setManualDate(e.target.value)}
+                  placeholder={t("trips.manualDatePlaceholder")}
+                />
+                <label className="muted" htmlFor="trip-manual-place">
+                  {t("trips.manualPlace")}
+                </label>
+                <input
+                  id="trip-manual-place"
+                  className="input"
+                  value={manualPlace}
+                  onChange={(e) => setManualPlace(e.target.value)}
+                  placeholder={t("trips.manualPlacePlaceholder")}
+                />
+              </>
+            ) : null}
+            <div className="row">
+              <button className="btn secondary" type="submit" disabled={savingMeta}>
+                {savingMeta ? t("trips.savingMeta") : t("trips.saveMeta")}
+              </button>
+              {metaSavedFlash ? <span className="muted">{t("trips.metaSaved")}</span> : null}
             </div>
           </form>
 

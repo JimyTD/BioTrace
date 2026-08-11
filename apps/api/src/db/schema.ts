@@ -15,6 +15,15 @@ export const trips = sqliteTable("trips", {
     .references(() => users.id),
   title: text("title").notNull(),
   createdAt: integer("created_at", { mode: "timestamp_ms" }).notNull(),
+  /**
+   * 开：展示优先用手填时间/地点（空项仍回落自动聚合）。
+   * 关：只展示自动聚合；手填内容保留不丢。
+   */
+  metaManualEnabled: integer("meta_manual_enabled", { mode: "boolean" }),
+  /** 用户手填时间文案（自由文本，如「2026.7」）。 */
+  manualDateText: text("manual_date_text"),
+  /** 用户手填地点文案（自由文本）。 */
+  manualPlaceText: text("manual_place_text"),
 });
 
 export const observations = sqliteTable(

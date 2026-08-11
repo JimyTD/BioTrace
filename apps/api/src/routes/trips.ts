@@ -17,10 +17,81 @@ import {
   serializeObservation,
   serializeTrip,
 } from "../serialize.js";
+import {
+  resolveTripSummary,
+  type TripObsForSummary,
+} from "../trips/summary.js";
+import type { Trip } from "../db/schema.js";
 
 export const tripRoutes = new Hono<{ Variables: Variables }>();
 
 tripRoutes.use("*", requireUser);
+
+async function loadTripObsSummary(userId: string, tripIds: string[]) {
+  if (tripIds.length === 0) {
+    return {
+      countByTrip: new Map<string, number>(),
+      coverByTrip: new Map<string, string>(),
+      obsByTrip: new Map<string, TripObsForSummary[]>(),
+    };
+  }
+
+  const countRows = await db
+    .select({
+      tripId: observations.tripId,
+      count: sql<number>`count(*)`.mapWith(Number),
+    })
+    .from(observations)
+    .where(and(eq(observations.userId, userId), inArray(observations.tripId, tripIds)))
+    .groupBy(observations.tripId);
+  const countByTrip = new Map(countRows.map((r) => [r.tripId, r.count]));
+
+  const coverByTrip = new Map<string, string>();
+  const obsByTrip = new Map<string, TripObsForSummary[]>();
+  const obsRows = await db.query.observations.findMany({
+    where: and(eq(observations.userId, userId), inArray(observations.tripId, tripIds)),
+    orderBy: [desc(observations.createdAt)],
+    columns: {
+      tripId: true,
+      displayPath: true,
+      capturedAt: true,
+      createdAt: true,
+      locationLabel: true,
+      countryCode: true,
+    },
+  });
+  for (const obs of obsRows) {
+    if (!coverByTrip.has(obs.tripId)) {
+      coverByTrip.set(obs.tripId, observationDisplayUrl(obs.displayPath));
+    }
+    const list = obsByTrip.get(obs.tripId) ?? [];
+    list.push({
+      capturedAt: obs.capturedAt,
+      createdAt: obs.createdAt,
+      locationLabel: obs.locationLabel,
+      countryCode: obs.countryCode,
+    });
+    obsByTrip.set(obs.tripId, list);
+  }
+
+  return { countByTrip, coverByTrip, obsByTrip };
+}
+
+function tripWithSummary(
+  trip: Trip,
+  pack: {
+    countByTrip: Map<string, number>;
+    coverByTrip: Map<string, string>;
+    obsByTrip: Map<string, TripObsForSummary[]>;
+  },
+) {
+  const obsList = pack.obsByTrip.get(trip.id) ?? [];
+  return serializeTrip(trip, {
+    coverDisplayUrl: pack.coverByTrip.get(trip.id) ?? null,
+    observationCount: pack.countByTrip.get(trip.id) ?? obsList.length,
+    summary: resolveTripSummary(obsList, trip),
+  });
+}
 
 tripRoutes.get("/", async (c) => {
   const user = c.get("user");
@@ -32,36 +103,13 @@ tripRoutes.get("/", async (c) => {
     return c.json({ trips: [] });
   }
 
-  const tripIds = rows.map((r) => r.id);
-  const countRows = await db
-    .select({
-      tripId: observations.tripId,
-      count: sql<number>`count(*)`.mapWith(Number),
-    })
-    .from(observations)
-    .where(and(eq(observations.userId, user.id), inArray(observations.tripId, tripIds)))
-    .groupBy(observations.tripId);
-  const countByTrip = new Map(countRows.map((r) => [r.tripId, r.count]));
-
-  const coverByTrip = new Map<string, string>();
-  const obsRows = await db.query.observations.findMany({
-    where: and(eq(observations.userId, user.id), inArray(observations.tripId, tripIds)),
-    orderBy: [desc(observations.createdAt)],
-    columns: { tripId: true, displayPath: true },
-  });
-  for (const obs of obsRows) {
-    if (!coverByTrip.has(obs.tripId)) {
-      coverByTrip.set(obs.tripId, observationDisplayUrl(obs.displayPath));
-    }
-  }
+  const pack = await loadTripObsSummary(
+    user.id,
+    rows.map((r) => r.id),
+  );
 
   return c.json({
-    trips: rows.map((trip) =>
-      serializeTrip(trip, {
-        coverDisplayUrl: coverByTrip.get(trip.id) ?? null,
-        observationCount: countByTrip.get(trip.id) ?? 0,
-      }),
-    ),
+    trips: rows.map((trip) => tripWithSummary(trip, pack)),
   });
 });
 
@@ -73,9 +121,19 @@ tripRoutes.post("/", async (c) => {
     userId: user.id,
     title: body.title,
     createdAt: new Date(),
+    metaManualEnabled: false,
+    manualDateText: null as string | null,
+    manualPlaceText: null as string | null,
   };
   await db.insert(trips).values(trip);
-  return c.json({ trip: serializeTrip(trip) }, 201);
+  return c.json(
+    {
+      trip: serializeTrip(trip, {
+        summary: resolveTripSummary([], trip),
+      }),
+    },
+    201,
+  );
 });
 
 tripRoutes.get("/:id", async (c) => {
@@ -87,7 +145,8 @@ tripRoutes.get("/:id", async (c) => {
     const err = apiError("not found", 404);
     return c.json(err.body, err.status);
   }
-  return c.json({ trip: serializeTrip(trip) });
+  const pack = await loadTripObsSummary(user.id, [trip.id]);
+  return c.json({ trip: tripWithSummary(trip, pack) });
 });
 
 tripRoutes.patch("/:id", async (c) => {
@@ -99,9 +158,35 @@ tripRoutes.patch("/:id", async (c) => {
     const err = apiError("not found", 404);
     return c.json(err.body, err.status);
   }
-  const body = z.object({ title: z.string().trim().min(1).max(120) }).parse(await c.req.json());
-  await db.update(trips).set({ title: body.title }).where(eq(trips.id, trip.id));
-  return c.json({ trip: serializeTrip({ ...trip, title: body.title }) });
+  const body = z
+    .object({
+      title: z.string().trim().min(1).max(120).optional(),
+      metaManualEnabled: z.boolean().optional(),
+      manualDateText: z.union([z.string().max(80), z.null()]).optional(),
+      manualPlaceText: z.union([z.string().max(120), z.null()]).optional(),
+    })
+    .parse(await c.req.json());
+
+  const patch: Partial<Trip> = {};
+  if (body.title !== undefined) patch.title = body.title;
+  if (body.metaManualEnabled !== undefined) patch.metaManualEnabled = body.metaManualEnabled;
+  if (body.manualDateText !== undefined) {
+    const v = body.manualDateText?.trim() ?? "";
+    patch.manualDateText = v || null;
+  }
+  if (body.manualPlaceText !== undefined) {
+    const v = body.manualPlaceText?.trim() ?? "";
+    patch.manualPlaceText = v || null;
+  }
+  if (Object.keys(patch).length === 0) {
+    const pack = await loadTripObsSummary(user.id, [trip.id]);
+    return c.json({ trip: tripWithSummary(trip, pack) });
+  }
+
+  await db.update(trips).set(patch).where(eq(trips.id, trip.id));
+  const updated = { ...trip, ...patch };
+  const pack = await loadTripObsSummary(user.id, [trip.id]);
+  return c.json({ trip: tripWithSummary(updated, pack) });
 });
 
 tripRoutes.delete("/:id", async (c) => {

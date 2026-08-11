@@ -1,5 +1,6 @@
 import { normalizeTaxonomy } from "./identify/types.js";
 import type { CollectionEntry, Observation, Trip, User } from "./db/schema.js";
+import type { TripSummaryResolved } from "./trips/summary.js";
 
 export function serializeUser(user: User) {
   return {
@@ -10,17 +11,28 @@ export function serializeUser(user: User) {
   };
 }
 
-export function serializeTrip(
-  trip: Trip,
-  extras?: { coverDisplayUrl?: string | null; observationCount?: number },
-) {
+export type TripSerializeExtras = {
+  coverDisplayUrl?: string | null;
+  observationCount?: number;
+  summary?: TripSummaryResolved | null;
+};
+
+export function serializeTrip(trip: Trip, extras?: TripSerializeExtras) {
+  const summary = extras?.summary;
   return {
     id: trip.id,
     userId: trip.userId,
     title: trip.title,
     createdAt: trip.createdAt.toISOString(),
+    metaManualEnabled: Boolean(trip.metaManualEnabled),
+    manualDateText: trip.manualDateText ?? null,
+    manualPlaceText: trip.manualPlaceText ?? null,
     coverDisplayUrl: extras?.coverDisplayUrl ?? null,
     observationCount: extras?.observationCount ?? 0,
+    autoDateSummary: summary?.autoDateSummary ?? null,
+    autoPlaceSummary: summary?.autoPlaceSummary ?? null,
+    dateSummary: summary?.dateSummary ?? null,
+    placeSummary: summary?.placeSummary ?? null,
   };
 }
 

@@ -237,6 +237,22 @@ a {
   padding: 0 2px;
 }
 
+.album-meta-line {
+  margin: 0.15rem 0 0;
+  font-size: 0.92rem;
+}
+
+.trip-meta-toggle {
+  align-items: center;
+  gap: 0.5rem;
+  cursor: pointer;
+}
+
+.trip-meta-toggle input {
+  width: 1rem;
+  height: 1rem;
+}
+
 .trip-cover-meta strong {
   font-size: 1.12rem;
   letter-spacing: -0.02em;

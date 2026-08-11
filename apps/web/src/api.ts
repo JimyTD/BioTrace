@@ -19,6 +19,22 @@ export type Trip = {
   createdAt: string;
   coverDisplayUrl?: string | null;
   observationCount?: number;
+  metaManualEnabled?: boolean;
+  manualDateText?: string | null;
+  manualPlaceText?: string | null;
+  /** 自动聚合（不受手填开关影响） */
+  autoDateSummary?: string | null;
+  autoPlaceSummary?: string | null;
+  /** 展示用：手填优先（开且非空）否则自动 */
+  dateSummary?: string | null;
+  placeSummary?: string | null;
+};
+
+export type TripUpdate = {
+  title?: string;
+  metaManualEnabled?: boolean;
+  manualDateText?: string | null;
+  manualPlaceText?: string | null;
 };
 export type ObsStatus = "analyzing" | "pending_settle" | "settled" | "failed";
 export type SettleTier = "full" | "weak" | "none";
@@ -154,11 +170,11 @@ export const api = {
       body: JSON.stringify({ title }),
     }),
   getTrip: (id: string) => request<{ trip: Trip }>(`/api/trips/${id}`),
-  updateTrip: (id: string, title: string) =>
+  updateTrip: (id: string, patch: TripUpdate) =>
     request<{ trip: Trip }>(`/api/trips/${id}`, {
       method: "PATCH",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ title }),
+      body: JSON.stringify(patch),
     }),
   deleteTrip: (id: string, confirmPhrase: string) =>
     request<{ ok: boolean; id: string; deletedObservations: number }>(`/api/trips/${id}`, {

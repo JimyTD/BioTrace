@@ -108,6 +108,10 @@ export async function migrate() {
   await ensureColumn("observations", "original_path", "original_path TEXT");
   await ensureColumn("observations", "location_label", "location_label TEXT");
 
+  await ensureColumn("trips", "meta_manual_enabled", "meta_manual_enabled INTEGER");
+  await ensureColumn("trips", "manual_date_text", "manual_date_text TEXT");
+  await ensureColumn("trips", "manual_place_text", "manual_place_text TEXT");
+
   // SQLite UNIQUE 允许多个 NULL；精确去重只约束已写入 hash 的行。
   await client.execute(`
     CREATE UNIQUE INDEX IF NOT EXISTS observations_user_content_hash

@@ -123,3 +123,20 @@ export function countryCodeFromZhName(nation: string | null | undefined): string
 export function normalizeStoredCountryCode(code: string | null | undefined): string | null {
   return normalizeAlpha2(code);
 }
+
+/** alpha-2 → 中文常用简称（旅途地点摘要用）；未录入则返回码本身。 */
+const ALPHA2_TO_ZH: Record<string, string> = Object.fromEntries(
+  Object.entries(ZH_NAME_TO_ALPHA2).map(([zh, code]) => [code, zh]),
+);
+// 常用简称优先（逆向建表时后写覆盖前写；显式钉死主名）
+ALPHA2_TO_ZH.CN = "中国";
+ALPHA2_TO_ZH.AE = "阿联酋";
+ALPHA2_TO_ZH.US = "美国";
+ALPHA2_TO_ZH.GB = "英国";
+ALPHA2_TO_ZH.KR = "韩国";
+
+export function countryZhNameFromCode(code: string | null | undefined): string | null {
+  const c = normalizeAlpha2(code);
+  if (!c) return null;
+  return ALPHA2_TO_ZH[c] ?? c;
+}

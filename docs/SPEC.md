@@ -18,7 +18,8 @@
 | 套册成就 | 引擎+三本内容已通 | 配置驱动；拓展手册 [`features/旅行套册.md`](./features/旅行套册.md) |
 | 皮肤主题 | 已落地 | 默认 `daylight`；手册 [`features/皮肤主题.md`](./features/皮肤主题.md) |
 | 地图补标 | 已完成 | 详情准星补标；`PATCH …/location` 重算国别/引入/稀有度（见 §1.3） |
-| 后置 | 未做 | 旅途元数据、全量灌库、iOS/上架；更多套册策展 |
+| 旅途元数据 | 已完成 | 列表/相册时间·地点摘要；自动聚合 + 可选手填覆盖（见 §1.5） |
+| 后置 | 未做 | 全量灌库、iOS/上架；更多套册策展 |
 
 本机：`pnpm.cmd dev` → Web `http://127.0.0.1:5173/` · API `http://127.0.0.1:8787`
 
@@ -88,6 +89,14 @@ docs/        筹划 + 本实现规格
 - **Android 相册**：默认传**原图**（`@capawesome/capacitor-file-picker` + `ACCESS_MEDIA_LOCATION`），不再走会把 GPS 涂成 `0,0` 的 Photo Picker 重编码。服务端 `readExif` 将近 Null Island 视为无定位；历史 `0,0` 启动时清洗。落盘 **原图 + display.jpg**（列表/识图用 display；详情优先原图若浏览器可显示）。单张上限默认 25MB（`UPLOAD_MAX_BYTES`）。
 - **可读地名**：天地图逆地理同一调用取 `province/city/county`，写入 `location_label`（国内省市区连写；海外「国家 · 城市」）。详情/地图优先展示；失败不挡主路径。
 - **同图去重**：上传原字节 SHA-256 → `content_hash`，按用户唯一；重复 `409 duplicate_photo`。删观察后可再传。不做感知哈希。
+
+## 1.5 旅途时间 / 地点摘要（已收口）
+
+列表与相册展示「张数 · 时间 · 地点」；封面仍用最新观察图。
+
+- **自动**：时间 = 观察 `capturedAt`（缺则 `createdAt`）首末日；地点从 `locationLabel` / `countryCode` 抽层级（最细到市），段内 `·`、多处 `-`（如 `江西·井冈山-湖南·湘潭`）。实现：[`trips/summary.ts`](../apps/api/src/trips/summary.ts)。
+- **手填覆盖**：旅途字段 `meta_manual_enabled` + `manual_date_text` / `manual_place_text`。开关开且该项非空才覆盖；关开关仍保留手填、展示回落自动。`PATCH /api/trips/:id` 可改。
+- **UI**：旅途列表副行；相册标题下同行；「管理旅途」里开关与输入框。
 
 ---
 
@@ -287,7 +296,7 @@ computeSettle
 - 套册：更多主题册策展（内容 only）；可选独立路由详情 / 手绘册皮
 - 皮肤：潜水/潮间带主题 `tide`；「我的」里主题切换 UI（见 [`features/皮肤主题.md`](./features/皮肤主题.md) §5）
 - 稀有度：灭绝级 XR 稳定性；中档继续靠判定键微调（禁止物种名单）
-- 旅途元数据增强（时间 / 地点摘要；**封面已实现**，列表 API 附 `coverDisplayUrl`）
+- ~~旅途元数据增强（时间 / 地点摘要）~~：已做——自动聚合 + 可选手填覆盖（见旅途列表 / 管理旅途）
 - 完整分类树动态够格（现为固定阶元门槛）；对象存储
 - iOS / Play 上架 / 备案后 HTTPS 域名 + App Links
 
