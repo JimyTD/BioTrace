@@ -240,11 +240,13 @@ a {
 
 .trip-cover-photo {
   position: absolute;
-  /* 与 cover-frame.svg 内窗对齐（约 5–6% inset） */
-  inset: 6% 5.3%;
-  width: auto;
-  height: auto;
+  /* 与 cover-frame.svg 挖空窗一致：四周 6% → 88% */
+  top: 6%;
+  left: 6%;
+  width: 88%;
+  height: 88%;
   object-fit: cover;
+  object-position: center;
   display: block;
   transition: transform 320ms ease;
 }
@@ -266,7 +268,10 @@ a {
 /* 无封面：纸色垫底即可，不用氛围插画 */
 .trip-cover-placeholder {
   position: absolute;
-  inset: 6% 5.3%;
+  top: 6%;
+  left: 6%;
+  width: 88%;
+  height: 88%;
   background:
     linear-gradient(
       145deg,

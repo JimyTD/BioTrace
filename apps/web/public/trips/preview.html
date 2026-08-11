@@ -42,9 +42,12 @@
         position: relative; aspect-ratio: 3/2; border-radius: 12px; overflow: hidden;
         background: var(--plate); box-shadow: var(--shadow);
       }
-      .media .photo { position: absolute; inset: 6% 5.3%; width: auto; height: auto; object-fit: cover; }
+      .media .photo {
+        position: absolute; top: 6%; left: 6%; width: 88%; height: 88%;
+        object-fit: cover; object-position: center; display: block;
+      }
       .media .ph {
-        position: absolute; inset: 6% 5.3%;
+        position: absolute; top: 6%; left: 6%; width: 88%; height: 88%;
         background: linear-gradient(145deg, rgba(211,84,60,.1), transparent 55%), var(--plate);
       }
       .media .frame { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: fill; z-index: 1; }
@@ -101,7 +104,7 @@
               </div>
               <div>
                 <div class="media">
-                  <img class="photo" src="../volumes/daylight/cover-intertidal.png" alt="" />
+                  <img class="photo" src="./_sample-photo.jpg" alt="" />
                   <img class="frame" src="./daylight/cover-frame.svg" alt="" />
                 </div>
                 <div class="meta"><strong>潮间带午后</strong><span>3 张照片 · 厦门</span></div>
