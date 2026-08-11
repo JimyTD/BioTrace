@@ -9,11 +9,11 @@
 
 | 阶段 | 状态 | 说明 |
 |------|------|------|
-| Cut 1 / 1.1 | 已完成 | 假登录、旅途、识图、相册、地图、删除、详情、术语表 |
+| Cut 1 / 1.1 | 已完成 | 旅途、识图、相册、地图、删除、详情、术语表（当时登录是临时假登录，见 Cut 5） |
 | Cut 2 | 已完成 | 待开包 → 抽卡结算、图鉴、引入警示 UI |
 | Cut 3 | 已收口 | 引入名录/识图韧性；稀有度 = encounter 分桶+否决（§3.1），已接结算 |
 | Cut 4 | 已上线 | 腾讯云轻量；手册 [`OPS.md`](./OPS.md) |
-| Cut 5 | 迭代中 | 邮箱+密码主路径（取代魔法链接）；Resend 用于找回；持久会话；见 §5 |
+| Cut 5 | 已上线 | 邮箱+密码主路径（取代魔法链接）；Resend 仅用于找回码；持久会话；见 §5 |
 | Cut 6 | 制品就绪 | Capacitor Android 侧载壳；手册 [`features/Android套壳.md`](./features/Android套壳.md) |
 | 套册成就 | 引擎+三本内容已通 | 配置驱动；拓展手册 [`features/旅行套册.md`](./features/旅行套册.md) |
 | 皮肤主题 | 已落地 | 默认 `daylight`；手册 [`features/皮肤主题.md`](./features/皮肤主题.md) |
@@ -166,6 +166,11 @@ docs/        筹划 + 本实现规格
 | [`formula.ts`](../apps/api/src/rarity/formula.ts) | 否决与 ±1 |
 | [`settle/rules.ts`](../apps/api/src/settle/rules.ts) | 结算编排 |
 | [`jobs/identify.ts`](../apps/api/src/jobs/identify.ts) | 识图后触发 settle |
+| [`rarity-score-config.json`](../apps/api/data/rarity-score-config.json) | 基础档与修正参数 |
+| [`rarity-thresholds.json`](../apps/api/data/rarity-thresholds.json) | 覆盖 `config.ts` 内置阈值（缺文件则用内置值） |
+| [`rarity-seed.json`](../apps/api/data/rarity-seed.json) | **仅模型失败时的兜底**：12 条 `国家|taxon → 档位`，命中记 `source:"seed"` |
+
+`rarity-seed.json` 是一份物种名单，但**只在 GLM 调用失败后才查**，不参与主路径评分——「禁止物种名单」那条约束针对的是判定键与主路径，不是这个兜底表。别往里加种来「调档」，要调就改 rubric 或 `rarity-score-config.json`。
 
 标定（不进用户请求）：`apps/api` 下 `pnpm exec tsx scripts/rarity-calibrate.ts`；锚点 [`rarity-calibrate-taxa.json`](../apps/api/scripts/rarity-calibrate-taxa.json)。  
 2026-08-07 新 20 锚点（相对用户档）：exact **15/20**，≤1 档 **20/20**。
@@ -225,8 +230,8 @@ computeSettle
 
 - **操作手册（唯一入口）**：[`OPS.md`](./OPS.md)（架构背景见其附录 A）
 - 仓库已含：`Dockerfile`、`docker-compose.yml`、`deploy/*`；生产项 `CORS_ORIGIN` / `COOKIE_SECURE`
-- 规格：2C2G40G、Ubuntu 22.04/24.04；假登录可先用；SQLite + 本地盘；不上 COS
-- **主线不再代劳上机**；购机/DNS/证书/compose 按 07 由部署侧完成并勾验收清单
+- 规格：2C2G40G、Ubuntu 22.04/24.04；SQLite + 本地盘；不上 COS
+- **主线不再代劳上机**；购机/DNS/证书/compose 按 [`OPS.md`](./OPS.md) 由部署侧完成并跑冒烟清单（现网 `DEV_AUTH=0`，假登录只在本机可用）
 
 ## 5. Cut 5：账号登录（邮箱+密码）
 
@@ -269,9 +274,9 @@ computeSettle
 - 套册：更多主题册策展（内容 only）；可选独立路由详情 / 手绘册皮
 - 皮肤：潜水/潮间带主题 `tide`；「我的」里主题切换 UI（见 [`features/皮肤主题.md`](./features/皮肤主题.md) §5）
 - 稀有度：灭绝级 XR 稳定性；中档继续靠判定键微调（禁止物种名单）
-- 旅途元数据增强（封面 / 时间 / 地点摘要）
-- 完整分类树动态够格、全量名录灌库；对象存储
-- 更精确逆地理国家
+- 旅途元数据增强（时间 / 地点摘要；**封面已实现**，列表 API 附 `coverDisplayUrl`）
+- 完整分类树动态够格（现为固定阶元门槛）；对象存储
+- 逆地理更细粒度（省市级；**国家级已由天地图 + 离线国界落地**）
 - iOS / Play 上架 / 备案后 HTTPS 域名 + App Links
 
 ---

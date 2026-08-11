@@ -22,8 +22,8 @@ pnpm dev
 - Web：http://127.0.0.1:5173/
 - API：http://127.0.0.1:8787/api/health
 
-登录：邮箱魔法链接（需 `RESEND_API_KEY`）；本机无 Key 时可开 `DEV_AUTH=1` 用「开发登录」，链接也会打到 API 日志。  
-`APP_ORIGIN` 本机请设为 `http://127.0.0.1:5173`（与 Vite 同源，便于验链设 cookie）。
+登录：**邮箱 + 密码**（注册即用，不强制验邮）。忘记密码走「找回」→ 邮件收 6 位码 → App 内填码重置，只有这一步需要 `RESEND_API_KEY`；本机没配 Key 时验证码会打到 API 日志。也可开 `DEV_AUTH=1` 用「开发登录」跳过。  
+`APP_ORIGIN` 本机请设为 `http://127.0.0.1:5173`（与 Vite 同源，便于设 cookie）。
 
 若本机访问 Gemini 需要代理，在 `apps/api/.env` 加：
 

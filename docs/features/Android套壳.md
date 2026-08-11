@@ -1,4 +1,4 @@
-# BioTrace Cut 6：Android 薄壳（侧载）
+﻿# BioTrace Cut 6：Android 薄壳（侧载）
 
 > Capacitor WebView 加载已部署的站点；**不上架应用商店**。架构见 [`planning/05-技术方案.md`](../planning/05-技术方案.md)；HTTP/IP 运维见 [`OPS.md`](../OPS.md)。
 
@@ -105,5 +105,5 @@ cd apps/mobile/android
 ## 6. 已知限制（本 Cut 不做）
 
 - iOS / TWA / 应用商店上架
-- App Links 深链回收魔法链接到 App 内（邮件仍可能外开浏览器）
+- App Links 深链（当前登录是邮箱+密码、找回码在 App 内填，已无需从邮件跳回 App）
 - 批量多图上传（产品上一次一张观察）

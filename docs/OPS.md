@@ -17,7 +17,7 @@ BioTrace 是个人向「旅行自然观察」Web 应用（上传照片 → 云�
 | 阶段 | 访问方式 | 登录 | Cookie | 说明 | 状态 |
 |------|---------|------|--------|------|------|
 | **一** | `http://106.53.188.20` | `DEV_AUTH=1` 过渡 | `COOKIE_SECURE=0` | IP 直连，免备案，先跑通功能 | ✅ 已完成（已进入二） |
-| **二（当前）** | 同上 | 邮箱+密码（Resend 用于找回） | 同上 | Resend 域名已验证；日常登录不发信；社交能力后置 | ✅ 登录方式迭代中 |
+| **二（当前）** | 同上 | 邮箱+密码（Resend 仅用于找回） | 同上 | Resend 域名已验证；日常登录不发信；社交能力后置 | ✅ 已上线 |
 | **三（远期）** | `https://bio.jettechdog.icu` | 邮箱+密码 | `COOKIE_SECURE=1` | 迁境外机 / 或大陆机备案后上域名 + HTTPS | ⏳ 规划 |
 
 **为什么这么分**：大陆服务器上，未备案域名的 80/443 会被腾讯云拦截（合规硬性要求）；用 IP 直连不受限。套安卓壳后 API 地址内置、用户不可见，IP 直连体验无损。故先用 IP 跑起来，域名/HTTPS 放到迁移或备案后处理。
@@ -227,11 +227,13 @@ sudo nginx -t && sudo systemctl reload nginx
 
 ---
 
-## 5. 第二阶段：接入 Resend 真实邮箱登录 ✅ 已完成（2026-08-07）
+## 5. 第二阶段：接入 Resend 真实邮箱 ✅ 已完成（2026-08-07）
 
-目标：让**任何人**输入邮箱即可收到登录链接，关闭 `DEV_AUTH`。**已落地**：Resend 自有发信域名 `jettechdog.icu` 已验证、`RESEND_API_KEY` 已配置、`DEV_AUTH=0`、`MAIL_FROM=BioTrace <noreply@jettechdog.icu>`，服务器实际生效。以下记录为落地过程与复现步骤。
+目标：关闭 `DEV_AUTH`，让**任何人**都能注册登录，且忘记密码时收得到验证码。**已落地**：Resend 自有发信域名 `jettechdog.icu` 已验证、`RESEND_API_KEY` 已配置、`DEV_AUTH=0`、`MAIL_FROM=BioTrace <noreply@jettechdog.icu>`，服务器实际生效。以下记录为落地过程与复现步骤。
 
-**为什么需要**：魔法链接靠 Resend 发信。用默认 `onboarding@resend.dev` 只能发到你本人注册 Resend 的邮箱；要发给别人，须在 Resend 验证一个自有发信域名。**验证发信域名只改 DNS，与网站备案无关，不需要备案。**
+**注意登录不发信**：主路径是邮箱+密码（见 [`SPEC.md`](./SPEC.md) §5），Resend **只用于找回密码的 6 位码**。本节最初是为已下线的邮箱魔法链接搭的，但发信域名这套配置对找回码同样必需，故保留。
+
+**为什么需要自有域名**：用默认 `onboarding@resend.dev` 只能发到你本人注册 Resend 的邮箱；要发给别人，须在 Resend 验证一个自有发信域名。**验证发信域名只改 DNS，与网站备案无关，不需要备案。**
 
 **步骤（用户侧）**
 1. 注册 [Resend](https://resend.com)（免费额度：100 封/天、3000 封/月，个人自用足够），拿到 `RESEND_API_KEY`。
@@ -249,7 +251,7 @@ cd /opt/biotrace && sudo docker compose up -d --force-recreate
 curl -s http://127.0.0.1:8787/api/health   # devAuth 应为 false
 ```
 
-> ✅ **已验证并上线**：域名 `jettechdog.icu` 已在 Resend 验证通过，`DEV_AUTH=0` 已生效，任何人输入邮箱均可收到登录链接。（历史提示：域名验证通过前只有你本人 Resend 注册邮箱能收信，其他人须暂用 `DEV_AUTH=1`——现已不适用。）
+> ✅ **已验证并上线**：域名 `jettechdog.icu` 已在 Resend 验证通过，`DEV_AUTH=0` 已生效，任何人都能注册并收到找回码。（历史提示：域名验证通过前只有你本人 Resend 注册邮箱能收信，其他人须暂用 `DEV_AUTH=1`——现已不适用。）
 >
 > ⚠️ **发信出境走代理**：广州机直连 `api.resend.com` 不稳（间歇 `ConnectTimeoutError`），已通过 `HTTPS_PROXY`（宿主机 Xray→新加坡）让发信出境。代码 `apps/api/src/mail/resend.ts` 用 undici `ProxyAgent(HTTPS_PROXY)` 自动生效，无需改代码。代理搭建/维护见 **§6.5**。
 
