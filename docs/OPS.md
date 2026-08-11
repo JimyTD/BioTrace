@@ -3,7 +3,7 @@
 > **这是 BioTrace 上线与运维的唯一操作手册**，反映真实落地方案，随版本更新持续维护。
 > **本文件是运维真源。** 架构背景、设计约定与天地图接入坑见文末[附录 A](#附录-a架构背景与设计约定)；业务功能见 [`SPEC.md`](./SPEC.md)。
 >
-> 最后更新：2026-08-10 · 当前阶段：**第二阶段（IP + HTTP + Resend 真实邮箱登录）已上线**；`DEV_AUTH=0`、Resend 走自有验证域名 `jettechdog.icu` 发信；已接入**境外出网代理（广州→新加坡 Xray）**保障 Resend/Gemini 出境；运维通道改为 Cursor MCP `tencent-lighthouse`（见 §2.1）
+> 最后更新：2026-08-11 · 当前阶段：**第二阶段（IP + HTTP + Resend 真实邮箱登录）已上线**；`DEV_AUTH=0`、Resend 走自有验证域名 `jettechdog.icu` 发信；已接入**境外出网代理（广州→新加坡 Xray）**保障 Resend/Gemini 出境；运维通道改为 Cursor MCP `tencent-lighthouse`（见 §2.1）；Android APK 为按需制品（见 §7.2）
 >
 > 🔒 **更新前必读**：[§7.0 数据来源单一性铁律](#70-铁律数据来源单一性错一次后果严重务必遵守)——git 为唯一工程来源、隐私靠服务器本地 `.env`、禁止 `reset --hard`。
 
@@ -22,7 +22,7 @@ BioTrace 是个人向「旅行自然观察」Web 应用（上传照片 → 云�
 
 **为什么这么分**：大陆服务器上，未备案域名的 80/443 会被腾讯云拦截（合规硬性要求）；用 IP 直连不受限。套安卓壳后 API 地址内置、用户不可见，IP 直连体验无损。故先用 IP 跑起来，域名/HTTPS 放到迁移或备案后处理。
 
-**Android 壳（Cut 6）**：见 [`features/Android套壳.md`](./features/Android套壳.md)。壳内 `server.url` 必须等于本表「访问方式」同源（当前 `http://106.53.188.20`）。HTTP 阶段服务器侧保持 `COOKIE_SECURE=0`，否则 WebView 会话会掉。改壳地址：`apps/mobile/server-url.txt` → `pnpm mobile:sync`。侧载包发布见 [§7.2](#72-发布-android-侧载包github-actions)。
+**Android 壳（Cut 6）**：见 [`features/Android套壳.md`](./features/Android套壳.md)。壳内 `server.url` 必须等于本表「访问方式」同源（当前 `http://106.53.188.20`）。HTTP 阶段服务器侧保持 `COOKIE_SECURE=0`，否则 WebView 会话会掉。改壳地址：`apps/mobile/server-url.txt` → `pnpm mobile:sync`。侧载包发布见 [§7.2](#72-发布-android-侧载包github-actions)。**日常只更新服务器即可**——壳是远程 WebView，不必随每次 Web/API 提交重打 APK。
 
 ---
 
@@ -448,10 +448,21 @@ sudo docker compose exec -T api sh -c 'echo $HTTPS_PROXY; getent hosts host.dock
 
 > 服务器更新（§7.1）只覆盖 Web/API。Android 薄壳是**独立制品**：用 GitHub Actions 打签名 release APK，挂到 GitHub Release 供侧载。细节与本机构建见 [`features/Android套壳.md`](./features/Android套壳.md)。
 
-**何时需要重打 APK**
+**更新节奏（重要）**
 
-- 改了 `apps/mobile` 原生壳 / Capacitor 插件 / `server-url`（公网源变更）
-- **不需要**：只改网站前端或 API（壳仍指向同一公网源即可）
+当前形态是 Capacitor **远程 WebView**：APK 只负责打开公网同源站点（`server.url`），页面与 API 一律走已部署的 Web。因此：
+
+- **日常发版路径 = §7.1 更新服务器**。用户下次打开 App（或刷新）即见新前端/API，**不必**跟着每次 `main` 提交重打/重装 APK。
+- APK 是**按需制品**，不是与 Web 同步的流水线；不要默认「服务器更新了就打一个新包」。
+
+**何时才需要重打 APK**
+
+| 需要重打 | 不需要重打 |
+|----------|------------|
+| 改了 `apps/mobile` 原生壳 / Manifest / 权限 | 只改 `apps/web` 前端 |
+| 增删改 Capacitor 插件（如相机、文件选择） | 只改 `apps/api`、套册、文案、识图逻辑 |
+| 改了 `server-url`（公网源地址变更） | 服务器按 §7.1 pull / 重建后已上线的内容 |
+| 需要抬 `versionCode` 做可覆盖安装的升级包 | 同签名、同公网源下的功能迭代 |
 
 **前置（一次性）**
 
