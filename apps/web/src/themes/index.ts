@@ -3,6 +3,7 @@
  *
  * - 配色 token：themes/*.css → [data-theme]
  * - 套册资源包：public/volumes/<themeId>/，经 volumeAssets helper 引用
+ * - 旅途资源包：public/trips/<themeId>/，经 tripAssets helper 引用
  * - 结构 class：styles.css 只用 var(--*)
  */
 export {
@@ -32,3 +33,13 @@ export {
   themeSettleAsset,
   themeSettleBase,
 } from "./settleAssets";
+
+export {
+  themeTripAsset,
+  themeTripBase,
+  tripAlbumEmptyUrl,
+  tripCoverEmptyUrl,
+  tripCoverFrameUrl,
+  tripFilmFrameUrl,
+  tripListEmptyUrl,
+} from "./tripAssets";

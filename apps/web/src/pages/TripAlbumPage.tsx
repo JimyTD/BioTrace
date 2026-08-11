@@ -13,6 +13,7 @@ import {
   pickImageNative,
   type PickImageMode,
 } from "../pickImage";
+import { tripAlbumEmptyUrl, tripFilmFrameUrl } from "../themes";
 import { tripMetaLine } from "../tripMeta";
 
 function statusBadge(obs: Observation) {
@@ -333,6 +334,7 @@ export default function TripAlbumPage() {
           </button>
         </div>
         <h1 className="page-title">{trip?.title ?? t("nav.trips")}</h1>
+        <p className="lede album-lede">{t("album.lede")}</p>
         {trip ? <p className="muted album-meta-line">{tripMetaLine(trip)}</p> : null}
       </header>
 
@@ -512,7 +514,12 @@ export default function TripAlbumPage() {
       {error ? <p className="error">{error}</p> : null}
 
       {loaded && observations.length === 0 ? (
-        <p className="muted empty-hint">{t("album.empty")}</p>
+        <div className="trip-empty album-empty">
+          <div className="trip-empty-art" aria-hidden>
+            <img src={tripAlbumEmptyUrl()} alt="" />
+          </div>
+          <p className="trip-empty-caption">{t("album.empty")}</p>
+        </div>
       ) : null}
 
       <div className="album film-grid">
@@ -524,6 +531,7 @@ export default function TripAlbumPage() {
             <Link className="film-tile-link" to={obsHref(obs)}>
               <div className="film-tile-media">
                 <img
+                  className="film-tile-photo"
                   src={obs.displayUrl}
                   alt={
                     obs.status === "pending_settle"
@@ -533,6 +541,10 @@ export default function TripAlbumPage() {
                         : obs.commonName || t("map.observationFallback")
                   }
                 />
+                {obs.status === "pending_settle" ? (
+                  <div className="film-tile-pending-veil" aria-hidden />
+                ) : null}
+                <img className="film-tile-frame" src={tripFilmFrameUrl()} alt="" aria-hidden />
                 <div className="film-tile-badge">{statusBadge(obs)}</div>
               </div>
               <div className="film-tile-meta">

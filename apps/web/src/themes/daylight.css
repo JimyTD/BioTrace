@@ -105,4 +105,12 @@
   --volume-complete-line: #d3543c;
   --volume-complete-soft: #f0ddd4;
   --volume-complete-ink: #9a4030;
+
+  /* 旅途封面墙 / 胶片格 */
+  --trip-cover-shadow: 0 10px 26px rgba(42, 36, 28, 0.1);
+  --trip-cover-shadow-hover: 0 14px 32px rgba(42, 36, 28, 0.14);
+  --trip-cover-plate: #efe6d6;
+  --trip-create-bg: color-mix(in srgb, var(--card) 82%, var(--volume-cover-empty));
+  --trip-pending-veil: color-mix(in srgb, var(--volume-cover-empty) 72%, #2a241c);
+  --trip-empty-caption: var(--muted);
 }

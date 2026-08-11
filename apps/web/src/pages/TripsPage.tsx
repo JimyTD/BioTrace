@@ -2,6 +2,11 @@ import { useEffect, useState, type FormEvent } from "react";
 import { Link } from "react-router-dom";
 import { t } from "@biotrace/messages";
 import { api, type Trip } from "../api";
+import {
+  tripCoverEmptyUrl,
+  tripCoverFrameUrl,
+  tripListEmptyUrl,
+} from "../themes";
 import { tripMetaLine } from "../tripMeta";
 
 export default function TripsPage() {
@@ -38,6 +43,7 @@ export default function TripsPage() {
     <div className="stack page-trips">
       <header className="page-head">
         <h1 className="page-title">{t("trips.title")}</h1>
+        <p className="lede">{t("trips.lede")}</p>
       </header>
 
       <form className="trip-create-inline" onSubmit={onCreate}>
@@ -50,7 +56,7 @@ export default function TripsPage() {
           value={title}
           onChange={(e) => setTitle(e.target.value)}
         />
-        <button className="btn" type="submit" disabled={!title.trim()}>
+        <button className="btn secondary" type="submit" disabled={!title.trim()}>
           {t("trips.createAction")}
         </button>
       </form>
@@ -59,24 +65,35 @@ export default function TripsPage() {
       {loading ? <p className="muted">{t("trips.loading")}</p> : null}
 
       {!loading && trips.length === 0 ? (
-        <p className="muted empty-hint">{t("trips.empty")}</p>
+        <div className="trip-empty">
+          <div className="trip-empty-art" aria-hidden>
+            <img src={tripListEmptyUrl()} alt="" />
+          </div>
+          <p className="trip-empty-caption">{t("trips.empty")}</p>
+        </div>
       ) : (
         <div className="trip-cover-list">
           {trips.map((trip) => (
-              <Link className="trip-cover" key={trip.id} to={`/trips/${trip.id}`}>
-                <div className="trip-cover-media">
-                  {trip.coverDisplayUrl ? (
-                    <img src={trip.coverDisplayUrl} alt="" />
-                  ) : (
-                    <div className="trip-cover-placeholder" aria-hidden />
-                  )}
-                </div>
-                <div className="trip-cover-meta">
-                  <strong>{trip.title}</strong>
-                  <span className="muted">{tripMetaLine(trip)}</span>
-                </div>
-              </Link>
-            ))}
+            <Link className="trip-cover" key={trip.id} to={`/trips/${trip.id}`}>
+              <div className="trip-cover-media">
+                {trip.coverDisplayUrl ? (
+                  <img className="trip-cover-photo" src={trip.coverDisplayUrl} alt="" />
+                ) : (
+                  <img
+                    className="trip-cover-photo is-placeholder"
+                    src={tripCoverEmptyUrl()}
+                    alt=""
+                    aria-hidden
+                  />
+                )}
+                <img className="trip-cover-frame" src={tripCoverFrameUrl()} alt="" aria-hidden />
+              </div>
+              <div className="trip-cover-meta">
+                <strong>{trip.title}</strong>
+                <span className="muted">{tripMetaLine(trip)}</span>
+              </div>
+            </Link>
+          ))}
         </div>
       )}
     </div>

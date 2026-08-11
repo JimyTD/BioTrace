@@ -184,61 +184,157 @@ a {
   color: var(--danger);
 }
 
+.page-trips .lede {
+  margin-bottom: 14px;
+}
+
+/* 题签条：创建降权，封面墙做主角 */
 .trip-create-inline {
   display: grid;
   grid-template-columns: 1fr auto;
   gap: 8px;
   align-items: center;
+  padding: 10px 12px;
+  border-radius: var(--radius-md);
+  background: var(--trip-create-bg);
+  border: 1px solid var(--line);
+  box-shadow: inset 0 1px 0 color-mix(in srgb, var(--card) 70%, transparent);
+}
+
+.trip-create-inline .input {
+  background: color-mix(in srgb, var(--input-bg) 88%, transparent);
+  border-color: color-mix(in srgb, var(--line) 80%, transparent);
+}
+
+.trip-create-inline .btn.secondary {
+  min-width: 4.5rem;
 }
 
 .trip-cover-list {
   display: grid;
-  gap: 18px;
+  gap: 22px;
+  margin-top: 4px;
 }
 
 .trip-cover {
   display: grid;
-  gap: 8px;
+  gap: 10px;
   color: inherit;
 }
 
 .trip-cover-media {
   position: relative;
   aspect-ratio: 3 / 2;
-  border-radius: var(--radius-md);
+  border-radius: calc(var(--radius-md) + 1px);
   overflow: hidden;
-  background: var(--surface-wash);
-  border: 1px solid var(--line);
+  background: var(--trip-cover-plate);
+  box-shadow: var(--trip-cover-shadow);
+  transition:
+    box-shadow 280ms ease,
+    transform 280ms ease;
 }
 
-.trip-cover-media img {
+.trip-cover:hover .trip-cover-media,
+.trip-cover:focus-visible .trip-cover-media {
+  box-shadow: var(--trip-cover-shadow-hover);
+  transform: translateY(-2px);
+}
+
+.trip-cover-photo {
+  position: absolute;
+  inset: 0;
   width: 100%;
   height: 100%;
   object-fit: cover;
   display: block;
-  transition: transform 280ms ease;
+  transition: transform 320ms ease;
 }
 
-.trip-cover:hover .trip-cover-media img {
-  transform: scale(1.02);
+.trip-cover-photo.is-placeholder {
+  object-position: center;
 }
 
-.trip-cover-placeholder {
+.trip-cover:hover .trip-cover-photo:not(.is-placeholder) {
+  transform: scale(1.03);
+}
+
+.trip-cover-frame {
+  position: absolute;
+  inset: 0;
   width: 100%;
   height: 100%;
-  background:
-    linear-gradient(145deg, rgba(211, 84, 60, 0.12), transparent 55%),
-    linear-gradient(180deg, #e7dfd2, #d9d0c2);
+  object-fit: fill;
+  pointer-events: none;
+  z-index: 1;
 }
 
 .trip-cover-meta {
   display: grid;
-  gap: 2px;
-  padding: 0 2px;
+  gap: 3px;
+  padding: 0 4px;
+}
+
+.trip-cover-meta strong {
+  font-family: var(--font-brand);
+  font-size: 1.14rem;
+  letter-spacing: -0.02em;
+}
+
+/* 列表 / 相册共用空态构图 */
+.trip-empty {
+  display: grid;
+  gap: 12px;
+  justify-items: center;
+  padding: 8px 0 12px;
+  animation: tripEmptyIn 420ms ease;
+}
+
+.trip-empty-art {
+  width: min(100%, 28rem);
+  aspect-ratio: 4 / 3;
+  border-radius: var(--radius-md);
+  overflow: hidden;
+  /* 羊皮纸插画应溶进页氛围，勿做成第二张「桌面照片卡」 */
+  background: transparent;
+  border: 1px solid color-mix(in srgb, var(--line) 65%, transparent);
+}
+
+.trip-empty-art img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+  mask-image: linear-gradient(#000 90%, transparent);
+}
+
+.trip-empty-caption {
+  margin: 0;
+  color: var(--trip-empty-caption);
+  text-align: center;
+  max-width: 28ch;
+  font-size: 0.95rem;
+  line-height: 1.45;
+}
+
+@keyframes tripEmptyIn {
+  from {
+    opacity: 0;
+    transform: translateY(6px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.album-lede {
+  margin: 4px 0 0;
+  max-width: 36ch;
+  font-size: 0.95rem;
 }
 
 .album-meta-line {
-  margin: 0.15rem 0 0;
+  margin: 0.35rem 0 0;
   font-size: 0.92rem;
 }
 
@@ -253,14 +349,9 @@ a {
   height: 1rem;
 }
 
-.trip-cover-meta strong {
-  font-size: 1.12rem;
-  letter-spacing: -0.02em;
-}
-
 .album-head {
   display: grid;
-  gap: 8px;
+  gap: 6px;
 }
 
 .album-head-row {
@@ -274,12 +365,14 @@ a {
   display: flex;
   gap: 10px;
   align-items: center;
+  margin-top: 2px;
 }
 
 .album-uploader {
-  padding: 12px 0 4px;
-  border-top: 1px solid var(--line);
-  border-bottom: 1px solid var(--line);
+  padding: 12px 12px 8px;
+  border-radius: var(--radius-md);
+  background: var(--trip-create-bg);
+  border: 1px solid var(--line);
 }
 
 .album {
@@ -290,7 +383,7 @@ a {
 
 .film-grid {
   grid-template-columns: repeat(2, minmax(0, 1fr));
-  gap: 14px 10px;
+  gap: 16px 12px;
 }
 
 @media (min-width: 640px) {
@@ -313,27 +406,51 @@ a {
 .film-tile-media {
   position: relative;
   aspect-ratio: 1;
-  border-radius: var(--radius-sm);
+  border-radius: 3px;
   overflow: hidden;
-  background: var(--surface-wash);
-  border: 1px solid var(--line);
+  background: var(--trip-cover-plate);
+  box-shadow: 0 4px 14px rgba(42, 36, 28, 0.08);
 }
 
-.film-tile-media img {
-  width: 100%;
-  height: 100%;
+.film-tile-photo {
+  position: absolute;
+  /* 与 film-frame.svg 8% 内窗对齐 */
+  inset: 8%;
+  width: 84%;
+  height: 84%;
   object-fit: cover;
   display: block;
 }
 
-.film-tile.is-pending .film-tile-media img {
-  filter: saturate(0.75) brightness(0.92);
+.film-tile-frame {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: fill;
+  pointer-events: none;
+  z-index: 2;
+}
+
+.film-tile-pending-veil {
+  position: absolute;
+  inset: 8%;
+  z-index: 1;
+  background:
+    linear-gradient(160deg, color-mix(in srgb, var(--trip-pending-veil) 55%, transparent), transparent 62%),
+    color-mix(in srgb, var(--trip-pending-veil) 28%, transparent);
+  pointer-events: none;
+}
+
+.film-tile.is-pending .film-tile-photo {
+  filter: saturate(0.72) brightness(0.9);
 }
 
 .film-tile-badge {
   position: absolute;
-  top: 8px;
-  left: 8px;
+  top: 10%;
+  left: 10%;
+  z-index: 3;
 }
 
 .film-tile-meta {
