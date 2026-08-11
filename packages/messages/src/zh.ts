@@ -47,10 +47,10 @@ export const zh = {
   "auth.resetMailHtml": "<p>你的 BioTrace 密码重置码是：</p><p style=\"font-size:1.5em;letter-spacing:0.2em\"><strong>{code}</strong></p><p>15 分钟内有效。如非本人操作，请忽略本邮件。</p>",
 
   "trips.title": "旅途",
-  "trips.lede": "先建一次旅途，再进去选图上传。",
+  "trips.lede": "每一次出门，都是一本新相册。",
   "trips.createLabel": "新建旅途",
-  "trips.createAction": "创建",
-  "trips.empty": "还没有旅途。写下名字，开始记录。",
+  "trips.createAction": "开册",
+  "trips.empty": "还没有旅途。写下名字，翻开第一页。",
   "trips.photoCount": "{count} 张照片",
   "trips.noPhotosYet": "还没有照片",
   "trips.loading": "加载旅途…",
@@ -79,7 +79,7 @@ export const zh = {
   "trips.autoPreviewEmpty": "自动汇总：暂无（上传带定位的照片后生成）",
 
   "album.back": "旅途",
-  "album.lede": "你拍，他认。一次可以多选几张。",
+  "album.lede": "选几张照片放进这本册子，我们来认一认。",
   "album.addPhotos": "加入照片",
   "album.upload": "上传并鉴定",
   "album.uploading": "上传中…",
@@ -95,7 +95,7 @@ export const zh = {
   "album.pickCancelled": "已取消选择",
   "album.pickFailed": "无法打开相册或相机，请重试",
   "album.picking": "选择中…",
-  "album.empty": "这个旅途还没有观察。上传照片试试。",
+  "album.empty": "册页还空着。加入照片，开始记录。",
   "album.uploadFailed": "上传失败",
   "album.duplicatePhoto": "这张照片已经上传过了。",
   "album.fileTooLarge": "照片太大，请压缩到 {maxMb}MB 以内再传。",
@@ -217,6 +217,9 @@ export const zh = {
   "map.openDetail": "查看详情",
   "map.loadFailed": "地图加载失败",
   "map.observationFallback": "观察",
+  /** 天地图 attribution；审图号以官网首页 mapdrawingApprovalNumber 为准，换号时改这里。 */
+  "map.tiandituAttribution": "天地图 · 国家地理信息公共服务平台 · GS(2025)1508号",
+  "map.simpleBasemapAttribution": "Natural Earth",
 
   "me.title": "我的",
   "me.lede": "账号与环境状态。",

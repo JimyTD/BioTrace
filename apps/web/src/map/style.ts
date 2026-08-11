@@ -1,4 +1,5 @@
 import type { Map, StyleSpecification } from "maplibre-gl";
+import { t } from "@biotrace/messages";
 
 /**
  * 天地图浏览器端 key 链：主 key + 可选备用（逗号分隔多个）。
@@ -27,8 +28,8 @@ export const TIANDITU_KEYS = parseKeys(
 /** @deprecated 兼容旧引用；等价于 TIANDITU_KEYS[0] */
 export const TIANDITU_KEY = TIANDITU_KEYS[0];
 
-// TODO 合规：补天地图官方要求的审图号（形如 GS(20XX)XXXX号），文本以官方条款为准。
-const TIANDITU_ATTRIBUTION = "天地图 · 国家地理信息公共服务平台";
+/** 审图号取自天地图官网首页 `mapdrawingApprovalNumber`（2026-08-11 核对为 GS(2025)1508号）；官网换号时改 messages。 */
+const TIANDITU_ATTRIBUTION = t("map.tiandituAttribution");
 
 /** t0~t7 多子域并行，缓解单域连接数瓶颈；必须用 _w 后缀（球面墨卡托 EPSG:3857）。 */
 function tiandituTiles(key: string, layer: "vec" | "cva"): string[] {
@@ -75,7 +76,7 @@ export const SIMPLE_STYLE: StyleSpecification = {
     countries: {
       type: "geojson",
       data: "/map/ne_50m_countries_chn_pov.geojson",
-      attribution: "Natural Earth",
+      attribution: t("map.simpleBasemapAttribution"),
     },
   },
   layers: [

@@ -576,7 +576,7 @@ sudo tar czf /root/biotrace-data.tgz -C /opt/biotrace data
 - [ ] Android 侧载 APK 打开同源站点且登录不掉会话（见 [`features/Android套壳.md`](./features/Android套壳.md)）
 - [ ] 生产天地图 key 已配：构建前设 `VITE_TIANDITU_KEY`（浏览器端，白名单含生产域名）、可选 `VITE_TIANDITU_KEY_FALLBACK` / `VITE_TIANDITU_KEY_FALLBACK_2`（浏览器端备用）、服务端设 `TIANDITU_SERVER_KEY`。缺浏览器端 key 则直接用内置简图；缺服务端 key 则国别判定走离线国界数据。细节见[附录 A.5](#a5-天地图接入要点踩过的坑)
 - [ ] 上线后留意控制台 `[map]` warn：配额 10000 次/日/key，超量当天拒绝、次日恢复。连续失败 6 次先切备用浏览器端 key，全部失败再切内置简图（国界 / China POV，无国名注记）
-- [ ] ⚠️ **上架 / 开放公网注册前必办：补地图审图号**。当前 `MapPage.tsx` 的 attribution 只有「天地图 · 国家地理信息公共服务平台」，**缺审图号**（形如 `GS(20XX)XXXX号`）。原文只能从天地图官网页底或控制台使用规范抄取，**不可自行编写**；落地时同步搬进 `packages/messages/src/zh.ts` 走 `t()`（现为硬编码，违反术语表规则）
+- [x] 地图审图号：已写入 `map.tiandituAttribution`（当前 `GS(2025)1508号`，取自官网首页 `mapdrawingApprovalNumber`）。**上架 / 大版本前再核对官网是否换号**，换则只改正文案 key
 - [ ] HTTPS 阶段：`COOKIE_SECURE=1` 且登录会话稳定
 
 ---
