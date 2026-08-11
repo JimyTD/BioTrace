@@ -10,7 +10,22 @@
     "legend": "LR",
     "unobtainable": "XR"
   },
-  "vetoClasses": ["pest_weed", "everyday", "unobtainable"],
+  "vetoClasses": ["pest_weed", "unobtainable"],
   "swarmDownshiftMin": 2.2,
-  "notes": "Priority/veto — not weighted sum. Model outputs encounter_class; local resolveFromEncounter maps + veto. Cache key prefix enc2. Rubric: encounter-rubric.ts (shared with calibrate)."
+  "offset": {
+    "weightIconic": 1.2,
+    "weightProtection": 1.0,
+    "weightSwarm": -0.4,
+    "weightHardPhoto": 0.7,
+    "thresholdUp": 2.0,
+    "thresholdDown": -2.0,
+    "protectionScore": {
+      "none": 0,
+      "uncertain": 0,
+      "you": 1,
+      "class_ii": 1.5,
+      "class_i": 2
+    }
+  },
+  "notes": "Bucket (encounter_class) sets base tier. Multi-axis weighted S maps to Δ∈{-1,0,+1}. Cache prefix enc3. Rubric: encounter-rubric.ts."
 }

@@ -23,9 +23,10 @@ const j = JSON.parse(readFileSync(file, "utf8")) as {
     user: string;
     model: string | null;
     encounter_class?: string;
+    iconic_appeal?: number;
     swarm_or_habituated?: number;
     protection_level?: string;
-    hard_to_photograph?: boolean;
+    hard_to_photograph?: number | boolean;
   }>;
 };
 
@@ -36,6 +37,7 @@ for (const r of j.rows) {
   if (!cls || !r.model) continue;
   const out = resolveFromEncounter({
     encounterClass: cls,
+    iconicAppeal: r.iconic_appeal,
     swarmOrHabituated: r.swarm_or_habituated,
     protectionLevel: r.protection_level,
     hardToPhotograph: r.hard_to_photograph,
@@ -45,7 +47,7 @@ for (const r of j.rows) {
   if (d <= 1) within1 += 1;
   const mark = out.rarity !== r.model ? ` (was ${r.model})` : "";
   console.log(
-    `#${r.id} ${r.label}: user ${r.user} → ${out.rarity}${mark} class=${cls} Δ${d}` +
+    `#${r.id} ${r.label}: user ${r.user} → ${out.rarity}${mark} class=${cls} S=${out.offsetScore.toFixed(2)} d=${out.offsetDelta} Δ${d}` +
       (out.adjustments.length ? ` [${out.adjustments.join(",")}]` : ""),
   );
 }

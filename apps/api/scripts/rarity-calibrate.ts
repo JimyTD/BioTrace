@@ -12,7 +12,10 @@ import { ENCOUNTER_RUBRIC } from "../src/rarity/encounter-rubric.js";
 import {
   collectibleRankFromTier,
   parseEncounterClass,
+  parseHardToPhotograph,
+  parseIconicAppeal,
   parseProtectionLevel,
+  parseSwarm,
   resolveFromEncounter,
   type EncounterClass,
 } from "../src/rarity/formula.js";
@@ -134,17 +137,23 @@ async function scoreOne(row: TaxonRow) {
   const parsed = extractJson(await callZhipu(prompt));
   const cls = parseEncounterClass(parsed.encounter_class);
   if (!cls) throw new Error(`bad encounter_class: ${String(parsed.encounter_class)}`);
+  const iconicAppeal = parseIconicAppeal(parsed.iconic_appeal);
+  const swarmOrHabituated = parseSwarm(parsed.swarm_or_habituated);
+  const protectionLevel = parseProtectionLevel(parsed.protection_level);
+  const hardToPhotograph = parseHardToPhotograph(parsed.hard_to_photograph);
   const resolved = resolveFromEncounter({
     encounterClass: cls,
-    swarmOrHabituated: Number(parsed.swarm_or_habituated ?? 0),
-    protectionLevel: parseProtectionLevel(parsed.protection_level),
-    hardToPhotograph: Boolean(parsed.hard_to_photograph),
+    iconicAppeal,
+    swarmOrHabituated,
+    protectionLevel,
+    hardToPhotograph,
   });
   return {
     encounterClass: cls as EncounterClass,
-    swarmOrHabituated: Number(parsed.swarm_or_habituated ?? 0),
-    protectionLevel: parseProtectionLevel(parsed.protection_level),
-    hardToPhotograph: Boolean(parsed.hard_to_photograph),
+    iconicAppeal,
+    swarmOrHabituated,
+    protectionLevel,
+    hardToPhotograph,
     reason: String(parsed.reason ?? ""),
     ...resolved,
   };
@@ -158,7 +167,7 @@ async function main() {
   const args = parseArgs();
   const taxa = JSON.parse(readFileSync(taxaPath, "utf8")) as TaxonRow[];
   const list = args.limit ? taxa.slice(0, args.limit) : taxa;
-  console.log(`Provider: zhipu | mode=encounter_class | items=${list.length}`);
+  console.log(`Provider: zhipu | mode=encounter_class+offset | items=${list.length}`);
 
   const rows: Array<Record<string, unknown>> = [];
   let exactUser = 0;
@@ -195,9 +204,12 @@ async function main() {
         base_tier: scored.baseTier,
         encounter_class: scored.encounterClass,
         adjustments: scored.adjustments,
+        iconic_appeal: scored.iconicAppeal,
         swarm_or_habituated: scored.swarmOrHabituated,
         protection_level: scored.protectionLevel,
         hard_to_photograph: scored.hardToPhotograph,
+        offset_score: scored.offsetScore,
+        offset_delta: scored.offsetDelta,
         dist_user: distUser,
         dist_agent: distAgent,
         reason: scored.reason,
@@ -210,7 +222,7 @@ async function main() {
             ? `agent ${agentTier} Δ${distAgent}`
             : "no ref";
       console.log(
-        `${scored.rarity} (${ref}) class=${scored.encounterClass}` +
+        `${scored.rarity} (${ref}) class=${scored.encounterClass} S=${scored.offsetScore.toFixed(2)} d=${scored.offsetDelta}` +
           (scored.adjustments.length ? ` [${scored.adjustments.join(",")}]` : ""),
       );
     } catch (err) {
@@ -228,7 +240,7 @@ async function main() {
     JSON.stringify(
       {
         generatedAt: new Date().toISOString(),
-        scheme: "encounter_class_veto",
+        scheme: "encounter_class_offset",
         provider: "zhipu",
         summary: {
           n: rows.length,
@@ -247,7 +259,7 @@ async function main() {
   );
 
   const csv = [
-    "id,label,user,agent,model,encounter_class,dist_user,dist_agent,adjustments,protection_level,reason",
+    "id,label,user,agent,model,encounter_class,iconic,swarm,hard,offset_score,offset_delta,dist_user,dist_agent,protection_level,reason",
     ...rows.map((r) =>
       [
         r.id,
@@ -256,9 +268,13 @@ async function main() {
         r.agent ?? "",
         r.model ?? "",
         r.encounter_class ?? "",
+        r.iconic_appeal ?? "",
+        r.swarm_or_habituated ?? "",
+        r.hard_to_photograph ?? "",
+        r.offset_score ?? "",
+        r.offset_delta ?? "",
         r.dist_user ?? "",
         r.dist_agent ?? "",
-        JSON.stringify((r.adjustments as string[] | undefined)?.join("|") ?? ""),
         r.protection_level ?? "",
         JSON.stringify(r.reason ?? r.error ?? ""),
       ].join(","),

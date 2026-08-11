@@ -7,7 +7,10 @@ import { readRarityCache, writeRarityCache } from "./cache.js";
 import { ENCOUNTER_RUBRIC } from "./encounter-rubric.js";
 import {
   parseEncounterClass,
+  parseHardToPhotograph,
+  parseIconicAppeal,
   parseProtectionLevel,
+  parseSwarm,
   resolveFromEncounter,
   type EncounterClass,
 } from "./formula.js";
@@ -22,7 +25,7 @@ export type EncounterRarityResolution = {
 };
 
 /** Bump when encounter rubric / formula semantics change enough to invalidate cache. */
-const ENCOUNTER_CACHE_VER = "enc2";
+const ENCOUNTER_CACHE_VER = "enc3";
 
 function encounterCacheKey(countryCode: string | null, taxonKey: string): string {
   return `${ENCOUNTER_CACHE_VER}|${taxonCacheKey(countryCode, taxonKey)}`;
@@ -138,9 +141,10 @@ export async function scoreEncounterClass(input: {
   countryCode: string | null;
 }): Promise<{
   encounterClass: EncounterClass;
+  iconicAppeal: number;
   swarmOrHabituated: number;
   protectionLevel: string;
-  hardToPhotograph: boolean;
+  hardToPhotograph: number;
   reason: string;
 }> {
   const country = effectiveCountry(input.countryCode);
@@ -158,9 +162,10 @@ export async function scoreEncounterClass(input: {
   if (!cls) throw new Error(`bad encounter_class: ${String(parsed.encounter_class)}`);
   return {
     encounterClass: cls,
-    swarmOrHabituated: Number(parsed.swarm_or_habituated ?? 0),
+    iconicAppeal: parseIconicAppeal(parsed.iconic_appeal),
+    swarmOrHabituated: parseSwarm(parsed.swarm_or_habituated),
     protectionLevel: parseProtectionLevel(parsed.protection_level),
-    hardToPhotograph: Boolean(parsed.hard_to_photograph),
+    hardToPhotograph: parseHardToPhotograph(parsed.hard_to_photograph),
     reason: String(parsed.reason ?? ""),
   };
 }
@@ -197,6 +202,7 @@ export async function resolveEncounterRarity(input: {
       const scored = await scoreEncounterClass({ ...input, countryCode });
       const resolved = resolveFromEncounter({
         encounterClass: scored.encounterClass,
+        iconicAppeal: scored.iconicAppeal,
         swarmOrHabituated: scored.swarmOrHabituated,
         protectionLevel: scored.protectionLevel,
         hardToPhotograph: scored.hardToPhotograph,

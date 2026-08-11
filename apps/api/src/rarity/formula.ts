@@ -2,7 +2,7 @@ import { readFileSync } from "node:fs";
 import { join } from "node:path";
 import { rarityConfig } from "./config.js";
 
-/** Traveler encounter bucket — primary rarity signal (not a weighted score). */
+/** Traveler encounter bucket — primary rarity signal. */
 export type EncounterClass =
   | "pest_weed"
   | "everyday"
@@ -17,11 +17,13 @@ export type ProtectionLevel = "none" | "uncertain" | "you" | "class_ii" | "class
 
 export type EncounterInput = {
   encounterClass: EncounterClass;
-  /** 0–3: swarming / tourist-habituated. High → shift toward commoner. */
+  /** -2…+2: aversion → iconic travel appeal */
+  iconicAppeal?: number;
+  /** 0–3: swarming / tourist-habituated */
   swarmOrHabituated?: number;
   protectionLevel?: ProtectionLevel | string;
-  /** Kept for explainability; does NOT raise tier. */
-  hardToPhotograph?: boolean;
+  /** 0–3: harder to find/photograph → positive offset */
+  hardToPhotograph?: number | boolean;
 };
 
 export type EncounterResolution = {
@@ -29,6 +31,18 @@ export type EncounterResolution = {
   baseTier: string;
   encounterClass: EncounterClass;
   adjustments: string[];
+  offsetScore: number;
+  offsetDelta: -1 | 0 | 1;
+};
+
+export type OffsetConfig = {
+  weightIconic: number;
+  weightProtection: number;
+  weightSwarm: number;
+  weightHardPhoto: number;
+  thresholdUp: number;
+  thresholdDown: number;
+  protectionScore: Record<string, number>;
 };
 
 export type ClassScoreConfig = {
@@ -36,6 +50,7 @@ export type ClassScoreConfig = {
   classBaseTier: Record<string, string>;
   vetoClasses: string[];
   swarmDownshiftMin: number;
+  offset: OffsetConfig;
 };
 
 const ENCOUNTER_CLASSES: EncounterClass[] = [
@@ -48,6 +63,22 @@ const ENCOUNTER_CLASSES: EncounterClass[] = [
   "legend",
   "unobtainable",
 ];
+
+const DEFAULT_OFFSET: OffsetConfig = {
+  weightIconic: 1.2,
+  weightProtection: 1.0,
+  weightSwarm: -0.4,
+  weightHardPhoto: 0.7,
+  thresholdUp: 2.0,
+  thresholdDown: -2.0,
+  protectionScore: {
+    none: 0,
+    uncertain: 0,
+    you: 1,
+    class_ii: 1.5,
+    class_i: 2,
+  },
+};
 
 function loadScoreConfig(): ClassScoreConfig {
   const fallback: ClassScoreConfig = {
@@ -62,18 +93,27 @@ function loadScoreConfig(): ClassScoreConfig {
       legend: "LR",
       unobtainable: "XR",
     },
-    vetoClasses: ["pest_weed", "everyday", "unobtainable"],
+    vetoClasses: ["pest_weed", "unobtainable"],
     swarmDownshiftMin: 2.2,
+    offset: DEFAULT_OFFSET,
   };
   try {
     const file = JSON.parse(
       readFileSync(join(rarityConfig.dataRoot, "rarity-score-config.json"), "utf8"),
-    ) as Partial<ClassScoreConfig>;
+    ) as Partial<ClassScoreConfig> & { offset?: Partial<OffsetConfig> };
     return {
       tiers: file.tiers?.length ? file.tiers : fallback.tiers,
       classBaseTier: { ...fallback.classBaseTier, ...(file.classBaseTier ?? {}) },
       vetoClasses: file.vetoClasses?.length ? file.vetoClasses : fallback.vetoClasses,
       swarmDownshiftMin: Number(file.swarmDownshiftMin ?? fallback.swarmDownshiftMin),
+      offset: {
+        ...DEFAULT_OFFSET,
+        ...(file.offset ?? {}),
+        protectionScore: {
+          ...DEFAULT_OFFSET.protectionScore,
+          ...(file.offset?.protectionScore ?? {}),
+        },
+      },
     };
   } catch {
     return fallback;
@@ -119,9 +159,23 @@ export function parseProtectionLevel(raw: unknown): ProtectionLevel {
   return table[key] ?? "uncertain";
 }
 
-function clamp01to3(n: number): number {
+function clamp(n: number, lo: number, hi: number): number {
   if (!Number.isFinite(n)) return 0;
-  return Math.max(0, Math.min(3, n));
+  return Math.max(lo, Math.min(hi, n));
+}
+
+export function parseIconicAppeal(raw: unknown): number {
+  return Math.round(clamp(Number(raw ?? 0), -2, 2));
+}
+
+/** Accept 0–3 number, or legacy boolean (true→2, false→0). */
+export function parseHardToPhotograph(raw: unknown): number {
+  if (typeof raw === "boolean") return raw ? 2 : 0;
+  return Math.round(clamp(Number(raw ?? 0), 0, 3));
+}
+
+export function parseSwarm(raw: unknown): number {
+  return Math.round(clamp(Number(raw ?? 0), 0, 3));
 }
 
 /** Collectible rank: higher = rarer. Unknown → 0. */
@@ -138,79 +192,109 @@ function tierByRank(rank: number): string {
   const tiers = rarityScoreConfig.tiers.length
     ? rarityScoreConfig.tiers
     : ["XR", "LR", "UR", "SSR", "SR", "R", "N"];
-  // rank 0 = N (last), rank max = XR (first)
   const idx = tiers.length - 1 - rank;
   return tiers[Math.max(0, Math.min(tiers.length - 1, idx))] ?? "R";
 }
 
 function shiftTier(tier: string, delta: number): string {
-  const rank = collectibleRankFromTier(tier) + delta;
-  return tierByRank(rank);
+  return tierByRank(collectibleRankFromTier(tier) + delta);
+}
+
+export function protectionNumeric(level: ProtectionLevel): number {
+  const table = rarityScoreConfig.offset.protectionScore;
+  return Number(table[level] ?? 0);
+}
+
+export function computeOffsetScore(input: {
+  iconicAppeal: number;
+  protectionLevel: ProtectionLevel;
+  swarmOrHabituated: number;
+  hardToPhotograph: number;
+}): { score: number; delta: -1 | 0 | 1 } {
+  const o = rarityScoreConfig.offset;
+  const score =
+    o.weightIconic * input.iconicAppeal +
+    o.weightProtection * protectionNumeric(input.protectionLevel) +
+    o.weightSwarm * input.swarmOrHabituated +
+    o.weightHardPhoto * input.hardToPhotograph;
+  let delta: -1 | 0 | 1 = 0;
+  if (score >= o.thresholdUp) delta = 1;
+  else if (score <= o.thresholdDown) delta = -1;
+  return { score, delta };
 }
 
 /**
- * Priority / veto model (not ax+by+cz):
- * - pest_weed / everyday → force N (ignore photo difficulty, protection boosts)
- * - unobtainable → force XR
- * - else base from class, then at most ±1 from swarm / strong protection
+ * Bucket sets base tier; weighted axes → Δ∈{-1,0,+1}.
+ * - unobtainable → XR (ignore Δ)
+ * - pest_weed → N base; uplift forbidden
+ * - legend + high swarm → base capped to UR before Δ
+ * - Δ cannot create XR
  */
 export function resolveFromEncounter(input: EncounterInput): EncounterResolution {
   const cls = input.encounterClass;
-  const baseTier = rarityScoreConfig.classBaseTier[cls] ?? "R";
   const adjustments: string[] = [];
+  const iconic = parseIconicAppeal(input.iconicAppeal);
+  const swarm = parseSwarm(input.swarmOrHabituated);
+  const hard = parseHardToPhotograph(input.hardToPhotograph);
+  const prot = parseProtectionLevel(input.protectionLevel);
 
   if (cls === "unobtainable") {
-    return { rarity: "XR", baseTier: "XR", encounterClass: cls, adjustments: ["veto:unobtainable"] };
+    return {
+      rarity: "XR",
+      baseTier: "XR",
+      encounterClass: cls,
+      adjustments: ["veto:unobtainable"],
+      offsetScore: 0,
+      offsetDelta: 0,
+    };
   }
 
-  const prot = parseProtectionLevel(input.protectionLevel);
-  // pest_weed always N. everyday is N unless protected wildlife (you/class) → R.
-  // Principled: "三有/保护常见鸟" keep collectible floor without species lists.
-  if (cls === "pest_weed") {
-    adjustments.push("veto:pest_weed");
-    if (input.hardToPhotograph) adjustments.push("ignore:hard_to_photograph");
-    return { rarity: "N", baseTier: "N", encounterClass: cls, adjustments };
-  }
-  if (cls === "everyday") {
-    const protectedWildlife = prot === "you" || prot === "class_ii" || prot === "class_i";
-    if (!protectedWildlife) {
-      adjustments.push("veto:everyday");
-      if (input.hardToPhotograph) adjustments.push("ignore:hard_to_photograph");
-      return { rarity: "N", baseTier: "N", encounterClass: cls, adjustments };
-    }
-    adjustments.push(`up:everyday_protected_${prot}`);
-    // Continue as place_common (R) from here.
-  }
+  let baseTier = rarityScoreConfig.classBaseTier[cls] ?? "R";
 
-  let tier = cls === "everyday" ? "R" : baseTier;
-  let effectiveBase = tier;
-  const swarm = clamp01to3(Number(input.swarmOrHabituated ?? 0));
-  // Habituated swarms cannot stay legend — cap at hard (UR).
+  // Habituated swarms cannot stay legend — cap at hard (UR) before offset.
   if (cls === "legend" && swarm >= rarityScoreConfig.swarmDownshiftMin) {
-    tier = "UR";
-    effectiveBase = "UR";
+    baseTier = "UR";
     adjustments.push("cap:swarm_blocks_legend");
-  } else {
-    // Swarm downshift only for scarce+ (keeps place_common at R even if Ligia swarms).
-    const canSwarmDown = collectibleRankFromTier(effectiveBase) >= collectibleRankFromTier("SSR");
-    if (canSwarmDown && swarm >= rarityScoreConfig.swarmDownshiftMin) {
-      tier = shiftTier(tier, -1);
-      adjustments.push("down:swarm_or_habituated");
-    }
   }
 
-  // Protection may bump noteworthy/scarce only — never hard/legend (avoids macaque→LR).
-  const canProtUp = effectiveBase === "SR" || effectiveBase === "SSR";
-  if (canProtUp && (prot === "class_ii" || prot === "class_i")) {
-    const bumped = shiftTier(tier, 1);
-    if (bumped !== tier && bumped !== "XR") {
-      tier = bumped;
-      adjustments.push(`up:protection_${prot}`);
-    }
+  const { score, delta: rawDelta } = computeOffsetScore({
+    iconicAppeal: iconic,
+    protectionLevel: prot,
+    swarmOrHabituated: swarm,
+    hardToPhotograph: hard,
+  });
+
+  let delta = rawDelta;
+  if (cls === "pest_weed" && delta > 0) {
+    delta = 0;
+    adjustments.push("veto:pest_weed_no_up");
+  }
+
+  let tier = shiftTier(baseTier, delta);
+  if (delta !== 0) {
+    adjustments.push(`offset:S=${score.toFixed(2)};Δ=${delta > 0 ? "+" : ""}${delta}`);
+  } else {
+    adjustments.push(`offset:S=${score.toFixed(2)};Δ=0`);
   }
 
   // Never promote into XR via adjustments
-  if (tier === "XR") tier = "LR";
+  if (tier === "XR") {
+    tier = "LR";
+    adjustments.push("cap:no_xr_from_offset");
+  }
 
-  return { rarity: tier, baseTier: effectiveBase, encounterClass: cls, adjustments };
+  if (cls === "pest_weed") {
+    // Keep pest floor at N even if somehow shifted.
+    tier = "N";
+    adjustments.push("veto:pest_weed");
+  }
+
+  return {
+    rarity: tier,
+    baseTier,
+    encounterClass: cls,
+    adjustments,
+    offsetScore: score,
+    offsetDelta: delta,
+  };
 }

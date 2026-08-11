@@ -124,40 +124,38 @@ docs/        筹划 + 本实现规格
 | 不叠首次 | 不挂钩「旅途/个人首次收集」 |
 | 弱结算不降档 | 按可靠阶元对应类群查；full/weak 不打折稀有度 |
 | 禁止物种硬编码 | 不靠科/属/种黑白名单刷分；靠普适判定键 |
-| 难拍不升档 | `hard_to_photograph` 仅备注，本地公式不因难拍抬档 |
+| 难拍可助升 | `hard_to_photograph` 进偏移分；单轴打满可 Δ=+1，但不能跨多档 |
 
 已否决：GBIF occurrence 主路径、`ax+by+cz` 加权、常见种封顶表（§3.6）。
 
-### 3.2 评分方式（分桶 + 否决，非连续打分）
+### 3.2 评分方式（分桶 + 偏移分，非纯连续定档）
 
-**模型不直接输出 N/R/SR…**。它输出遇见类别 + 修正字段；本地映射定档。
+**模型不直接输出 N/R/SR…**。它输出遇见桶 + 修正轴；本地：桶→基础档，再算偏移 Δ∈{-1,0,+1}。
 
 1. **GLM 文本**（[`encounter-rubric.ts`](../apps/api/src/rarity/encounter-rubric.ts)，标定与生产同一份）输出：
-   - `encounter_class`：必填枚举
+   - `encounter_class`：必填枚举（主档）
+   - `iconic_appeal`：−2…+2（嫌恶 ↔ 标志性向往）
+   - `protection_level`：`none|uncertain|you|class_ii|class_i`
    - `swarm_or_habituated`：0–3
-   - `protection_level`：`none|uncertain|you|class_ii|class_i`（`you` = 三有等）
-   - `hard_to_photograph`：boolean（不升档）
+   - `hard_to_photograph`：0–3（可助升档）
    - `reason`：一句话
-2. **本地** [`resolveFromEncounter`](../apps/api/src/rarity/formula.ts)（配置 [`rarity-score-config.json`](../apps/api/data/rarity-score-config.json)）：
+2. **本地** [`resolveFromEncounter`](../apps/api/src/rarity/formula.ts)（[`rarity-score-config.json`](../apps/api/data/rarity-score-config.json)）：
 
-| encounter_class | 基础档 | 否决/备注 |
-|-----------------|--------|-----------|
-| `pest_weed` | N | 强制 N；难拍无效 |
-| `everyday` | N | 强制 N；若 `you/class_*` → 抬到 **R**（薄安全网） |
+| encounter_class | 基础档 | 备注 |
+|-----------------|--------|------|
+| `pest_weed` | N | 禁止上抬 |
+| `everyday` | N | 偏移可达 R |
 | `place_common` | R | |
 | `noteworthy` | SR | |
 | `scarce` | SSR | |
 | `hard` | UR | |
-| `legend` | LR | 成群/半驯化高 → 封顶 **UR** |
-| `unobtainable` | XR | 强制 XR |
+| `legend` | LR | 高成群先盖成 UR 再偏移 |
+| `unobtainable` | XR | 锁死，忽略偏移 |
 
-小修正（最多约 ±1，且有门槛）：
+偏移分（权可调）：\(S = 1.2×向往 + 1.0×保护 − 0.4×成群 + 0.7×难拍\)（保护：none/uncertain=0，you=1，ii=1.5，i=2）。  
+\(S\ge 2\Rightarrow +1\)；\(S\le -2\Rightarrow -1\)；否则 0。不能造出 XR。缓存键前缀 `enc3`。
 
-- 成群/半驯化：仅基础档 ≥ SSR 时降 1 档；`legend`+高成群直接盖成 UR
-- 保护 `class_ii` / `class_i`：仅基础档为 SR/SSR 时可升 1 档（不把 hard 抬成 LR）
-- 修正不能造出 XR
-
-**判定键（写在 rubric，勿写成物种名单）**：旅行收获感优先于「城乡多不多」；会想拍的野鸟/脊椎即使常见也 ≥ `noteworthy`；隐蔽/夜行/回避人类勿停在 `noteworthy`；保护级高 ≠ 自动 legend。
+**判定键（写在 rubric，勿写成物种名单）**：旅行收获感优先；会想拍的野鸟/脊椎 ≥ `noteworthy`；保护级高 ≠ 自动 legend。
 
 档位全序：`N → R → SR → SSR → UR → LR → XR`（文案见 `packages/messages` `rarity.*`）。
 
@@ -170,7 +168,7 @@ docs/        筹划 + 本实现规格
       → resolveRarity（rarity/index.ts）
           → resolveEncounterRarity（rarity/encounter.ts）
               → 有效国家 = countryCode || CN（无国家按中国常见度）
-              → 读缓存 enc2|有效国家|taxon（source=encounter）
+              → 读缓存 enc3|有效国家|taxon（source=encounter）
               → 未命中：ZHIPU 文本模型 + ENCOUNTER_RUBRIC（Prompt 同有效国家）
               → resolveFromEncounter → 写缓存
               → 失败：seed → 默认 R（默认不缓存）
@@ -240,7 +238,7 @@ computeSettle
 
 已定（无国家稀有度）：
 
-- [x] **无国家 → 按 CN 评**：Prompt / 缓存键 / seed 查找同一回落；结算文案 `settle.locationImprecise`（「无定位时按中国常见度评定」）。不强制地图补标；不改全球口径。旧 `GLOBAL|…` 缓存行可忽略，新键为 `enc2|CN|…`。
+- [x] **无国家 → 按 CN 评**：Prompt / 缓存键 / seed 查找同一回落；结算文案 `settle.locationImprecise`（「无定位时按中国常见度评定」）。不强制地图补标；不改全球口径。旧 `GLOBAL|…` / `enc2|…` 缓存行可忽略，新键为 `enc3|CN|…`。
 
 ~~GBIF 稀有度主路径 / 常见种封顶表 / novelty 加权~~：已否决。  
 ~~引入种靠手写名单当主路径 / 属名模糊匹配~~：已否决。
