@@ -11,7 +11,7 @@ import {
   MAP_STYLE,
   PIN_EXISTING_ZOOM,
   USER_MAX_ZOOM,
-  attachTiandituFallback,
+  attachBasemapFallback,
 } from "../map/style";
 
 export default function PinLocationPage() {
@@ -48,7 +48,7 @@ export default function PinLocationPage() {
           maxZoom: USER_MAX_ZOOM,
         });
         map.addControl(new maplibregl.NavigationControl({ visualizePitch: false }), "top-right");
-        detachFallback = attachTiandituFallback(map);
+        detachFallback = attachBasemapFallback(map);
 
         const refreshCenter = () => {
           const c = map!.getCenter();

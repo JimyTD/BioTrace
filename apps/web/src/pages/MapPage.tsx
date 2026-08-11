@@ -11,7 +11,7 @@ import {
   DEFAULT_MAP_ZOOM,
   MAP_STYLE,
   USER_MAX_ZOOM,
-  attachTiandituFallback,
+  attachBasemapFallback,
 } from "../map/style";
 
 export default function MapPage() {
@@ -41,7 +41,7 @@ export default function MapPage() {
       popupRef.current?.remove();
     });
 
-    const detachFallback = attachTiandituFallback(map);
+    const detachFallback = attachBasemapFallback(map);
 
     mapRef.current = map;
     return () => {

@@ -1,0 +1,122 @@
+<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>BioTrace 内置简图演示</title>
+    <link
+      rel="stylesheet"
+      href="https://unpkg.com/maplibre-gl@4.7.1/dist/maplibre-gl.css"
+    />
+    <script src="https://unpkg.com/maplibre-gl@4.7.1/dist/maplibre-gl.js"></script>
+    <style>
+      html,
+      body {
+        margin: 0;
+        height: 100%;
+        font-family: "Segoe UI", "PingFang SC", sans-serif;
+      }
+      #map {
+        position: absolute;
+        inset: 0;
+      }
+      .banner {
+        position: absolute;
+        z-index: 2;
+        left: 12px;
+        top: 12px;
+        max-width: min(440px, calc(100% - 24px));
+        padding: 10px 12px;
+        border-radius: 10px;
+        background: rgba(255, 252, 246, 0.92);
+        box-shadow: 0 4px 18px rgba(40, 30, 20, 0.12);
+        color: #3b3228;
+        font-size: 13px;
+        line-height: 1.45;
+      }
+      .banner strong {
+        display: block;
+        margin-bottom: 4px;
+        font-size: 14px;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="banner">
+      <strong>内置简图（天地图全部失败时的最终回落）</strong>
+      Natural Earth 1:50m 国界 · China POV（台湾并入中国几何）· 无国名/街道注记 · 观察点仍可钉点
+    </div>
+    <div id="map"></div>
+    <script>
+      const SIMPLE_STYLE = {
+        version: 8,
+        sources: {
+          countries: {
+            type: "geojson",
+            data: "./ne_50m_countries_chn_pov.geojson",
+            attribution: "Natural Earth",
+          },
+        },
+        layers: [
+          {
+            id: "background",
+            type: "background",
+            paint: { "background-color": "#c5d6e8" },
+          },
+          {
+            id: "country-fill",
+            type: "fill",
+            source: "countries",
+            paint: {
+              "fill-color": [
+                "match",
+                ["get", "c"],
+                1,
+                "#e7dfd2",
+                2,
+                "#e2d7c4",
+                3,
+                "#ebe3d6",
+                4,
+                "#ddd2c0",
+                5,
+                "#e9e0d0",
+                6,
+                "#e0d5c2",
+                7,
+                "#efe6da",
+                "#e8e0d4",
+              ],
+            },
+          },
+          {
+            id: "country-borders",
+            type: "line",
+            source: "countries",
+            paint: {
+              "line-color": "#8f7f68",
+              "line-width": ["interpolate", ["linear"], ["zoom"], 1, 0.4, 4, 0.8, 8, 1.2],
+              "line-opacity": 0.85,
+            },
+          },
+        ],
+      };
+
+      const map = new maplibregl.Map({
+        container: "map",
+        style: SIMPLE_STYLE,
+        center: [105, 30],
+        zoom: 2.2,
+        maxZoom: 14,
+      });
+      map.addControl(new maplibregl.NavigationControl({ visualizePitch: false }), "top-right");
+
+      map.on("load", () => {
+        new maplibregl.Marker({ color: "#c45c26" })
+          .setLngLat([114.17, 26.58])
+          .setPopup(new maplibregl.Popup().setText("示例观察点 · 井冈山附近"))
+          .addTo(map);
+      });
+    </script>
+  </body>
+</html>

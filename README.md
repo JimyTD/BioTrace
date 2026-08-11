@@ -39,17 +39,19 @@ HTTPS_PROXY=http://127.0.0.1:7890
 | 链路 | 用途 |变量 | key 类型 |
 |---|---|---|---|
 | 底图瓦片 | 地图页显示 | `VITE_TIANDITU_KEY`（放`apps/web/.env.local`） | **浏览器端**，需配域名白名单 |
+| 底图备用（可选） | 主 key 瓦片失败时切换 | `VITE_TIANDITU_KEY_FALLBACK`（可逗号分隔多个浏览器端 key） | **浏览器端** |
 | 逆地理编码 | 坐标 → 国家，喂给稀有度与引入种判定 | `TIANDITU_SERVER_KEY`（放 `apps/api/.env`） | **服务端** |
 
-两者**不可混用**（服务端 key 调瓦片、浏览器端 key 调 API 都会被拒）。申请：<https://console.tianditu.gov.cn/> → 应用管理 → 创建应用，个人实名即可，无需营业执照。
+浏览器端与服务端**不可混用**。申请：<https://console.tianditu.gov.cn/> → 应用管理 → 创建应用，个人实名即可；备用底图同账号再开浏览器端应用即可，不必新账号。
 
 **都留空也能跑**，只是降级：
 
-- 底图回落 OpenFreeMap（OSM 数据）
+- 底图回落内置简图（`public/map/ne_50m_countries_chn_pov.geojson`，Natural Earth 1:50m 国界 / China POV，**无国名注记**）
 - 国别判定走内置离线国界数据（`apps/api/data/geo/countries-10m.topo.json`，源自 Natural Earth，公有领域 CC0）
 
-> ⚠️ **合规提示**：OpenFreeMap 使用 OSM 数据，其国界与地名表达在中国大陆法规下**不合规**（例如台湾被标为国家级要素），仅作开发与兜底用途。
-> 天地图由自然资源部主管，为官方审核版本；`VITE_TIANDITU_KEY` 是构建时内联的，**改后必须重新 build**。
+运行时回落链：**主浏览器端 key → 备用 key → 内置简图**（已移除 OpenFreeMap）。
+
+> ⚠️ **合规提示**：天地图由自然资源部主管，为官方审核版本；`VITE_*` 天地图变量是构建时内联的，**改后必须重新 build**。
 > **将本项目部署到公网者，需自行确认所在地对地图服务的合规要求**（在中国大陆公开提供地图服务通常需使用具备审图号的服务并在界面标注）。
 > 选型经过见 [`docs/planning/04f-世界地图选型.md`](docs/planning/04f-世界地图选型.md) §12。
 
