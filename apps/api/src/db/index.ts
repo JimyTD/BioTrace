@@ -92,6 +92,12 @@ export async function migrate() {
       updated_at INTEGER NOT NULL
     );
     CREATE UNIQUE INDEX IF NOT EXISTS volume_progress_user_vol ON volume_progress(user_id, volume_id);
+    CREATE TABLE IF NOT EXISTS identify_daily_usage (
+      user_id TEXT NOT NULL REFERENCES users(id),
+      day TEXT NOT NULL,
+      count INTEGER NOT NULL,
+      PRIMARY KEY (user_id, day)
+    );
   `);
 
   await ensureColumn("observations", "blurb", "blurb TEXT");
@@ -161,6 +167,11 @@ export async function migrate() {
   }
 
   await ensureColumn("users", "display_name", "display_name TEXT");
+  await ensureColumn("users", "identify_use_own_key", "identify_use_own_key INTEGER");
+  await ensureColumn("users", "identify_user_key_enc", "identify_user_key_enc TEXT");
+  await ensureColumn("users", "identify_user_key_hint", "identify_user_key_hint TEXT");
+  await ensureColumn("users", "identify_user_base_url", "identify_user_base_url TEXT");
+  await ensureColumn("users", "identify_user_model", "identify_user_model TEXT");
 
   // Cut 2: grandfather ready → settled
   await client.execute(`

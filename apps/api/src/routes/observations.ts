@@ -9,6 +9,8 @@ import { observations } from "../db/schema.js";
 import { apiError } from "../errors.js";
 import { env } from "../env.js";
 import { enqueueIdentify } from "../jobs/identify.js";
+import { getIdentifyQuota, isPlatformIdentifyQuotaExhausted } from "../services/identify-quota.js";
+import { usesOwnIdentifyKey } from "../services/user-identify.js";
 import {
   repairCollectionAfterObservationDeleted,
   upsertCollectionFromObservation,
@@ -212,6 +214,19 @@ observationRoutes.post("/:id/reidentify", async (c) => {
       description: z.string().trim().min(1).max(2000),
     })
     .parse(await c.req.json());
+
+  // Soft cap: refuse re-run before wiping identity (photo stays; try again tomorrow / BYOK later).
+  if (!(await usesOwnIdentifyKey(user.id)) && (await isPlatformIdentifyQuotaExhausted(user.id))) {
+    const identifyQuota = await getIdentifyQuota(user.id);
+    return c.json(
+      {
+        error: t("error.identifyDailyLimit"),
+        code: "identify_daily_limit",
+        identifyQuota,
+      },
+      429,
+    );
+  }
 
   // Drop this observation from collection under the old taxon before rewriting identity
   await repairCollectionAfterObservationDeleted(user.id, row.id, row.taxonKey);

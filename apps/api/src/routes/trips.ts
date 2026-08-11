@@ -9,6 +9,8 @@ import { observations, trips } from "../db/schema.js";
 import { apiError } from "../errors.js";
 import { env } from "../env.js";
 import { enqueueIdentify } from "../jobs/identify.js";
+import { isPlatformIdentifyQuotaExhausted } from "../services/identify-quota.js";
+import { usesOwnIdentifyKey } from "../services/user-identify.js";
 import { readExif, saveObservationMedia } from "../services/media.js";
 import { repairCollectionAfterObservationDeleted } from "../services/collection.js";
 import { removeObservationFiles } from "../services/observationFiles.js";
@@ -296,11 +298,14 @@ tripRoutes.post("/:id/observations", async (c) => {
     originalName: file.name || "photo.jpg",
   });
 
+  const useOwnKey = await usesOwnIdentifyKey(user.id);
+  const quotaExhausted =
+    !useOwnKey && (await isPlatformIdentifyQuotaExhausted(user.id));
   const row = {
     id: observationId,
     tripId: trip.id,
     userId: user.id,
-    status: "analyzing" as const,
+    status: (quotaExhausted ? "failed" : "analyzing") as "failed" | "analyzing",
     description,
     capturedAt: exif.capturedAt,
     lat: exif.lat,
@@ -316,7 +321,7 @@ tripRoutes.post("/:id/observations", async (c) => {
     taxonomyJson: null,
     blurb: null,
     notes: null,
-    error: null,
+    error: quotaExhausted ? ("identify_daily_limit" as const) : null,
     settleTier: null,
     rarity: null,
     countryCode: null,
@@ -338,15 +343,23 @@ tripRoutes.post("/:id/observations", async (c) => {
     return c.json({ error: t("album.duplicatePhoto"), code: "duplicate_photo" }, 409);
   }
 
-  enqueueIdentify({
-    observationId,
-    imagePath: saved.displayAbsolutePath,
-    mimeType: saved.mimeType,
-    lat: exif.lat,
-    lng: exif.lng,
-    capturedAt: exif.capturedAt,
-    description,
-  });
+  if (!quotaExhausted) {
+    enqueueIdentify({
+      observationId,
+      imagePath: saved.displayAbsolutePath,
+      mimeType: saved.mimeType,
+      lat: exif.lat,
+      lng: exif.lng,
+      capturedAt: exif.capturedAt,
+      description,
+    });
+  }
 
-  return c.json({ observation: serializeObservation(row, { redactPending: true }) }, 201);
+  return c.json(
+    {
+      observation: serializeObservation(row, { redactPending: true }),
+      ...(quotaExhausted ? { code: "identify_daily_limit" as const } : {}),
+    },
+    201,
+  );
 });

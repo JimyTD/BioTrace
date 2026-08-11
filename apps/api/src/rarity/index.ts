@@ -1,3 +1,4 @@
+import { env } from "../env.js";
 import { resolveEncounterRarity } from "./encounter.js";
 
 export type RarityResolution = {
@@ -21,6 +22,18 @@ export async function resolveRarity(input: {
   label?: string | null;
   scientificName?: string | null;
 }): Promise<RarityResolution> {
+  // Guardrail / local tests: skip GLM encounter scoring when vision is mocked.
+  if (env.identifyMock) {
+    return {
+      rarity: "R",
+      source: "default",
+      occurrenceCount: null,
+      gbifUsageKey: null,
+      encounterClass: "place_common",
+      adjustments: ["identify_mock"],
+    };
+  }
+
   const resolved = await resolveEncounterRarity({
     taxonKey: input.taxonKey,
     countryCode: input.countryCode,

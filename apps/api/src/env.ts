@@ -74,6 +74,16 @@ export const env = {
   identifyGeminiWaitMaxMs: Number(process.env.IDENTIFY_GEMINI_WAIT_MAX_MS ?? 90_000),
   /** Wall-clock budget for one observation identify (wait + calls). */
   identifyJobDeadlineMs: Number(process.env.IDENTIFY_JOB_DEADLINE_MS ?? 900_000),
+  /**
+   * Per-account daily cap for platform-default identify calls (UTC day).
+   * `0` disables the account cap (provider-side limits still apply).
+   */
+  identifyDailyLimit: Number(process.env.IDENTIFY_DAILY_LIMIT ?? 100),
+  /**
+   * When `1`, identify returns a fixed local mock and never calls cloud vision.
+   * Still applies platform day-cap / BYOK switch rules — for guardrail tests.
+   */
+  identifyMock: (process.env.IDENTIFY_MOCK ?? "").trim() === "1",
   /** Public site origin (no trailing slash). */
   appOrigin: (process.env.APP_ORIGIN ?? "http://127.0.0.1:5173").replace(/\/$/, ""),
   resendApiKey: process.env.RESEND_API_KEY?.trim() || "",

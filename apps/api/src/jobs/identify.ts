@@ -3,10 +3,21 @@ import { db } from "../db/index.js";
 import { observations } from "../db/schema.js";
 import { localizeThrownMessage } from "../errors.js";
 import { evaluateEligibility } from "../identify/eligibility.js";
-import { identifyWithFallback } from "../identify/orchestrator.js";
+import { runIdentifyForUser } from "../identify/run.js";
 import { emptyTaxonomy } from "../identify/types.js";
 import { computeSettle } from "../settle/rules.js";
 import { enqueueIdentifyJob } from "./identify-queue.js";
+
+const STORED_CODES = new Set([
+  "identify_unavailable",
+  "identify_too_coarse",
+  "identify_quota",
+  "identify_daily_limit",
+  "identify_user_key_incomplete",
+  "identify_not_organism",
+  "identify_human",
+  "identify_not_living",
+]);
 
 export function enqueueIdentify(opts: {
   observationId: string;
@@ -19,7 +30,13 @@ export function enqueueIdentify(opts: {
 }) {
   enqueueIdentifyJob(async () => {
     try {
-      const { result, provider } = await identifyWithFallback({
+      const obs = await db.query.observations.findFirst({
+        where: eq(observations.id, opts.observationId),
+        columns: { userId: true },
+      });
+      if (!obs) return;
+
+      const { result, provider } = await runIdentifyForUser(obs.userId, {
         imagePath: opts.imagePath,
         mimeType: opts.mimeType,
         lat: opts.lat,
@@ -49,7 +66,6 @@ export function enqueueIdentify(opts: {
             settleTier: "none",
             rarity: null,
             countryCode: null,
-            // 闸门在识别前就拦下了，computeSettle 未执行 → 尚未判定，而非「判过但无坐标」
             countrySource: null,
             locationLabel: null,
             locationPrecise: false,
@@ -64,7 +80,6 @@ export function enqueueIdentify(opts: {
       }
 
       const taxonomyJson = JSON.stringify(result.taxonomy);
-      // 识图 Prompt 可用上传时闭包坐标；地理结算读库内最新 lat/lng（支持 analyzing 期间补标）。
       const fresh = await db.query.observations.findFirst({
         where: eq(observations.id, opts.observationId),
         columns: { lat: true, lng: true },
@@ -134,13 +149,11 @@ export function enqueueIdentify(opts: {
         .where(eq(observations.id, opts.observationId));
     } catch (err) {
       const raw = err instanceof Error ? err.message : String(err);
+      if (raw === "identify_daily_limit") {
+        console.log(`[identify] daily limit obs=${opts.observationId}`);
+      }
       const stored =
-        raw === "identify_unavailable" ||
-        raw === "identify_too_coarse" ||
-        raw === "identify_quota" ||
-        raw === "identify_not_organism" ||
-        raw === "identify_human" ||
-        raw === "identify_not_living"
+        STORED_CODES.has(raw)
           ? raw === "identify_quota"
             ? "identify_unavailable"
             : raw

@@ -196,12 +196,14 @@ export default function TripAlbumPage() {
     const desc = batch.length === 1 ? description : "";
     let ok = 0;
     let fail = 0;
+    let dailyLimitHits = 0;
     try {
       for (let i = 0; i < batch.length; i++) {
         setUploadProgress({ current: i + 1, total: batch.length });
         try {
-          await api.uploadObservation(id, batch[i]!, desc);
+          const res = await api.uploadObservation(id, batch[i]!, desc);
           ok += 1;
+          if (res.code === "identify_daily_limit") dailyLimitHits += 1;
         } catch {
           fail += 1;
         }
@@ -215,6 +217,9 @@ export default function TripAlbumPage() {
         setError(t("album.uploadAllFailed"));
       } else if (fail > 0) {
         setToast(t("album.uploadPartial", { ok, fail }));
+        window.setTimeout(() => setToast(null), 5000);
+      } else if (dailyLimitHits > 0) {
+        setToast(t("error.identifyDailyLimitShort"));
         window.setTimeout(() => setToast(null), 5000);
       }
     } finally {

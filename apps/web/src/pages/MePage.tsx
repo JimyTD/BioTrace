@@ -1,6 +1,13 @@
 import { useEffect, useState, type FormEvent } from "react";
 import { t } from "@biotrace/messages";
-import { api, type HealthResponse, type ProviderHealthSnap, type User } from "../api";
+import {
+  api,
+  type HealthResponse,
+  type IdentifyKeySettings,
+  type IdentifyQuota,
+  type ProviderHealthSnap,
+  type User,
+} from "../api";
 
 function providerLine(
   provider: "gemini" | "zhipu",
@@ -40,6 +47,15 @@ export default function MePage({
   onUserUpdated: (user: User) => void;
 }) {
   const [health, setHealth] = useState<HealthResponse | null>(null);
+  const [identifyQuota, setIdentifyQuota] = useState<IdentifyQuota | null>(null);
+  const [identifyKey, setIdentifyKey] = useState<IdentifyKeySettings | null>(null);
+  const [useOwnKey, setUseOwnKey] = useState(false);
+  const [baseUrl, setBaseUrl] = useState("");
+  const [model, setModel] = useState("");
+  const [apiKey, setApiKey] = useState("");
+  const [keyBusy, setKeyBusy] = useState(false);
+  const [keyMsg, setKeyMsg] = useState<string | null>(null);
+  const [keyErr, setKeyErr] = useState<string | null>(null);
   const [displayName, setDisplayName] = useState(user.displayName ?? "");
   const [profileBusy, setProfileBusy] = useState(false);
   const [profileMsg, setProfileMsg] = useState<string | null>(null);
@@ -59,6 +75,22 @@ export default function MePage({
       .health()
       .then(setHealth)
       .catch(() => setHealth(null));
+    api
+      .me()
+      .then((res) => {
+        setIdentifyQuota(res.identifyQuota ?? null);
+        const ik = res.identifyKey ?? null;
+        setIdentifyKey(ik);
+        if (ik) {
+          setUseOwnKey(ik.useOwnKey);
+          setBaseUrl(ik.baseUrl ?? "");
+          setModel(ik.model ?? "");
+        }
+      })
+      .catch(() => {
+        setIdentifyQuota(null);
+        setIdentifyKey(null);
+      });
   }, []);
 
   async function logout() {
@@ -96,6 +128,47 @@ export default function MePage({
       setPwErr(err instanceof Error ? err.message : t("error.server"));
     } finally {
       setPwBusy(false);
+    }
+  }
+
+  async function saveIdentifyKey(e: FormEvent) {
+    e.preventDefault();
+    setKeyBusy(true);
+    setKeyErr(null);
+    setKeyMsg(null);
+    try {
+      const res = await api.updateIdentifyKey({
+        useOwnKey,
+        baseUrl: baseUrl.trim() || null,
+        model: model.trim() || null,
+        apiKey: apiKey.trim() || undefined,
+      });
+      setIdentifyKey(res.identifyKey);
+      setUseOwnKey(res.identifyKey.useOwnKey);
+      setBaseUrl(res.identifyKey.baseUrl ?? "");
+      setModel(res.identifyKey.model ?? "");
+      setApiKey("");
+      setKeyMsg(res.message);
+    } catch (err) {
+      setKeyErr(err instanceof Error ? err.message : t("error.server"));
+    } finally {
+      setKeyBusy(false);
+    }
+  }
+
+  async function clearIdentifyKey() {
+    setKeyBusy(true);
+    setKeyErr(null);
+    setKeyMsg(null);
+    try {
+      const res = await api.updateIdentifyKey({ clearKey: true });
+      setIdentifyKey(res.identifyKey);
+      setApiKey("");
+      setKeyMsg(res.message);
+    } catch (err) {
+      setKeyErr(err instanceof Error ? err.message : t("error.server"));
+    } finally {
+      setKeyBusy(false);
     }
   }
 
@@ -165,6 +238,93 @@ export default function MePage({
           </button>
           {pwMsg ? <p className="muted">{pwMsg}</p> : null}
           {pwErr ? <p className="error">{pwErr}</p> : null}
+        </form>
+
+        <div className="stack" style={{ gap: "0.25rem" }}>
+          <p className="muted">
+            {identifyQuota == null
+              ? null
+              : identifyQuota.limited
+                ? t("me.identifyQuota", {
+                    used: String(identifyQuota.used),
+                    limit: String(identifyQuota.limit),
+                  })
+                : t("me.identifyQuotaUnlimited")}
+          </p>
+          {identifyQuota?.limited ? <p className="muted">{t("me.identifyQuotaHint")}</p> : null}
+        </div>
+
+        <form className="stack" onSubmit={saveIdentifyKey}>
+          <strong>{t("me.identifyKeyTitle")}</strong>
+          <p className="muted">{t("me.identifyKeyLede")}</p>
+          <label className="row" style={{ gap: "0.5rem", alignItems: "center" }}>
+            <input
+              type="checkbox"
+              checked={useOwnKey}
+              onChange={(ev) => setUseOwnKey(ev.target.checked)}
+              disabled={keyBusy}
+            />
+            <span>{t("me.identifyUseOwnKey")}</span>
+          </label>
+          {useOwnKey && identifyKey && !identifyKey.ready ? (
+            <p className="muted">{t("me.identifyKeyNotReady")}</p>
+          ) : null}
+          <label className="stack" style={{ gap: "0.35rem" }}>
+            <span className="muted">{t("me.identifyBaseUrl")}</span>
+            <input
+              className="input"
+              type="url"
+              placeholder={t("me.identifyBaseUrlPlaceholder")}
+              value={baseUrl}
+              onChange={(ev) => setBaseUrl(ev.target.value)}
+              disabled={keyBusy}
+            />
+          </label>
+          <label className="stack" style={{ gap: "0.35rem" }}>
+            <span className="muted">{t("me.identifyModel")}</span>
+            <input
+              className="input"
+              type="text"
+              placeholder={t("me.identifyModelPlaceholder")}
+              value={model}
+              onChange={(ev) => setModel(ev.target.value)}
+              disabled={keyBusy}
+            />
+          </label>
+          <label className="stack" style={{ gap: "0.35rem" }}>
+            <span className="muted">{t("me.identifyApiKey")}</span>
+            <input
+              className="input"
+              type="password"
+              autoComplete="off"
+              placeholder={t("me.identifyApiKeyPlaceholder")}
+              value={apiKey}
+              onChange={(ev) => setApiKey(ev.target.value)}
+              disabled={keyBusy}
+            />
+          </label>
+          {identifyKey?.hasKey && identifyKey.keyHint ? (
+            <p className="muted">
+              {t("me.identifyApiKeySaved", { hint: identifyKey.keyHint })}
+            </p>
+          ) : null}
+          <div className="row" style={{ gap: "0.5rem", flexWrap: "wrap" }}>
+            <button className="btn secondary" type="submit" disabled={keyBusy}>
+              {keyBusy ? t("me.identifyKeySaving") : t("me.identifyKeySave")}
+            </button>
+            {identifyKey?.hasKey ? (
+              <button
+                className="btn secondary"
+                type="button"
+                disabled={keyBusy}
+                onClick={() => void clearIdentifyKey()}
+              >
+                {t("me.identifyKeyClear")}
+              </button>
+            ) : null}
+          </div>
+          {keyMsg ? <p className="muted">{keyMsg}</p> : null}
+          {keyErr ? <p className="error">{keyErr}</p> : null}
         </form>
 
         <p className="muted">

@@ -10,6 +10,8 @@ const known: Record<string, MessageKey> = {
   "confirm phrase mismatch": "error.confirmPhraseMismatch",
   identify_too_coarse: "error.identifyTooCoarse",
   identify_quota: "error.identifyQuota",
+  identify_daily_limit: "error.identifyDailyLimit",
+  identify_user_key_incomplete: "error.identifyUserKeyIncomplete",
   identify_unavailable: "error.identifyUnavailable",
   identify_not_organism: "error.identifyNotCollectible",
   identify_human: "error.identifyNotCollectible",

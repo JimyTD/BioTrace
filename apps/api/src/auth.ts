@@ -99,6 +99,11 @@ export async function ensureDevUser(): Promise<User> {
     passwordHash: await hashPassword(crypto.randomUUID()),
     displayName: "Dev",
     createdAt: now,
+    identifyUseOwnKey: false,
+    identifyUserKeyEnc: null,
+    identifyUserKeyHint: null,
+    identifyUserBaseUrl: null,
+    identifyUserModel: null,
   };
   await db.insert(users).values(user);
   return user;

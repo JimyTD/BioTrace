@@ -15,6 +15,11 @@ import { env } from "../env.js";
 import { takeRateLimit } from "../lib/rate-limit.js";
 import { hashPassword, verifyPassword } from "../lib/password.js";
 import { sendPasswordResetEmail } from "../mail/resend.js";
+import { getIdentifyQuota } from "../services/identify-quota.js";
+import {
+  getUserIdentifyPublic,
+  updateUserIdentify,
+} from "../services/user-identify.js";
 import { serializeUser } from "../serialize.js";
 import { t } from "@biotrace/messages";
 
@@ -82,6 +87,11 @@ authRoutes.post("/register", async (c) => {
     passwordHash: await hashPassword(body.data.password),
     displayName,
     createdAt: now,
+    identifyUseOwnKey: false as boolean | null,
+    identifyUserKeyEnc: null as string | null,
+    identifyUserKeyHint: null as string | null,
+    identifyUserBaseUrl: null as string | null,
+    identifyUserModel: null as string | null,
   };
   await db.insert(users).values(user);
   setSessionCookie(c, user.id);
@@ -238,7 +248,42 @@ authRoutes.post("/logout", async (c) => {
 });
 
 authRoutes.get("/me", requireUser, async (c) => {
-  return c.json({ user: serializeUser(c.get("user")) });
+  const user = c.get("user");
+  return c.json({
+    user: serializeUser(user),
+    identifyQuota: await getIdentifyQuota(user.id),
+    identifyKey: await getUserIdentifyPublic(user.id),
+  });
+});
+
+authRoutes.patch("/me/identify-key", requireUser, async (c) => {
+  const body = z
+    .object({
+      useOwnKey: z.boolean().optional(),
+      apiKey: z.string().max(512).optional().nullable(),
+      baseUrl: z.string().max(500).optional().nullable(),
+      model: z.string().max(120).optional().nullable(),
+      clearKey: z.boolean().optional(),
+    })
+    .safeParse(await c.req.json().catch(() => ({})));
+
+  if (!body.success) {
+    return c.json({ error: t("me.identifyKeyInvalid"), code: "invalid_identify_key" }, 400);
+  }
+
+  const user = c.get("user");
+  const identifyKey = await updateUserIdentify(user.id, {
+    useOwnKey: body.data.useOwnKey,
+    apiKey: body.data.apiKey,
+    baseUrl: body.data.baseUrl,
+    model: body.data.model,
+    clearKey: body.data.clearKey,
+  });
+  return c.json({
+    ok: true as const,
+    identifyKey,
+    message: t("me.identifyKeySaved"),
+  });
 });
 
 authRoutes.patch("/me", requireUser, async (c) => {

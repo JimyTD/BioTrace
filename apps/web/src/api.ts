@@ -120,9 +120,47 @@ export type HealthResponse = {
   identifyQueue?: { pending: number; running: number };
 };
 
+export type IdentifyQuota = {
+  day: string;
+  used: number;
+  limit: number;
+  remaining: number | null;
+  limited: boolean;
+  exhausted: boolean;
+};
+
+export type IdentifyKeySettings = {
+  useOwnKey: boolean;
+  hasKey: boolean;
+  keyHint: string | null;
+  baseUrl: string | null;
+  model: string | null;
+  ready: boolean;
+};
+
 export const api = {
   health: () => request<HealthResponse>("/api/health"),
-  me: () => request<{ user: User }>("/api/auth/me"),
+  me: () =>
+    request<{
+      user: User;
+      identifyQuota?: IdentifyQuota;
+      identifyKey?: IdentifyKeySettings;
+    }>("/api/auth/me"),
+  updateIdentifyKey: (body: {
+    useOwnKey?: boolean;
+    apiKey?: string | null;
+    baseUrl?: string | null;
+    model?: string | null;
+    clearKey?: boolean;
+  }) =>
+    request<{ ok: boolean; identifyKey: IdentifyKeySettings; message: string }>(
+      "/api/auth/me/identify-key",
+      {
+        method: "PATCH",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(body),
+      },
+    ),
   register: (email: string, password: string, displayName?: string) =>
     request<{ user: User }>("/api/auth/register", {
       method: "POST",
@@ -188,10 +226,13 @@ export const api = {
     const form = new FormData();
     form.append("file", file);
     if (description?.trim()) form.append("description", description.trim());
-    return request<{ observation: Observation }>(`/api/trips/${tripId}/observations`, {
-      method: "POST",
-      body: form,
-    });
+    return request<{ observation: Observation; code?: string }>(
+      `/api/trips/${tripId}/observations`,
+      {
+        method: "POST",
+        body: form,
+      },
+    );
   },
   getObservation: (id: string, forSettle = false) =>
     request<{ observation: Observation }>(

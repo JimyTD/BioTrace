@@ -1,4 +1,4 @@
-import { sqliteTable, text, integer, real, uniqueIndex } from "drizzle-orm/sqlite-core";
+import { sqliteTable, text, integer, real, uniqueIndex, primaryKey } from "drizzle-orm/sqlite-core";
 
 export const users = sqliteTable("users", {
   id: text("id").primaryKey(),
@@ -6,6 +6,13 @@ export const users = sqliteTable("users", {
   passwordHash: text("password_hash").notNull(),
   displayName: text("display_name"),
   createdAt: integer("created_at", { mode: "timestamp_ms" }).notNull(),
+  /** Explicit switch: use saved OpenAI-compatible key instead of platform. */
+  identifyUseOwnKey: integer("identify_use_own_key", { mode: "boolean" }),
+  /** AES-GCM sealed API key (`secret-box`). */
+  identifyUserKeyEnc: text("identify_user_key_enc"),
+  identifyUserKeyHint: text("identify_user_key_hint"),
+  identifyUserBaseUrl: text("identify_user_base_url"),
+  identifyUserModel: text("identify_user_model"),
 });
 
 export const trips = sqliteTable("trips", {
@@ -118,6 +125,20 @@ export const passwordResetTokens = sqliteTable("password_reset_tokens", {
   createdAt: integer("created_at", { mode: "timestamp_ms" }).notNull(),
 });
 
+/** Platform-key identify calls per user per UTC calendar day. */
+export const identifyDailyUsage = sqliteTable(
+  "identify_daily_usage",
+  {
+    userId: text("user_id")
+      .notNull()
+      .references(() => users.id),
+    /** UTC calendar day `YYYY-MM-DD`. */
+    day: text("day").notNull(),
+    count: integer("count").notNull(),
+  },
+  (t) => [primaryKey({ columns: [t.userId, t.day] })],
+);
+
 /** User progress on configurable field volumes (套册). */
 export const volumeProgress = sqliteTable(
   "volume_progress",
@@ -141,3 +162,4 @@ export type CollectionEntry = typeof collectionEntries.$inferSelect;
 export type RarityCacheRow = typeof rarityCache.$inferSelect;
 export type PasswordResetToken = typeof passwordResetTokens.$inferSelect;
 export type VolumeProgress = typeof volumeProgress.$inferSelect;
+export type IdentifyDailyUsage = typeof identifyDailyUsage.$inferSelect;
