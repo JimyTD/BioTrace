@@ -104,6 +104,26 @@ export async function migrate() {
   await ensureColumn("observations", "taxon_key", "taxon_key TEXT");
   await ensureColumn("observations", "identify_provider", "identify_provider TEXT");
   await ensureColumn("observations", "settled_at", "settled_at INTEGER");
+  await ensureColumn("observations", "content_hash", "content_hash TEXT");
+  await ensureColumn("observations", "original_path", "original_path TEXT");
+  await ensureColumn("observations", "location_label", "location_label TEXT");
+
+  // SQLite UNIQUE 允许多个 NULL；精确去重只约束已写入 hash 的行。
+  await client.execute(`
+    CREATE UNIQUE INDEX IF NOT EXISTS observations_user_content_hash
+    ON observations(user_id, content_hash)
+  `);
+
+  // Android Photo Picker 涂零 GPS：历史脏数据清成无定位，引导补标。
+  await client.execute(`
+    UPDATE observations
+    SET lat = NULL,
+        lng = NULL,
+        location_precise = 0,
+        location_label = NULL
+    WHERE lat IS NOT NULL AND lng IS NOT NULL
+      AND ABS(lat) < 0.00001 AND ABS(lng) < 0.00001
+  `);
 
   // Drop cached match-miss defaults so improved GBIF resolver can retry.
   await client.execute(`DELETE FROM rarity_cache WHERE source = 'default'`);

@@ -4,6 +4,7 @@ import maplibregl, { Map, Marker, Popup } from "maplibre-gl";
 import "maplibre-gl/dist/maplibre-gl.css";
 import { t } from "@biotrace/messages";
 import { api, type Observation } from "../api";
+import { hasValidCoords } from "../geo";
 import {
   AUTO_FIT_MAX_ZOOM,
   DEFAULT_MAP_CENTER,
@@ -61,7 +62,7 @@ export default function MapPage() {
       .listMappedObservations()
       .then(({ observations }) => {
         if (cancelled) return;
-        observationsRef.current = observations.filter((o) => o.lat != null && o.lng != null);
+        observationsRef.current = observations.filter((o) => hasValidCoords(o.lat, o.lng));
         setCount(observationsRef.current.length);
       })
       .catch((e) => {
@@ -79,7 +80,9 @@ export default function MapPage() {
 
   function selectObservation(obs: Observation) {
     const map = mapRef.current;
-    if (!map || obs.lat == null || obs.lng == null) return;
+    if (!map || !hasValidCoords(obs.lat, obs.lng)) return;
+    const lat = obs.lat as number;
+    const lng = obs.lng as number;
     setSelected(obs);
 
     markersRef.current.forEach((m) => {
@@ -93,7 +96,7 @@ export default function MapPage() {
       ? t(obs.status === "pending_settle" ? "status.pending_settle" : "status.analyzing")
       : obs.commonName || obs.scientificName || t("map.observationFallback");
     const popup = new maplibregl.Popup({ offset: 16, closeButton: true, maxWidth: "240px" })
-      .setLngLat([obs.lng, obs.lat])
+      .setLngLat([lng, lat])
       .setHTML(
         `<div class="map-popup">
           <img src="${obs.displayUrl}" alt="" />
@@ -114,7 +117,9 @@ export default function MapPage() {
 
     const bounds = new maplibregl.LngLatBounds();
     for (const obs of observations) {
-      if (obs.lat == null || obs.lng == null) continue;
+      if (!hasValidCoords(obs.lat, obs.lng)) continue;
+      const lat = obs.lat as number;
+      const lng = obs.lng as number;
       const el = document.createElement("button");
       el.type = "button";
       el.className = "map-dot";
@@ -129,10 +134,10 @@ export default function MapPage() {
       });
 
       const marker = new maplibregl.Marker({ element: el, anchor: "center" })
-        .setLngLat([obs.lng, obs.lat])
+        .setLngLat([lng, lat])
         .addTo(map);
       markersRef.current.push(marker);
-      bounds.extend([obs.lng, obs.lat]);
+      bounds.extend([lng, lat]);
     }
 
     if (!bounds.isEmpty()) {
@@ -165,7 +170,8 @@ export default function MapPage() {
                   t("map.observationFallback")}
             </strong>
             <span className="muted">
-              {selected.lat?.toFixed(5)}, {selected.lng?.toFixed(5)}
+              {selected.locationLabel ||
+                `${selected.lat?.toFixed(5)}, ${selected.lng?.toFixed(5)}`}
             </span>
             <div className="row">
               <Link

@@ -58,6 +58,8 @@ export const env = {
   zhipuTextModel: process.env.ZHIPU_TEXT_MODEL?.trim() || "glm-4-flash",
   zhipuBaseUrl: process.env.ZHIPU_BASE_URL?.trim() || "https://open.bigmodel.cn/api/paas/v4",
   displayMaxEdge: Number(process.env.DISPLAY_MAX_EDGE ?? 1600),
+  /** 单张上传原图上限（字节）；相册默认传原图，防止极端文件打爆磁盘。 */
+  uploadMaxBytes: Number(process.env.UPLOAD_MAX_BYTES ?? 25 * 1024 * 1024),
   httpsProxy: process.env.HTTPS_PROXY?.trim() || process.env.HTTP_PROXY?.trim() || "",
   /**
    * 天地图**服务端** key（逆地理编码用，非前端瓦片的浏览器端 key）。

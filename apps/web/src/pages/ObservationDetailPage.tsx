@@ -9,6 +9,13 @@ import {
   identifyErrorPrimary,
   isNotCollectibleError,
 } from "../identifyErrors";
+import { hasValidCoords } from "../geo";
+
+function heroUrl(obs: Observation): string {
+  const original = obs.originalUrl;
+  if (original && /\.(jpe?g|png|webp)(\?|$)/i.test(original)) return original;
+  return obs.displayUrl;
+}
 
 const RANK_ORDER = [
   "kingdom",
@@ -193,7 +200,7 @@ export default function ObservationDetailPage() {
         ) : null}
       </div>
 
-      <img className="detail-hero" src={obs.displayUrl} alt={title} />
+      <img className="detail-hero" src={heroUrl(obs)} alt={title} />
 
       <div className="panel stack">
         <div className="row">
@@ -275,17 +282,25 @@ export default function ObservationDetailPage() {
             {obs.capturedAt ? new Date(obs.capturedAt).toLocaleString() : "—"}
           </span>
           <div className="row" style={{ alignItems: "center" }}>
-            <span>
-              {t("detail.location")}：
-              {obs.lat != null && obs.lng != null
-                ? `${obs.lat.toFixed(5)}, ${obs.lng.toFixed(5)}`
-                : t("detail.noGps")}
+            <span className="stack" style={{ gap: 2, flex: 1 }}>
+              <span>
+                {t("detail.location")}：
+                {hasValidCoords(obs.lat, obs.lng)
+                  ? obs.locationLabel ||
+                    `${obs.lat!.toFixed(5)}, ${obs.lng!.toFixed(5)}`
+                  : t("detail.noGps")}
+              </span>
+              {hasValidCoords(obs.lat, obs.lng) && obs.locationLabel ? (
+                <span className="muted" style={{ fontSize: "0.85em" }}>
+                  {obs.lat!.toFixed(5)}, {obs.lng!.toFixed(5)}
+                </span>
+              ) : null}
             </span>
             <Link
-              className={obs.lat != null && obs.lng != null ? "btn secondary" : "btn"}
+              className={hasValidCoords(obs.lat, obs.lng) ? "btn secondary" : "btn"}
               to={`/observations/${obs.id}/pin`}
             >
-              {obs.lat != null && obs.lng != null
+              {hasValidCoords(obs.lat, obs.lng)
                 ? t("detail.changeLocation")
                 : t("detail.setLocation")}
             </Link>

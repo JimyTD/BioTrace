@@ -83,6 +83,12 @@ docs/        筹划 + 本实现规格
 
 验收：无 GPS 可识图开包；补标后上地图；海外点国别正确（如福冈→JP）；俗名/分类不变。
 
+## 1.4 原图上传 / 可读地名 / 同图去重（已收口）
+
+- **Android 相册**：默认传**原图**（`@capawesome/capacitor-file-picker` + `ACCESS_MEDIA_LOCATION`），不再走会把 GPS 涂成 `0,0` 的 Photo Picker 重编码。服务端 `readExif` 将近 Null Island 视为无定位；历史 `0,0` 启动时清洗。落盘 **原图 + display.jpg**（列表/识图用 display；详情优先原图若浏览器可显示）。单张上限默认 25MB（`UPLOAD_MAX_BYTES`）。
+- **可读地名**：天地图逆地理同一调用取 `province/city/county`，写入 `location_label`（国内省市区连写；海外「国家 · 城市」）。详情/地图优先展示；失败不挡主路径。
+- **同图去重**：上传原字节 SHA-256 → `content_hash`，按用户唯一；重复 `409 duplicate_photo`。删观察后可再传。不做感知哈希。
+
 ---
 
 ## 2. Cut 2（已收口）
@@ -276,7 +282,6 @@ computeSettle
 - 稀有度：灭绝级 XR 稳定性；中档继续靠判定键微调（禁止物种名单）
 - 旅途元数据增强（时间 / 地点摘要；**封面已实现**，列表 API 附 `coverDisplayUrl`）
 - 完整分类树动态够格（现为固定阶元门槛）；对象存储
-- 逆地理更细粒度（省市级；**国家级已由天地图 + 离线国界落地**）
 - iOS / Play 上架 / 备案后 HTTPS 域名 + App Links
 
 ---

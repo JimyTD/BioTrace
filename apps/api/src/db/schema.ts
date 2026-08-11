@@ -17,49 +17,59 @@ export const trips = sqliteTable("trips", {
   createdAt: integer("created_at", { mode: "timestamp_ms" }).notNull(),
 });
 
-export const observations = sqliteTable("observations", {
-  id: text("id").primaryKey(),
-  tripId: text("trip_id")
-    .notNull()
-    .references(() => trips.id),
-  userId: text("user_id")
-    .notNull()
-    .references(() => users.id),
-  status: text("status", {
-    enum: ["analyzing", "pending_settle", "settled", "failed"],
-  }).notNull(),
-  description: text("description"),
-  capturedAt: integer("captured_at", { mode: "timestamp_ms" }),
-  lat: real("lat"),
-  lng: real("lng"),
-  displayPath: text("display_path").notNull(),
-  commonName: text("common_name"),
-  scientificName: text("scientific_name"),
-  finestReliableRank: text("finest_reliable_rank"),
-  confidence: real("confidence"),
-  taxonomyJson: text("taxonomy_json"),
-  blurb: text("blurb"),
-  notes: text("notes"),
-  error: text("error"),
-  settleTier: text("settle_tier", { enum: ["full", "weak", "none"] }),
-  /** Tier code from rarity module (default N/R/SR/UR; not hard-capped to four). */
-  rarity: text("rarity"),
-  countryCode: text("country_code"),
-  /**
-   * 国别判定来源，仅用于诊断与日后定向重跑，不参与业务逻辑。
-   * `tianditu` 线上权威| `offline` 离线国界兜底 | `none` 判定执行过但坐标缺失/非法
-   * | `null` 尚未判定（刚上传，或在识别闸门就被拦下）
-   */
-  countrySource: text("country_source"),
-  locationPrecise: integer("location_precise", { mode: "boolean" }),
-  alertIntroduced: integer("alert_introduced", { mode: "boolean" }),
-  taxonKey: text("taxon_key"),
-  /** Identify provider id: gemini | zhipu */
-  identifyProvider: text("identify_provider"),
-  settledAt: integer("settled_at", { mode: "timestamp_ms" }),
-  createdAt: integer("created_at", { mode: "timestamp_ms" }).notNull(),
-  updatedAt: integer("updated_at", { mode: "timestamp_ms" }).notNull(),
-});
+export const observations = sqliteTable(
+  "observations",
+  {
+    id: text("id").primaryKey(),
+    tripId: text("trip_id")
+      .notNull()
+      .references(() => trips.id),
+    userId: text("user_id")
+      .notNull()
+      .references(() => users.id),
+    status: text("status", {
+      enum: ["analyzing", "pending_settle", "settled", "failed"],
+    }).notNull(),
+    description: text("description"),
+    capturedAt: integer("captured_at", { mode: "timestamp_ms" }),
+    lat: real("lat"),
+    lng: real("lng"),
+    /** SHA-256 hex of original upload bytes; unique per user for exact-duplicate reject. */
+    contentHash: text("content_hash"),
+    displayPath: text("display_path").notNull(),
+    /** Original upload relative path (album quality); may be null for legacy rows. */
+    originalPath: text("original_path"),
+    /** Human place label from Tianditu reverse geocode (e.g. 省市区). */
+    locationLabel: text("location_label"),
+    commonName: text("common_name"),
+    scientificName: text("scientific_name"),
+    finestReliableRank: text("finest_reliable_rank"),
+    confidence: real("confidence"),
+    taxonomyJson: text("taxonomy_json"),
+    blurb: text("blurb"),
+    notes: text("notes"),
+    error: text("error"),
+    settleTier: text("settle_tier", { enum: ["full", "weak", "none"] }),
+    /** Tier code from rarity module (default N/R/SR/UR; not hard-capped to four). */
+    rarity: text("rarity"),
+    countryCode: text("country_code"),
+    /**
+     * 国别判定来源，仅用于诊断与日后定向重跑，不参与业务逻辑。
+     * `tianditu` 线上权威| `offline` 离线国界兜底 | `none` 判定执行过但坐标缺失/非法
+     * | `null` 尚未判定（刚上传，或在识别闸门就被拦下）
+     */
+    countrySource: text("country_source"),
+    locationPrecise: integer("location_precise", { mode: "boolean" }),
+    alertIntroduced: integer("alert_introduced", { mode: "boolean" }),
+    taxonKey: text("taxon_key"),
+    /** Identify provider id: gemini | zhipu */
+    identifyProvider: text("identify_provider"),
+    settledAt: integer("settled_at", { mode: "timestamp_ms" }),
+    createdAt: integer("created_at", { mode: "timestamp_ms" }).notNull(),
+    updatedAt: integer("updated_at", { mode: "timestamp_ms" }).notNull(),
+  },
+  (t) => [uniqueIndex("observations_user_content_hash").on(t.userId, t.contentHash)],
+);
 
 export const collectionEntries = sqliteTable(
   "collection_entries",

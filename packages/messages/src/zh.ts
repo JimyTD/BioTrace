@@ -94,6 +94,8 @@ export const zh = {
   "album.descriptionPlaceholder": "可选描述（仅辅助这一张的识别，以图像为准）",
   "album.empty": "这个旅途还没有观察。上传照片试试。",
   "album.uploadFailed": "上传失败",
+  "album.duplicatePhoto": "这张照片已经上传过了。",
+  "album.fileTooLarge": "照片太大，请压缩到 {maxMb}MB 以内再传。",
   "album.pendingHint": "结论已经落笔。",
   "album.noGps": "无定位",
   "album.reliableTo": "可靠到：{rank}",

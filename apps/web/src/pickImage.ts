@@ -1,5 +1,6 @@
-import { Camera, CameraResultType, CameraSource, type GalleryPhoto, type Photo } from "@capacitor/camera";
+import { Camera, CameraResultType, CameraSource, type Photo } from "@capacitor/camera";
 import { Capacitor } from "@capacitor/core";
+import { FilePicker } from "@capawesome/capacitor-file-picker";
 
 export type PickImageMode = "gallery" | "camera";
 
@@ -11,7 +12,7 @@ function isUserCancel(err: unknown): boolean {
   return /cancel/i.test(msg);
 }
 
-async function photoToFile(photo: Photo | GalleryPhoto, index = 0): Promise<File> {
+async function photoToFile(photo: Photo, index = 0): Promise<File> {
   if (!photo.webPath) {
     throw new Error("missing_web_path");
   }
@@ -23,7 +24,22 @@ async function photoToFile(photo: Photo | GalleryPhoto, index = 0): Promise<File
   return new File([blob], `observation-${index + 1}.${ext}`, { type: mime });
 }
 
-/** Native Capacitor shell: system camera / photo picker (not the file manager). */
+async function pickedPathToFile(
+  path: string,
+  name: string | undefined,
+  mimeType: string | undefined,
+  index: number,
+): Promise<File> {
+  const url = Capacitor.convertFileSrc(path);
+  const res = await fetch(url);
+  const blob = await res.blob();
+  const mime = mimeType || blob.type || "image/jpeg";
+  const fallbackExt = mime.includes("png") ? "png" : mime.includes("webp") ? "webp" : "jpg";
+  const fileName = name?.trim() || `observation-${index + 1}.${fallbackExt}`;
+  return new File([blob], fileName, { type: mime });
+}
+
+/** Native Capacitor shell: system camera / original-file gallery picker. */
 export function canUseNativePicker(): boolean {
   try {
     return Capacitor.isNativePlatform();
@@ -33,13 +49,14 @@ export function canUseNativePicker(): boolean {
 }
 
 /**
- * Camera: one photo. Gallery: multi-select via pickImages (falls back to single getPhoto).
+ * Camera: one photo (device capture usually keeps GPS).
+ * Gallery: FilePicker 原图 + ACCESS_MEDIA_LOCATION，避免 Photo Picker 把 GPS 涂成 0,0。
  */
 export async function pickImageNative(mode: PickImageMode): Promise<File[]> {
   try {
     if (mode === "camera") {
       const photo = await Camera.getPhoto({
-        quality: 92,
+        quality: 95,
         allowEditing: false,
         resultType: CameraResultType.Uri,
         source: CameraSource.Camera,
@@ -49,30 +66,27 @@ export async function pickImageNative(mode: PickImageMode): Promise<File[]> {
     }
 
     try {
-      const gallery = await Camera.pickImages({
-        quality: 92,
-        correctOrientation: true,
-        limit: MAX_UPLOAD_BATCH,
-      });
-      const photos = gallery.photos ?? [];
-      if (photos.length === 0) return [];
-      const files: File[] = [];
-      for (let i = 0; i < photos.length; i++) {
-        files.push(await photoToFile(photos[i]!, i));
-      }
-      return files;
-    } catch (err) {
-      // Older shells / cancel: try single-photo path unless user cancelled.
-      if (isUserCancel(err)) return [];
-      const photo = await Camera.getPhoto({
-        quality: 92,
-        allowEditing: false,
-        resultType: CameraResultType.Uri,
-        source: CameraSource.Photos,
-        correctOrientation: true,
-      });
-      return [await photoToFile(photo, 0)];
+      await FilePicker.requestPermissions({ permissions: ["accessMediaLocation"] });
+    } catch {
+      // 权限被拒时仍尝试选图；可能无 GPS，服务端会当成无定位
     }
+
+    // Android FilePicker：limit 仅支持 0（不限）或 1；用 0 再在客户端截断。
+    const result = await FilePicker.pickImages({
+      limit: 0,
+      readData: false,
+      skipTranscoding: true,
+    });
+    const picked = (result.files ?? []).slice(0, MAX_UPLOAD_BATCH);
+    if (picked.length === 0) return [];
+
+    const files: File[] = [];
+    for (let i = 0; i < picked.length; i++) {
+      const f = picked[i]!;
+      if (!f.path) continue;
+      files.push(await pickedPathToFile(f.path, f.name, f.mimeType, i));
+    }
+    return files;
   } catch (err) {
     if (isUserCancel(err)) return [];
     throw err;

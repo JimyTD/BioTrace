@@ -51,6 +51,7 @@ export function enqueueIdentify(opts: {
             countryCode: null,
             // 闸门在识别前就拦下了，computeSettle 未执行 → 尚未判定，而非「判过但无坐标」
             countrySource: null,
+            locationLabel: null,
             locationPrecise: false,
             alertIntroduced: false,
             taxonKey: null,
@@ -94,6 +95,7 @@ export function enqueueIdentify(opts: {
             rarity: null,
             countryCode: settle.countryCode,
             countrySource: settle.countrySource,
+            locationLabel: settle.locationLabel,
             locationPrecise: settle.locationPrecise,
             alertIntroduced: false,
             taxonKey: settle.taxonKey,
@@ -121,6 +123,7 @@ export function enqueueIdentify(opts: {
           rarity: settle.rarity,
           countryCode: settle.countryCode,
           countrySource: settle.countrySource,
+          locationLabel: settle.locationLabel,
           locationPrecise: settle.locationPrecise,
           alertIntroduced: settle.alertIntroduced,
           taxonKey: settle.taxonKey,

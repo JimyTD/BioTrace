@@ -1,3 +1,4 @@
+import { createHash } from "node:crypto";
 import { Hono } from "hono";
 import { and, desc, eq, inArray, sql } from "drizzle-orm";
 import { z } from "zod";
@@ -6,8 +7,9 @@ import { requireUser, type Variables } from "../auth.js";
 import { db } from "../db/index.js";
 import { observations, trips } from "../db/schema.js";
 import { apiError } from "../errors.js";
+import { env } from "../env.js";
 import { enqueueIdentify } from "../jobs/identify.js";
-import { readExif, saveDisplayImage } from "../services/media.js";
+import { readExif, saveObservationMedia } from "../services/media.js";
 import { repairCollectionAfterObservationDeleted } from "../services/collection.js";
 import { removeObservationFiles } from "../services/observationFiles.js";
 import {
@@ -179,11 +181,30 @@ tripRoutes.post("/:id/observations", async (c) => {
       : null;
 
   const buffer = Buffer.from(await file.arrayBuffer());
+  if (buffer.byteLength > env.uploadMaxBytes) {
+    return c.json(
+      {
+        error: t("album.fileTooLarge", { maxMb: Math.round(env.uploadMaxBytes / (1024 * 1024)) }),
+        code: "file_too_large",
+      },
+      400,
+    );
+  }
+
+  const contentHash = createHash("sha256").update(buffer).digest("hex");
+  const dup = await db.query.observations.findFirst({
+    where: and(eq(observations.userId, user.id), eq(observations.contentHash, contentHash)),
+    columns: { id: true },
+  });
+  if (dup) {
+    return c.json({ error: t("album.duplicatePhoto"), code: "duplicate_photo" }, 409);
+  }
+
   const exif = await readExif(buffer);
   const observationId = crypto.randomUUID();
   const now = new Date();
 
-  const saved = await saveDisplayImage({
+  const saved = await saveObservationMedia({
     observationId,
     buffer,
     mimeType: file.type || "image/jpeg",
@@ -199,7 +220,10 @@ tripRoutes.post("/:id/observations", async (c) => {
     capturedAt: exif.capturedAt,
     lat: exif.lat,
     lng: exif.lng,
-    displayPath: saved.relativePath,
+    contentHash,
+    displayPath: saved.displayPath,
+    originalPath: saved.originalPath,
+    locationLabel: null as string | null,
     commonName: null,
     scientificName: null,
     finestReliableRank: null,
@@ -222,11 +246,16 @@ tripRoutes.post("/:id/observations", async (c) => {
     updatedAt: now,
   };
 
-  await db.insert(observations).values(row);
+  try {
+    await db.insert(observations).values(row);
+  } catch {
+    // 并发双传可能撞 UNIQUE；统一成业务错误
+    return c.json({ error: t("album.duplicatePhoto"), code: "duplicate_photo" }, 409);
+  }
 
   enqueueIdentify({
     observationId,
-    imagePath: saved.absolutePath,
+    imagePath: saved.displayAbsolutePath,
     mimeType: saved.mimeType,
     lat: exif.lat,
     lng: exif.lng,

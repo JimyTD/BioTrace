@@ -4,6 +4,7 @@ import maplibregl, { Map } from "maplibre-gl";
 import "maplibre-gl/dist/maplibre-gl.css";
 import { t } from "@biotrace/messages";
 import { api } from "../api";
+import { hasValidCoords } from "../geo";
 import {
   DEFAULT_MAP_CENTER,
   DEFAULT_MAP_ZOOM,
@@ -33,7 +34,7 @@ export default function PinLocationPage() {
         const { observation } = await api.getObservation(id);
         if (cancelled || !containerRef.current) return;
 
-        const hasPoint = observation.lat != null && observation.lng != null;
+        const hasPoint = hasValidCoords(observation.lat, observation.lng);
         const center: [number, number] = hasPoint
           ? [observation.lng!, observation.lat!]
           : DEFAULT_MAP_CENTER;

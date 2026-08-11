@@ -12,6 +12,8 @@ export type SettleComputation = {
   countryCode: string | null;
   /** 国别判定来源，仅用于诊断与日后定向重跑，不参与业务逻辑。 */
   countrySource: CountrySource;
+  /** 可读地名（天地图逆地理）；离线兜底时可能为 null */
+  locationLabel: string | null;
   locationPrecise: boolean;
   alertIntroduced: boolean;
   taxonKey: string | null;
@@ -42,6 +44,7 @@ export async function computeSettle(input: {
 }): Promise<SettleComputation> {
   const country = await resolveCountry(input.lat, input.lng);
   const countryCode = country.code;
+  const locationLabel = country.locationLabel;
   const locationPrecise = Boolean(countryCode);
   const settleTier = settleTierFromRank(input.finestReliableRank);
   const taxonomy = parseTaxonomy(input.taxonomyJson);
@@ -57,6 +60,7 @@ export async function computeSettle(input: {
       rarity: null,
       countryCode,
       countrySource: country.source,
+      locationLabel,
       locationPrecise,
       alertIntroduced: false,
       taxonKey,
@@ -99,6 +103,7 @@ export async function computeSettle(input: {
     rarity: resolved.rarity,
     countryCode,
     countrySource: country.source,
+    locationLabel,
     locationPrecise,
     alertIntroduced: intro.alert,
     taxonKey,

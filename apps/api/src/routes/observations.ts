@@ -15,6 +15,8 @@ import {
 } from "../services/collection.js";
 import { removeObservationFiles } from "../services/observationFiles.js";
 import { serializeObservation } from "../serialize.js";
+import { validCoords } from "../settle/geo/coords.js";
+import { resolveCountry } from "../settle/country.js";
 import { computeSettle } from "../settle/rules.js";
 import { evaluateVolumesOnObservation } from "../volumes/index.js";
 
@@ -72,13 +74,17 @@ observationRoutes.patch("/:id/location", async (c) => {
     return c.json({ error: t("detail.locationInvalid"), code: "location_invalid" }, 400);
   }
 
-  const { lat, lng } = parsed.data;
+  const coords = validCoords(parsed.data.lat, parsed.data.lng);
+  if (!coords) {
+    return c.json({ error: t("detail.locationInvalid"), code: "location_invalid" }, 400);
+  }
+  const { lat, lng } = coords;
   const now = new Date();
   const hasIdentity = Boolean(row.finestReliableRank);
 
-  let derived: Awaited<ReturnType<typeof computeSettle>> | null = null;
+  let patch: Record<string, unknown> = { lat, lng, updatedAt: now };
   if (hasIdentity) {
-    derived = await computeSettle({
+    const derived = await computeSettle({
       lat,
       lng,
       finestReliableRank: row.finestReliableRank,
@@ -86,27 +92,29 @@ observationRoutes.patch("/:id/location", async (c) => {
       commonName: row.commonName,
       taxonomyJson: row.taxonomyJson,
     });
+    patch = {
+      ...patch,
+      countryCode: derived.countryCode,
+      countrySource: derived.countrySource,
+      locationLabel: derived.locationLabel,
+      locationPrecise: derived.locationPrecise,
+      alertIntroduced: derived.alertIntroduced,
+      rarity: derived.rarity,
+      settleTier: derived.settleTier,
+      taxonKey: derived.taxonKey,
+    };
+  } else {
+    const country = await resolveCountry(lat, lng);
+    patch = {
+      ...patch,
+      countryCode: country.code,
+      countrySource: country.source,
+      locationLabel: country.locationLabel,
+      locationPrecise: Boolean(country.code),
+    };
   }
 
-  await db
-    .update(observations)
-    .set({
-      lat,
-      lng,
-      updatedAt: now,
-      ...(derived
-        ? {
-            countryCode: derived.countryCode,
-            countrySource: derived.countrySource,
-            locationPrecise: derived.locationPrecise,
-            alertIntroduced: derived.alertIntroduced,
-            rarity: derived.rarity,
-            settleTier: derived.settleTier,
-            taxonKey: derived.taxonKey,
-          }
-        : {}),
-    })
-    .where(eq(observations.id, row.id));
+  await db.update(observations).set(patch).where(eq(observations.id, row.id));
 
   const updated = await db.query.observations.findFirst({
     where: eq(observations.id, row.id),
@@ -225,6 +233,7 @@ observationRoutes.post("/:id/reidentify", async (c) => {
       settleTier: null,
       rarity: null,
       countryCode: null,
+      locationLabel: null,
       locationPrecise: null,
       alertIntroduced: false,
       taxonKey: null,

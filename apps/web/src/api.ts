@@ -35,6 +35,9 @@ export type Observation = {
   lat: number | null;
   lng: number | null;
   displayUrl: string;
+  /** 原图（相册高清）；旧观察可能为 null */
+  originalUrl?: string | null;
+  locationLabel?: string | null;
   commonName: string | null;
   scientificName: string | null;
   finestReliableRank: string | null;

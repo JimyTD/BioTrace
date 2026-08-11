@@ -1,5 +1,5 @@
 /**
- * 坐标 → 国家 alpha-2。
+ * 坐标 → 国家 alpha-2（+ 可读地名，若线上逆地理成功）。
  *
  * 历史：这里曾是 23 个手写的经纬度矩形 + first-match-wins，导致首尔/河内/
  * 新德里等大量境外坐标被判成 CN（CN 的矩形覆盖了众多邻国且排在首位），
@@ -11,6 +11,7 @@
  *
  * 台湾/香港/澳门的归入规则统一在 geo/iso3166.ts，本文件不做任何映射。
  */
+import { validCoords } from "./geo/coords.js";
 import { offlineCountryFromLatLng } from "./geo/offlineCountry.js";
 import { tiandituCountryFromLatLng } from "./geo/tiandituGeocode.js";
 
@@ -20,18 +21,9 @@ export type CountrySource = "tianditu" | "offline" | "none";
 export type CountryResolution = {
   code: string | null;
   source: CountrySource;
+  /** 仅线上逆地理有；离线兜底时为 null */
+  locationLabel: string | null;
 };
-
-/** 同时校验并收窄两个坐标，避免调用处用 as 断言。 */
-function coords(
-  lat: number | null | undefined,
-  lng: number | null | undefined,
-): { lat: number; lng: number } | null {
-  if (lat == null || lng == null) return null;
-  if (!Number.isFinite(lat) || !Number.isFinite(lng)) return null;
-  if (lat < -90 || lat > 90 || lng < -180 || lng > 180) return null;
-  return { lat, lng };
-}
 
 /**
  * 纯离线判定，同步。给测试与不便走网络的场合用；
@@ -41,7 +33,7 @@ export function countryFromLatLng(
   lat: number | null | undefined,
   lng: number | null | undefined,
 ): string | null {
-  const c = coords(lat, lng);
+  const c = validCoords(lat, lng);
   if (!c) return null;
   return offlineCountryFromLatLng(c.lat, c.lng);
 }
@@ -56,11 +48,17 @@ export async function resolveCountry(
   lat: number | null | undefined,
   lng: number | null | undefined,
 ): Promise<CountryResolution> {
-  const c = coords(lat, lng);
-  if (!c) return { code: null, source: "none" };
+  const c = validCoords(lat, lng);
+  if (!c) return { code: null, source: "none", locationLabel: null };
 
   const online = await tiandituCountryFromLatLng(c.lat, c.lng);
-  if (online.ok) return { code: online.code, source: "tianditu" };
+  if (online.ok) {
+    return { code: online.code, source: "tianditu", locationLabel: online.label };
+  }
 
-  return { code: offlineCountryFromLatLng(c.lat, c.lng), source: "offline" };
+  return {
+    code: offlineCountryFromLatLng(c.lat, c.lng),
+    source: "offline",
+    locationLabel: null,
+  };
 }

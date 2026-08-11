@@ -53,6 +53,9 @@ export function serializeObservation(
     lat: obs.lat,
     lng: obs.lng,
     displayUrl: observationDisplayUrl(obs.displayPath),
+    /** 原图 URL（相册高清）；旧数据可能没有 */
+    originalUrl: obs.originalPath ? observationDisplayUrl(obs.originalPath) : null,
+    locationLabel: obs.locationLabel ?? null,
     commonName: redact ? null : obs.commonName,
     scientificName: redact ? null : obs.scientificName,
     finestReliableRank: redact ? null : obs.finestReliableRank,

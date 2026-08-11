@@ -74,6 +74,9 @@ importers:
       '@capacitor/splash-screen':
         specifier: ^7.0.2
         version: 7.0.5(@capacitor/core@7.6.8)
+      '@capawesome/capacitor-file-picker':
+        specifier: 7.2.0
+        version: 7.2.0(@capacitor/core@7.6.8)
     devDependencies:
       '@capacitor/cli':
         specifier: ^7.4.3
@@ -90,6 +93,9 @@ importers:
       '@capacitor/core':
         specifier: ^7.4.3
         version: 7.6.8
+      '@capawesome/capacitor-file-picker':
+        specifier: 7.2.0
+        version: 7.2.0(@capacitor/core@7.6.8)
       maplibre-gl:
         specifier: ^5.7.0
         version: 5.24.0
@@ -231,6 +237,11 @@ packages:
 
   '@capacitor/splash-screen@7.0.5':
     resolution: {integrity: sha512-bPG2SamFL7VT5I3XsgsGgJhkiyxq3OXCOVKEDupSieVdtEiG7j2vLbSD0xL+91zteF/qLuxsjbugGy5LD8mS2A==}
+    peerDependencies:
+      '@capacitor/core': '>=7.0.0'
+
+  '@capawesome/capacitor-file-picker@7.2.0':
+    resolution: {integrity: sha512-qUNa+Ypem575xSNiJwgiOaaHXzAHaxMtERySRIsIC0HggoCa11xGS3xEVtMooQ3fS0cDXfl4/17DYoHQtkDjXA==}
     peerDependencies:
       '@capacitor/core': '>=7.0.0'
 
@@ -2098,6 +2109,10 @@ snapshots:
       tslib: 2.8.1
 
   '@capacitor/splash-screen@7.0.5(@capacitor/core@7.6.8)':
+    dependencies:
+      '@capacitor/core': 7.6.8
+
+  '@capawesome/capacitor-file-picker@7.2.0(@capacitor/core@7.6.8)':
     dependencies:
       '@capacitor/core': 7.6.8
 
