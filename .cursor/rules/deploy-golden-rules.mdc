@@ -1,0 +1,24 @@
+---
+description: 操作 BioTrace 服务器（106.53.188.20）或部署链路时的铁律：git 唯一来源、密钥永不入库、禁 reset --hard
+alwaysApply: true
+---
+
+# 部署运维铁律（强制）
+
+仅在**真的要动服务器或部署链路**时生效；纯本地改代码不受此约束。
+完整步骤见 [`docs/OPS.md`](docs/OPS.md) §7，逐条理由见 [`.codebuddy/rules/deploy-golden-rules.md`](.codebuddy/rules/deploy-golden-rules.md)。
+
+## 必须
+
+- **git 是唯一工程来源**：改本地 → push GitHub → 服务器 `git pull --ff-only` → 重建。服务器 `/opt/biotrace` 只作运行态
+- 服务器上 git 操作走代理：`git -c http.proxy=http://127.0.0.1:10809 pull --ff-only`（直连 GitHub 会超时）
+- 构建 / 拉取用 `nohup … &` 后台跑再轮询日志（Lighthouse 单命令会超时中断）
+- `docker-compose.override.yml` 必须保留 `deploy/Dockerfile.cn` 与 `extra_hosts: host.docker.internal:host-gateway`（出境代理链路靠它）
+- 更新后验证出境：`curl -s -m 12 -x http://127.0.0.1:10809 https://api.ipify.org` 应为新加坡出口 IP
+
+## 禁止
+
+- `git reset --hard` / `git checkout -- <file>` 丢弃服务器改动（无差别永久删除，不可恢复）
+- 在服务器上直接改任何被 git 跟踪的文件（会造成两边分叉）
+- 把真实密钥写进任何入库文件——代码、文档、注释、commit message 皆不可。密钥只存服务器本地 `deploy/.env.production`（已 gitignore）
+- 试图把 `.env.production` 或 `*.pem` 「同步」「还原」进 git
