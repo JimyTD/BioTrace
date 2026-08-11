@@ -539,7 +539,7 @@ a {
   gap: 14px;
 }
 
-/* 单开包舞台：底 → 照片窗 → 框/壳 → 稀有度引子 */
+/* 单开包舞台：底 → 照片垫/窗 → 框/壳 → 稀有度引子 */
 .settle-stage {
   position: relative;
   width: 100%;
@@ -562,17 +562,37 @@ a {
   filter: saturate(0.85) brightness(0.92);
 }
 
-/* 与 daylight pack-sealed.png 卡心窗对齐（色键后量得） */
-.settle-photo-window {
+/*
+ * 照片垫：封缄时对齐壳窗；展出时用居中方窗（相框 SVG 为正方形，
+ * 避免 4:3 舞台把方框拉扁，也更好兼容横竖原图）。
+ */
+.settle-photo-mat {
   position: absolute;
   z-index: 1;
   inset: 23.9% 36.1% 24.6% 16.3%;
+}
+
+.settle-stage:not(.sealed) .settle-photo-mat {
+  top: 50%;
+  left: 50%;
+  width: min(86%, 20rem);
+  max-height: 88%;
+  aspect-ratio: 1;
+  height: auto;
+  inset: auto;
+  transform: translate(-50%, -52%);
+}
+
+.settle-photo-window {
+  position: absolute;
+  inset: 0;
   overflow: hidden;
-  background: var(--surface-wash);
+  background: #2a241c;
 }
 
 .settle-stage:not(.sealed) .settle-photo-window {
   inset: 6%;
+  border-radius: 2px;
 }
 
 .settle-photo-window .settle-blur,
@@ -580,6 +600,7 @@ a {
   width: 100%;
   height: 100%;
   object-fit: cover;
+  object-position: center;
   display: block;
   border-radius: 0;
   max-height: none;
@@ -592,9 +613,9 @@ a {
 
 .settle-photo-frame {
   position: absolute;
-  inset: 6%;
-  width: calc(100% - 12%);
-  height: calc(100% - 12%);
+  inset: 0;
+  width: 100%;
+  height: 100%;
   object-fit: fill;
   z-index: 2;
   pointer-events: none;
@@ -656,7 +677,7 @@ a {
   --seal-ink: var(--rarity-XR-seal-ink);
 }
 
-/* 印章外形用 mask；「亮」靠高光/纹理层次，不是把底色刷浅 */
+/* 印章外形用 mask（data-URI）；白=显。亮靠高光纹理，不是刷浅底色 */
 .settle-rarity-seal-motif {
   position: absolute;
   inset: 0;
@@ -669,6 +690,8 @@ a {
   mask-repeat: no-repeat;
   -webkit-mask-position: center;
   mask-position: center;
+  -webkit-mask-mode: alpha;
+  mask-mode: alpha;
 }
 
 .settle-rarity-letter {

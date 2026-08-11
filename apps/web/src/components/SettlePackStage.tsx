@@ -3,8 +3,8 @@ import {
   settlePackBgUrl,
   settlePackSealedUrl,
   settlePhotoFrameUrl,
-  settleRaritySealUrl,
 } from "../themes";
+import { SettleRaritySeal } from "./SettleRaritySeal";
 
 export type SettleStagePhase = "sealed" | "revealing" | "open";
 
@@ -26,32 +26,24 @@ export function SettlePackStage({ phase, photoUrl, photoAlt = "", rarity = null 
     <div className={`settle-stage ${phase}`}>
       <img className="settle-pack-bg" src={settlePackBgUrl()} alt="" aria-hidden />
 
-      <div className="settle-photo-window">
-        <img
-          src={photoUrl}
-          alt={photoAlt}
-          className={sealed || phase === "revealing" ? "settle-blur" : "settle-hero"}
-        />
+      <div className="settle-photo-mat">
+        <div className="settle-photo-window">
+          <img
+            src={photoUrl}
+            alt={photoAlt}
+            className={sealed || phase === "revealing" ? "settle-blur" : "settle-hero"}
+          />
+        </div>
+        {showFrame ? (
+          <img className="settle-photo-frame" src={settlePhotoFrameUrl()} alt="" aria-hidden />
+        ) : null}
       </div>
-
-      {showFrame ? (
-        <img className="settle-photo-frame" src={settlePhotoFrameUrl()} alt="" aria-hidden />
-      ) : null}
 
       {showingPack ? (
         <img className="settle-pack-shell" src={settlePackSealedUrl()} alt="" aria-hidden />
       ) : null}
 
-      {showSeal ? (
-        <div className={`settle-rarity-seal rarity-${rarity}`}>
-          <div
-            className="settle-rarity-seal-motif"
-            style={{ ["--seal-mask" as string]: `url("${settleRaritySealUrl(undefined, rarity)}")` }}
-            aria-hidden
-          />
-          <span className="settle-rarity-letter">{rarity}</span>
-        </div>
-      ) : null}
+      {showSeal ? <SettleRaritySeal rarity={rarity} /> : null}
     </div>
   );
 }
