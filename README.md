@@ -4,7 +4,7 @@
 
 **当前 Android 侧载包版本：`0.1.0`**（[Release](https://github.com/JimyTD/BioTrace/releases/tag/android-v0.1.0) · 发版见 [`docs/OPS.md` §7.2](docs/OPS.md)）
 
-> 文档导航 [`docs/README.md`](docs/README.md)：功能真源 [`docs/SPEC.md`](docs/SPEC.md) · 运维真源 [`docs/OPS.md`](docs/OPS.md) · 专题 [`docs/features/`](docs/features/) · 规划与归档 [`docs/planning/`](docs/planning/)、[`docs/archive/`](docs/archive/)。
+> 文档导航 [`docs/README.md`](docs/README.md)：功能真源 [`docs/SPEC.md`](docs/SPEC.md) · 运维真源 [`docs/OPS.md`](docs/OPS.md) · 专题 [`docs/features/`](docs/features/) · 来时路 [`docs/planning/`](docs/planning/)。
 
 ## 本机启动
 
@@ -63,7 +63,7 @@ deploy/              生产 env / Nginx 模板
 Dockerfile           API 镜像
 docker-compose.yml   本机环回 8787
 data/                本地库与上传图（gitignore）
-docs/                SPEC 功能真源 / OPS 运维真源 / features 专题 / planning·archive 留档
+docs/                SPEC 功能真源 / OPS 运维真源 / features 专题 / planning 来时路
 model-bakeoff/       多模型对照脚本（独立）
 ```
 
