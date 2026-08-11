@@ -61,7 +61,8 @@ a {
 .content {
   width: min(720px, calc(100% - 24px));
   margin: 0 auto;
-  padding: 16px 0 88px;
+  /* 底栏 sticky 高度 + safe-area；勿让封面抬升层盖住导航 */
+  padding: 16px 0 calc(96px + env(safe-area-inset-bottom));
 }
 
 .page-title {
@@ -229,32 +230,26 @@ a {
   overflow: hidden;
   background: var(--trip-cover-plate);
   box-shadow: var(--trip-cover-shadow);
-  transition:
-    box-shadow 280ms ease,
-    transform 280ms ease;
+  transition: box-shadow 280ms ease;
 }
 
 .trip-cover:hover .trip-cover-media,
 .trip-cover:focus-visible .trip-cover-media {
   box-shadow: var(--trip-cover-shadow-hover);
-  transform: translateY(-2px);
 }
 
 .trip-cover-photo {
   position: absolute;
-  inset: 0;
-  width: 100%;
-  height: 100%;
+  /* 与 cover-frame.svg 内窗对齐（约 5–6% inset） */
+  inset: 6% 5.3%;
+  width: auto;
+  height: auto;
   object-fit: cover;
   display: block;
   transition: transform 320ms ease;
 }
 
-.trip-cover-photo.is-placeholder {
-  object-position: center;
-}
-
-.trip-cover:hover .trip-cover-photo:not(.is-placeholder) {
+.trip-cover:hover .trip-cover-photo {
   transform: scale(1.03);
 }
 
@@ -266,6 +261,19 @@ a {
   object-fit: fill;
   pointer-events: none;
   z-index: 1;
+}
+
+/* 无封面：纸色垫底即可，不用氛围插画 */
+.trip-cover-placeholder {
+  position: absolute;
+  inset: 6% 5.3%;
+  background:
+    linear-gradient(
+      145deg,
+      color-mix(in srgb, var(--cta) 10%, transparent),
+      transparent 55%
+    ),
+    var(--trip-cover-plate);
 }
 
 .trip-cover-meta {
@@ -280,31 +288,9 @@ a {
   letter-spacing: -0.02em;
 }
 
-/* 列表 / 相册共用空态构图 */
+/* 空态：克制文案，不用整幅插画抢戏 */
 .trip-empty {
-  display: grid;
-  gap: 12px;
-  justify-items: center;
-  padding: 8px 0 12px;
-  animation: tripEmptyIn 420ms ease;
-}
-
-.trip-empty-art {
-  width: min(100%, 28rem);
-  aspect-ratio: 4 / 3;
-  border-radius: var(--radius-md);
-  overflow: hidden;
-  /* 羊皮纸插画应溶进页氛围，勿做成第二张「桌面照片卡」 */
-  background: transparent;
-  border: 1px solid color-mix(in srgb, var(--line) 65%, transparent);
-}
-
-.trip-empty-art img {
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
-  display: block;
-  mask-image: linear-gradient(#000 90%, transparent);
+  padding: 28px 8px 12px;
 }
 
 .trip-empty-caption {
@@ -312,19 +298,9 @@ a {
   color: var(--trip-empty-caption);
   text-align: center;
   max-width: 28ch;
+  margin-inline: auto;
   font-size: 0.95rem;
   line-height: 1.45;
-}
-
-@keyframes tripEmptyIn {
-  from {
-    opacity: 0;
-    transform: translateY(6px);
-  }
-  to {
-    opacity: 1;
-    transform: translateY(0);
-  }
 }
 
 .album-lede {
@@ -1117,6 +1093,7 @@ a {
 .nav {
   position: sticky;
   bottom: 0;
+  z-index: 30;
   display: grid;
   grid-template-columns: repeat(4, 1fr);
   gap: 0;

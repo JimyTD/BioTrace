@@ -2,11 +2,7 @@ import { useEffect, useState, type FormEvent } from "react";
 import { Link } from "react-router-dom";
 import { t } from "@biotrace/messages";
 import { api, type Trip } from "../api";
-import {
-  tripCoverEmptyUrl,
-  tripCoverFrameUrl,
-  tripListEmptyUrl,
-} from "../themes";
+import { tripCoverFrameUrl } from "../themes";
 import { tripMetaLine } from "../tripMeta";
 
 export default function TripsPage() {
@@ -66,9 +62,6 @@ export default function TripsPage() {
 
       {!loading && trips.length === 0 ? (
         <div className="trip-empty">
-          <div className="trip-empty-art" aria-hidden>
-            <img src={tripListEmptyUrl()} alt="" />
-          </div>
           <p className="trip-empty-caption">{t("trips.empty")}</p>
         </div>
       ) : (
@@ -79,12 +72,7 @@ export default function TripsPage() {
                 {trip.coverDisplayUrl ? (
                   <img className="trip-cover-photo" src={trip.coverDisplayUrl} alt="" />
                 ) : (
-                  <img
-                    className="trip-cover-photo is-placeholder"
-                    src={tripCoverEmptyUrl()}
-                    alt=""
-                    aria-hidden
-                  />
+                  <div className="trip-cover-placeholder" aria-hidden />
                 )}
                 <img className="trip-cover-frame" src={tripCoverFrameUrl()} alt="" aria-hidden />
               </div>

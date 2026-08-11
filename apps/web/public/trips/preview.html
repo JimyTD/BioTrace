@@ -6,348 +6,130 @@
     <title>旅途页 · 真布局预览</title>
     <style>
       :root {
-        --ink: #1f2a24;
-        --muted: #6b6258;
-        --line: rgba(42, 64, 51, 0.14);
-        --card: #faf8f3;
-        --cta: #d3543c;
-        --cta-ink: #fffaf7;
-        --secondary: #8b6f4e;
-        --input-bg: #fffdf9;
-        --surface-wash: rgba(58, 50, 44, 0.06);
-        --nav-bg: #f3efe7;
-        --nav-active-bg: #f0ddd4;
-        --nav-active-ink: #9a4030;
-        --trip-cover-plate: #efe6d6;
-        --trip-cover-shadow: 0 10px 26px rgba(42, 36, 28, 0.1);
-        --trip-create-bg: #f3ebe0;
-        --trip-pending-veil: #e7dfd2;
-        --radius-md: 11px;
-        --radius-btn: 10px;
-        --font-brand: "Segoe UI", "PingFang SC", "Microsoft YaHei", sans-serif;
-        --bg-atmosphere:
-          radial-gradient(900px 480px at 8% -8%, rgba(212, 168, 120, 0.22) 0%, transparent 55%),
-          radial-gradient(700px 420px at 100% 0%, rgba(168, 186, 168, 0.18) 0%, transparent 50%),
+        --ink: #1f2a24; --muted: #6b6258; --line: rgba(42, 64, 51, 0.14);
+        --card: #faf8f3; --cta: #d3543c; --cta-ink: #fffaf7;
+        --nav-bg: #f3efe7; --nav-active-bg: #f0ddd4; --nav-active-ink: #9a4030;
+        --plate: #efe6d6; --shadow: 0 10px 26px rgba(42, 36, 28, 0.1);
+        --font: "Segoe UI", "PingFang SC", "Microsoft YaHei", sans-serif;
+        --bg:
+          radial-gradient(900px 480px at 8% -8%, rgba(212, 168, 120, 0.22), transparent 55%),
           linear-gradient(180deg, #f3efe7, #ebe6dc);
       }
       * { box-sizing: border-box; }
-      body {
-        margin: 0;
-        padding: 16px 12px 40px;
-        font-family: var(--font-brand);
-        color: var(--ink);
-        background: #d9d0c2;
-      }
-      h1.page { margin: 0 0 8px; font-size: 1.15rem; }
-      .note { margin: 0 0 14px; color: #5a5248; font-size: 0.88rem; max-width: 46ch; }
-      .row-phones {
-        display: flex; flex-wrap: wrap; gap: 18px; align-items: flex-start;
-      }
+      body { margin: 0; padding: 16px 12px 40px; font-family: var(--font); color: var(--ink); background: #d9d0c2; }
+      h1 { margin: 0 0 8px; font-size: 1.15rem; }
+      .note { margin: 0 0 14px; color: #5a5248; font-size: 0.88rem; max-width: 48ch; }
+      .phones { display: flex; flex-wrap: wrap; gap: 18px; }
       .phone {
-        width: min(100%, 360px);
-        background: var(--bg-atmosphere);
-        border-radius: 22px;
-        border: 1px solid rgba(42, 36, 28, 0.18);
-        box-shadow: 0 16px 40px rgba(42, 36, 28, 0.14);
-        overflow: hidden;
-        display: grid;
-        grid-template-rows: 1fr auto;
-        min-height: 640px;
+        width: min(100%, 360px); min-height: 640px; background: var(--bg);
+        border-radius: 22px; border: 1px solid rgba(42,36,28,.18);
+        box-shadow: 0 16px 40px rgba(42,36,28,.14);
+        display: grid; grid-template-rows: 1fr auto; overflow: hidden;
       }
-      .content {
-        padding: 18px 16px 88px;
-        display: grid;
-        gap: 14px;
-        align-content: start;
-      }
-      .label {
-        margin: 0 0 6px;
-        font-size: 0.75rem;
-        color: #5a5248;
-        letter-spacing: 0.04em;
-      }
-      .page-title {
-        margin: 0;
-        font-size: 1.45rem;
-        font-weight: 700;
-        letter-spacing: -0.03em;
-      }
-      .lede {
-        margin: 0;
-        color: var(--muted);
-        max-width: 36ch;
-        font-size: 0.95rem;
-        line-height: 1.45;
-      }
+      .content { padding: 18px 16px calc(96px + env(safe-area-inset-bottom, 0)); display: grid; gap: 14px; align-content: start; }
+      .label { margin: 0 0 6px; font-size: 0.75rem; color: #5a5248; }
+      .title { margin: 0; font-size: 1.45rem; font-weight: 700; }
+      .lede { margin: 0; color: var(--muted); font-size: 0.95rem; }
       .create {
-        display: grid;
-        grid-template-columns: 1fr auto;
-        gap: 8px;
-        padding: 10px 12px;
-        border-radius: var(--radius-md);
-        background: var(--trip-create-bg);
-        border: 1px solid var(--line);
+        display: grid; grid-template-columns: 1fr auto; gap: 8px; padding: 10px 12px;
+        border-radius: 11px; background: #f3ebe0; border: 1px solid var(--line);
       }
-      .create input {
-        border: 1px solid var(--line);
-        border-radius: var(--radius-btn);
-        padding: 8px 10px;
-        font: inherit;
-        background: var(--input-bg);
-      }
-      .btn {
-        border: 0;
-        border-radius: var(--radius-btn);
-        padding: 8px 14px;
-        font: inherit;
-        cursor: pointer;
-        background: color-mix(in srgb, var(--secondary) 14%, var(--card));
-        color: var(--ink);
-        border: 1px solid var(--line);
-      }
+      .create input { border: 1px solid var(--line); border-radius: 10px; padding: 8px 10px; font: inherit; background: #fffdf9; }
+      .btn { border: 1px solid var(--line); border-radius: 10px; padding: 8px 14px; font: inherit; background: #fffaf2; }
       .btn.primary { background: var(--cta); color: var(--cta-ink); border-color: transparent; }
-      .cover-list { display: grid; gap: 18px; }
-      .cover { display: grid; gap: 10px; color: inherit; text-decoration: none; }
-      .cover-media {
-        position: relative;
-        aspect-ratio: 3 / 2;
-        border-radius: 12px;
-        overflow: hidden;
-        background: var(--trip-cover-plate);
-        box-shadow: var(--trip-cover-shadow);
+      .covers { display: grid; gap: 18px; }
+      .media {
+        position: relative; aspect-ratio: 3/2; border-radius: 12px; overflow: hidden;
+        background: var(--plate); box-shadow: var(--shadow);
       }
-      .cover-media .photo {
-        position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover;
+      .media .photo { position: absolute; inset: 6% 5.3%; width: auto; height: auto; object-fit: cover; }
+      .media .ph {
+        position: absolute; inset: 6% 5.3%;
+        background: linear-gradient(145deg, rgba(211,84,60,.1), transparent 55%), var(--plate);
       }
-      .cover-media .frame {
-        position: absolute; inset: 0; width: 100%; height: 100%; object-fit: fill; pointer-events: none;
-      }
+      .media .frame { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: fill; z-index: 1; }
       .meta strong { display: block; font-size: 1.12rem; }
       .meta span { color: var(--muted); font-size: 0.9rem; }
-      .empty {
-        display: grid; gap: 12px; justify-items: center; padding: 6px 0 0;
-      }
-      .empty-art {
-        width: 100%;
-        aspect-ratio: 4 / 3;
-        border-radius: var(--radius-md);
-        overflow: hidden;
-        /* 与页氛围同色系，不再套「第二张桌面照片」感 */
-        background: transparent;
-        box-shadow: none;
-        border: 1px solid color-mix(in srgb, var(--line) 70%, transparent);
-      }
-      .empty-art img {
-        width: 100%; height: 100%; object-fit: cover; display: block;
-        /* 边缘轻轻溶进页面底 */
-        mask-image: linear-gradient(#000 88%, transparent);
-      }
-      .caption {
-        margin: 0; color: var(--muted); text-align: center;
-        max-width: 26ch; font-size: 0.92rem; line-height: 1.45;
-      }
-      .album-head { display: grid; gap: 6px; }
-      .head-row { display: flex; justify-content: space-between; }
-      .text-link { color: var(--muted); text-decoration: none; font-size: 0.9rem; }
-      .toolbar { display: flex; }
-      .film {
-        display: grid;
-        grid-template-columns: repeat(2, minmax(0, 1fr));
-        gap: 14px 10px;
-      }
-      .tile { display: grid; gap: 6px; }
+      .empty { padding: 28px 8px 12px; }
+      .caption { margin: 0 auto; color: var(--muted); text-align: center; max-width: 26ch; font-size: 0.92rem; }
+      .film { display: grid; grid-template-columns: 1fr 1fr; gap: 14px 10px; }
       .tile-media {
-        position: relative;
-        aspect-ratio: 1;
-        border-radius: 3px;
-        overflow: hidden;
-        background: var(--trip-cover-plate);
-        box-shadow: 0 4px 14px rgba(42, 36, 28, 0.08);
+        position: relative; aspect-ratio: 1; border-radius: 3px; overflow: hidden;
+        background: var(--plate); box-shadow: 0 4px 14px rgba(42,36,28,.08);
       }
-      .tile-media .photo {
-        position: absolute; inset: 8%; width: 84%; height: 84%; object-fit: cover;
-      }
-      .tile-media.is-pending .photo { filter: saturate(0.72) brightness(0.9); }
-      .tile-media .veil {
-        position: absolute; inset: 8%; z-index: 1;
-        background:
-          linear-gradient(160deg, color-mix(in srgb, var(--trip-pending-veil) 55%, transparent), transparent 62%),
-          color-mix(in srgb, var(--trip-pending-veil) 28%, transparent);
-      }
-      .tile-media .frame {
-        position: absolute; inset: 0; width: 100%; height: 100%;
-        object-fit: fill; z-index: 2; pointer-events: none;
-      }
-      .badge {
-        position: absolute; top: 10%; left: 10%; z-index: 3;
-        background: #f3e3c4; color: #9a6b24; font-size: 0.7rem; font-weight: 700;
-        padding: 2px 7px; border-radius: 999px;
-      }
-      .tile span.muted { color: var(--muted); font-size: 0.85rem; }
+      .tile-media .photo { position: absolute; inset: 8%; width: 84%; height: 84%; object-fit: cover; }
+      .tile-media .frame { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: fill; z-index: 2; }
       .nav {
-        display: grid;
-        grid-template-columns: repeat(4, 1fr);
-        gap: 4px;
-        padding: 8px 10px calc(8px + env(safe-area-inset-bottom, 0));
-        background: var(--nav-bg);
-        border-top: 1px solid var(--line);
+        position: sticky; bottom: 0; z-index: 30;
+        display: grid; grid-template-columns: repeat(4,1fr);
+        padding: 8px 10px; background: var(--nav-bg); border-top: 1px solid var(--line);
       }
-      .nav span {
-        text-align: center;
-        font-size: 0.72rem;
-        color: var(--muted);
-        padding: 8px 4px;
-        border-radius: 10px;
-      }
-      .nav span.on {
-        background: var(--nav-active-bg);
-        color: var(--nav-active-ink);
-        font-weight: 700;
-      }
+      .nav span { text-align: center; font-size: 0.72rem; color: var(--muted); padding: 8px 4px; border-radius: 10px; }
+      .nav span.on { background: var(--nav-active-bg); color: var(--nav-active-ink); font-weight: 700; }
     </style>
   </head>
   <body>
-    <h1 class="page">旅途页 · 真布局预览</h1>
-    <p class="note">
-      四台「手机」= 进 App 会看到的结构：页面氛围底 + 内容 + 底栏。
-      资源与开包同属羊皮纸铜版语汇，不是 scrapbook 摆拍。
-    </p>
-
-    <div class="row-phones">
-      <!-- 1 列表空态 -->
+    <h1>旅途页 · 真布局预览</h1>
+    <p class="note">封面框边垫须看得见；空态不再塞整幅插画；底栏 z-index 压住内容，防穿模。</p>
+    <div class="phones">
       <div>
-        <p class="label">1 · 列表空态（零旅途）</p>
+        <p class="label">1 · 列表空态</p>
         <div class="phone">
           <div class="content">
-            <header>
-              <h2 class="page-title">旅途</h2>
-              <p class="lede">每一次出门，都是一本新相册。</p>
-            </header>
-            <div class="create">
-              <input readonly aria-label="新建" />
-              <button class="btn" type="button">开册</button>
-            </div>
-            <div class="empty">
-              <div class="empty-art"><img src="./daylight/list-empty.jpg" alt="" /></div>
-              <p class="caption">还没有旅途。写下名字，翻开第一页。</p>
-            </div>
+            <h2 class="title">旅途</h2>
+            <p class="lede">每一次出门，都是一本新相册。</p>
+            <div class="create"><input readonly /><button class="btn" type="button">开册</button></div>
+            <div class="empty"><p class="caption">还没有旅途。写下名字，翻开第一页。</p></div>
           </div>
-          <nav class="nav" aria-label="底栏">
-            <span class="on">旅途</span><span>地图</span><span>图鉴</span><span>我的</span>
-          </nav>
+          <nav class="nav"><span class="on">旅途</span><span>地图</span><span>图鉴</span><span>我的</span></nav>
         </div>
       </div>
-
-      <!-- 2 列表有旅途 -->
       <div>
-        <p class="label">2 · 封面墙（无封面垫底 / 有封面照片）</p>
+        <p class="label">2 · 封面墙（无图纸垫 / 有图）</p>
         <div class="phone">
           <div class="content">
-            <header>
-              <h2 class="page-title">旅途</h2>
-              <p class="lede">每一次出门，都是一本新相册。</p>
-            </header>
-            <div class="create">
-              <input readonly />
-              <button class="btn" type="button">开册</button>
-            </div>
-            <div class="cover-list">
-              <a class="cover" href="#">
-                <div class="cover-media">
-                  <img class="photo" src="./daylight/cover-empty.jpg" alt="" />
+            <h2 class="title">旅途</h2>
+            <p class="lede">每一次出门，都是一本新相册。</p>
+            <div class="create"><input readonly /><button class="btn" type="button">开册</button></div>
+            <div class="covers">
+              <div>
+                <div class="media">
+                  <div class="ph"></div>
                   <img class="frame" src="./daylight/cover-frame.svg" alt="" />
                 </div>
-                <div class="meta">
-                  <strong>清明回乡</strong>
-                  <span>还没有照片</span>
-                </div>
-              </a>
-              <a class="cover" href="#">
-                <div class="cover-media">
+                <div class="meta"><strong>清明回乡</strong><span>还没有照片</span></div>
+              </div>
+              <div>
+                <div class="media">
                   <img class="photo" src="../volumes/daylight/cover-intertidal.png" alt="" />
                   <img class="frame" src="./daylight/cover-frame.svg" alt="" />
                 </div>
-                <div class="meta">
-                  <strong>潮间带午后</strong>
-                  <span>3 张照片 · 厦门</span>
-                </div>
-              </a>
+                <div class="meta"><strong>潮间带午后</strong><span>3 张照片 · 厦门</span></div>
+              </div>
             </div>
           </div>
-          <nav class="nav" aria-label="底栏">
-            <span class="on">旅途</span><span>地图</span><span>图鉴</span><span>我的</span>
-          </nav>
+          <nav class="nav"><span class="on">旅途</span><span>地图</span><span>图鉴</span><span>我的</span></nav>
         </div>
       </div>
-
-      <!-- 3 相册空态 -->
       <div>
-        <p class="label">3 · 相册空态</p>
+        <p class="label">3 · 胶片格（保留）</p>
         <div class="phone">
           <div class="content">
-            <header class="album-head">
-              <div class="head-row">
-                <a class="text-link" href="#">← 返回</a>
-                <span class="text-link">管理旅途</span>
-              </div>
-              <h2 class="page-title">潮间带午后</h2>
-              <p class="lede">选几张照片放进这本册子，我们来认一认。</p>
-              <p class="meta"><span>还没有照片</span></p>
-            </header>
-            <div class="toolbar">
-              <button class="btn primary" type="button">加入照片</button>
-            </div>
-            <div class="empty">
-              <div class="empty-art"><img src="./daylight/album-empty.jpg" alt="" /></div>
-              <p class="caption">册页还空着。加入照片，开始记录。</p>
-            </div>
-          </div>
-          <nav class="nav" aria-label="底栏">
-            <span class="on">旅途</span><span>地图</span><span>图鉴</span><span>我的</span>
-          </nav>
-        </div>
-      </div>
-
-      <!-- 4 相册有格 -->
-      <div>
-        <p class="label">4 · 胶片格（含待开包）</p>
-        <div class="phone">
-          <div class="content">
-            <header class="album-head">
-              <div class="head-row">
-                <a class="text-link" href="#">← 返回</a>
-                <span class="text-link">管理旅途</span>
-              </div>
-              <h2 class="page-title">潮间带午后</h2>
-              <p class="lede">选几张照片放进这本册子，我们来认一认。</p>
-              <p class="meta"><span>3 张照片 · 厦门</span></p>
-            </header>
-            <div class="toolbar">
-              <button class="btn primary" type="button">加入照片</button>
-            </div>
+            <h2 class="title">潮间带午后</h2>
+            <p class="lede">选几张照片放进这本册子，我们来认一认。</p>
+            <button class="btn primary" type="button">加入照片</button>
             <div class="film">
-              <div class="tile">
-                <div class="tile-media">
-                  <img class="photo" src="../volumes/daylight/cover-intertidal.png" alt="" />
-                  <img class="frame" src="./daylight/film-frame.svg" alt="" />
-                </div>
-                <strong style="font-size:0.95rem">滨螺</strong>
-                <span class="muted">可靠到：属</span>
+              <div class="tile-media">
+                <img class="photo" src="../volumes/daylight/cover-intertidal.png" alt="" />
+                <img class="frame" src="./daylight/film-frame.svg" alt="" />
               </div>
-              <div class="tile">
-                <div class="tile-media is-pending">
-                  <img class="photo" src="../volumes/daylight/cover-urban_wild.png" alt="" />
-                  <div class="veil"></div>
-                  <img class="frame" src="./daylight/film-frame.svg" alt="" />
-                  <span class="badge">待开包</span>
-                </div>
-                <span class="muted">点开收下</span>
+              <div class="tile-media">
+                <img class="photo" src="../volumes/daylight/cover-urban_wild.png" alt="" />
+                <img class="frame" src="./daylight/film-frame.svg" alt="" />
               </div>
             </div>
           </div>
-          <nav class="nav" aria-label="底栏">
-            <span class="on">旅途</span><span>地图</span><span>图鉴</span><span>我的</span>
-          </nav>
+          <nav class="nav"><span class="on">旅途</span><span>地图</span><span>图鉴</span><span>我的</span></nav>
         </div>
       </div>
     </div>

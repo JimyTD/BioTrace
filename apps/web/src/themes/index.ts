@@ -37,9 +37,6 @@ export {
 export {
   themeTripAsset,
   themeTripBase,
-  tripAlbumEmptyUrl,
-  tripCoverEmptyUrl,
   tripCoverFrameUrl,
   tripFilmFrameUrl,
-  tripListEmptyUrl,
 } from "./tripAssets";

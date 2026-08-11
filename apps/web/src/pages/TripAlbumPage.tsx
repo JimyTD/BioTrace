@@ -13,7 +13,7 @@ import {
   pickImageNative,
   type PickImageMode,
 } from "../pickImage";
-import { tripAlbumEmptyUrl, tripFilmFrameUrl } from "../themes";
+import { tripFilmFrameUrl } from "../themes";
 import { tripMetaLine } from "../tripMeta";
 
 function statusBadge(obs: Observation) {
@@ -514,10 +514,7 @@ export default function TripAlbumPage() {
       {error ? <p className="error">{error}</p> : null}
 
       {loaded && observations.length === 0 ? (
-        <div className="trip-empty album-empty">
-          <div className="trip-empty-art" aria-hidden>
-            <img src={tripAlbumEmptyUrl()} alt="" />
-          </div>
+        <div className="trip-empty">
           <p className="trip-empty-caption">{t("album.empty")}</p>
         </div>
       ) : null}
