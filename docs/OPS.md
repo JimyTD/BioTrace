@@ -584,7 +584,7 @@ sudo tar czf /root/biotrace-data.tgz -C /opt/biotrace data
 | Android Actions 构建失败（签名） | 查四件 Secrets 是否齐全；勿在日志中打印密码；keystore 是否为生成时那份 |
 | 新 APK 无法覆盖安装 | 签名不一致（用了另一份 jks）或 `versionCode` 未升高；核对 tag 版本与 Secrets |
 | 域名指大陆机打不开 | 未备案被拦；用 IP 访问，或迁境外机 / 完成备案 |
-| 别人收不到登录邮件 | Resend 发信域名未验证；仅本人邮箱能收；验证域名或临时开`DEV_AUTH=1` |
+| 别人收不到找回码邮件 | Resend 发信域名未验证；仅本人邮箱能收；验证域名或临时开 `DEV_AUTH=1`（日常登录不发信） |
 | 发信/识图间歇超时(ConnectTimeout) | 广州直连境外不稳；确认已走代理：xray `active` 且 `curl -x http://127.0.0.1:10809 https://api.ipify.org` 出 SG1 IP（§6.5） |
 | 容器连不到宿主机代理 | xray 须监听 `0.0.0.0:10809`（非 127）；容器内 `getent hosts host.docker.internal` 需有解析（override 的 extra_hosts）；`HTTPS_PROXY` 已注入 |
 | 服务器重启后代理失效 | 确认 `systemctl is-enabled xray`=enabled、`/etc/iptables/rules.v4` 含 10809 规则（§6.5 ④） |
