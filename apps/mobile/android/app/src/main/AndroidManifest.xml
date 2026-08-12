@@ -58,6 +58,8 @@
     <uses-permission android:name="android.permission.READ_MEDIA_IMAGES" />
     <!-- 读取相册照片未脱敏的 EXIF GPS；仅加清单不够，选图前还要 runtime 申请 -->
     <uses-permission android:name="android.permission.ACCESS_MEDIA_LOCATION" />
+    <!-- 应用内下载 APK 后唤起系统安装器（侧载更新） -->
+    <uses-permission android:name="android.permission.REQUEST_INSTALL_PACKAGES" />
     <uses-permission
         android:name="android.permission.READ_EXTERNAL_STORAGE"
         android:maxSdkVersion="32" />

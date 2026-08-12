@@ -98,6 +98,13 @@ docs/        筹划 + 本实现规格
 - **手填覆盖**：旅途字段 `meta_manual_enabled` + `manual_date_text` / `manual_place_text`。开关开且该项非空才覆盖；关开关仍保留手填、展示回落自动。`PATCH /api/trips/:id` 可改。
 - **UI**：旅途列表副行；相册标题下同行；「管理旅途」里开关与输入框。
 
+## 1.6 Android 壳应用内更新（已收口）
+
+- **范围**：仅侧载 APK；Web/API 仍按服务器部署静默更新，用户无感。
+- **真源**：服务器 `/opt/biotrace/data/android-release/`（`BioTrace.apk` + `latest.json`，只留最新）；`GET /api/app/android` / `.../apk`。
+- **行为**：「我的」检查更新；下载后唤起系统安装。minor/major 落后 → 进 App 强提示不可跳过；仅 patch 落后不挡用。
+- **运维**：发版后必须把包覆盖到上述目录，见 [`OPS.md`](./OPS.md) §7.2。
+
 ---
 
 ## 2. Cut 2（已收口）

@@ -1,5 +1,5 @@
 import { config } from "dotenv";
-import { resolve, isAbsolute } from "node:path";
+import { resolve, isAbsolute, dirname, join } from "node:path";
 import { fileURLToPath } from "node:url";
 import { mkdirSync } from "node:fs";
 
@@ -17,9 +17,13 @@ const databasePath = databaseUrlRaw.startsWith("file:")
   : resolvePath(databaseUrlRaw);
 
 const uploadDir = resolvePath(process.env.UPLOAD_DIR ?? "../../data/uploads");
+const androidReleaseDir = resolvePath(
+  process.env.ANDROID_RELEASE_DIR ?? join(dirname(databasePath), "android-release"),
+);
 
 mkdirSync(resolve(databasePath, ".."), { recursive: true });
 mkdirSync(uploadDir, { recursive: true });
+mkdirSync(androidReleaseDir, { recursive: true });
 
 function parseCorsOrigins(): string[] {
   const raw = process.env.CORS_ORIGIN?.trim();
@@ -50,6 +54,8 @@ export const env = {
   databaseUrl: `file:${databasePath}`,
   databasePath,
   uploadDir,
+  /** 侧载 APK 发布目录：仅保留最新 BioTrace.apk + latest.json。 */
+  androidReleaseDir,
   geminiApiKey: process.env.GEMINI_API_KEY?.trim() || "",
   geminiModel: process.env.GEMINI_MODEL?.trim() || "gemini-flash-latest",
   zhipuApiKey: process.env.ZHIPU_API_KEY?.trim() || "",

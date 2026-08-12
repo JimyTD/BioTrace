@@ -521,6 +521,11 @@ a {
   background: var(--modal-scrim);
 }
 
+.force-update-backdrop {
+  z-index: 60;
+  background: color-mix(in srgb, #2a241c 72%, transparent);
+}
+
 .modal-panel {
   width: min(420px, 100%);
   padding: 18px;

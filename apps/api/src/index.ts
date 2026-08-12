@@ -11,6 +11,7 @@ import { env } from "./env.js";
 import { providerSnapshot } from "./identify/health.js";
 import { identifyQueueSize } from "./jobs/identify-queue.js";
 import { adminRoutes } from "./routes/admin.js";
+import { appRoutes } from "./routes/app.js";
 import { authRoutes } from "./routes/auth.js";
 import { collectionRoutes } from "./routes/collection.js";
 import { fileRoutes } from "./routes/files.js";
@@ -46,6 +47,7 @@ app.get("/api/health", (c) =>
 );
 
 app.route("/api/auth", authRoutes);
+app.route("/api/app", appRoutes);
 app.route("/api/trips", tripRoutes);
 app.route("/api/observations", observationRoutes);
 app.route("/api/collection", collectionRoutes);

@@ -3,7 +3,7 @@
 > **这是 BioTrace 上线与运维的唯一操作手册**，反映真实落地方案，随版本更新持续维护。
 > **本文件是运维真源。** 架构背景、设计约定与天地图接入坑见文末[附录 A](#附录-a架构背景与设计约定)；业务功能见 [`SPEC.md`](./SPEC.md)。
 >
-> 最后更新：2026-08-11 · 当前阶段：**第二阶段（IP + HTTP + Resend 真实邮箱登录）已上线**；`DEV_AUTH=0`、Resend 走自有验证域名 `jettechdog.icu` 发信；已接入**境外出网代理（广州→新加坡 Xray）**保障 Resend/Gemini 出境；运维通道改为 Cursor MCP `tencent-lighthouse`（见 §2.1）；Android APK 为按需制品（见 §7.2）
+> 最后更新：2026-08-12 · 当前阶段：**第二阶段（IP + HTTP + Resend 真实邮箱登录）已上线**；`DEV_AUTH=0`、Resend 走自有验证域名 `jettechdog.icu` 发信；已接入**境外出网代理（广州→新加坡 Xray）**保障 Resend/Gemini 出境；运维通道改为 Cursor MCP `tencent-lighthouse`（见 §2.1）；Android APK 为按需制品（见 §7.2）
 >
 > 🔒 **更新前必读**：[§7.0 数据来源单一性铁律](#70-铁律数据来源单一性错一次后果严重务必遵守)——git 为唯一工程来源、隐私靠服务器本地 `.env`、禁止 `reset --hard`。
 
@@ -491,10 +491,68 @@ git push origin android-v1.0.0
 **产物**
 
 - Actions Artifact：`BioTrace-<version>.apk`（保留约 30 天）
-- GitHub Release：同名 APK 附件（tag `android-v*` 或手动 Run 且勾选创建 Release）
+- GitHub Release：同名 APK 附件（tag `android-v*` 或手动 Run 且勾选 Create Release）
 - 默认壳内地址：`http://106.53.188.20`（可用 workflow 输入覆盖）
 
-**验收**：真机安装 Release APK → 打开同源站点 → 登录不掉会话（与 §10 Android 项一致）。
+**发布到服务器（应用内「检查更新」真源 · 必做）**
+
+GitHub Release **不够**：壳内检查读的是本机 API（`GET /api/app/android`），APK 必须落到服务器数据目录，且**只保留最新一份**。
+
+目录（Docker 卷内，不被 §7.1 的 web `rsync --delete` 清掉）：
+
+```text
+/opt/biotrace/data/android-release/
+  BioTrace.apk      # 固定文件名，每次覆盖
+  latest.json       # 版本元数据，见 deploy/android-release.latest.json.example
+```
+
+`versionCode` 算法与 CI 一致：`major*10000 + minor*100 + patch`（如 `0.1.3` → `103`）。
+
+在能拿到 APK 的机器上（本机下载 Release / Artifact 后上传，或服务器 curl）：
+
+```bash
+# 示例：版本 0.1.3；先把 BioTrace-0.1.3.apk 放到当前目录
+VER=0.1.3
+CODE=$((0*10000 + 1*100 + 3))   # → 103；按实际 major.minor.patch 算
+DIR=/opt/biotrace/data/android-release
+
+sudo mkdir -p "$DIR"
+# 只留最新：覆盖固定名，删掉误放的带版本号副本
+sudo cp -f "BioTrace-${VER}.apk" "$DIR/BioTrace.apk"
+sudo rm -f "$DIR"/BioTrace-*.apk
+sudo tee "$DIR/latest.json" >/dev/null <<EOF
+{
+  "versionName": "${VER}",
+  "versionCode": ${CODE},
+  "notes": ""
+}
+EOF
+sudo chown -R root:root "$DIR"
+sudo chmod 644 "$DIR/BioTrace.apk" "$DIR/latest.json"
+```
+
+验收：
+
+```bash
+curl -sS http://127.0.0.1:8787/api/app/android
+# 应返回 versionName / versionCode / apkUrl
+curl -sSI http://127.0.0.1:8787/api/app/android/apk | head
+# 应 200，Content-Type 含 package-archive
+```
+
+可选环境变量：`ANDROID_RELEASE_DIR`（默认与 db 同级的 `android-release`；容器内即 `/data/android-release`）。
+
+**应用内更新行为（产品约定）**
+
+- 仅 Android 壳：「我的」显示版本 +「检查更新」；下载完成后**直接唤起系统安装页**（不必翻文件夹）。
+- 同 minor 仅 patch 升高：不挡用，启动不弹窗。
+- **第二位（minor）或 major 落后**：登录后进 App 强提示，不可跳过。
+- 浏览器访问站点：不展示壳更新 UI（Web/API 仍按 §7.1 静默更新）。
+
+> 首次带上「检查更新 / 下载安装」能力的壳，仍需**手动侧载一次**；之后用户即可应用内升级。缺 FilePicker 等插件的旧壳同理——先手装一版含新插件的包。
+
+**验收**：真机安装 Release APK → 打开同源站点 → 登录不掉会话（与 §10 Android 项一致）→ 「我的」可检查更新；服务器已放包时能下载并弹出安装页。
+
 
 ---
 
@@ -629,6 +687,7 @@ sudo tar czf /root/biotrace-data.tgz -C /opt/biotrace data
 | SG1 `/root/proxy-setup.md` | 新加坡机上的节点参数文档（Reality/Hysteria2 参数来源，不入本仓库） |
 | `/etc/nginx/sites-available/biotrace` | Nginx 站点（当前 80/IP；HTTPS 版见example） |
 | `deploy/nginx.biotrace.conf.example` | HTTPS + 域名版 Nginx 模板（第三阶段用） |
+| `/opt/biotrace/data/android-release/` | 侧载 APK 真源（仅最新 `BioTrace.apk` + `latest.json`；§7.2） |
 | `.github/workflows/android-release.yml` | Android 签名 APK 构建与 GitHub Release（§7.2） |
 | `D:/Fun/BioTrace-secrets/`（仓库外） | Android release `.jks` 与凭据备份（**勿入库**） |
 

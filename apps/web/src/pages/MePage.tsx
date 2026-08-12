@@ -1,6 +1,14 @@
 import { useEffect, useState, type FormEvent } from "react";
 import { t } from "@biotrace/messages";
 import {
+  downloadAndInstallApk,
+  fetchAndroidUpdate,
+  getLocalAppVersion,
+  isNativeAndroidShell,
+  isNewerVersion,
+  type AndroidUpdateInfo,
+} from "../androidUpdate";
+import {
   api,
   type HealthResponse,
   type IdentifyKeySettings,
@@ -65,10 +73,24 @@ export default function MePage({
   const [pwBusy, setPwBusy] = useState(false);
   const [pwMsg, setPwMsg] = useState<string | null>(null);
   const [pwErr, setPwErr] = useState<string | null>(null);
+  const nativeAndroid = isNativeAndroidShell();
+  const [localVersion, setLocalVersion] = useState<{
+    versionName: string;
+    versionCode: number;
+  } | null>(null);
+  const [updateBusy, setUpdateBusy] = useState(false);
+  const [updateMsg, setUpdateMsg] = useState<string | null>(null);
+  const [updateErr, setUpdateErr] = useState<string | null>(null);
+  const [pendingUpdate, setPendingUpdate] = useState<AndroidUpdateInfo | null>(null);
 
   useEffect(() => {
     setDisplayName(user.displayName ?? "");
   }, [user.displayName]);
+
+  useEffect(() => {
+    if (!nativeAndroid) return;
+    void getLocalAppVersion().then(setLocalVersion);
+  }, [nativeAndroid]);
 
   useEffect(() => {
     api
@@ -96,6 +118,46 @@ export default function MePage({
   async function logout() {
     await api.logout().catch(() => undefined);
     onLogout();
+  }
+
+  async function checkUpdate() {
+    setUpdateBusy(true);
+    setUpdateErr(null);
+    setUpdateMsg(null);
+    setPendingUpdate(null);
+    try {
+      const local = localVersion ?? (await getLocalAppVersion());
+      if (local) setLocalVersion(local);
+      const remote = await fetchAndroidUpdate();
+      if (!remote) {
+        setUpdateMsg(t("me.updateMissing"));
+        return;
+      }
+      if (!local || !isNewerVersion(local, remote)) {
+        setUpdateMsg(t("me.updateUpToDate"));
+        return;
+      }
+      setPendingUpdate(remote);
+      setUpdateMsg(t("me.updateAvailable", { version: remote.versionName }));
+    } catch {
+      setUpdateErr(t("me.updateFailed"));
+    } finally {
+      setUpdateBusy(false);
+    }
+  }
+
+  async function installPendingUpdate() {
+    if (!pendingUpdate) return;
+    setUpdateBusy(true);
+    setUpdateErr(null);
+    try {
+      await downloadAndInstallApk(pendingUpdate.apkUrl);
+      setUpdateMsg(t("me.updateInstallHint"));
+    } catch {
+      setUpdateErr(t("me.updateFailed"));
+    } finally {
+      setUpdateBusy(false);
+    }
   }
 
   async function saveProfile(e: FormEvent) {
@@ -328,6 +390,42 @@ export default function MePage({
         <p className="muted">
           {providerLine("zhipu", health?.providers?.zhipu, health?.zhipuConfigured)}
         </p>
+
+        {nativeAndroid ? (
+          <div className="stack" style={{ gap: "0.5rem" }}>
+            <p className="muted">
+              {localVersion
+                ? t("me.appVersion", { version: localVersion.versionName })
+                : t("me.appVersionUnknown")}
+            </p>
+            <div className="row" style={{ gap: "0.5rem", flexWrap: "wrap" }}>
+              <button
+                className="btn secondary"
+                type="button"
+                disabled={updateBusy}
+                onClick={() => void checkUpdate()}
+              >
+                {updateBusy && !pendingUpdate
+                  ? t("me.checkingUpdate")
+                  : t("me.checkUpdate")}
+              </button>
+              {pendingUpdate ? (
+                <button
+                  className="btn"
+                  type="button"
+                  disabled={updateBusy}
+                  onClick={() => void installPendingUpdate()}
+                >
+                  {updateBusy ? t("me.updateDownloading") : t("me.updateDownload")}
+                </button>
+              ) : null}
+            </div>
+            {updateMsg ? <p className="muted">{updateMsg}</p> : null}
+            {updateErr ? <p className="error">{updateErr}</p> : null}
+            {pendingUpdate?.notes ? <p className="muted">{pendingUpdate.notes}</p> : null}
+          </div>
+        ) : null}
+
         <button className="btn secondary" onClick={logout}>
           {t("auth.logout")}
         </button>

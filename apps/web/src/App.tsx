@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import { NavLink, Navigate, Route, Routes } from "react-router-dom";
 import { t } from "@biotrace/messages";
 import { api, type User } from "./api";
+import ForceAppUpdateGate from "./components/ForceAppUpdateGate";
 import CollectionPage from "./pages/CollectionPage";
 import LoginPage from "./pages/LoginPage";
 import MapPage from "./pages/MapPage";
@@ -39,6 +40,7 @@ export default function App() {
 
   return (
     <div className="app-shell">
+      <ForceAppUpdateGate enabled />
       <header className="app-topbar">
         <span className="app-wordmark">{t("app.name")}</span>
       </header>
