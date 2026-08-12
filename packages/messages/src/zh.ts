@@ -470,6 +470,26 @@ export const zh = {
   "admin.col.errorMeaning": "含义",
   "admin.col.status": "状态",
   "admin.col.count": "数量",
+  "admin.storage.orphanTitle": "无主上传目录（孤儿）",
+  "admin.storage.orphanHint":
+    "uploads 下有以观察 ID 命名的文件夹，但数据库里已经没有这条观察。通常是删观察后残留，或上传中断。删除只清这些无主文件夹，不会动仍有观察记录的目录。",
+  "admin.storage.orphanEmpty": "没有孤儿目录",
+  "admin.storage.deleteOrphans": "删除列出的孤儿目录",
+  "admin.storage.deleteOrphansConfirm":
+    "将删除 {count} 个无主上传目录（仅磁盘文件）。不会删除任何观察数据库记录。确定？",
+  "admin.storage.missingTitle": "观察缺图（库在、文件不在）",
+  "admin.storage.missingHint":
+    "数据库里还有这些观察，但磁盘上找不到对应图片。常见原因：手工删过 uploads、备份恢复不完整、磁盘故障。本页只诊断，不会自动删库。",
+  "admin.storage.missingEmpty": "没有缺图的观察",
+  "admin.storage.missingDisplay": "缺展示图",
+  "admin.storage.missingOriginal": "缺原图",
+  "admin.storage.missingBoth": "展示图与原图都缺",
+  "admin.storage.col.what": "缺什么",
+  "admin.storage.col.size": "大小",
+  "admin.storage.backupHint": "若配置了 BIOTRACE_BACKUP_DIR，这里显示最近备份包（只读，不在此恢复）。",
+  "admin.storage.backupTitle": "备份状态",
+  "admin.storage.backupNone": "目录已配置，但未找到 biotrace 备份包",
+  "admin.storage.backupNotConfigured": "未配置 BIOTRACE_BACKUP_DIR",
 } as const;
 
 export type MessageKey = keyof typeof zh;

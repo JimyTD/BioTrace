@@ -711,16 +711,24 @@ adminRoutes.get("/storage", async (c) => {
 adminRoutes.post("/storage/orphans/delete", async (c) => {
   const admin = c.get("admin");
   const body = z.object({ ids: z.array(z.string().min(1)).min(1).max(200) }).parse(await c.req.json());
+  // Only delete ids that are still orphans right now (intersect with live scan).
+  const live = new Set((await findOrphanUploadDirs()).map((o) => o.id));
   const deleted: string[] = [];
+  const skipped: string[] = [];
   for (const id of body.ids) {
+    if (!live.has(id)) {
+      skipped.push(id);
+      continue;
+    }
     if (await deleteOrphanUploadDir(id)) deleted.push(id);
+    else skipped.push(id);
   }
   await writeAudit({
     admin,
     action: "storage.delete_orphans",
-    summary: deleted.join(","),
+    summary: `deleted=${deleted.length} skipped=${skipped.length}`,
   });
-  return c.json({ deleted });
+  return c.json({ deleted, skipped });
 });
 
 adminRoutes.post("/rarity-cache/clear", async (c) => {

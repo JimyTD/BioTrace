@@ -638,6 +638,7 @@ function SecretsPage() {
 function StoragePage() {
   const [data, setData] = useState<Record<string, unknown> | null>(null);
   const [msg, setMsg] = useState("");
+  const [busy, setBusy] = useState(false);
 
   async function reload() {
     setData(await adminApi.storage());
@@ -648,8 +649,33 @@ function StoragePage() {
   }, []);
 
   if (!data) return <p className="admin-muted">{t("app.loading")}</p>;
-  const orphans = (data.orphans ?? []) as string[];
-  const missing = (data.missing ?? []) as Array<{ id: string; displayPath: string }>;
+
+  const orphans = (data.orphans ?? []) as Array<{ id: string; bytes?: number } | string>;
+  const orphanRows = orphans.map((o) =>
+    typeof o === "string" ? { id: o, bytes: 0 } : { id: o.id, bytes: Number(o.bytes ?? 0) },
+  );
+  const missing = (data.missing ?? []) as Array<{
+    id: string;
+    displayPath: string;
+    originalPath?: string | null;
+    displayMissing?: boolean;
+    originalMissing?: boolean;
+  }>;
+  const backup = data.backup as {
+    configured?: boolean;
+    dir?: string | null;
+    latest?: { name: string; bytes: number; mtimeMs: number } | null;
+  };
+
+  function missingLabel(row: (typeof missing)[0]) {
+    const d = Boolean(row.displayMissing);
+    const o = Boolean(row.originalMissing);
+    if (d && o) return t("admin.storage.missingBoth");
+    if (d) return t("admin.storage.missingDisplay");
+    if (o) return t("admin.storage.missingOriginal");
+    // 旧 API 未带标志时：有记录即视为缺文件
+    return t("admin.storage.missingDisplay");
+  }
 
   return (
     <>
@@ -664,26 +690,116 @@ function StoragePage() {
           <div className="value">{bytes(data.uploadsBytes)}</div>
         </div>
       </div>
+
       <div className="admin-panel">
-        <strong>备份</strong>
-        <pre className="admin-pre">{JSON.stringify(data.backup, null, 2)}</pre>
-        <strong>孤儿目录（{orphans.length}）</strong>
-        <pre className="admin-pre">{orphans.join("\n") || "(无)"}</pre>
-        {orphans.length ? (
-          <button
-            type="button"
-            onClick={async () => {
-              if (!confirm(`删除 ${orphans.length} 个孤儿目录？`)) return;
-              await adminApi.deleteOrphans(orphans);
-              setMsg("已删除");
-              await reload();
-            }}
-          >
-            删除全部孤儿
-          </button>
-        ) : null}
-        <strong>媒体缺失</strong>
-        <pre className="admin-pre">{JSON.stringify(missing, null, 2)}</pre>
+        <strong>{t("admin.storage.backupTitle")}</strong>
+        <p className="admin-muted">{t("admin.storage.backupHint")}</p>
+        {backup?.configured ? (
+          backup.latest ? (
+            <p>
+              {backup.latest.name} · {bytes(backup.latest.bytes)} ·{" "}
+              {formatAdminTime(backup.latest.mtimeMs)}
+            </p>
+          ) : (
+            <p className="admin-muted">{t("admin.storage.backupNone")}</p>
+          )
+        ) : (
+          <p className="admin-muted">{t("admin.storage.backupNotConfigured")}</p>
+        )}
+      </div>
+
+      <div className="admin-panel">
+        <strong>
+          {t("admin.storage.orphanTitle")}（{orphanRows.length}）
+        </strong>
+        <p className="admin-muted">{t("admin.storage.orphanHint")}</p>
+        {orphanRows.length === 0 ? (
+          <p className="admin-muted">{t("admin.storage.orphanEmpty")}</p>
+        ) : (
+          <>
+            <table className="admin-table">
+              <thead>
+                <tr>
+                  <th>观察 ID（目录名）</th>
+                  <th>{t("admin.storage.col.size")}</th>
+                </tr>
+              </thead>
+              <tbody>
+                {orphanRows.map((o) => (
+                  <tr key={o.id}>
+                    <td>{o.id}</td>
+                    <td>{bytes(o.bytes)}</td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+            <p className="admin-toolbar">
+              <button
+                type="button"
+                disabled={busy}
+                onClick={async () => {
+                  if (
+                    !confirm(
+                      t("admin.storage.deleteOrphansConfirm", { count: orphanRows.length }),
+                    )
+                  ) {
+                    return;
+                  }
+                  setBusy(true);
+                  try {
+                    const r = (await adminApi.deleteOrphans(orphanRows.map((o) => o.id))) as {
+                      deleted?: string[];
+                      skipped?: string[];
+                    };
+                    setMsg(
+                      `${t("admin.deleted")} ${r.deleted?.length ?? 0}` +
+                        (r.skipped?.length ? ` · 跳过 ${r.skipped.length}` : ""),
+                    );
+                    await reload();
+                  } finally {
+                    setBusy(false);
+                  }
+                }}
+              >
+                {t("admin.storage.deleteOrphans")}
+              </button>
+            </p>
+          </>
+        )}
+      </div>
+
+      <div className="admin-panel">
+        <strong>
+          {t("admin.storage.missingTitle")}（{missing.length}）
+        </strong>
+        <p className="admin-muted">{t("admin.storage.missingHint")}</p>
+        {missing.length === 0 ? (
+          <p className="admin-muted">{t("admin.storage.missingEmpty")}</p>
+        ) : (
+          <table className="admin-table">
+            <thead>
+              <tr>
+                <th>观察</th>
+                <th>{t("admin.storage.col.what")}</th>
+                <th>路径</th>
+              </tr>
+            </thead>
+            <tbody>
+              {missing.map((m) => (
+                <tr key={m.id}>
+                  <td>
+                    <Link to={`/admin/observations/${m.id}`}>{m.id.slice(0, 8)}</Link>
+                  </td>
+                  <td>{missingLabel(m)}</td>
+                  <td className="admin-muted">
+                    {m.displayPath}
+                    {m.originalPath ? ` · ${m.originalPath}` : ""}
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        )}
         {msg ? <p className="admin-ok">{msg}</p> : null}
       </div>
     </>
