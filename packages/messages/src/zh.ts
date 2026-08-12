@@ -49,7 +49,7 @@ export const zh = {
   "trips.title": "旅途",
   "trips.lede": "每一次出门，都是一本新相册。",
   "trips.createLabel": "新建旅途",
-  "trips.createAction": "开册",
+  "trips.createAction": "创建",
   "trips.empty": "还没有旅途。写下名字，翻开第一页。",
   "trips.photoCount": "{count} 张照片",
   "trips.noPhotosYet": "还没有照片",
