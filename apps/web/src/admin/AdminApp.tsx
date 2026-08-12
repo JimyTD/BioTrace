@@ -2,6 +2,13 @@ import { useEffect, useState, type FormEvent, type ReactNode } from "react";
 import { Link, NavLink, Navigate, Route, Routes, useNavigate, useParams } from "react-router-dom";
 import { t } from "@biotrace/messages";
 import { adminApi, type AdminUser } from "./api";
+import {
+  explainObsError,
+  flagLabel,
+  formatAdminTime,
+  obsStatusLabel,
+  providerStatusLabel,
+} from "./format";
 import "./admin.css";
 
 function bytes(n: unknown) {
@@ -114,11 +121,26 @@ function Dashboard() {
   const byStatus = (data.observationsByStatus ?? {}) as Record<string, number>;
   const flags = data.flags as Record<string, boolean>;
   const storage = data.storage as { databaseBytes: number; uploadsBytes: number };
-  const recentFailed = (data.recentFailed ?? []) as Array<{ id: string; error?: string; updatedAt?: string }>;
+  const queue = data.identifyQueue as { pending?: number; running?: number } | number | null;
+  const queuePending = typeof queue === "object" && queue ? Number(queue.pending ?? 0) : 0;
+  const queueRunning =
+    typeof queue === "object" && queue ? Number(queue.running ?? 0) : Number(queue ?? 0);
+  const providers = (data.providers ?? {}) as Record<
+    string,
+    { configured?: boolean; status?: string; coolUntil?: number | null; lastOkAt?: number | null }
+  >;
+  const recentFailed = (data.recentFailed ?? []) as Array<{
+    id: string;
+    error?: string;
+    updatedAt?: string;
+  }>;
+
+  const statusOrder = ["analyzing", "pending_settle", "settled", "failed"];
 
   return (
     <>
       <h1>{t("admin.nav.dashboard")}</h1>
+      <p className="admin-muted">{t("admin.timeHint")}</p>
       <div className="admin-cards">
         <div className="admin-card">
           <div className="label">{t("admin.usersTotal")}</div>
@@ -130,7 +152,11 @@ function Dashboard() {
         </div>
         <div className="admin-card">
           <div className="label">{t("admin.identifyQueue")}</div>
-          <div className="value">{String(data.identifyQueue)}</div>
+          <div className="value" style={{ fontSize: "1rem" }}>
+            {t("admin.queuePending", { pending: queuePending })}
+            <br />
+            {t("admin.queueRunning", { running: queueRunning })}
+          </div>
         </div>
         <div className="admin-card">
           <div className="label">{t("admin.identifyUsageToday")}</div>
@@ -147,37 +173,113 @@ function Dashboard() {
           <div className="value">{bytes(storage?.uploadsBytes)}</div>
         </div>
       </div>
+
       <div className="admin-panel">
         <strong>{t("admin.obsStatus")}</strong>
-        <pre className="admin-pre">{JSON.stringify(byStatus, null, 2)}</pre>
-        <strong>{t("admin.flags")}</strong>
-        <pre className="admin-pre">{JSON.stringify(flags, null, 2)}</pre>
-        <strong>{t("admin.providers")}</strong>
-        <pre className="admin-pre">{JSON.stringify(data.providers, null, 2)}</pre>
+        <table className="admin-table" style={{ marginTop: "0.5rem" }}>
+          <thead>
+            <tr>
+              <th>{t("admin.col.status")}</th>
+              <th>{t("admin.col.count")}</th>
+            </tr>
+          </thead>
+          <tbody>
+            {statusOrder.map((st) => (
+              <tr key={st}>
+                <td>
+                  {obsStatusLabel(st)} <span className="admin-muted">({st})</span>
+                </td>
+                <td>{byStatus[st] ?? 0}</td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
       </div>
+
+      <div className="admin-panel">
+        <strong>{t("admin.flags")}</strong>
+        <table className="admin-table" style={{ marginTop: "0.5rem" }}>
+          <tbody>
+            {Object.entries(flags).map(([k, v]) => (
+              <tr key={k}>
+                <td>{flagLabel(k)}</td>
+                <td className={v ? (k === "devAuth" || k === "identifyMock" || k === "sessionSecretIsDefault" ? "admin-err" : "") : ""}>
+                  {v ? t("admin.flag.on") : t("admin.flag.off")}
+                </td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </div>
+
+      <div className="admin-panel">
+        <strong>{t("admin.providers")}</strong>
+        <table className="admin-table" style={{ marginTop: "0.5rem" }}>
+          <thead>
+            <tr>
+              <th>服务</th>
+              <th>状态</th>
+              <th>{t("admin.provider.coolUntil")}</th>
+              <th>{t("admin.provider.lastOk")}</th>
+            </tr>
+          </thead>
+          <tbody>
+            {Object.entries(providers).map(([name, p]) => (
+              <tr key={name}>
+                <td>
+                  {name}{" "}
+                  <span className="admin-muted">
+                    ({p.configured ? t("admin.provider.configured") : t("admin.provider.notConfigured")})
+                  </span>
+                </td>
+                <td>{providerStatusLabel(String(p.status ?? ""))}</td>
+                <td>
+                  {p.coolUntil
+                    ? formatAdminTime(p.coolUntil)
+                    : t("admin.provider.notCooling")}
+                </td>
+                <td>
+                  {p.lastOkAt ? formatAdminTime(p.lastOkAt) : t("admin.provider.neverOk")}
+                </td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </div>
+
       <h2>{t("admin.recentFailed")}</h2>
       <table className="admin-table">
         <thead>
           <tr>
             <th>id</th>
-            <th>error</th>
-            <th>updated</th>
+            <th>{t("admin.col.errorMeaning")}</th>
+            <th>{t("admin.error.code")}</th>
+            <th>{t("admin.col.updatedAt")}</th>
           </tr>
         </thead>
         <tbody>
-          {recentFailed.map((r) => (
-            <tr key={r.id}>
-              <td>
-                <Link to={`/admin/observations/${r.id}`}>{r.id.slice(0, 8)}</Link>
-              </td>
-              <td>{r.error}</td>
-              <td>{r.updatedAt}</td>
-            </tr>
-          ))}
+          {recentFailed.map((r) => {
+            const ex = explainObsError(r.error);
+            return (
+              <tr key={r.id}>
+                <td>
+                  <Link to={`/admin/observations/${r.id}`}>{r.id.slice(0, 8)}</Link>
+                </td>
+                <td>{ex.title}</td>
+                <td className="admin-muted">{ex.code ?? "—"}</td>
+                <td>{formatAdminTime(r.updatedAt)}</td>
+              </tr>
+            );
+          })}
         </tbody>
       </table>
       <p className="admin-toolbar" style={{ marginTop: "1rem" }}>
-        <button type="button" onClick={() => adminApi.clearRarityCache({ all: true }).then(() => alert(t("admin.rarityCleared")))}>
+        <button
+          type="button"
+          onClick={() =>
+            adminApi.clearRarityCache({ all: true }).then(() => alert(t("admin.rarityCleared")))
+          }
+        >
           {t("admin.clearRarityCache")}
         </button>
       </p>
@@ -373,28 +475,34 @@ function ObservationsPage() {
         <thead>
           <tr>
             <th>图</th>
-            <th>status</th>
+            <th>{t("admin.col.status")}</th>
             <th>名称</th>
-            <th>error</th>
-            <th>updated</th>
+            <th>{t("admin.col.errorMeaning")}</th>
+            <th>{t("admin.col.updatedAt")}</th>
           </tr>
         </thead>
         <tbody>
-          {items.map((o) => (
+          {items.map((o) => {
+            const ex = explainObsError(o.error == null ? null : String(o.error));
+            return (
             <tr key={String(o.id)}>
               <td>
                 <img className="admin-thumb" src={String(o.displayUrl)} alt="" />
               </td>
               <td>
-                <Link to={`/admin/observations/${o.id}`}>{String(o.status)}</Link>
+                <Link to={`/admin/observations/${o.id}`}>{obsStatusLabel(String(o.status))}</Link>
               </td>
               <td>
                 {String(o.commonName ?? "")} {String(o.scientificName ?? "")}
               </td>
-              <td>{String(o.error ?? "")}</td>
-              <td>{String(o.updatedAt ?? "")}</td>
+              <td>
+                {ex.title}
+                {ex.code ? <div className="admin-muted">{ex.code}</div> : null}
+              </td>
+              <td>{formatAdminTime(o.updatedAt == null ? null : String(o.updatedAt))}</td>
             </tr>
-          ))}
+            );
+          })}
         </tbody>
       </table>
     </>
