@@ -178,3 +178,17 @@
   object-fit: cover;
   background: #eee;
 }
+
+.admin-meter {
+  margin-top: 0.35rem;
+  height: 8px;
+  background: #e4e4e7;
+  border-radius: 4px;
+  overflow: hidden;
+  max-width: 320px;
+}
+
+.admin-meter-fill {
+  height: 100%;
+  background: #3f3f46;
+}

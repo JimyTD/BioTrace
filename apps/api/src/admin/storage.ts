@@ -1,5 +1,6 @@
-import { readdir, stat, rm, access, lstat } from "node:fs/promises";
-import { join, normalize, sep } from "node:path";
+import { readdir, stat, rm, access, lstat, statfs } from "node:fs/promises";
+import { totalmem, freemem, loadavg, hostname, platform, uptime } from "node:os";
+import { join, normalize, sep, dirname } from "node:path";
 import { eq } from "drizzle-orm";
 import { env } from "../env.js";
 import { db } from "../db/index.js";
@@ -53,6 +54,52 @@ export async function storageSummary() {
     databaseBytes: dbBytes,
     uploadDir: env.uploadDir,
     uploadsBytes,
+  };
+}
+
+/** Disk for the data volume + process-visible memory (Docker 内多为宿主机/cgroup 视图). */
+export async function hostResources() {
+  const memTotal = totalmem();
+  const memFree = freemem();
+  const memUsed = Math.max(0, memTotal - memFree);
+
+  let disk: {
+    path: string;
+    totalBytes: number;
+    freeBytes: number;
+    usedBytes: number;
+    usedRatio: number;
+  } | null = null;
+
+  const diskPath = env.uploadDir || dirname(env.databasePath);
+  try {
+    const fsStat = await statfs(diskPath);
+    const totalBytes = Number(fsStat.bsize) * Number(fsStat.blocks);
+    const freeBytes = Number(fsStat.bsize) * Number(fsStat.bavail);
+    const usedBytes = Math.max(0, totalBytes - freeBytes);
+    disk = {
+      path: diskPath,
+      totalBytes,
+      freeBytes,
+      usedBytes,
+      usedRatio: totalBytes > 0 ? usedBytes / totalBytes : 0,
+    };
+  } catch {
+    disk = null;
+  }
+
+  return {
+    hostname: hostname(),
+    platform: platform(),
+    uptimeSec: Math.floor(uptime()),
+    loadAvg: loadavg(),
+    memory: {
+      totalBytes: memTotal,
+      freeBytes: memFree,
+      usedBytes: memUsed,
+      usedRatio: memTotal > 0 ? memUsed / memTotal : 0,
+    },
+    disk,
   };
 }
 

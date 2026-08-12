@@ -13,9 +13,11 @@ import "./admin.css";
 
 function bytes(n: unknown) {
   const v = Number(n ?? 0);
-  if (v < 1024) return `${v} B`;
+  if (!Number.isFinite(v) || v < 0) return "—";
+  if (v < 1024) return `${Math.round(v)} B`;
   if (v < 1024 * 1024) return `${(v / 1024).toFixed(1)} KB`;
-  return `${(v / 1024 / 1024).toFixed(1)} MB`;
+  if (v < 1024 * 1024 * 1024) return `${(v / 1024 / 1024).toFixed(1)} MB`;
+  return `${(v / 1024 / 1024 / 1024).toFixed(2)} GB`;
 }
 
 function Login({ onOk }: { onOk: (a: AdminUser) => void }) {
@@ -690,6 +692,105 @@ function StoragePage() {
           <div className="value">{bytes(data.uploadsBytes)}</div>
         </div>
       </div>
+
+      {(() => {
+        const host = data.host as {
+          hostname?: string;
+          uptimeSec?: number;
+          loadAvg?: number[];
+          memory?: { totalBytes: number; freeBytes: number; usedBytes: number; usedRatio: number };
+          disk?: {
+            path: string;
+            totalBytes: number;
+            freeBytes: number;
+            usedBytes: number;
+            usedRatio: number;
+          } | null;
+        } | null;
+        if (!host) return null;
+        const mem = host.memory;
+        const disk = host.disk;
+        const uptimeSec = Number(host.uptimeSec ?? 0);
+        const uptimeLabel =
+          uptimeSec >= 86400
+            ? `${Math.floor(uptimeSec / 86400)} 天 ${Math.floor((uptimeSec % 86400) / 3600)} 小时`
+            : uptimeSec >= 3600
+              ? `${Math.floor(uptimeSec / 3600)} 小时 ${Math.floor((uptimeSec % 3600) / 60)} 分`
+              : `${Math.floor(uptimeSec / 60)} 分`;
+        return (
+          <div className="admin-panel">
+            <strong>{t("admin.storage.hostTitle")}</strong>
+            <p className="admin-muted">
+              {t("admin.storage.hostHint")}
+              {host.hostname ? ` · ${host.hostname}` : ""}
+            </p>
+            <table className="admin-table">
+              <tbody>
+                <tr>
+                  <td>{t("admin.storage.disk")}</td>
+                  <td>
+                    {disk ? (
+                      <>
+                        {t("admin.storage.usedOfTotal", {
+                          used: bytes(disk.usedBytes),
+                          total: bytes(disk.totalBytes),
+                          pct: Math.round(disk.usedRatio * 100),
+                        })}
+                        <div className="admin-muted">
+                          {t("admin.storage.free", { free: bytes(disk.freeBytes) })} · {disk.path}
+                        </div>
+                        <div className="admin-meter">
+                          <div
+                            className="admin-meter-fill"
+                            style={{ width: `${Math.min(100, Math.round(disk.usedRatio * 100))}%` }}
+                          />
+                        </div>
+                      </>
+                    ) : (
+                      t("admin.storage.diskUnavailable")
+                    )}
+                  </td>
+                </tr>
+                <tr>
+                  <td>{t("admin.storage.memory")}</td>
+                  <td>
+                    {mem ? (
+                      <>
+                        {t("admin.storage.usedOfTotal", {
+                          used: bytes(mem.usedBytes),
+                          total: bytes(mem.totalBytes),
+                          pct: Math.round(mem.usedRatio * 100),
+                        })}
+                        <div className="admin-muted">
+                          {t("admin.storage.free", { free: bytes(mem.freeBytes) })}
+                        </div>
+                        <div className="admin-meter">
+                          <div
+                            className="admin-meter-fill"
+                            style={{ width: `${Math.min(100, Math.round(mem.usedRatio * 100))}%` }}
+                          />
+                        </div>
+                      </>
+                    ) : (
+                      "—"
+                    )}
+                  </td>
+                </tr>
+                <tr>
+                  <td>{t("admin.storage.loadAvg")}</td>
+                  <td>
+                    {(host.loadAvg ?? []).map((n) => Number(n).toFixed(2)).join(" / ") || "—"}
+                  </td>
+                </tr>
+                <tr>
+                  <td>{t("admin.storage.uptime")}</td>
+                  <td>{uptimeLabel}</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        );
+      })()}
 
       <div className="admin-panel">
         <strong>{t("admin.storage.backupTitle")}</strong>

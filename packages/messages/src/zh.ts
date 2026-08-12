@@ -504,6 +504,15 @@ export const zh = {
   "admin.storage.backupTitle": "备份状态",
   "admin.storage.backupNone": "目录已配置，但未找到 biotrace 备份包",
   "admin.storage.backupNotConfigured": "未配置 BIOTRACE_BACKUP_DIR",
+  "admin.storage.hostTitle": "服务器资源",
+  "admin.storage.hostHint": "数值来自 API 进程可见环境（Docker 内通常接近宿主机/容器限额）。磁盘针对数据卷所在分区。",
+  "admin.storage.disk": "磁盘（数据分区）",
+  "admin.storage.memory": "内存",
+  "admin.storage.usedOfTotal": "已用 {used} / 共 {total}（{pct}%）",
+  "admin.storage.free": "剩余 {free}",
+  "admin.storage.loadAvg": "负载（1/5/15 分钟）",
+  "admin.storage.uptime": "进程可见运行时长",
+  "admin.storage.diskUnavailable": "无法读取磁盘统计",
 } as const;
 
 export type MessageKey = keyof typeof zh;

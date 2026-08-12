@@ -19,6 +19,7 @@ import {
   deleteOrphanUploadDir,
   findMissingMedia,
   findOrphanUploadDirs,
+  hostResources,
   storageSummary,
 } from "../admin/storage.js";
 import { db } from "../db/index.js";
@@ -699,13 +700,14 @@ adminRoutes.patch("/secrets", async (c) => {
 });
 
 adminRoutes.get("/storage", async (c) => {
-  const [summary, orphans, missing, backup] = await Promise.all([
+  const [summary, orphans, missing, backup, host] = await Promise.all([
     storageSummary(),
     findOrphanUploadDirs(),
     findMissingMedia(),
     backupStatus(),
+    hostResources(),
   ]);
-  return c.json({ ...summary, orphans, missing, backup });
+  return c.json({ ...summary, orphans, missing, backup, host });
 });
 
 adminRoutes.post("/storage/orphans/delete", async (c) => {
