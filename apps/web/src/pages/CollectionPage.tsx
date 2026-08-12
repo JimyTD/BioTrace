@@ -3,7 +3,7 @@ import { Link } from "react-router-dom";
 import { hasMessage, t, type MessageKey } from "@biotrace/messages";
 import { api, type CollectionEntry, type Rarity, type VolumeListItem } from "../api";
 import VolumeBookDialog from "../components/VolumeBookDialog";
-import { volumeCoverUrl, volumeSealCompleteUrl } from "../themes";
+import { tripFilmFrameUrl, volumeCoverUrl, volumeSealCompleteUrl } from "../themes";
 
 function rarityLabel(r: Rarity) {
   return t(`rarity.${r}` as MessageKey);
@@ -118,12 +118,14 @@ export default function CollectionPage() {
                   <div className="film-tile-media">
                     {entry.coverDisplayUrl ? (
                       <img
+                        className="film-tile-photo"
                         src={entry.coverDisplayUrl}
                         alt={entry.commonName || entry.scientificName || entry.taxonKey}
                       />
                     ) : (
                       <div className="card-placeholder" />
                     )}
+                    <img className="film-tile-frame" src={tripFilmFrameUrl()} alt="" aria-hidden />
                   </div>
                   <div className="film-tile-meta">
                     <div className="card-tags">
