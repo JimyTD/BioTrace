@@ -135,6 +135,8 @@ function Dashboard() {
     id: string;
     error?: string;
     updatedAt?: string;
+    userId?: string;
+    userEmail?: string | null;
   }>;
 
   const statusOrder = ["analyzing", "pending_settle", "settled", "failed"];
@@ -254,6 +256,7 @@ function Dashboard() {
         <thead>
           <tr>
             <th>id</th>
+            <th>{t("admin.col.user")}</th>
             <th>{t("admin.col.errorMeaning")}</th>
             <th>{t("admin.error.code")}</th>
             <th>{t("admin.col.updatedAt")}</th>
@@ -262,10 +265,22 @@ function Dashboard() {
         <tbody>
           {recentFailed.map((r) => {
             const ex = explainObsError(r.error);
+            const userLabel = r.userEmail
+              ? String(r.userEmail)
+              : r.userId
+                ? String(r.userId).slice(0, 8)
+                : "—";
             return (
               <tr key={r.id}>
                 <td>
                   <Link to={`/admin/observations/${r.id}`}>{r.id.slice(0, 8)}</Link>
+                </td>
+                <td>
+                  {r.userId ? (
+                    <Link to={`/admin/users/${r.userId}`}>{userLabel}</Link>
+                  ) : (
+                    userLabel
+                  )}
                 </td>
                 <td>{ex.title}</td>
                 <td className="admin-muted">{ex.code ?? "—"}</td>
@@ -478,6 +493,7 @@ function ObservationsPage() {
           <tr>
             <th>图</th>
             <th>{t("admin.col.status")}</th>
+            <th>{t("admin.col.user")}</th>
             <th>名称</th>
             <th>{t("admin.col.errorMeaning")}</th>
             <th>{t("admin.col.updatedAt")}</th>
@@ -486,6 +502,11 @@ function ObservationsPage() {
         <tbody>
           {items.map((o) => {
             const ex = explainObsError(o.error == null ? null : String(o.error));
+            const userLabel = o.userEmail
+              ? String(o.userEmail)
+              : o.userId
+                ? String(o.userId).slice(0, 8)
+                : "—";
             return (
             <tr key={String(o.id)}>
               <td>
@@ -493,6 +514,13 @@ function ObservationsPage() {
               </td>
               <td>
                 <Link to={`/admin/observations/${o.id}`}>{obsStatusLabel(String(o.status))}</Link>
+              </td>
+              <td>
+                {o.userId ? (
+                  <Link to={`/admin/users/${String(o.userId)}`}>{userLabel}</Link>
+                ) : (
+                  userLabel
+                )}
               </td>
               <td>
                 {String(o.commonName ?? "")} {String(o.scientificName ?? "")}
@@ -653,22 +681,13 @@ function SecretsPage() {
                 </td>
                 <td className="admin-muted">{s.env}</td>
                 <td>
-                  {s.kind === "secret" ? (
-                    s.configured ? (
-                      <>
-                        <div>{t("admin.secrets.configured")}</div>
-                        {s.hint ? (
-                          <div className="admin-muted">
-                            {t("admin.secrets.currentFingerprint")}：{s.hint}
-                          </div>
-                        ) : null}
-                      </>
-                    ) : (
-                      t("admin.secrets.notConfigured")
-                    )
-                  ) : (
-                    <code>{String(s.value ?? "—")}</code>
-                  )}
+                  {s.kind === "secret"
+                    ? s.configured
+                      ? t("admin.secrets.configured")
+                      : t("admin.secrets.notConfigured")
+                    : (
+                      <code>{String(s.value ?? "—")}</code>
+                    )}
                 </td>
                 <td>{sourceLabel(s.source)}</td>
               </tr>
@@ -698,16 +717,11 @@ function SecretsPage() {
         <input
           value={value}
           onChange={(e) => setValue(e.target.value)}
-          placeholder={t("admin.secrets.newValuePlaceholder")}
           style={{ display: "block", width: "100%", maxWidth: 480 }}
           autoComplete="off"
           spellCheck={false}
         />
-        {selected?.kind === "secret" && selected.configured && selected.hint ? (
-          <p className="admin-muted" style={{ marginTop: 6 }}>
-            {t("admin.secrets.currentFingerprint")}：{selected.hint}
-          </p>
-        ) : selected?.kind === "setting" ? (
+        {selected?.kind === "setting" ? (
           <p className="admin-muted" style={{ marginTop: 6 }}>
             当前值：<code>{String(selected.value ?? "—")}</code>
           </p>

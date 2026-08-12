@@ -482,6 +482,7 @@ export const zh = {
   "admin.timeHint": "时间均为北京时间",
   "admin.col.updatedAt": "最近更新",
   "admin.col.errorMeaning": "含义",
+  "admin.col.user": "用户",
   "admin.col.status": "状态",
   "admin.col.count": "数量",
   "admin.storage.orphanTitle": "无主上传目录（孤儿）",

@@ -3,7 +3,7 @@ import { access } from "node:fs/promises";
 import { join, normalize, sep } from "node:path";
 import { Readable } from "node:stream";
 import { t } from "@biotrace/messages";
-import { and, count, desc, eq, like, sql } from "drizzle-orm";
+import { and, count, desc, eq, inArray, like, sql } from "drizzle-orm";
 import { Hono } from "hono";
 import { z } from "zod";
 import {
@@ -62,7 +62,10 @@ function fileUrl(obsId: string, filename: string) {
   return `/api/admin/files/${obsId}/${filename}`;
 }
 
-function serializeObsAdmin(row: typeof observations.$inferSelect) {
+function serializeObsAdmin(
+  row: typeof observations.$inferSelect,
+  owner?: { email: string; displayName: string | null } | null,
+) {
   const displayName = row.displayPath.split(/[/\\]/).pop() ?? "display.jpg";
   const originalName = row.originalPath
     ? (row.originalPath.split(/[/\\]/).pop() ?? null)
@@ -71,6 +74,8 @@ function serializeObsAdmin(row: typeof observations.$inferSelect) {
     id: row.id,
     tripId: row.tripId,
     userId: row.userId,
+    userEmail: owner?.email ?? null,
+    userDisplayName: owner?.displayName ?? null,
     status: row.status,
     description: row.description,
     capturedAt: iso(row.capturedAt),
@@ -99,6 +104,19 @@ function serializeObsAdmin(row: typeof observations.$inferSelect) {
     createdAt: iso(row.createdAt),
     updatedAt: iso(row.updatedAt),
   };
+}
+
+async function attachOwners(rows: Array<typeof observations.$inferSelect>) {
+  const ids = [...new Set(rows.map((r) => r.userId))];
+  const map = new Map<string, { email: string; displayName: string | null }>();
+  if (ids.length) {
+    const owners = await db.query.users.findMany({
+      where: inArray(users.id, ids),
+      columns: { id: true, email: true, displayName: true },
+    });
+    for (const u of owners) map.set(u.id, { email: u.email, displayName: u.displayName });
+  }
+  return rows.map((r) => serializeObsAdmin(r, map.get(r.userId) ?? null));
 }
 
 adminRoutes.post("/login", async (c) => {
@@ -189,7 +207,7 @@ adminRoutes.get("/dashboard", async (c) => {
       sessionSecretIsDefault: env.sessionSecret === "dev-change-me-to-a-long-random-string",
     },
     storage,
-    recentFailed: recentFailed.map(serializeObsAdmin),
+    recentFailed: await attachOwners(recentFailed),
   });
 });
 
@@ -448,7 +466,7 @@ adminRoutes.get("/observations", async (c) => {
           limit,
         });
 
-  return c.json({ items: rows.map(serializeObsAdmin) });
+  return c.json({ items: await attachOwners(rows) });
 });
 
 adminRoutes.get("/observations/:id", async (c) => {
@@ -461,7 +479,10 @@ adminRoutes.get("/observations/:id", async (c) => {
   }
   const owner = await db.query.users.findFirst({ where: eq(users.id, row.userId) });
   return c.json({
-    observation: serializeObsAdmin(row),
+    observation: serializeObsAdmin(
+      row,
+      owner ? { email: owner.email, displayName: owner.displayName } : null,
+    ),
     user: owner
       ? { id: owner.id, email: owner.email, displayName: owner.displayName }
       : null,
