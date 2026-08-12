@@ -653,11 +653,22 @@ function SecretsPage() {
                 </td>
                 <td className="admin-muted">{s.env}</td>
                 <td>
-                  {s.kind === "secret"
-                    ? s.configured
-                      ? `${t("admin.secrets.configured")} ${s.hint ?? ""}`
-                      : t("admin.secrets.notConfigured")
-                    : String(s.value ?? "—")}
+                  {s.kind === "secret" ? (
+                    s.configured ? (
+                      <>
+                        <div>{t("admin.secrets.configured")}</div>
+                        {s.hint ? (
+                          <div className="admin-muted">
+                            {t("admin.secrets.currentFingerprint")}：{s.hint}
+                          </div>
+                        ) : null}
+                      </>
+                    ) : (
+                      t("admin.secrets.notConfigured")
+                    )
+                  ) : (
+                    <code>{String(s.value ?? "—")}</code>
+                  )}
                 </td>
                 <td>{sourceLabel(s.source)}</td>
               </tr>
@@ -687,15 +698,20 @@ function SecretsPage() {
         <input
           value={value}
           onChange={(e) => setValue(e.target.value)}
-          placeholder={
-            selected?.kind === "secret"
-              ? selected.configured
-                ? String(selected.hint ?? "")
-                : ""
-              : String(selected?.value ?? "")
-          }
+          placeholder={t("admin.secrets.newValuePlaceholder")}
           style={{ display: "block", width: "100%", maxWidth: 480 }}
+          autoComplete="off"
+          spellCheck={false}
         />
+        {selected?.kind === "secret" && selected.configured && selected.hint ? (
+          <p className="admin-muted" style={{ marginTop: 6 }}>
+            {t("admin.secrets.currentFingerprint")}：{selected.hint}
+          </p>
+        ) : selected?.kind === "setting" ? (
+          <p className="admin-muted" style={{ marginTop: 6 }}>
+            当前值：<code>{String(selected.value ?? "—")}</code>
+          </p>
+        ) : null}
         <p className="admin-toolbar">
           <button
             type="button"

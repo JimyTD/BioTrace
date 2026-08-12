@@ -528,6 +528,8 @@ export const zh = {
   "admin.secrets.col.source": "来源",
   "admin.secrets.configured": "已配置",
   "admin.secrets.notConfigured": "未配置",
+  "admin.secrets.newValuePlaceholder": "在此粘贴新值（不会回显完整旧值）",
+  "admin.secrets.currentFingerprint": "当前指纹",
   "admin.secrets.source.overlay": "后台覆盖",
   "admin.secrets.source.env": "环境变量",
   "admin.secrets.source.none": "—",

@@ -69,8 +69,10 @@ export function getRuntimeSecretsPath(): string {
 function hintOf(value: string | undefined | null): string | null {
   const v = (value ?? "").trim();
   if (!v) return null;
-  if (v.length <= 4) return "****";
-  return `…${v.slice(-4)}`;
+  if (v.length <= 8) return `共 ${v.length} 位（过短，不展示片段）`;
+  const head = v.slice(0, 6);
+  const tail = v.slice(-6);
+  return `共 ${v.length} 位 · 开头 ${head} · 结尾 ${tail}`;
 }
 
 function sourceOf(slot: SecretSlot): "overlay" | "env" | "none" {
@@ -103,9 +105,24 @@ export function effectiveTiandituBrowserKeys(): string[] {
 
 export function secretsPublicView() {
   applyRuntimeSecrets();
+  const live: Record<string, string | number> = {
+    geminiApiKey: env.geminiApiKey,
+    zhipuApiKey: env.zhipuApiKey,
+    resendApiKey: env.resendApiKey,
+    tiandituServerKey: env.tiandituServerKey,
+    tiandituBrowserKey: env.tiandituBrowserKey,
+    tiandituBrowserFallback: env.tiandituBrowserFallback,
+    tiandituBrowserFallback2: env.tiandituBrowserFallback2,
+    geminiModel: env.geminiModel,
+    zhipuVlModel: env.zhipuVlModel,
+    zhipuTextModel: env.zhipuTextModel,
+    identifyDailyLimit: env.identifyDailyLimit,
+    identifyConcurrency: env.identifyConcurrency,
+  };
+
   const slots = SECRET_SLOTS.map((slot) => {
     if (slot.kind === "secret") {
-      const value = effectiveString(slot);
+      const value = String(live[slot.id] ?? "");
       return {
         id: slot.id,
         kind: slot.kind,
@@ -116,17 +133,14 @@ export function secretsPublicView() {
         source: sourceOf(slot),
       };
     }
-    const value =
-      slot.valueType === "number"
-        ? effectiveNumber(slot, slot.id === "identifyConcurrency" ? 1 : 100)
-        : effectiveString(slot);
+    const value = live[slot.id];
     return {
       id: slot.id,
       kind: slot.kind,
       group: slot.group,
       env: slot.env,
-      value,
-      source: sourceOf(slot),
+      value: value ?? "",
+      source: sourceOf(slot) === "none" && value !== undefined && value !== "" ? "env" : sourceOf(slot),
     };
   });
 
