@@ -2,21 +2,15 @@ import { readFileSync } from "node:fs";
 import { join } from "node:path";
 import { rarityConfig } from "./config.js";
 
-/** Traveler encounter bucket — primary rarity signal. */
-export type EncounterClass =
-  | "pest_weed"
-  | "everyday"
-  | "place_common"
-  | "noteworthy"
-  | "scarce"
-  | "hard"
-  | "legend"
-  | "unobtainable";
-
 export type ProtectionLevel = "none" | "uncertain" | "you" | "class_ii" | "class_i";
 
 export type EncounterInput = {
-  encounterClass: EncounterClass;
+  /** 0–5 encounter frequency for an ordinary traveler — primary rarity signal. */
+  frequency: number;
+  /** Extinct / no reachable wild population → XR gate. */
+  extinct?: boolean;
+  /** Aversive pest or roadside weed → locked at N. */
+  pestOrWeed?: boolean;
   /** -2…+2: aversion → iconic travel appeal */
   iconicAppeal?: number;
   /** 0–3: swarming / tourist-habituated */
@@ -29,7 +23,7 @@ export type EncounterInput = {
 export type EncounterResolution = {
   rarity: string;
   baseTier: string;
-  encounterClass: EncounterClass;
+  frequency: number;
   adjustments: string[];
   offsetScore: number;
   offsetDelta: -1 | 0 | 1;
@@ -47,27 +41,16 @@ export type OffsetConfig = {
 
 export type ClassScoreConfig = {
   tiers: string[];
-  classBaseTier: Record<string, string>;
-  vetoClasses: string[];
+  frequencyBaseTier: Record<string, string>;
   swarmDownshiftMin: number;
   offset: OffsetConfig;
 };
 
-const ENCOUNTER_CLASSES: EncounterClass[] = [
-  "pest_weed",
-  "everyday",
-  "place_common",
-  "noteworthy",
-  "scarce",
-  "hard",
-  "legend",
-  "unobtainable",
-];
-
+/** Protection level informs the model's frequency call; it no longer adds score locally. */
 const DEFAULT_OFFSET: OffsetConfig = {
   weightIconic: 1.2,
-  weightProtection: 1.0,
-  weightSwarm: -0.4,
+  weightProtection: 0,
+  weightSwarm: -0.7,
   weightHardPhoto: 0.7,
   thresholdUp: 2.0,
   thresholdDown: -2.0,
@@ -83,17 +66,14 @@ const DEFAULT_OFFSET: OffsetConfig = {
 function loadScoreConfig(): ClassScoreConfig {
   const fallback: ClassScoreConfig = {
     tiers: ["XR", "LR", "UR", "SSR", "SR", "R", "N"],
-    classBaseTier: {
-      pest_weed: "N",
-      everyday: "N",
-      place_common: "R",
-      noteworthy: "SR",
-      scarce: "SSR",
-      hard: "UR",
-      legend: "LR",
-      unobtainable: "XR",
+    frequencyBaseTier: {
+      "0": "N",
+      "1": "R",
+      "2": "SR",
+      "3": "SSR",
+      "4": "UR",
+      "5": "LR",
     },
-    vetoClasses: ["pest_weed", "unobtainable"],
     swarmDownshiftMin: 2.2,
     offset: DEFAULT_OFFSET,
   };
@@ -103,8 +83,7 @@ function loadScoreConfig(): ClassScoreConfig {
     ) as Partial<ClassScoreConfig> & { offset?: Partial<OffsetConfig> };
     return {
       tiers: file.tiers?.length ? file.tiers : fallback.tiers,
-      classBaseTier: { ...fallback.classBaseTier, ...(file.classBaseTier ?? {}) },
-      vetoClasses: file.vetoClasses?.length ? file.vetoClasses : fallback.vetoClasses,
+      frequencyBaseTier: { ...fallback.frequencyBaseTier, ...(file.frequencyBaseTier ?? {}) },
       swarmDownshiftMin: Number(file.swarmDownshiftMin ?? fallback.swarmDownshiftMin),
       offset: {
         ...DEFAULT_OFFSET,
@@ -122,13 +101,18 @@ function loadScoreConfig(): ClassScoreConfig {
 
 export const rarityScoreConfig = loadScoreConfig();
 
-export function parseEncounterClass(raw: unknown): EncounterClass | null {
-  const key = String(raw ?? "")
-    .trim()
-    .toLowerCase()
-    .replace(/[\s-]+/g, "_");
-  if ((ENCOUNTER_CLASSES as string[]).includes(key)) return key as EncounterClass;
-  return null;
+/** 0–5 frequency; anything unparseable is rejected so the caller can retry the model. */
+export function parseFrequency(raw: unknown): number | null {
+  const n = Number(String(raw ?? "").trim());
+  if (!Number.isFinite(n)) return null;
+  const rounded = Math.round(n);
+  if (rounded < 0 || rounded > 5) return null;
+  return rounded;
+}
+
+export function parseBoolFlag(raw: unknown): boolean {
+  if (typeof raw === "boolean") return raw;
+  return /^(1|true|yes|y|是)$/i.test(String(raw ?? "").trim());
 }
 
 export function parseProtectionLevel(raw: unknown): ProtectionLevel {
@@ -224,75 +208,69 @@ export function computeOffsetScore(input: {
 }
 
 /**
- * Bucket sets base tier; weighted axes → Δ∈{-1,0,+1}.
- * - unobtainable → XR (ignore Δ)
- * - pest_weed → N base; uplift forbidden
- * - legend + high swarm → base capped to UR before Δ
- * - Δ cannot create XR
+ * Frequency 0–5 sets the base tier; weighted axes → Δ∈{-1,0,+1}.
+ * - extinct → XR (the only path to XR)
+ * - pest / weed → locked at N
+ * - top frequency + habituated swarm → base capped to UR before Δ
  */
 export function resolveFromEncounter(input: EncounterInput): EncounterResolution {
-  const cls = input.encounterClass;
   const adjustments: string[] = [];
+  const frequency = clamp(Math.round(Number(input.frequency ?? 0)), 0, 5);
   const iconic = parseIconicAppeal(input.iconicAppeal);
   const swarm = parseSwarm(input.swarmOrHabituated);
   const hard = parseHardToPhotograph(input.hardToPhotograph);
   const prot = parseProtectionLevel(input.protectionLevel);
 
-  if (cls === "unobtainable") {
+  if (input.extinct) {
     return {
       rarity: "XR",
       baseTier: "XR",
-      encounterClass: cls,
-      adjustments: ["veto:unobtainable"],
+      frequency,
+      adjustments: ["gate:extinct"],
       offsetScore: 0,
       offsetDelta: 0,
     };
   }
 
-  let baseTier = rarityScoreConfig.classBaseTier[cls] ?? "R";
-
-  // Habituated swarms cannot stay legend — cap at hard (UR) before offset.
-  if (cls === "legend" && swarm >= rarityScoreConfig.swarmDownshiftMin) {
-    baseTier = "UR";
-    adjustments.push("cap:swarm_blocks_legend");
+  if (input.pestOrWeed) {
+    return {
+      rarity: "N",
+      baseTier: "N",
+      frequency,
+      adjustments: ["gate:pest_weed"],
+      offsetScore: 0,
+      offsetDelta: 0,
+    };
   }
 
-  const { score, delta: rawDelta } = computeOffsetScore({
+  let baseTier = rarityScoreConfig.frequencyBaseTier[String(frequency)] ?? "R";
+
+  // Habituated swarms cannot sit at the top tier — cap before offset.
+  if (frequency >= 5 && swarm >= rarityScoreConfig.swarmDownshiftMin) {
+    baseTier = "UR";
+    adjustments.push("cap:swarm_blocks_top");
+  }
+
+  const { score, delta } = computeOffsetScore({
     iconicAppeal: iconic,
     protectionLevel: prot,
     swarmOrHabituated: swarm,
     hardToPhotograph: hard,
   });
 
-  let delta = rawDelta;
-  if (cls === "pest_weed" && delta > 0) {
-    delta = 0;
-    adjustments.push("veto:pest_weed_no_up");
-  }
-
   let tier = shiftTier(baseTier, delta);
-  if (delta !== 0) {
-    adjustments.push(`offset:S=${score.toFixed(2)};Δ=${delta > 0 ? "+" : ""}${delta}`);
-  } else {
-    adjustments.push(`offset:S=${score.toFixed(2)};Δ=0`);
-  }
+  adjustments.push(`offset:S=${score.toFixed(2)};Δ=${delta > 0 ? "+" : ""}${delta}`);
 
-  // Never promote into XR via adjustments
+  // XR is reserved for the extinct gate.
   if (tier === "XR") {
     tier = "LR";
     adjustments.push("cap:no_xr_from_offset");
   }
 
-  if (cls === "pest_weed") {
-    // Keep pest floor at N even if somehow shifted.
-    tier = "N";
-    adjustments.push("veto:pest_weed");
-  }
-
   return {
     rarity: tier,
     baseTier,
-    encounterClass: cls,
+    frequency,
     adjustments,
     offsetScore: score,
     offsetDelta: delta,

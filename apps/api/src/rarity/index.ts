@@ -6,12 +6,13 @@ export type RarityResolution = {
   source: "cache" | "encounter" | "seed" | "default" | "gbif";
   occurrenceCount: number | null;
   gbifUsageKey: number | null;
-  encounterClass?: string | null;
+  /** 0–5 traveler encounter frequency behind the tier, when scored this call. */
+  frequency?: number | null;
   adjustments?: string[];
 };
 
 /**
- * Production rarity resolver — encounter_class + veto (not GBIF counts).
+ * Production rarity resolver — encounter frequency + gates (not GBIF counts).
  */
 export async function resolveRarity(input: {
   taxonKey: string;
@@ -29,7 +30,7 @@ export async function resolveRarity(input: {
       source: "default",
       occurrenceCount: null,
       gbifUsageKey: null,
-      encounterClass: "place_common",
+      frequency: 1,
       adjustments: ["identify_mock"],
     };
   }
@@ -46,7 +47,7 @@ export async function resolveRarity(input: {
     source: resolved.source,
     occurrenceCount: resolved.occurrenceCount,
     gbifUsageKey: resolved.gbifUsageKey,
-    encounterClass: resolved.encounterClass,
+    frequency: resolved.frequency,
     adjustments: resolved.adjustments,
   };
 }
@@ -55,11 +56,11 @@ export { rarityConfig, rankBandFromFinest, rarityCollectibleRank } from "./confi
 export { gradeFromCount } from "./grade.js";
 export {
   resolveFromEncounter,
-  parseEncounterClass,
+  parseFrequency,
+  parseBoolFlag,
   parseProtectionLevel,
   collectibleRankFromTier,
-  type EncounterClass,
   type EncounterInput,
 } from "./formula.js";
-export { resolveEncounterRarity, scoreEncounterClass } from "./encounter.js";
+export { resolveEncounterRarity, scoreEncounter } from "./encounter.js";
 export { ENCOUNTER_RUBRIC } from "./encounter-rubric.js";

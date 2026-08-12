@@ -45,7 +45,7 @@ export default function App() {
       <main className="content">
         <Routes>
           <Route path="/" element={<TripsPage />} />
-          <Route path="/trips/:id" element={<TripAlbumPage />} />
+          <Route path="/trips/:id" element={<TripAlbumPage userId={user.id} />} />
           <Route path="/observations/:id/pin" element={<PinLocationPage />} />
           <Route path="/observations/:id" element={<ObservationDetailPage />} />
           <Route path="/settle/:id" element={<ObservationSettlePage />} />

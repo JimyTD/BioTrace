@@ -517,6 +517,13 @@ curl -s http://127.0.0.1:8787/api/health
 
 **建议**：给备份配一个定时任务；`data/uploads` 会随使用增长，注意 40G 磁盘余量。
 
+### 8.1 管理后台（Admin）
+
+- 入口：站点 `/admin`（独立账号，不是普通用户）
+- 首次启动：在 `deploy/.env.production`（或本地 `.env`）设置 `ADMIN_BOOTSTRAP_USERNAME` + `ADMIN_BOOTSTRAP_PASSWORD`（≥8 位）；仅当 `admin_users` 表为空时写入首个管理员
+- 平台 Key 覆盖写在数据目录 `admin-runtime-secrets.json`（与 db 同级，已在 `/data` 卷内，勿提交 git）
+- 备份状态页可选：`BIOTRACE_BACKUP_DIR` 指向存放 `biotrace-data-*.tgz` 的目录
+
 ---
 
 ## 9. 第三阶段：迁移到境外机 + 域名 + HTTPS（远期）

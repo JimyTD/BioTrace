@@ -1,3 +1,4 @@
+import { randomBytes } from "node:crypto";
 import { createClient } from "@libsql/client";
 import { drizzle } from "drizzle-orm/libsql";
 import { env } from "../env.js";
@@ -6,6 +7,17 @@ import * as schema from "./schema.js";
 const client = createClient({ url: env.databaseUrl });
 
 export const db = drizzle(client, { schema });
+
+const INVITE_ALPHABET = "ABCDEFGHJKLMNPQRSTUVWXYZ23456789";
+
+export function genInviteCode(len = 8): string {
+  const bytes = randomBytes(len);
+  let out = "";
+  for (let i = 0; i < len; i++) {
+    out += INVITE_ALPHABET[bytes[i]! % INVITE_ALPHABET.length]!;
+  }
+  return out;
+}
 
 async function ensureColumn(table: string, name: string, ddl: string) {
   const cols = await client.execute(`PRAGMA table_info(${table})`);
@@ -28,7 +40,15 @@ export async function migrate() {
       id TEXT PRIMARY KEY NOT NULL,
       user_id TEXT NOT NULL REFERENCES users(id),
       title TEXT NOT NULL,
-      created_at INTEGER NOT NULL
+      created_at INTEGER NOT NULL,
+      invite_code TEXT UNIQUE,
+      allow_join INTEGER
+    );
+    CREATE TABLE IF NOT EXISTS trip_members (
+      trip_id TEXT NOT NULL REFERENCES trips(id),
+      user_id TEXT NOT NULL REFERENCES users(id),
+      joined_at INTEGER NOT NULL,
+      PRIMARY KEY (trip_id, user_id)
     );
     CREATE TABLE IF NOT EXISTS observations (
       id TEXT PRIMARY KEY NOT NULL,
@@ -117,6 +137,54 @@ export async function migrate() {
   await ensureColumn("trips", "meta_manual_enabled", "meta_manual_enabled INTEGER");
   await ensureColumn("trips", "manual_date_text", "manual_date_text TEXT");
   await ensureColumn("trips", "manual_place_text", "manual_place_text TEXT");
+  await ensureColumn("trips", "invite_code", "invite_code TEXT");
+  await ensureColumn("trips", "allow_join", "allow_join INTEGER");
+
+  await client.execute(`
+    CREATE UNIQUE INDEX IF NOT EXISTS trips_invite_code_uq ON trips(invite_code)
+  `);
+  await client.executeMultiple(`
+    CREATE TABLE IF NOT EXISTS trip_members (
+      trip_id TEXT NOT NULL REFERENCES trips(id),
+      user_id TEXT NOT NULL REFERENCES users(id),
+      joined_at INTEGER NOT NULL,
+      PRIMARY KEY (trip_id, user_id)
+    );
+    CREATE TABLE IF NOT EXISTS shared_collection_credits (
+      user_id TEXT NOT NULL REFERENCES users(id),
+      trip_id TEXT NOT NULL REFERENCES trips(id),
+      observation_id TEXT NOT NULL REFERENCES observations(id),
+      taxon_key TEXT NOT NULL,
+      PRIMARY KEY (user_id, observation_id)
+    );
+    CREATE INDEX IF NOT EXISTS idx_shared_credits_trip_user
+      ON shared_collection_credits(trip_id, user_id);
+  `);
+
+  // Backfill: every legacy trip owner becomes a member; ensure invite code exists.
+  await client.execute(`
+    INSERT OR IGNORE INTO trip_members (trip_id, user_id, joined_at)
+    SELECT id, user_id, created_at FROM trips
+  `);
+  const tripsMissingCode = await client.execute(
+    `SELECT id FROM trips WHERE invite_code IS NULL OR invite_code = ''`,
+  );
+  for (const row of tripsMissingCode.rows) {
+    const id = String(row.id);
+    let code = "";
+    for (let attempt = 0; attempt < 8; attempt++) {
+      code = genInviteCode();
+      try {
+        await client.execute({
+          sql: `UPDATE trips SET invite_code = ?, allow_join = COALESCE(allow_join, 0) WHERE id = ?`,
+          args: [code, id],
+        });
+        break;
+      } catch {
+        /* unique collision — retry */
+      }
+    }
+  }
 
   // SQLite UNIQUE 允许多个 NULL；精确去重只约束已写入 hash 的行。
   await client.execute(`
@@ -183,5 +251,26 @@ export async function migrate() {
         alert_introduced = COALESCE(alert_introduced, 0),
         settled_at = COALESCE(settled_at, updated_at)
     WHERE status = 'ready'
+  `);
+
+  await client.executeMultiple(`
+    CREATE TABLE IF NOT EXISTS admin_users (
+      id TEXT PRIMARY KEY NOT NULL,
+      username TEXT NOT NULL UNIQUE,
+      password_hash TEXT NOT NULL,
+      created_at INTEGER NOT NULL
+    );
+    CREATE TABLE IF NOT EXISTS admin_audit_log (
+      id TEXT PRIMARY KEY NOT NULL,
+      admin_id TEXT NOT NULL,
+      admin_username TEXT NOT NULL,
+      action TEXT NOT NULL,
+      target_type TEXT,
+      target_id TEXT,
+      summary TEXT,
+      ok INTEGER NOT NULL,
+      created_at INTEGER NOT NULL
+    );
+    CREATE INDEX IF NOT EXISTS idx_admin_audit_created ON admin_audit_log(created_at);
   `);
 }

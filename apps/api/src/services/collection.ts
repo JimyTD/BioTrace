@@ -4,46 +4,8 @@ import { collectionEntries, observations, type Observation } from "../db/schema.
 import { rarityCollectibleRank } from "../rarity/config.js";
 
 export async function upsertCollectionFromObservation(obs: Observation) {
-  if (!obs.taxonKey || !obs.rarity || obs.status !== "settled") return;
-
-  const existing = await db.query.collectionEntries.findFirst({
-    where: and(
-      eq(collectionEntries.userId, obs.userId),
-      eq(collectionEntries.taxonKey, obs.taxonKey),
-    ),
-  });
-
-  const now = new Date();
-  if (!existing) {
-    await db.insert(collectionEntries).values({
-      id: crypto.randomUUID(),
-      userId: obs.userId,
-      taxonKey: obs.taxonKey,
-      commonName: obs.commonName,
-      scientificName: obs.scientificName,
-      rarity: obs.rarity,
-      coverObservationId: obs.id,
-      firstCollectedAt: now,
-      updatedAt: now,
-    });
-    return;
-  }
-
-  const nextRarity =
-    rarityCollectibleRank(obs.rarity) > rarityCollectibleRank(existing.rarity)
-      ? obs.rarity
-      : existing.rarity;
-
-  await db
-    .update(collectionEntries)
-    .set({
-      commonName: obs.commonName ?? existing.commonName,
-      scientificName: obs.scientificName ?? existing.scientificName,
-      rarity: nextRarity,
-      coverObservationId: obs.id,
-      updatedAt: now,
-    })
-    .where(eq(collectionEntries.id, existing.id));
+  const { upsertCollectionForUser } = await import("./shared-progress.js");
+  await upsertCollectionForUser(obs.userId, obs);
 }
 
 /** Detach an observation from collection (delete / reidentify start). */
@@ -113,26 +75,13 @@ async function refreshCollectionEntry(
 
 /** Fix broken covers / orphan entries when listing图鉴. */
 export async function sanitizeUserCollection(userId: string) {
+  const { rebuildCollectionTaxonForUser } = await import("./shared-progress.js");
   const entries = await db.query.collectionEntries.findMany({
     where: eq(collectionEntries.userId, userId),
   });
 
   for (const entry of entries) {
-    let coverOk = false;
-    if (entry.coverObservationId) {
-      const cover = await db.query.observations.findFirst({
-        where: and(
-          eq(observations.id, entry.coverObservationId),
-          eq(observations.userId, userId),
-          eq(observations.status, "settled"),
-          eq(observations.taxonKey, entry.taxonKey),
-        ),
-      });
-      coverOk = Boolean(cover);
-    }
-    if (!coverOk) {
-      await refreshCollectionEntry(entry.id, userId, entry.taxonKey);
-    }
+    await rebuildCollectionTaxonForUser(userId, entry.taxonKey);
   }
 }
 

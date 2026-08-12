@@ -6,26 +6,26 @@ import { cacheKey as taxonCacheKey, rarityConfig } from "./config.js";
 import { readRarityCache, writeRarityCache } from "./cache.js";
 import { ENCOUNTER_RUBRIC } from "./encounter-rubric.js";
 import {
-  parseEncounterClass,
+  parseBoolFlag,
+  parseFrequency,
   parseHardToPhotograph,
   parseIconicAppeal,
   parseProtectionLevel,
   parseSwarm,
   resolveFromEncounter,
-  type EncounterClass,
 } from "./formula.js";
 
 export type EncounterRarityResolution = {
   rarity: string;
   source: "cache" | "encounter" | "seed" | "default";
-  encounterClass: EncounterClass | null;
+  frequency: number | null;
   adjustments: string[];
   occurrenceCount: number | null;
   gbifUsageKey: number | null;
 };
 
 /** Bump when encounter rubric / formula semantics change enough to invalidate cache. */
-const ENCOUNTER_CACHE_VER = "enc3";
+const ENCOUNTER_CACHE_VER = "enc4";
 
 function encounterCacheKey(countryCode: string | null, taxonKey: string): string {
   return `${ENCOUNTER_CACHE_VER}|${taxonCacheKey(countryCode, taxonKey)}`;
@@ -133,14 +133,16 @@ function effectiveCountry(countryCode: string | null | undefined): string {
   return countryCode?.trim().toUpperCase() || "CN";
 }
 
-export async function scoreEncounterClass(input: {
+export async function scoreEncounter(input: {
   label?: string | null;
   taxonKey: string;
   scientificName?: string | null;
   finestReliableRank?: string | null;
   countryCode: string | null;
 }): Promise<{
-  encounterClass: EncounterClass;
+  frequency: number;
+  extinct: boolean;
+  pestOrWeed: boolean;
   iconicAppeal: number;
   swarmOrHabituated: number;
   protectionLevel: string;
@@ -158,10 +160,14 @@ export async function scoreEncounterClass(input: {
 - context: wild field encounter`;
 
   const parsed = extractJson(await withRetry(() => callZhipuText(prompt)));
-  const cls = parseEncounterClass(parsed.encounter_class);
-  if (!cls) throw new Error(`bad encounter_class: ${String(parsed.encounter_class)}`);
+  const frequency = parseFrequency(parsed.encounter_frequency);
+  if (frequency == null) {
+    throw new Error(`bad encounter_frequency: ${String(parsed.encounter_frequency)}`);
+  }
   return {
-    encounterClass: cls,
+    frequency,
+    extinct: parseBoolFlag(parsed.extinct_or_unobtainable),
+    pestOrWeed: parseBoolFlag(parsed.pest_or_weed),
     iconicAppeal: parseIconicAppeal(parsed.iconic_appeal),
     swarmOrHabituated: parseSwarm(parsed.swarm_or_habituated),
     protectionLevel: parseProtectionLevel(parsed.protection_level),
@@ -171,7 +177,7 @@ export async function scoreEncounterClass(input: {
 }
 
 /**
- * Production rarity: GLM encounter_class → local veto/resolve.
+ * Production rarity: GLM encounter frequency + gates → local resolve.
  * Cached under enc|… keys (does not reuse GBIF cache rows).
  */
 export async function resolveEncounterRarity(input: {
@@ -188,7 +194,7 @@ export async function resolveEncounterRarity(input: {
     return {
       rarity: cached.rarity,
       source: "cache",
-      encounterClass: null,
+      frequency: null,
       adjustments: [],
       occurrenceCount: null,
       gbifUsageKey: null,
@@ -199,9 +205,11 @@ export async function resolveEncounterRarity(input: {
     console.warn("[rarity] encounter skipped: ZHIPU_API_KEY missing");
   } else {
     try {
-      const scored = await scoreEncounterClass({ ...input, countryCode });
+      const scored = await scoreEncounter({ ...input, countryCode });
       const resolved = resolveFromEncounter({
-        encounterClass: scored.encounterClass,
+        frequency: scored.frequency,
+        extinct: scored.extinct,
+        pestOrWeed: scored.pestOrWeed,
         iconicAppeal: scored.iconicAppeal,
         swarmOrHabituated: scored.swarmOrHabituated,
         protectionLevel: scored.protectionLevel,
@@ -215,14 +223,14 @@ export async function resolveEncounterRarity(input: {
         source: "encounter",
       });
       console.log(
-        `[rarity] encounter ${input.taxonKey} class=${resolved.encounterClass} → ${resolved.rarity}` +
+        `[rarity] encounter ${input.taxonKey} freq=${resolved.frequency} → ${resolved.rarity}` +
           (resolved.adjustments.length ? ` [${resolved.adjustments.join(",")}]` : "") +
           (scored.reason ? ` · ${scored.reason.slice(0, 80)}` : ""),
       );
       return {
         rarity: resolved.rarity,
         source: "encounter",
-        encounterClass: resolved.encounterClass,
+        frequency: resolved.frequency,
         adjustments: resolved.adjustments,
         occurrenceCount: null,
         gbifUsageKey: null,
@@ -240,7 +248,7 @@ export async function resolveEncounterRarity(input: {
     return {
       rarity: fromSeed,
       source: "seed",
-      encounterClass: null,
+      frequency: null,
       adjustments: [],
       occurrenceCount: null,
       gbifUsageKey: null,
@@ -250,7 +258,7 @@ export async function resolveEncounterRarity(input: {
   return {
     rarity: rarityConfig.defaultRarity,
     source: "default",
-    encounterClass: null,
+    frequency: null,
     adjustments: [],
     occurrenceCount: null,
     gbifUsageKey: null,

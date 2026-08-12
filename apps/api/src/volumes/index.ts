@@ -5,7 +5,7 @@ import { observationDisplayUrl } from "../serialize.js";
 import { loadVolumeConfigs } from "./load.js";
 import { listVolumeProgress } from "./progress.js";
 
-export { evaluateVolumesOnObservation } from "./evaluate.js";
+export { evaluateVolumesOnObservation, evaluateVolumesForUser } from "./evaluate.js";
 export { loadVolumeConfigs } from "./load.js";
 export type { VolumeConfig } from "./types.js";
 
@@ -48,9 +48,8 @@ export async function listVolumesForUser(userId: string): Promise<VolumeListItem
       columns: { id: true, displayPath: true, userId: true },
     });
     for (const row of rows) {
-      if (row.userId === userId) {
-        pathByObsId.set(row.id, observationDisplayUrl(row.displayPath));
-      }
+      // Shared-trip slots may point at another member's photo; files ACL gates read.
+      pathByObsId.set(row.id, observationDisplayUrl(row.displayPath));
     }
   }
 

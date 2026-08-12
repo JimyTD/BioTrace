@@ -1,39 +1,41 @@
-/** Shared encounter-class rubric (calibrate + production). No species answer keys. */
-export const ENCOUNTER_RUBRIC = `你在为旅行 App「BioTrace」判定给定国家尺度下野生/野外旅行遇见的「遇见类别」与修正轴。
-这不是科研丰度。主信号是 encounter_class（遇见桶）；另给四个修正轴供系统做最多 ±1 档偏移。不要针对某个中文俗名背答案。
+/** Shared encounter rubric (calibrate + production). No species answer keys. */
+export const ENCOUNTER_RUBRIC = `你在为旅行 App「BioTrace」判定一个物种在给定国家的「野外遇见难度」。
+这不是科研丰度，也不是保护等级排名。先写理由，再打分。不要针对某个中文俗名背答案。
 
-核心判别（选桶，比生态学常见度更优先）：
-- 若普通人旅行中拍到会有一点「收获/想留影」的感觉 → 至少 place_common，常见情况用 noteworthy；不要因为「城乡也很多」就打成 everyday。
-- everyday / pest_weed 只留给「看见了也不会当成一次收集」的东西（嫌恶、杂草、真正无感背景）。
-- 难拍本身不单独决定主桶；但可在 hard_to_photograph 轴打高分。
+只输出 JSON，字段顺序必须与下面一致（reason 必须在最前）：
+{"reason":"一句话","extinct_or_unobtainable":false,"pest_or_weed":false,"encounter_frequency":2,"iconic_appeal":0,"protection_level":"uncertain","swarm_or_habituated":0,"hard_to_photograph":0}
 
-只从下列枚举选一个 encounter_class（必填）：
-- pest_weed：卫生害虫、吸血蚊蚋、路旁广布杂草等嫌恶/无感极常见。
-- everyday：真正无旅行收获感的城乡背景（非上类）。判定键：拍到了也不会觉得开到一张卡。
-  禁止：把「城乡常见但会想拍的野鸟/野生脊椎动物」标成 everyday（应 ≥ noteworthy，至少 place_common）。
-  禁止：主要出现在潮间带/墙缝/雨夜静水/浅滩等特定微生境时标 everyday（应 ≥ place_common）。
-- place_common：到对的微生境几乎必见、密度高、惊喜弱，但仍可能有轻微收集感。
-- noteworthy：有明确野趣/旅行收获感，全国尺度上并不算难得。
-  包括：多数野生鸟（即使公园/城区可见）、有观察乐趣的常见昆虫、水边巡飞、田塘常见两栖等。
-  边界：若该类群通常隐蔽、夜行、回避人类，普通行程很难碰上 → 不要停在 noteworthy，应升到 scarce/hard。
-- scarce：一次常规多日旅行里算明显好运。
-- hard：多数旅行者多年难得一遇，但仍有可重复野外遇见路径。
-  景区半驯化、投喂成群的大型兽 → 仍 hard，禁止因此升 legend。
-- legend：接近一生一次；极难，但有现存野外种群、理论上可遇。
-  禁止：广泛归化的引入爬行/水生生物标 legend（最多 noteworthy）。
-  禁止：仅因「中型兽少见」就标 legend——那种通常是 hard/scarce。
-- unobtainable：功能灭绝/已灭绝/对旅行者野外实质不可再遇（有现存偶见分布则用 legend，不用本档）。
+一、两个前置判断
+- extinct_or_unobtainable：已灭绝、野外功能性灭绝、或野外已无可遇见种群 → true。
+  野外仍有现存种群（哪怕极少、哪怕只在少数保护区）→ false。
+- pest_or_weed：卫生害虫、吸血蚊蚋、仓储/农业害虫、路旁广布杂草这类「看见也不会当成一次收集」的嫌恶生物 → true。
+  城乡常见但会让人想拍一下的野鸟、野生脊椎动物、有观察乐趣的昆虫 → false。
 
-修正轴（整数；与选桶分开想）：
-- iconic_appeal：-2…+2
-  负=嫌恶/无感背景；0=中性；正=标志性「这趟值了」的向往（萤火虫夜景、金丝猴等）。不是「可爱网红」乱加。
-- protection_level：none|uncertain|you|class_ii|class_i
-  没把握用 uncertain；害虫/杂草/引入种/普通无脊椎常见类用 none。
-  保护级高不等于自动 legend。
-- swarm_or_habituated：0–3
-  成群/不躲人/景区半驯化越高越大。独行警惕打低。
-- hard_to_photograph：0–3
-  越难发现/难拍越高（夜行、一瞬、隐蔽）。显眼好拍打低。
+二、encounter_frequency（0–5 整数，最重要的字段）
+设想一个每年出门旅行几趟、不专门去找、不请向导、不架红外相机的普通旅行者，
+在该国野外亲眼遇到并拍下来的频次：
+- 0：城乡随处都有，几乎天天能见
+- 1：到对的环境（潮间带、墙缝、水塘边、树林边缘等）几乎一定见得到
+- 2：一年能碰上几次
+- 3：几年才碰上一次
+- 4：十年难遇，通常得专门蹲守或进特定保护区
+- 5：一辈子可能只有一次
 
-禁止输出 N/R/SR 字母档。只输出 JSON：
-{"encounter_class":"...","iconic_appeal":0,"protection_level":"...","swarm_or_habituated":0,"hard_to_photograph":0,"reason":"..."}`;
+打分要点：
+- 只按「多久能碰上一次」判断，不按名气大小、不按保护级高低。
+- 夜行、隐蔽、警惕人、只在深山或高海拔的类群，频次应落在 3–5，不要因为「这名字听说过」就给 2。
+- 广泛归化的引入种、城市公园常见鸟兽，频次多在 1–2。
+- 名字冷门、你不熟悉，不等于罕见。大量不起眼的小型无脊椎动物（潮间带附着类、土壤与落叶层类、
+  墙缝与草丛类）其实到处都是，应给 0–1，不要因为「没听过」就给高分。
+- 4–5 应当留给公认极难野外遇见的大型或深山物种；不确定时优先给中间档。
+- 0–5 每一档都要用得起来；不要把大批物种都堆在同一个数字上。
+
+三、四根修正轴（系统只用它们做最多 ±1 档微调，不要用它们表达稀有度）
+- iconic_appeal（-2…2）：这次遇见的向往感。
+  -2 = 嫌恶；0 = 中性；+1 = 会想拍下来发出去；+2 =「这趟值了」级别的名场面。
+- protection_level：none | uncertain | you | class_ii | class_i；没把握填 uncertain。
+  它只是你判断频次时的参考先验，系统不会因为它直接给你抬档。
+- swarm_or_habituated（0–3）：0 = 独行且警惕；1 = 偶尔小群；2 = 常成群或不太躲人；3 = 景区半驯化、投喂成群。
+- hard_to_photograph（0–3）：0 = 显眼好拍；1 = 需要耐心和运气；2 = 夜行/极易惊飞/藏得很深；3 = 暴露窗口极短，几乎拍不到。
+
+禁止输出 N/R/SR/SSR/UR/LR/XR 字母档，禁止输出除上述字段外的内容。`;

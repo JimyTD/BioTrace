@@ -92,4 +92,7 @@ export const env = {
   sessionTtlMs: Number(process.env.SESSION_TTL_MS ?? 90 * 24 * 60 * 60_000),
   /** Password-reset OTP TTL (default 15 minutes). */
   passwordResetTtlMs: Number(process.env.PASSWORD_RESET_TTL_MS ?? 15 * 60_000),
+  /** Seed first admin when `admin_users` is empty (username + password ≥ 8). */
+  adminBootstrapUsername: (process.env.ADMIN_BOOTSTRAP_USERNAME ?? "").trim(),
+  adminBootstrapPassword: process.env.ADMIN_BOOTSTRAP_PASSWORD ?? "",
 };

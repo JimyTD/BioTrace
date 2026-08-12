@@ -3,17 +3,22 @@ import { Hono } from "hono";
 import { cors } from "hono/cors";
 import { logger } from "hono/logger";
 import { t } from "@biotrace/messages";
+import { ensureBootstrapAdmin } from "./admin/auth.js";
+import { applyRuntimeSecrets } from "./admin/runtime-secrets.js";
 import type { Variables } from "./auth.js";
 import { migrate } from "./db/index.js";
 import { env } from "./env.js";
 import { providerSnapshot } from "./identify/health.js";
 import { identifyQueueSize } from "./jobs/identify-queue.js";
+import { adminRoutes } from "./routes/admin.js";
 import { authRoutes } from "./routes/auth.js";
 import { collectionRoutes } from "./routes/collection.js";
 import { fileRoutes } from "./routes/files.js";
 import { observationRoutes } from "./routes/observations.js";
 import { tripRoutes } from "./routes/trips.js";
 import { volumeRoutes } from "./routes/volumes.js";
+
+applyRuntimeSecrets();
 
 const app = new Hono<{ Variables: Variables }>();
 
@@ -46,6 +51,7 @@ app.route("/api/observations", observationRoutes);
 app.route("/api/collection", collectionRoutes);
 app.route("/api/volumes", volumeRoutes);
 app.route("/api/files", fileRoutes);
+app.route("/api/admin", adminRoutes);
 
 app.onError((err, c) => {
   console.error(err);
@@ -60,6 +66,7 @@ app.onError((err, c) => {
 });
 
 await migrate();
+await ensureBootstrapAdmin();
 
 serve({ fetch: app.fetch, port: env.port, hostname: env.host }, (info) => {
   console.log(`BioTrace API http://${info.address}:${info.port}`);

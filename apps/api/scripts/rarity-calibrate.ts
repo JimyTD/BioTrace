@@ -11,13 +11,13 @@ import { env } from "../src/env.js";
 import { ENCOUNTER_RUBRIC } from "../src/rarity/encounter-rubric.js";
 import {
   collectibleRankFromTier,
-  parseEncounterClass,
+  parseBoolFlag,
+  parseFrequency,
   parseHardToPhotograph,
   parseIconicAppeal,
   parseProtectionLevel,
   parseSwarm,
   resolveFromEncounter,
-  type EncounterClass,
 } from "../src/rarity/formula.js";
 
 type TaxonRow = {
@@ -61,7 +61,7 @@ async function withRetry<T>(fn: () => Promise<T>, label: string, attempts = 6): 
     } catch (err) {
       last = err;
       const msg = err instanceof Error ? err.message : String(err);
-      if (!/429|quota|rate|Too Many|timeout|ECONNRESET|503|fetch failed/i.test(msg) || i === attempts) {
+      if (!/429|5\d\d|quota|rate|Too Many|timeout|ECONNRESET|fetch failed/i.test(msg) || i === attempts) {
         throw err;
       }
       // Zhipu free tier allows ~1 req/s on a single connection; back off hard on 1302.
@@ -143,21 +143,28 @@ async function scoreOne(row: TaxonRow, opts: { model: string; thinking: boolean 
 - context: wild field encounter`;
 
   const parsed = extractJson(await callZhipu(prompt, opts));
-  const cls = parseEncounterClass(parsed.encounter_class);
-  if (!cls) throw new Error(`bad encounter_class: ${String(parsed.encounter_class)}`);
+  const frequency = parseFrequency(parsed.encounter_frequency);
+  if (frequency == null) {
+    throw new Error(`bad encounter_frequency: ${String(parsed.encounter_frequency)}`);
+  }
+  const extinct = parseBoolFlag(parsed.extinct_or_unobtainable);
+  const pestOrWeed = parseBoolFlag(parsed.pest_or_weed);
   const iconicAppeal = parseIconicAppeal(parsed.iconic_appeal);
   const swarmOrHabituated = parseSwarm(parsed.swarm_or_habituated);
   const protectionLevel = parseProtectionLevel(parsed.protection_level);
   const hardToPhotograph = parseHardToPhotograph(parsed.hard_to_photograph);
   const resolved = resolveFromEncounter({
-    encounterClass: cls,
+    frequency,
+    extinct,
+    pestOrWeed,
     iconicAppeal,
     swarmOrHabituated,
     protectionLevel,
     hardToPhotograph,
   });
   return {
-    encounterClass: cls as EncounterClass,
+    extinct,
+    pestOrWeed,
     iconicAppeal,
     swarmOrHabituated,
     protectionLevel,
@@ -176,7 +183,7 @@ async function main() {
   const taxa = JSON.parse(readFileSync(taxaPath, "utf8")) as TaxonRow[];
   const list = args.limit ? taxa.slice(0, args.limit) : taxa;
   console.log(
-    `Provider: zhipu | model=${args.model} | thinking=${args.thinking ? "on" : "off"} | mode=encounter_class+offset | items=${list.length}`,
+    `Provider: zhipu | model=${args.model} | thinking=${args.thinking ? "on" : "off"} | mode=frequency+offset | items=${list.length}`,
   );
 
   const rows: Array<Record<string, unknown>> = [];
@@ -215,7 +222,9 @@ async function main() {
         agent: agentTier || "",
         model: scored.rarity,
         base_tier: scored.baseTier,
-        encounter_class: scored.encounterClass,
+        encounter_frequency: scored.frequency,
+        extinct_or_unobtainable: scored.extinct,
+        pest_or_weed: scored.pestOrWeed,
         adjustments: scored.adjustments,
         iconic_appeal: scored.iconicAppeal,
         swarm_or_habituated: scored.swarmOrHabituated,
@@ -235,7 +244,7 @@ async function main() {
             ? `agent ${agentTier} Δ${distAgent}`
             : "no ref";
       console.log(
-        `${scored.rarity} (${ref}) class=${scored.encounterClass} S=${scored.offsetScore.toFixed(2)} d=${scored.offsetDelta}` +
+        `${scored.rarity} (${ref}) freq=${scored.frequency} S=${scored.offsetScore.toFixed(2)} d=${scored.offsetDelta}` +
           (scored.adjustments.length ? ` [${scored.adjustments.join(",")}]` : ""),
       );
     } catch (err) {
@@ -254,7 +263,7 @@ async function main() {
     JSON.stringify(
       {
         generatedAt: new Date().toISOString(),
-        scheme: "encounter_class_offset",
+        scheme: "encounter_frequency_offset",
         provider: "zhipu",
         model: args.model,
         thinking: args.thinking,
@@ -275,7 +284,7 @@ async function main() {
   );
 
   const csv = [
-    "id,label,user,agent,model,encounter_class,iconic,swarm,hard,offset_score,offset_delta,dist_user,dist_agent,protection_level,reason",
+    "id,label,user,agent,model,freq,extinct,pest,iconic,swarm,hard,offset_score,offset_delta,dist_user,dist_agent,protection_level,reason",
     ...rows.map((r) =>
       [
         r.id,
@@ -283,7 +292,9 @@ async function main() {
         r.user ?? "",
         r.agent ?? "",
         r.model ?? "",
-        r.encounter_class ?? "",
+        r.encounter_frequency ?? "",
+        r.extinct_or_unobtainable ? 1 : 0,
+        r.pest_or_weed ? 1 : 0,
         r.iconic_appeal ?? "",
         r.swarm_or_habituated ?? "",
         r.hard_to_photograph ?? "",

@@ -1,7 +1,7 @@
 import { useEffect, useMemo, useRef, useState, type FormEvent, type MouseEvent } from "react";
 import { Link, useNavigate, useParams } from "react-router-dom";
 import { formatRank, t } from "@biotrace/messages";
-import { api, type Observation, type Trip } from "../api";
+import { api, type Observation, type Trip, type TripMember } from "../api";
 import ConfirmDialog from "../components/ConfirmDialog";
 import {
   identifyErrorPrimary,
@@ -42,11 +42,12 @@ function obsHref(obs: Observation) {
   return `/observations/${obs.id}`;
 }
 
-export default function TripAlbumPage() {
+export default function TripAlbumPage({ userId }: { userId: string }) {
   const { id = "" } = useParams();
   const navigate = useNavigate();
   const [trip, setTrip] = useState<Trip | null>(null);
   const [observations, setObservations] = useState<Observation[]>([]);
+  const [members, setMembers] = useState<TripMember[]>([]);
   const [files, setFiles] = useState<File[]>([]);
   const [previewUrls, setPreviewUrls] = useState<string[]>([]);
   const [description, setDescription] = useState("");
@@ -70,9 +71,14 @@ export default function TripAlbumPage() {
   const [showUploader, setShowUploader] = useState(false);
   const [loaded, setLoaded] = useState(false);
   const [picking, setPicking] = useState(false);
+  const [allowJoinBusy, setAllowJoinBusy] = useState(false);
+  const [copiedFlash, setCopiedFlash] = useState(false);
+  const [leaving, setLeaving] = useState(false);
+  const [kickingId, setKickingId] = useState<string | null>(null);
   const fileInputRef = useRef<HTMLInputElement | null>(null);
   const cameraInputRef = useRef<HTMLInputElement | null>(null);
   const nativePicker = canUseNativePicker();
+  const isAdmin = Boolean(trip?.isAdmin);
 
   const analyzingIds = useMemo(
     () => observations.filter((o) => o.status === "analyzing").map((o) => o.id),
@@ -106,9 +112,10 @@ export default function TripAlbumPage() {
   }, [files]);
 
   async function refresh() {
-    const [tripRes, obsRes] = await Promise.all([
+    const [tripRes, obsRes, membersRes] = await Promise.all([
       api.getTrip(id),
       api.listTripObservations(id),
+      api.listTripMembers(id),
     ]);
     setTrip(tripRes.trip);
     setTitleDraft(tripRes.trip.title);
@@ -116,6 +123,7 @@ export default function TripAlbumPage() {
     setManualDate(tripRes.trip.manualDateText ?? "");
     setManualPlace(tripRes.trip.manualPlaceText ?? "");
     setObservations(obsRes.observations);
+    setMembers(membersRes.members);
     setLoaded(true);
   }
 
@@ -309,6 +317,61 @@ export default function TripAlbumPage() {
     }
   }
 
+  async function onToggleAllowJoin(next: boolean) {
+    setAllowJoinBusy(true);
+    setError(null);
+    try {
+      const res = await api.updateTripShare(id, next);
+      setTrip((prev) =>
+        prev
+          ? { ...prev, allowJoin: res.allowJoin, inviteCode: res.inviteCode }
+          : prev,
+      );
+    } catch (err) {
+      setError(err instanceof Error ? err.message : t("share.actionFailed"));
+    } finally {
+      setAllowJoinBusy(false);
+    }
+  }
+
+  async function onCopyInvite() {
+    const code = trip?.inviteCode;
+    if (!code) return;
+    try {
+      await navigator.clipboard.writeText(code);
+      setCopiedFlash(true);
+      window.setTimeout(() => setCopiedFlash(false), 2000);
+    } catch {
+      setError(t("share.actionFailed"));
+    }
+  }
+
+  async function onLeaveTrip() {
+    if (!window.confirm(t("share.leaveConfirm"))) return;
+    setLeaving(true);
+    setError(null);
+    try {
+      await api.leaveTrip(id);
+      navigate("/", { replace: true });
+    } catch (err) {
+      setError(err instanceof Error ? err.message : t("share.actionFailed"));
+      setLeaving(false);
+    }
+  }
+
+  async function onKick(memberId: string) {
+    setKickingId(memberId);
+    setError(null);
+    try {
+      await api.kickTripMember(id, memberId);
+      await refresh();
+    } catch (err) {
+      setError(err instanceof Error ? err.message : t("share.actionFailed"));
+    } finally {
+      setKickingId(null);
+    }
+  }
+
   const uploadLabel = uploading
     ? uploadProgress
       ? t("album.uploadingProgress", {
@@ -336,6 +399,11 @@ export default function TripAlbumPage() {
         <h1 className="page-title">{trip?.title ?? t("nav.trips")}</h1>
         <p className="lede album-lede">{t("album.lede")}</p>
         {trip ? <p className="muted album-meta-line">{tripMetaLine(trip)}</p> : null}
+        {(trip?.memberCount ?? 1) > 1 ? (
+          <p className="muted album-meta-line">
+            {t("trips.sharedBadge")} · {t("trips.memberCount", { count: trip?.memberCount ?? 1 })}
+          </p>
+        ) : null}
       </header>
 
       {showManage ? (
@@ -405,23 +473,86 @@ export default function TripAlbumPage() {
             </div>
           </form>
 
-          <form className="stack danger-zone" onSubmit={onDeleteTrip}>
-            <p className="muted">{t("trips.deleteHint")}</p>
-            <p className="confirm-phrase">{t("trips.deleteConfirmPhrase")}</p>
-            <input
-              className="input"
-              value={deletePhrase}
-              onChange={(e) => setDeletePhrase(e.target.value)}
-              autoComplete="off"
-            />
-            <button
-              className="btn danger"
-              type="submit"
-              disabled={deletingTrip || deletePhrase.trim() !== t("trips.deleteConfirmPhrase")}
-            >
-              {deletingTrip ? t("trips.deleting") : t("trips.delete")}
-            </button>
-          </form>
+          <section className="stack">
+            <h2 className="section-title">{t("share.section")}</h2>
+            {isAdmin ? (
+              <>
+                <p className="muted">
+                  {t("share.inviteCode")}：<strong>{trip?.inviteCode ?? "—"}</strong>
+                </p>
+                <div className="row">
+                  <button className="btn secondary" type="button" onClick={() => void onCopyInvite()}>
+                    {copiedFlash ? t("share.copied") : t("share.copyCode")}
+                  </button>
+                </div>
+                <label className="row trip-meta-toggle">
+                  <input
+                    type="checkbox"
+                    checked={Boolean(trip?.allowJoin)}
+                    disabled={allowJoinBusy}
+                    onChange={(e) => void onToggleAllowJoin(e.target.checked)}
+                  />
+                  <span>{t("share.allowJoin")}</span>
+                </label>
+                <p className="muted">{t("share.allowJoinHint")}</p>
+              </>
+            ) : null}
+            <p className="muted">{t("share.members")}</p>
+            <ul className="stack share-member-list">
+              {members.map((m) => (
+                <li className="row share-member-row" key={m.userId}>
+                  <span>
+                    {m.displayName?.trim() || m.email}
+                    {m.userId === userId ? `（${t("share.you")}）` : ""}
+                    {m.isAdmin ? ` · ${t("share.admin")}` : ""}
+                  </span>
+                  {isAdmin && m.userId !== userId ? (
+                    <button
+                      className="text-link"
+                      type="button"
+                      disabled={kickingId === m.userId}
+                      onClick={() => void onKick(m.userId)}
+                    >
+                      {kickingId === m.userId ? t("share.kicking") : t("share.kick")}
+                    </button>
+                  ) : null}
+                </li>
+              ))}
+            </ul>
+            {(trip?.memberCount ?? 1) > 1 || !isAdmin ? (
+              <button
+                className="btn secondary"
+                type="button"
+                disabled={leaving}
+                onClick={() => void onLeaveTrip()}
+              >
+                {leaving ? t("share.leaving") : t("share.leave")}
+              </button>
+            ) : null}
+          </section>
+
+          {isAdmin ? (
+            <form className="stack danger-zone" onSubmit={onDeleteTrip}>
+              <p className="muted">{t("trips.deleteHint")}</p>
+              {(trip?.memberCount ?? 1) > 1 ? (
+                <p className="muted">{t("share.dissolveHint")}</p>
+              ) : null}
+              <p className="confirm-phrase">{t("trips.deleteConfirmPhrase")}</p>
+              <input
+                className="input"
+                value={deletePhrase}
+                onChange={(e) => setDeletePhrase(e.target.value)}
+                autoComplete="off"
+              />
+              <button
+                className="btn danger"
+                type="submit"
+                disabled={deletingTrip || deletePhrase.trim() !== t("trips.deleteConfirmPhrase")}
+              >
+                {deletingTrip ? t("trips.deleting") : t("trips.delete")}
+              </button>
+            </form>
+          ) : null}
         </div>
       ) : null}
 
@@ -573,14 +704,16 @@ export default function TripAlbumPage() {
                 ) : null}
               </div>
             </Link>
-            <button
-              className="film-tile-delete"
-              type="button"
-              disabled={deletingId === obs.id}
-              onClick={(ev) => askDeleteOne(obs.id, ev)}
-            >
-              {deletingId === obs.id ? t("album.deleting") : t("album.delete")}
-            </button>
+            {obs.userId === userId ? (
+              <button
+                className="film-tile-delete"
+                type="button"
+                disabled={deletingId === obs.id}
+                onClick={(ev) => askDeleteOne(obs.id, ev)}
+              >
+                {deletingId === obs.id ? t("album.deleting") : t("album.delete")}
+              </button>
+            ) : null}
           </article>
         ))}
       </div>

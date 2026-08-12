@@ -28,6 +28,19 @@ export type Trip = {
   /** 展示用：手填优先（开且非空）否则自动 */
   dateSummary?: string | null;
   placeSummary?: string | null;
+  memberCount?: number;
+  isAdmin?: boolean;
+  allowJoin?: boolean;
+  /** 仅管理员可见 */
+  inviteCode?: string | null;
+};
+
+export type TripMember = {
+  userId: string;
+  displayName: string | null;
+  email: string;
+  joinedAt: string;
+  isAdmin: boolean;
 };
 
 export type TripUpdate = {
@@ -207,6 +220,12 @@ export const api = {
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ title }),
     }),
+  joinTrip: (code: string) =>
+    request<{ trip: Trip }>("/api/trips/join", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ code }),
+    }),
   getTrip: (id: string) => request<{ trip: Trip }>(`/api/trips/${id}`),
   updateTrip: (id: string, patch: TripUpdate) =>
     request<{ trip: Trip }>(`/api/trips/${id}`, {
@@ -215,10 +234,35 @@ export const api = {
       body: JSON.stringify(patch),
     }),
   deleteTrip: (id: string, confirmPhrase: string) =>
-    request<{ ok: boolean; id: string; deletedObservations: number }>(`/api/trips/${id}`, {
-      method: "DELETE",
+    request<{ ok: boolean; id: string; deletedObservations: number; dissolved?: boolean }>(
+      `/api/trips/${id}`,
+      {
+        method: "DELETE",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ confirmPhrase }),
+      },
+    ),
+  listTripMembers: (id: string) =>
+    request<{ members: TripMember[]; memberLimit: number }>(`/api/trips/${id}/members`),
+  updateTripShare: (id: string, allowJoin: boolean) =>
+    request<{ allowJoin: boolean; inviteCode: string; memberLimit: number }>(
+      `/api/trips/${id}/share`,
+      {
+        method: "PATCH",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ allowJoin }),
+      },
+    ),
+  leaveTrip: (id: string) =>
+    request<{ ok: boolean; result: "left" | "dissolved" }>(`/api/trips/${id}/leave`, {
+      method: "POST",
+      body: "{}",
+    }),
+  kickTripMember: (id: string, userId: string) =>
+    request<{ ok: boolean }>(`/api/trips/${id}/kick`, {
+      method: "POST",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ confirmPhrase }),
+      body: JSON.stringify({ userId }),
     }),
   listTripObservations: (tripId: string) =>
     request<{ observations: Observation[] }>(`/api/trips/${tripId}/observations`),

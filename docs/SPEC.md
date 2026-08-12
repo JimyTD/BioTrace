@@ -35,7 +35,7 @@ apps/web     Vite + React + MapLibre
 apps/mobile  Capacitor Android 薄壳（WebView → 线上站点）
 packages/messages   统一 UI/术语文案（默认 zh）
 apps/api/data/      rarity-* / introduced-index（GRIIS）/ introduced-seed（补丁）
-apps/api/src/rarity/  稀有度主路径（encounter_class → resolveFromEncounter）
+apps/api/src/rarity/  稀有度主路径（encounter_frequency + 硬闸 → resolveFromEncounter）
 apps/api/src/identify/  识图编排（健康状态 / Gemini / 智谱回退）
 data/        本地 DB 与 uploads（gitignore）
 docs/        筹划 + 本实现规格
@@ -128,34 +128,38 @@ docs/        筹划 + 本实现规格
 
 已否决：GBIF occurrence 主路径、`ax+by+cz` 加权、常见种封顶表（§3.6）。
 
-### 3.2 评分方式（分桶 + 偏移分，非纯连续定档）
+### 3.2 评分方式（遇见频次 + 偏移分，非纯连续定档）
 
-**模型不直接输出 N/R/SR…**。它输出遇见桶 + 修正轴；本地：桶→基础档，再算偏移 Δ∈{-1,0,+1}。
+**模型不直接输出 N/R/SR…**，也不再从近义桶名里单选（`scarce`/`hard`/`legend` 靠形容词区分，模型分不开，会偏心某一个）。它只答**一个 0–5 的频次**加两个前置判断；本地：频次→基础档，再算偏移 Δ∈{-1,0,+1}。
 
-1. **GLM 文本**（[`encounter-rubric.ts`](../apps/api/src/rarity/encounter-rubric.ts)，标定与生产同一份）输出：
-   - `encounter_class`：必填枚举（主档）
+1. **GLM 文本**（[`encounter-rubric.ts`](../apps/api/src/rarity/encounter-rubric.ts)，标定与生产同一份）输出（`reason` 必须在最前，让模型先说理再打分）：
+   - `reason`：一句话
+   - `extinct_or_unobtainable`：布尔，**唯一通往 XR 的路径**
+   - `pest_or_weed`：布尔，命中即锁 N
+   - `encounter_frequency`：0–5 必填整数（主信号）
    - `iconic_appeal`：−2…+2（嫌恶 ↔ 标志性向往）
-   - `protection_level`：`none|uncertain|you|class_ii|class_i`
+   - `protection_level`：`none|uncertain|you|class_ii|class_i`（**仅作先验，本地不加分**）
    - `swarm_or_habituated`：0–3
    - `hard_to_photograph`：0–3（可助升档）
-   - `reason`：一句话
 2. **本地** [`resolveFromEncounter`](../apps/api/src/rarity/formula.ts)（[`rarity-score-config.json`](../apps/api/data/rarity-score-config.json)）：
 
-| encounter_class | 基础档 | 备注 |
-|-----------------|--------|------|
-| `pest_weed` | N | 禁止上抬 |
-| `everyday` | N | 偏移可达 R |
-| `place_common` | R | |
-| `noteworthy` | SR | |
-| `scarce` | SSR | |
-| `hard` | UR | |
-| `legend` | LR | 高成群先盖成 UR 再偏移 |
-| `unobtainable` | XR | 锁死，忽略偏移 |
+| encounter_frequency | 含义（写成频次，不写形容词） | 基础档 |
+|---------------------|------------------------------|--------|
+| 0 | 城乡随处，几乎天天能见 | N |
+| 1 | 到对的环境几乎一定见得到 | R |
+| 2 | 一年能碰上几次 | SR |
+| 3 | 几年才碰上一次 | SSR |
+| 4 | 十年难遇，要专门蹲守 | UR |
+| 5 | 一辈子可能只有一次 | LR |
 
-偏移分（权可调）：\(S = 1.2×向往 + 1.0×保护 − 0.4×成群 + 0.7×难拍\)（保护：none/uncertain=0，you=1，ii=1.5，i=2）。  
-\(S\ge 2\Rightarrow +1\)；\(S\le -2\Rightarrow -1\)；否则 0。不能造出 XR。缓存键前缀 `enc3`。
+硬闸优先于频次：`extinct_or_unobtainable` → XR（忽略偏移）；`pest_or_weed` → 锁 N；频次 5 且高成群先盖成 UR 再偏移。
 
-**判定键（写在 rubric，勿写成物种名单）**：旅行收获感优先；会想拍的野鸟/脊椎 ≥ `noteworthy`；保护级高 ≠ 自动 legend。
+偏移分（权可调）：\(S = 1.2×向往 − 0.7×成群 + 0.7×难拍\)。  
+\(S\ge 2\Rightarrow +1\)；\(S\le -2\Rightarrow -1\)；否则 0。偏移造不出 XR。缓存键前缀 `enc4`。
+
+保护级权重置 0：它高不代表更难遇，之前 `class_i` 单轴就够 +1，等于所有国家一级自动升档，与「保护级高 ≠ 自动 legend」冲突。`protectionScore` 表保留以便日后调权。
+
+**判定键（写在 rubric，勿写成物种名单）**：按「多久碰上一次」判断，不按名气与保护级；夜行/隐蔽/深山类群落 3–5；名字冷门 ≠ 罕见，不起眼的小型无脊椎多为 0–1。
 
 档位全序：`N → R → SR → SSR → UR → LR → XR`（文案见 `packages/messages` `rarity.*`）。
 
@@ -168,7 +172,7 @@ docs/        筹划 + 本实现规格
       → resolveRarity（rarity/index.ts）
           → resolveEncounterRarity（rarity/encounter.ts）
               → 有效国家 = countryCode || CN（无国家按中国常见度）
-              → 读缓存 enc3|有效国家|taxon（source=encounter）
+              → 读缓存 enc4|有效国家|taxon（source=encounter）
               → 未命中：ZHIPU 文本模型 + ENCOUNTER_RUBRIC（Prompt 同有效国家）
               → resolveFromEncounter → 写缓存
               → 失败：seed → 默认 R（默认不缓存）
@@ -177,9 +181,9 @@ docs/        筹划 + 本实现规格
 
 | 文件 | 职责 |
 |------|------|
-| [`encounter-rubric.ts`](../apps/api/src/rarity/encounter-rubric.ts) | 分桶判定键（生产=标定） |
+| [`encounter-rubric.ts`](../apps/api/src/rarity/encounter-rubric.ts) | 频次判定键（生产=标定） |
 | [`encounter.ts`](../apps/api/src/rarity/encounter.ts) | 调 GLM、缓存、回退 |
-| [`formula.ts`](../apps/api/src/rarity/formula.ts) | 否决与 ±1 |
+| [`formula.ts`](../apps/api/src/rarity/formula.ts) | 硬闸、频次映射与 ±1 |
 | [`settle/rules.ts`](../apps/api/src/settle/rules.ts) | 结算编排 |
 | [`jobs/identify.ts`](../apps/api/src/jobs/identify.ts) | 识图后触发 settle |
 | [`rarity-score-config.json`](../apps/api/data/rarity-score-config.json) | 基础档与修正参数 |
@@ -188,15 +192,18 @@ docs/        筹划 + 本实现规格
 
 `rarity-seed.json` 是一份物种名单，但**只在 GLM 调用失败后才查**，不参与主路径评分——「禁止物种名单」那条约束针对的是判定键与主路径，不是这个兜底表。别往里加种来「调档」，要调就改 rubric 或 `rarity-score-config.json`。
 
-标定（不进用户请求）：`apps/api` 下 `pnpm exec tsx scripts/rarity-calibrate.ts`；锚点 [`rarity-calibrate-taxa.json`](../apps/api/scripts/rarity-calibrate-taxa.json)。  
-2026-08-07 新 20 锚点（相对用户档）：exact **15/20**，≤1 档 **20/20**。
+标定（不进用户请求）：`apps/api` 下 `pnpm exec tsx scripts/rarity-calibrate.ts --model=<id> --thinking=off --delay-ms=1200`；锚点 [`rarity-calibrate-taxa.json`](../apps/api/scripts/rarity-calibrate-taxa.json)。  
+智谱免费档并发 1、约 1 req/s：`glm-4.7-flash` 开 thinking 必撞 `1302` 限流，标定一律关 thinking。
+
+2026-08-11 频次版 20 锚点（相对 agent 预期，`user` 列待填）：`glm-4-flash` exact 9/20、`glm-4-flash-250414` 7/20、`glm-4.7-flash` 10/20。
+三个模型都把小灵猫/黄喉貂/白唇鹿等判得低于 agent 预期，需先由人确认 `user` 档再继续调权。
 
 ### 3.4 环境变量
 
 | 变量 | 默认 | 含义 |
 |------|------|------|
 | `ZHIPU_API_KEY` | — | encounter 文本 + 识图回退 |
-| `ZHIPU_TEXT_MODEL` | `glm-4-flash` | encounter_class 模型 |
+| `ZHIPU_TEXT_MODEL` | `glm-4-flash` | 稀有度频次判定模型（免费可选 `glm-4-flash-250414` / `glm-4.7-flash`） |
 | `RARITY_CACHE_TTL_DAYS` | `30` | encounter 缓存 TTL |
 | `GBIF_ENABLED` | `1` | 遗留；结算主路径不读 |
 

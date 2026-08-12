@@ -20,8 +20,16 @@ export type VolumeEvalResult = {
   newlyCompleted: Array<{ volumeId: string; titleKey: string }>;
 };
 
-/** After settle/claim: advance all configured volumes for this observation. */
+/** After settle/claim: advance volumes for the observation uploader. */
 export async function evaluateVolumesOnObservation(obs: Observation): Promise<VolumeEvalResult> {
+  return evaluateVolumesForUser(obs.userId, obs);
+}
+
+/** Advance volumes for an arbitrary beneficiary (shared-trip members). */
+export async function evaluateVolumesForUser(
+  userId: string,
+  obs: Observation,
+): Promise<VolumeEvalResult> {
   const newlyLit: VolumeEvalResult["newlyLit"] = [];
   const newlyCompletedVolumeIds: string[] = [];
   const newlyCompleted: VolumeEvalResult["newlyCompleted"] = [];
@@ -44,7 +52,7 @@ export async function evaluateVolumesOnObservation(obs: Observation): Promise<Vo
   const volumes = loadVolumeConfigs();
 
   for (const vol of volumes) {
-    const prev = await readVolumeProgress(obs.userId, vol.id);
+    const prev = await readVolumeProgress(userId, vol.id);
     const litSlots: Record<string, LitSlotEntry> = { ...prev.litSlots };
     const wasComplete = Boolean(prev.completedAt);
     let changed = false;
@@ -79,7 +87,7 @@ export async function evaluateVolumesOnObservation(obs: Observation): Promise<Vo
 
     if (changed) {
       await writeVolumeProgress({
-        userId: obs.userId,
+        userId,
         volumeId: vol.id,
         litSlots,
         completedAt,

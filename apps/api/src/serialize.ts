@@ -15,6 +15,11 @@ export type TripSerializeExtras = {
   coverDisplayUrl?: string | null;
   observationCount?: number;
   summary?: TripSummaryResolved | null;
+  memberCount?: number;
+  isAdmin?: boolean;
+  /** Invite code only when requester is admin. */
+  inviteCode?: string | null;
+  allowJoin?: boolean;
 };
 
 export function serializeTrip(trip: Trip, extras?: TripSerializeExtras) {
@@ -33,6 +38,10 @@ export function serializeTrip(trip: Trip, extras?: TripSerializeExtras) {
     autoPlaceSummary: summary?.autoPlaceSummary ?? null,
     dateSummary: summary?.dateSummary ?? null,
     placeSummary: summary?.placeSummary ?? null,
+    memberCount: extras?.memberCount ?? 1,
+    isAdmin: extras?.isAdmin ?? false,
+    allowJoin: Boolean(trip.allowJoin),
+    inviteCode: extras?.inviteCode ?? null,
   };
 }
 

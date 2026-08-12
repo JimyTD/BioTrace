@@ -1,0 +1,180 @@
+.admin-root {
+  font-family: ui-sans-serif, system-ui, sans-serif;
+  color: #1a1a1a;
+  background: #f4f4f5;
+  min-height: 100vh;
+  margin: 0;
+}
+
+.admin-login {
+  max-width: 360px;
+  margin: 4rem auto;
+  padding: 1.5rem;
+  background: #fff;
+  border: 1px solid #ddd;
+}
+
+.admin-login label {
+  display: block;
+  margin: 0.75rem 0 0.25rem;
+  font-size: 0.875rem;
+}
+
+.admin-login input {
+  width: 100%;
+  box-sizing: border-box;
+  padding: 0.5rem;
+}
+
+.admin-shell {
+  display: grid;
+  grid-template-columns: 180px 1fr;
+  min-height: 100vh;
+}
+
+.admin-side {
+  background: #18181b;
+  color: #fafafa;
+  padding: 1rem 0.75rem;
+}
+
+.admin-side a {
+  display: block;
+  color: #d4d4d8;
+  text-decoration: none;
+  padding: 0.4rem 0.5rem;
+  border-radius: 4px;
+  margin-bottom: 0.15rem;
+  font-size: 0.9rem;
+}
+
+.admin-side a.active,
+.admin-side a:hover {
+  background: #27272a;
+  color: #fff;
+}
+
+.admin-side .brand {
+  font-weight: 700;
+  margin: 0 0.5rem 1rem;
+  font-size: 0.95rem;
+}
+
+.admin-main {
+  padding: 1.25rem 1.5rem 3rem;
+}
+
+.admin-main h1 {
+  margin: 0 0 1rem;
+  font-size: 1.25rem;
+}
+
+.admin-cards {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
+  gap: 0.75rem;
+  margin-bottom: 1.25rem;
+}
+
+.admin-card {
+  background: #fff;
+  border: 1px solid #e4e4e7;
+  padding: 0.75rem;
+}
+
+.admin-card .label {
+  font-size: 0.75rem;
+  color: #71717a;
+}
+
+.admin-card .value {
+  font-size: 1.25rem;
+  font-weight: 600;
+  margin-top: 0.25rem;
+}
+
+.admin-table {
+  width: 100%;
+  border-collapse: collapse;
+  background: #fff;
+  font-size: 0.875rem;
+}
+
+.admin-table th,
+.admin-table td {
+  border: 1px solid #e4e4e7;
+  padding: 0.4rem 0.5rem;
+  text-align: left;
+  vertical-align: top;
+}
+
+.admin-table th {
+  background: #fafafa;
+}
+
+.admin-toolbar {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  margin-bottom: 0.75rem;
+  align-items: center;
+}
+
+.admin-toolbar input,
+.admin-toolbar select,
+.admin-panel input,
+.admin-panel textarea {
+  padding: 0.35rem 0.5rem;
+}
+
+.admin-toolbar button,
+.admin-panel button,
+.admin-login button {
+  padding: 0.35rem 0.75rem;
+  cursor: pointer;
+}
+
+.admin-panel {
+  background: #fff;
+  border: 1px solid #e4e4e7;
+  padding: 1rem;
+  margin-bottom: 1rem;
+  max-width: 720px;
+}
+
+.admin-panel label {
+  display: block;
+  margin-top: 0.75rem;
+  font-size: 0.875rem;
+}
+
+.admin-muted {
+  color: #71717a;
+  font-size: 0.875rem;
+}
+
+.admin-err {
+  color: #b91c1c;
+  margin: 0.5rem 0;
+}
+
+.admin-ok {
+  color: #15803d;
+  margin: 0.5rem 0;
+}
+
+.admin-pre {
+  white-space: pre-wrap;
+  word-break: break-all;
+  font-size: 0.8rem;
+  background: #fafafa;
+  padding: 0.5rem;
+  border: 1px solid #e4e4e7;
+}
+
+.admin-thumb {
+  width: 48px;
+  height: 48px;
+  object-fit: cover;
+  background: #eee;
+}

@@ -8,8 +8,10 @@ import { tripMetaLine } from "../tripMeta";
 export default function TripsPage() {
   const [trips, setTrips] = useState<Trip[]>([]);
   const [title, setTitle] = useState("");
+  const [joinCode, setJoinCode] = useState("");
   const [error, setError] = useState<string | null>(null);
   const [loading, setLoading] = useState(true);
+  const [joining, setJoining] = useState(false);
 
   async function refresh() {
     const { trips: rows } = await api.listTrips();
@@ -35,6 +37,22 @@ export default function TripsPage() {
     }
   }
 
+  async function onJoin(e: FormEvent) {
+    e.preventDefault();
+    if (!joinCode.trim()) return;
+    setError(null);
+    setJoining(true);
+    try {
+      await api.joinTrip(joinCode.trim());
+      setJoinCode("");
+      await refresh();
+    } catch (err) {
+      setError(err instanceof Error ? err.message : t("trips.joinFailed"));
+    } finally {
+      setJoining(false);
+    }
+  }
+
   return (
     <div className="stack page-trips">
       <header className="page-head">
@@ -54,6 +72,23 @@ export default function TripsPage() {
         />
         <button className="btn secondary" type="submit" disabled={!title.trim()}>
           {t("trips.createAction")}
+        </button>
+      </form>
+
+      <form className="trip-create-inline" onSubmit={onJoin}>
+        <label className="sr-only" htmlFor="trip-join-code">
+          {t("trips.joinLabel")}
+        </label>
+        <input
+          id="trip-join-code"
+          className="input"
+          value={joinCode}
+          onChange={(e) => setJoinCode(e.target.value.toUpperCase())}
+          placeholder={t("trips.joinLabel")}
+          autoComplete="off"
+        />
+        <button className="btn secondary" type="submit" disabled={!joinCode.trim() || joining}>
+          {t("trips.joinAction")}
         </button>
       </form>
 
@@ -79,6 +114,11 @@ export default function TripsPage() {
               <div className="trip-cover-meta">
                 <strong>{trip.title}</strong>
                 <span className="muted">{tripMetaLine(trip)}</span>
+                {(trip.memberCount ?? 1) > 1 ? (
+                  <span className="muted">
+                    {t("trips.sharedBadge")} · {t("trips.memberCount", { count: trip.memberCount ?? 1 })}
+                  </span>
+                ) : null}
               </div>
             </Link>
           ))}

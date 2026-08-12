@@ -1,38 +1,57 @@
 import { join } from "node:path";
 import { Hono } from "hono";
-import { and, desc, eq, isNotNull } from "drizzle-orm";
+import { and, desc, eq, inArray, isNotNull, or } from "drizzle-orm";
 import { z } from "zod";
 import { t } from "@biotrace/messages";
 import { requireUser, type Variables } from "../auth.js";
 import { db } from "../db/index.js";
-import { observations } from "../db/schema.js";
+import { observations, type Observation } from "../db/schema.js";
 import { apiError } from "../errors.js";
 import { env } from "../env.js";
 import { enqueueIdentify } from "../jobs/identify.js";
 import { getIdentifyQuota, isPlatformIdentifyQuotaExhausted } from "../services/identify-quota.js";
 import { usesOwnIdentifyKey } from "../services/user-identify.js";
+import { repairCollectionAfterObservationDeleted } from "../services/collection.js";
 import {
-  repairCollectionAfterObservationDeleted,
-  upsertCollectionFromObservation,
-} from "../services/collection.js";
+  grantSharedProgressToAllMembers,
+  revokeCreditsForObservation,
+} from "../services/shared-progress.js";
+import { isTripMember, listTripsForUser } from "../services/trip-share.js";
 import { removeObservationFiles } from "../services/observationFiles.js";
 import { serializeObservation } from "../serialize.js";
 import { validCoords } from "../settle/geo/coords.js";
 import { resolveCountry } from "../settle/country.js";
 import { computeSettle } from "../settle/rules.js";
-import { evaluateVolumesOnObservation } from "../volumes/index.js";
-
 export const observationRoutes = new Hono<{ Variables: Variables }>();
 
 observationRoutes.use("*", requireUser);
 
+async function loadAccessibleObservation(
+  obsId: string,
+  userId: string,
+): Promise<Observation | null> {
+  const row = await db.query.observations.findFirst({
+    where: eq(observations.id, obsId),
+  });
+  if (!row) return null;
+  if (row.userId === userId) return row;
+  if (await isTripMember(row.tripId, userId)) return row;
+  return null;
+}
+
 observationRoutes.get("/", async (c) => {
   const user = c.get("user");
   const mappedOnly = c.req.query("mapped") === "1";
+  const memberTrips = await listTripsForUser(user.id);
+  const tripIds = memberTrips.map((t) => t.id);
+
+  const scope =
+    tripIds.length > 0
+      ? or(eq(observations.userId, user.id), inArray(observations.tripId, tripIds))
+      : eq(observations.userId, user.id);
+
   const rows = await db.query.observations.findMany({
-    where: mappedOnly
-      ? and(eq(observations.userId, user.id), isNotNull(observations.lat), isNotNull(observations.lng))
-      : eq(observations.userId, user.id),
+    where: mappedOnly ? and(scope, isNotNull(observations.lat), isNotNull(observations.lng)) : scope,
     orderBy: [desc(observations.createdAt)],
   });
   return c.json({
@@ -42,9 +61,7 @@ observationRoutes.get("/", async (c) => {
 
 observationRoutes.get("/:id", async (c) => {
   const user = c.get("user");
-  const row = await db.query.observations.findFirst({
-    where: and(eq(observations.id, c.req.param("id")), eq(observations.userId, user.id)),
-  });
+  const row = await loadAccessibleObservation(c.req.param("id"), user.id);
   if (!row) {
     const err = apiError("not found", 404);
     return c.json(err.body, err.status);
@@ -127,7 +144,8 @@ observationRoutes.patch("/:id/location", async (c) => {
   }
 
   if (updated.status === "settled") {
-    await upsertCollectionFromObservation(updated);
+    await revokeCreditsForObservation(updated.id);
+    await grantSharedProgressToAllMembers(updated);
   }
 
   return c.json({
@@ -137,9 +155,7 @@ observationRoutes.patch("/:id/location", async (c) => {
 
 observationRoutes.post("/:id/settle", async (c) => {
   const user = c.get("user");
-  const row = await db.query.observations.findFirst({
-    where: and(eq(observations.id, c.req.param("id")), eq(observations.userId, user.id)),
-  });
+  const row = await loadAccessibleObservation(c.req.param("id"), user.id);
   if (!row) {
     const err = apiError("not found", 404);
     return c.json(err.body, err.status);
@@ -161,23 +177,15 @@ observationRoutes.post("/:id/settle", async (c) => {
   const updated = await db.query.observations.findFirst({
     where: eq(observations.id, row.id),
   });
-  let volumeEval = {
-    newlyLit: [] as Array<{
-      volumeId: string;
-      slotId: string;
-      volumeTitleKey: string;
-      slotTitleKey: string;
-    }>,
-    newlyCompletedVolumeIds: [] as string[],
-    newlyCompleted: [] as Array<{ volumeId: string; titleKey: string }>,
-  };
-  if (updated) {
-    await upsertCollectionFromObservation(updated);
-    volumeEval = await evaluateVolumesOnObservation(updated);
+  if (!updated) {
+    const err = apiError("not found", 404);
+    return c.json(err.body, err.status);
   }
 
+  const volumeEval = await grantSharedProgressToAllMembers(updated, user.id);
+
   return c.json({
-    observation: serializeObservation(updated!, { redactPending: false }),
+    observation: serializeObservation(updated, { redactPending: false }),
     volumes: volumeEval,
   });
 });
@@ -192,6 +200,7 @@ observationRoutes.delete("/:id", async (c) => {
     return c.json(err.body, err.status);
   }
 
+  await revokeCreditsForObservation(row.id);
   await db.delete(observations).where(eq(observations.id, row.id));
   await removeObservationFiles(row.displayPath);
   await repairCollectionAfterObservationDeleted(user.id, row.id, row.taxonKey);
@@ -228,7 +237,7 @@ observationRoutes.post("/:id/reidentify", async (c) => {
     );
   }
 
-  // Drop this observation from collection under the old taxon before rewriting identity
+  await revokeCreditsForObservation(row.id);
   await repairCollectionAfterObservationDeleted(user.id, row.id, row.taxonKey);
 
   const now = new Date();

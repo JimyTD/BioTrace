@@ -17,6 +17,7 @@ export const users = sqliteTable("users", {
 
 export const trips = sqliteTable("trips", {
   id: text("id").primaryKey(),
+  /** Admin user id (succession on admin leave). */
   userId: text("user_id")
     .notNull()
     .references(() => users.id),
@@ -31,7 +32,26 @@ export const trips = sqliteTable("trips", {
   manualDateText: text("manual_date_text"),
   /** 用户手填地点文案（自由文本）。 */
   manualPlaceText: text("manual_place_text"),
+  /** Unique invite code (generated once; not rotated). */
+  inviteCode: text("invite_code").unique(),
+  /** Admin toggle: whether the invite code accepts new members. */
+  allowJoin: integer("allow_join", { mode: "boolean" }),
 });
+
+/** Members of a trip (including admin). */
+export const tripMembers = sqliteTable(
+  "trip_members",
+  {
+    tripId: text("trip_id")
+      .notNull()
+      .references(() => trips.id),
+    userId: text("user_id")
+      .notNull()
+      .references(() => users.id),
+    joinedAt: integer("joined_at", { mode: "timestamp_ms" }).notNull(),
+  },
+  (t) => [primaryKey({ columns: [t.tripId, t.userId] })],
+);
 
 export const observations = sqliteTable(
   "observations",
@@ -85,6 +105,27 @@ export const observations = sqliteTable(
     updatedAt: integer("updated_at", { mode: "timestamp_ms" }).notNull(),
   },
   (t) => [uniqueIndex("observations_user_content_hash").on(t.userId, t.contentHash)],
+);
+
+/**
+ * Tracks图鉴 credit from a shared-trip observation so leave/kick can fully reclaim.
+ * Own-upload solo progress does not need a row here.
+ */
+export const sharedCollectionCredits = sqliteTable(
+  "shared_collection_credits",
+  {
+    userId: text("user_id")
+      .notNull()
+      .references(() => users.id),
+    tripId: text("trip_id")
+      .notNull()
+      .references(() => trips.id),
+    observationId: text("observation_id")
+      .notNull()
+      .references(() => observations.id),
+    taxonKey: text("taxon_key").notNull(),
+  },
+  (t) => [primaryKey({ columns: [t.userId, t.observationId] })],
 );
 
 export const collectionEntries = sqliteTable(
@@ -155,11 +196,35 @@ export const volumeProgress = sqliteTable(
   (t) => [uniqueIndex("volume_progress_user_vol").on(t.userId, t.volumeId)],
 );
 
+/** Separate from end-user `users` — admin console only. */
+export const adminUsers = sqliteTable("admin_users", {
+  id: text("id").primaryKey(),
+  username: text("username").notNull().unique(),
+  passwordHash: text("password_hash").notNull(),
+  createdAt: integer("created_at", { mode: "timestamp_ms" }).notNull(),
+});
+
+export const adminAuditLog = sqliteTable("admin_audit_log", {
+  id: text("id").primaryKey(),
+  adminId: text("admin_id").notNull(),
+  adminUsername: text("admin_username").notNull(),
+  action: text("action").notNull(),
+  targetType: text("target_type"),
+  targetId: text("target_id"),
+  summary: text("summary"),
+  ok: integer("ok", { mode: "boolean" }).notNull(),
+  createdAt: integer("created_at", { mode: "timestamp_ms" }).notNull(),
+});
+
 export type User = typeof users.$inferSelect;
 export type Trip = typeof trips.$inferSelect;
+export type TripMember = typeof tripMembers.$inferSelect;
+export type SharedCollectionCredit = typeof sharedCollectionCredits.$inferSelect;
 export type Observation = typeof observations.$inferSelect;
 export type CollectionEntry = typeof collectionEntries.$inferSelect;
 export type RarityCacheRow = typeof rarityCache.$inferSelect;
 export type PasswordResetToken = typeof passwordResetTokens.$inferSelect;
 export type VolumeProgress = typeof volumeProgress.$inferSelect;
 export type IdentifyDailyUsage = typeof identifyDailyUsage.$inferSelect;
+export type AdminUser = typeof adminUsers.$inferSelect;
+export type AdminAuditLog = typeof adminAuditLog.$inferSelect;

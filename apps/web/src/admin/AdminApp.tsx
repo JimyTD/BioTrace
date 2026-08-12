@@ -1,0 +1,660 @@
+import { useEffect, useState, type FormEvent, type ReactNode } from "react";
+import { Link, NavLink, Navigate, Route, Routes, useNavigate, useParams } from "react-router-dom";
+import { t } from "@biotrace/messages";
+import { adminApi, type AdminUser } from "./api";
+import "./admin.css";
+
+function bytes(n: unknown) {
+  const v = Number(n ?? 0);
+  if (v < 1024) return `${v} B`;
+  if (v < 1024 * 1024) return `${(v / 1024).toFixed(1)} KB`;
+  return `${(v / 1024 / 1024).toFixed(1)} MB`;
+}
+
+function Login({ onOk }: { onOk: (a: AdminUser) => void }) {
+  const [username, setUsername] = useState("");
+  const [password, setPassword] = useState("");
+  const [err, setErr] = useState("");
+  const [busy, setBusy] = useState(false);
+
+  async function submit(e: FormEvent) {
+    e.preventDefault();
+    setBusy(true);
+    setErr("");
+    try {
+      const r = await adminApi.login(username, password);
+      onOk(r.admin);
+    } catch (ex) {
+      setErr(ex instanceof Error ? ex.message : t("admin.invalidCredentials"));
+    } finally {
+      setBusy(false);
+    }
+  }
+
+  return (
+    <div className="admin-root">
+      <form className="admin-login" onSubmit={submit}>
+        <h1>{t("admin.login")}</h1>
+        <label htmlFor="admin-user">{t("admin.username")}</label>
+        <input id="admin-user" value={username} onChange={(e) => setUsername(e.target.value)} autoComplete="username" />
+        <label htmlFor="admin-pass">{t("admin.password")}</label>
+        <input
+          id="admin-pass"
+          type="password"
+          value={password}
+          onChange={(e) => setPassword(e.target.value)}
+          autoComplete="current-password"
+        />
+        {err ? <p className="admin-err">{err}</p> : null}
+        <p style={{ marginTop: "1rem" }}>
+          <button type="submit" disabled={busy}>
+            {busy ? t("admin.loggingIn") : t("admin.loginAction")}
+          </button>
+        </p>
+      </form>
+    </div>
+  );
+}
+
+function Shell({
+  admin,
+  onLogout,
+  children,
+}: {
+  admin: AdminUser;
+  onLogout: () => void;
+  children: ReactNode;
+}) {
+  return (
+    <div className="admin-root admin-shell">
+      <aside className="admin-side">
+        <div className="brand">{t("admin.title")}</div>
+        <NavLink to="/admin" end>
+          {t("admin.nav.dashboard")}
+        </NavLink>
+        <NavLink to="/admin/users">{t("admin.nav.users")}</NavLink>
+        <NavLink to="/admin/observations">{t("admin.nav.observations")}</NavLink>
+        <NavLink to="/admin/secrets">{t("admin.nav.secrets")}</NavLink>
+        <NavLink to="/admin/storage">{t("admin.nav.storage")}</NavLink>
+        <NavLink to="/admin/audit">{t("admin.nav.audit")}</NavLink>
+        <p className="admin-muted" style={{ margin: "1.5rem 0.5rem 0.5rem", color: "#a1a1aa" }}>
+          {admin.username}
+        </p>
+        <button
+          type="button"
+          style={{ margin: "0 0.5rem", width: "calc(100% - 1rem)" }}
+          onClick={async () => {
+            await adminApi.logout().catch(() => undefined);
+            onLogout();
+          }}
+        >
+          {t("admin.logout")}
+        </button>
+      </aside>
+      <main className="admin-main">{children}</main>
+    </div>
+  );
+}
+
+function Dashboard() {
+  const [data, setData] = useState<Record<string, unknown> | null>(null);
+  const [err, setErr] = useState("");
+
+  useEffect(() => {
+    adminApi
+      .dashboard()
+      .then(setData)
+      .catch((e) => setErr(String(e.message ?? e)));
+  }, []);
+
+  if (err) return <p className="admin-err">{err}</p>;
+  if (!data) return <p className="admin-muted">{t("app.loading")}</p>;
+
+  const users = data.users as { total: number; today: number };
+  const byStatus = (data.observationsByStatus ?? {}) as Record<string, number>;
+  const flags = data.flags as Record<string, boolean>;
+  const storage = data.storage as { databaseBytes: number; uploadsBytes: number };
+  const recentFailed = (data.recentFailed ?? []) as Array<{ id: string; error?: string; updatedAt?: string }>;
+
+  return (
+    <>
+      <h1>{t("admin.nav.dashboard")}</h1>
+      <div className="admin-cards">
+        <div className="admin-card">
+          <div className="label">{t("admin.usersTotal")}</div>
+          <div className="value">{users.total}</div>
+        </div>
+        <div className="admin-card">
+          <div className="label">{t("admin.usersToday")}</div>
+          <div className="value">{users.today}</div>
+        </div>
+        <div className="admin-card">
+          <div className="label">{t("admin.identifyQueue")}</div>
+          <div className="value">{String(data.identifyQueue)}</div>
+        </div>
+        <div className="admin-card">
+          <div className="label">{t("admin.identifyUsageToday")}</div>
+          <div className="value">
+            {String(data.identifyUsageToday)} / {String(data.identifyDailyLimit)}
+          </div>
+        </div>
+        <div className="admin-card">
+          <div className="label">DB</div>
+          <div className="value">{bytes(storage?.databaseBytes)}</div>
+        </div>
+        <div className="admin-card">
+          <div className="label">uploads</div>
+          <div className="value">{bytes(storage?.uploadsBytes)}</div>
+        </div>
+      </div>
+      <div className="admin-panel">
+        <strong>{t("admin.obsStatus")}</strong>
+        <pre className="admin-pre">{JSON.stringify(byStatus, null, 2)}</pre>
+        <strong>{t("admin.flags")}</strong>
+        <pre className="admin-pre">{JSON.stringify(flags, null, 2)}</pre>
+        <strong>{t("admin.providers")}</strong>
+        <pre className="admin-pre">{JSON.stringify(data.providers, null, 2)}</pre>
+      </div>
+      <h2>{t("admin.recentFailed")}</h2>
+      <table className="admin-table">
+        <thead>
+          <tr>
+            <th>id</th>
+            <th>error</th>
+            <th>updated</th>
+          </tr>
+        </thead>
+        <tbody>
+          {recentFailed.map((r) => (
+            <tr key={r.id}>
+              <td>
+                <Link to={`/admin/observations/${r.id}`}>{r.id.slice(0, 8)}</Link>
+              </td>
+              <td>{r.error}</td>
+              <td>{r.updatedAt}</td>
+            </tr>
+          ))}
+        </tbody>
+      </table>
+      <p className="admin-toolbar" style={{ marginTop: "1rem" }}>
+        <button type="button" onClick={() => adminApi.clearRarityCache({ all: true }).then(() => alert(t("admin.rarityCleared")))}>
+          {t("admin.clearRarityCache")}
+        </button>
+      </p>
+    </>
+  );
+}
+
+function UsersPage() {
+  const [q, setQ] = useState("");
+  const [items, setItems] = useState<Array<Record<string, unknown>>>([]);
+  const [err, setErr] = useState("");
+
+  async function load(query?: string) {
+    setErr("");
+    try {
+      const r = await adminApi.users(query);
+      setItems(r.items as Array<Record<string, unknown>>);
+    } catch (e) {
+      setErr(e instanceof Error ? e.message : String(e));
+    }
+  }
+
+  useEffect(() => {
+    void load();
+  }, []);
+
+  return (
+    <>
+      <h1>{t("admin.nav.users")}</h1>
+      <div className="admin-toolbar">
+        <input placeholder="email" value={q} onChange={(e) => setQ(e.target.value)} />
+        <button type="button" onClick={() => load(q)}>
+          搜索
+        </button>
+      </div>
+      {err ? <p className="admin-err">{err}</p> : null}
+      <table className="admin-table">
+        <thead>
+          <tr>
+            <th>email</th>
+            <th>昵称</th>
+            <th>今日用量</th>
+            <th>BYOK</th>
+            <th>注册</th>
+          </tr>
+        </thead>
+        <tbody>
+          {items.map((u) => (
+            <tr key={String(u.id)}>
+              <td>
+                <Link to={`/admin/users/${u.id}`}>{String(u.email)}</Link>
+              </td>
+              <td>{String(u.displayName ?? "")}</td>
+              <td>{String(u.identifyUsageToday)}</td>
+              <td>{u.identifyUseOwnKey ? "是" : "否"}</td>
+              <td>{String(u.createdAt ?? "")}</td>
+            </tr>
+          ))}
+        </tbody>
+      </table>
+    </>
+  );
+}
+
+function UserDetailPage() {
+  const { id } = useParams();
+  const nav = useNavigate();
+  const [data, setData] = useState<Record<string, unknown> | null>(null);
+  const [pwd, setPwd] = useState("");
+  const [usage, setUsage] = useState("0");
+  const [msg, setMsg] = useState("");
+
+  async function reload() {
+    if (!id) return;
+    setData(await adminApi.user(id));
+  }
+
+  useEffect(() => {
+    void reload().catch((e) => setMsg(String(e.message ?? e)));
+  }, [id]);
+
+  if (!data) return <p className="admin-muted">{msg || t("app.loading")}</p>;
+  const user = data.user as Record<string, unknown>;
+  const trips = (data.trips ?? []) as Array<{ id: string; title: string; createdAt: string }>;
+  const quota = data.identifyQuota as Record<string, unknown>;
+
+  return (
+    <>
+      <h1>{String(user.email)}</h1>
+      <div className="admin-panel">
+        <pre className="admin-pre">{JSON.stringify({ user, observationsByStatus: data.observationsByStatus, collectionCount: data.collectionCount, identifyQuota: quota }, null, 2)}</pre>
+        <label>重置密码（≥8）</label>
+        <input type="password" value={pwd} onChange={(e) => setPwd(e.target.value)} />
+        <button
+          type="button"
+          onClick={async () => {
+            await adminApi.resetPassword(String(user.id), pwd);
+            setMsg("密码已重置");
+            setPwd("");
+          }}
+        >
+          重置密码
+        </button>
+        <label>当日识图已用次数</label>
+        <input value={usage} onChange={(e) => setUsage(e.target.value)} />
+        <button
+          type="button"
+          onClick={async () => {
+            await adminApi.setUsage(String(user.id), Number(usage));
+            setMsg("用量已更新");
+            await reload();
+          }}
+        >
+          写入用量
+        </button>
+        <p>
+          <button type="button" onClick={() => adminApi.clearByok(String(user.id)).then(reload)}>
+            清除 BYOK
+          </button>{" "}
+          <button
+            type="button"
+            onClick={async () => {
+              if (!confirm(`确认删除用户 ${user.email}？不可恢复`)) return;
+              await adminApi.deleteUser(String(user.id));
+              nav("/admin/users");
+            }}
+          >
+            删除用户
+          </button>
+        </p>
+        {msg ? <p className="admin-ok">{msg}</p> : null}
+      </div>
+      <h2>旅途</h2>
+      <table className="admin-table">
+        <thead>
+          <tr>
+            <th>标题</th>
+            <th>创建</th>
+          </tr>
+        </thead>
+        <tbody>
+          {trips.map((tr) => (
+            <tr key={tr.id}>
+              <td>{tr.title}</td>
+              <td>{tr.createdAt}</td>
+            </tr>
+          ))}
+        </tbody>
+      </table>
+    </>
+  );
+}
+
+function ObservationsPage() {
+  const [status, setStatus] = useState("");
+  const [email, setEmail] = useState("");
+  const [hasError, setHasError] = useState(false);
+  const [items, setItems] = useState<Array<Record<string, unknown>>>([]);
+
+  async function load() {
+    const params: Record<string, string> = {};
+    if (status) params.status = status;
+    if (email.trim()) params.email = email.trim();
+    if (hasError) params.hasError = "1";
+    const r = await adminApi.observations(params);
+    setItems(r.items as Array<Record<string, unknown>>);
+  }
+
+  useEffect(() => {
+    void load();
+  }, []);
+
+  return (
+    <>
+      <h1>{t("admin.nav.observations")}</h1>
+      <div className="admin-toolbar">
+        <select value={status} onChange={(e) => setStatus(e.target.value)}>
+          <option value="">全部状态</option>
+          <option value="analyzing">analyzing</option>
+          <option value="pending_settle">pending_settle</option>
+          <option value="settled">settled</option>
+          <option value="failed">failed</option>
+        </select>
+        <input placeholder="email 精确" value={email} onChange={(e) => setEmail(e.target.value)} />
+        <label>
+          <input type="checkbox" checked={hasError} onChange={(e) => setHasError(e.target.checked)} /> 有 error
+        </label>
+        <button type="button" onClick={() => load()}>
+          筛选
+        </button>
+      </div>
+      <table className="admin-table">
+        <thead>
+          <tr>
+            <th>图</th>
+            <th>status</th>
+            <th>名称</th>
+            <th>error</th>
+            <th>updated</th>
+          </tr>
+        </thead>
+        <tbody>
+          {items.map((o) => (
+            <tr key={String(o.id)}>
+              <td>
+                <img className="admin-thumb" src={String(o.displayUrl)} alt="" />
+              </td>
+              <td>
+                <Link to={`/admin/observations/${o.id}`}>{String(o.status)}</Link>
+              </td>
+              <td>
+                {String(o.commonName ?? "")} {String(o.scientificName ?? "")}
+              </td>
+              <td>{String(o.error ?? "")}</td>
+              <td>{String(o.updatedAt ?? "")}</td>
+            </tr>
+          ))}
+        </tbody>
+      </table>
+    </>
+  );
+}
+
+function ObservationDetailPage() {
+  const { id } = useParams();
+  const nav = useNavigate();
+  const [data, setData] = useState<Record<string, unknown> | null>(null);
+  const [desc, setDesc] = useState("");
+  const [msg, setMsg] = useState("");
+
+  async function reload() {
+    if (!id) return;
+    setData(await adminApi.observation(id));
+  }
+
+  useEffect(() => {
+    void reload().catch((e) => setMsg(String(e.message ?? e)));
+  }, [id]);
+
+  if (!data) return <p className="admin-muted">{msg || t("app.loading")}</p>;
+  const o = data.observation as Record<string, unknown>;
+
+  return (
+    <>
+      <h1>观察 {String(o.id).slice(0, 8)}</h1>
+      <div className="admin-panel">
+        {o.displayUrl ? <img src={String(o.displayUrl)} alt="" style={{ maxWidth: "100%", maxHeight: 320 }} /> : null}
+        <pre className="admin-pre">{JSON.stringify(data, null, 2)}</pre>
+        <div className="admin-toolbar">
+          <button type="button" onClick={() => adminApi.requeue(String(o.id)).then(() => setMsg("已重入队"))}>
+            重入队
+          </button>
+          <button type="button" onClick={() => adminApi.recomputeSettle(String(o.id)).then(reload)}>
+            重算 settle
+          </button>
+          <button
+            type="button"
+            onClick={async () => {
+              if (!confirm("删除观察？")) return;
+              await adminApi.deleteObservation(String(o.id));
+              nav("/admin/observations");
+            }}
+          >
+            删除
+          </button>
+        </div>
+        <label>重识别修正说明</label>
+        <textarea rows={3} value={desc} onChange={(e) => setDesc(e.target.value)} style={{ width: "100%" }} />
+        <button
+          type="button"
+          onClick={async () => {
+            await adminApi.reidentify(String(o.id), desc);
+            setMsg("已触发重识别");
+            await reload();
+          }}
+        >
+          重识别
+        </button>
+        {msg ? <p className="admin-ok">{msg}</p> : null}
+      </div>
+    </>
+  );
+}
+
+function SecretsPage() {
+  const [data, setData] = useState<Record<string, unknown> | null>(null);
+  const [gemini, setGemini] = useState("");
+  const [zhipu, setZhipu] = useState("");
+  const [resend, setResend] = useState("");
+  const [tianditu, setTianditu] = useState("");
+  const [limit, setLimit] = useState("");
+  const [msg, setMsg] = useState("");
+
+  async function reload() {
+    const r = await adminApi.secrets();
+    setData(r);
+    setLimit(String(r.identifyDailyLimit ?? ""));
+  }
+
+  useEffect(() => {
+    void reload();
+  }, []);
+
+  if (!data) return <p className="admin-muted">{t("app.loading")}</p>;
+
+  return (
+    <>
+      <h1>{t("admin.nav.secrets")}</h1>
+      <div className="admin-panel">
+        <p className="admin-muted">留空表示不改；填空字符串并保存可清除 overlay（回落 process env）。不明文回显已有 Key。</p>
+        <pre className="admin-pre">{JSON.stringify(data, null, 2)}</pre>
+        <label>Gemini API Key</label>
+        <input value={gemini} onChange={(e) => setGemini(e.target.value)} placeholder="新值" />
+        <label>智谱 API Key</label>
+        <input value={zhipu} onChange={(e) => setZhipu(e.target.value)} placeholder="新值" />
+        <label>Resend API Key</label>
+        <input value={resend} onChange={(e) => setResend(e.target.value)} placeholder="新值" />
+        <label>天地图服务端 Key</label>
+        <input value={tianditu} onChange={(e) => setTianditu(e.target.value)} placeholder="新值" />
+        <label>IDENTIFY_DAILY_LIMIT</label>
+        <input value={limit} onChange={(e) => setLimit(e.target.value)} />
+        <p>
+          <button
+            type="button"
+            onClick={async () => {
+              const body: Record<string, unknown> = {};
+              if (gemini !== "") body.geminiApiKey = gemini;
+              if (zhipu !== "") body.zhipuApiKey = zhipu;
+              if (resend !== "") body.resendApiKey = resend;
+              if (tianditu !== "") body.tiandituServerKey = tianditu;
+              if (limit !== "") body.identifyDailyLimit = Number(limit);
+              await adminApi.patchSecrets(body);
+              setGemini("");
+              setZhipu("");
+              setResend("");
+              setTianditu("");
+              setMsg("已保存");
+              await reload();
+            }}
+          >
+            保存
+          </button>
+        </p>
+        {msg ? <p className="admin-ok">{msg}</p> : null}
+      </div>
+    </>
+  );
+}
+
+function StoragePage() {
+  const [data, setData] = useState<Record<string, unknown> | null>(null);
+  const [msg, setMsg] = useState("");
+
+  async function reload() {
+    setData(await adminApi.storage());
+  }
+
+  useEffect(() => {
+    void reload();
+  }, []);
+
+  if (!data) return <p className="admin-muted">{t("app.loading")}</p>;
+  const orphans = (data.orphans ?? []) as string[];
+  const missing = (data.missing ?? []) as Array<{ id: string; displayPath: string }>;
+
+  return (
+    <>
+      <h1>{t("admin.nav.storage")}</h1>
+      <div className="admin-cards">
+        <div className="admin-card">
+          <div className="label">DB</div>
+          <div className="value">{bytes(data.databaseBytes)}</div>
+        </div>
+        <div className="admin-card">
+          <div className="label">uploads</div>
+          <div className="value">{bytes(data.uploadsBytes)}</div>
+        </div>
+      </div>
+      <div className="admin-panel">
+        <strong>备份</strong>
+        <pre className="admin-pre">{JSON.stringify(data.backup, null, 2)}</pre>
+        <strong>孤儿目录（{orphans.length}）</strong>
+        <pre className="admin-pre">{orphans.join("\n") || "(无)"}</pre>
+        {orphans.length ? (
+          <button
+            type="button"
+            onClick={async () => {
+              if (!confirm(`删除 ${orphans.length} 个孤儿目录？`)) return;
+              await adminApi.deleteOrphans(orphans);
+              setMsg("已删除");
+              await reload();
+            }}
+          >
+            删除全部孤儿
+          </button>
+        ) : null}
+        <strong>媒体缺失</strong>
+        <pre className="admin-pre">{JSON.stringify(missing, null, 2)}</pre>
+        {msg ? <p className="admin-ok">{msg}</p> : null}
+      </div>
+    </>
+  );
+}
+
+function AuditPage() {
+  const [items, setItems] = useState<Array<Record<string, unknown>>>([]);
+  useEffect(() => {
+    void adminApi.audit().then((r) => setItems(r.items as Array<Record<string, unknown>>));
+  }, []);
+  return (
+    <>
+      <h1>{t("admin.nav.audit")}</h1>
+      <table className="admin-table">
+        <thead>
+          <tr>
+            <th>时间</th>
+            <th>管理员</th>
+            <th>动作</th>
+            <th>目标</th>
+            <th>摘要</th>
+          </tr>
+        </thead>
+        <tbody>
+          {items.map((r) => (
+            <tr key={String(r.id)}>
+              <td>{String(r.createdAt ?? "")}</td>
+              <td>{String(r.adminUsername)}</td>
+              <td>{String(r.action)}</td>
+              <td>
+                {String(r.targetType ?? "")} {String(r.targetId ?? "")}
+              </td>
+              <td>{String(r.summary ?? "")}</td>
+            </tr>
+          ))}
+        </tbody>
+      </table>
+    </>
+  );
+}
+
+export default function AdminApp() {
+  const [admin, setAdmin] = useState<AdminUser | null>(null);
+  const [booting, setBooting] = useState(true);
+
+  useEffect(() => {
+    adminApi
+      .me()
+      .then((r) => setAdmin(r.admin))
+      .catch(() => setAdmin(null))
+      .finally(() => setBooting(false));
+  }, []);
+
+  if (booting) {
+    return (
+      <div className="admin-root">
+        <p className="admin-muted" style={{ padding: "2rem" }}>
+          {t("app.loading")}
+        </p>
+      </div>
+    );
+  }
+
+  if (!admin) return <Login onOk={setAdmin} />;
+
+  return (
+    <Shell admin={admin} onLogout={() => setAdmin(null)}>
+      <Routes>
+        <Route path="/admin" element={<Dashboard />} />
+        <Route path="/admin/users" element={<UsersPage />} />
+        <Route path="/admin/users/:id" element={<UserDetailPage />} />
+        <Route path="/admin/observations" element={<ObservationsPage />} />
+        <Route path="/admin/observations/:id" element={<ObservationDetailPage />} />
+        <Route path="/admin/secrets" element={<SecretsPage />} />
+        <Route path="/admin/storage" element={<StoragePage />} />
+        <Route path="/admin/audit" element={<AuditPage />} />
+        <Route path="*" element={<Navigate to="/admin" replace />} />
+      </Routes>
+    </Shell>
+  );
+}
