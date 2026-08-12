@@ -72,6 +72,20 @@ export const env = {
    * 留空则国别判定只走离线国界数据。
    */
   tiandituServerKey: process.env.TIANDITU_SERVER_KEY?.trim() || "",
+  /**
+   * 天地图**浏览器端** key 链（瓦片）。可由 admin overlay 覆盖；
+   * 也认 VITE_TIANDITU_*（便于与前端构建环境同名）。
+   */
+  tiandituBrowserKey:
+    process.env.TIANDITU_BROWSER_KEY?.trim() || process.env.VITE_TIANDITU_KEY?.trim() || "",
+  tiandituBrowserFallback:
+    process.env.TIANDITU_BROWSER_KEY_FALLBACK?.trim() ||
+    process.env.VITE_TIANDITU_KEY_FALLBACK?.trim() ||
+    "",
+  tiandituBrowserFallback2:
+    process.env.TIANDITU_BROWSER_KEY_FALLBACK_2?.trim() ||
+    process.env.VITE_TIANDITU_KEY_FALLBACK_2?.trim() ||
+    "",
   /** On-demand GBIF occurrence counts for rarity; disable for offline/dev. */
   gbifEnabled: (process.env.GBIF_ENABLED ?? "1") === "1",
   rarityCacheTtlDays: Number(process.env.RARITY_CACHE_TTL_DAYS ?? 30),

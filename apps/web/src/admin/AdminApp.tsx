@@ -573,18 +573,28 @@ function ObservationDetailPage() {
 }
 
 function SecretsPage() {
+  type SlotRow = {
+    id: string;
+    kind: "secret" | "setting";
+    group: string;
+    env: string;
+    configured?: boolean;
+    hint?: string | null;
+    value?: string | number;
+    source?: string;
+  };
+
   const [data, setData] = useState<Record<string, unknown> | null>(null);
-  const [gemini, setGemini] = useState("");
-  const [zhipu, setZhipu] = useState("");
-  const [resend, setResend] = useState("");
-  const [tianditu, setTianditu] = useState("");
-  const [limit, setLimit] = useState("");
+  const [slotId, setSlotId] = useState("");
+  const [value, setValue] = useState("");
   const [msg, setMsg] = useState("");
+  const [busy, setBusy] = useState(false);
 
   async function reload() {
     const r = await adminApi.secrets();
     setData(r);
-    setLimit(String(r.identifyDailyLimit ?? ""));
+    const slots = (r.slots as SlotRow[] | undefined) ?? [];
+    if (!slotId && slots[0]) setSlotId(slots[0].id);
   }
 
   useEffect(() => {
@@ -592,46 +602,150 @@ function SecretsPage() {
   }, []);
 
   if (!data) return <p className="admin-muted">{t("app.loading")}</p>;
+  const slots = (data.slots as SlotRow[] | undefined) ?? [];
+  const selected = slots.find((s) => s.id === slotId) ?? null;
+
+  function slotLabel(id: string) {
+    const key = `admin.secrets.slot.${id}` as const;
+    try {
+      return t(key as Parameters<typeof t>[0]);
+    } catch {
+      return id;
+    }
+  }
+
+  function groupLabel(g: string) {
+    const key = `admin.secrets.group.${g}` as const;
+    try {
+      return t(key as Parameters<typeof t>[0]);
+    } catch {
+      return g;
+    }
+  }
+
+  function sourceLabel(s?: string) {
+    if (s === "overlay") return t("admin.secrets.source.overlay");
+    if (s === "env") return t("admin.secrets.source.env");
+    return t("admin.secrets.source.none");
+  }
 
   return (
     <>
       <h1>{t("admin.nav.secrets")}</h1>
       <div className="admin-panel">
-        <p className="admin-muted">留空表示不改；填空字符串并保存可清除 overlay（回落 process env）。不明文回显已有 Key。</p>
-        <pre className="admin-pre">{JSON.stringify(data, null, 2)}</pre>
-        <label>Gemini API Key</label>
-        <input value={gemini} onChange={(e) => setGemini(e.target.value)} placeholder="新值" />
-        <label>智谱 API Key</label>
-        <input value={zhipu} onChange={(e) => setZhipu(e.target.value)} placeholder="新值" />
-        <label>Resend API Key</label>
-        <input value={resend} onChange={(e) => setResend(e.target.value)} placeholder="新值" />
-        <label>天地图服务端 Key</label>
-        <input value={tianditu} onChange={(e) => setTianditu(e.target.value)} placeholder="新值" />
-        <label>IDENTIFY_DAILY_LIMIT</label>
-        <input value={limit} onChange={(e) => setLimit(e.target.value)} />
-        <p>
+        <p className="admin-muted">{t("admin.secrets.hint")}</p>
+        <table className="admin-table">
+          <thead>
+            <tr>
+              <th>{t("admin.secrets.col.name")}</th>
+              <th>{t("admin.secrets.col.env")}</th>
+              <th>{t("admin.secrets.col.status")}</th>
+              <th>{t("admin.secrets.col.source")}</th>
+            </tr>
+          </thead>
+          <tbody>
+            {slots.map((s) => (
+              <tr key={s.id} className={s.id === slotId ? "admin-row-active" : undefined}>
+                <td>
+                  <button type="button" className="admin-linkish" onClick={() => setSlotId(s.id)}>
+                    [{groupLabel(s.group)}] {slotLabel(s.id)}
+                  </button>
+                </td>
+                <td className="admin-muted">{s.env}</td>
+                <td>
+                  {s.kind === "secret"
+                    ? s.configured
+                      ? `${t("admin.secrets.configured")} ${s.hint ?? ""}`
+                      : t("admin.secrets.notConfigured")
+                    : String(s.value ?? "—")}
+                </td>
+                <td>{sourceLabel(s.source)}</td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </div>
+
+      <div className="admin-panel">
+        <label>{t("admin.secrets.pickSlot")}</label>
+        <select
+          value={slotId}
+          onChange={(e) => {
+            setSlotId(e.target.value);
+            setValue("");
+            setMsg("");
+          }}
+          style={{ display: "block", width: "100%", maxWidth: 480, marginTop: 4 }}
+        >
+          {slots.map((s) => (
+            <option key={s.id} value={s.id}>
+              [{groupLabel(s.group)}] {slotLabel(s.id)}
+            </option>
+          ))}
+        </select>
+        <label>{t("admin.secrets.newValue")}</label>
+        <input
+          value={value}
+          onChange={(e) => setValue(e.target.value)}
+          placeholder={
+            selected?.kind === "secret"
+              ? selected.configured
+                ? String(selected.hint ?? "")
+                : ""
+              : String(selected?.value ?? "")
+          }
+          style={{ display: "block", width: "100%", maxWidth: 480 }}
+        />
+        <p className="admin-toolbar">
           <button
             type="button"
+            disabled={busy || !slotId}
             onClick={async () => {
-              const body: Record<string, unknown> = {};
-              if (gemini !== "") body.geminiApiKey = gemini;
-              if (zhipu !== "") body.zhipuApiKey = zhipu;
-              if (resend !== "") body.resendApiKey = resend;
-              if (tianditu !== "") body.tiandituServerKey = tianditu;
-              if (limit !== "") body.identifyDailyLimit = Number(limit);
-              await adminApi.patchSecrets(body);
-              setGemini("");
-              setZhipu("");
-              setResend("");
-              setTianditu("");
-              setMsg("已保存");
-              await reload();
+              setBusy(true);
+              try {
+                const payloadValue =
+                  selected?.kind === "setting" && selected.id.includes("Limit")
+                    ? Number(value)
+                    : selected?.kind === "setting" && selected.id.includes("Concurrency")
+                      ? Number(value)
+                      : value;
+                await adminApi.patchSecrets({ id: slotId, value: payloadValue });
+                setValue("");
+                setMsg(t("admin.saved"));
+                await reload();
+              } catch (e) {
+                setMsg(e instanceof Error ? e.message : String(e));
+              } finally {
+                setBusy(false);
+              }
             }}
           >
-            保存
+            {t("admin.secrets.save")}
+          </button>
+          <button
+            type="button"
+            disabled={busy || !slotId || selected?.source !== "overlay"}
+            onClick={async () => {
+              setBusy(true);
+              try {
+                await adminApi.patchSecrets({ id: slotId, value: null });
+                setValue("");
+                setMsg(t("admin.secrets.cleared"));
+                await reload();
+              } catch (e) {
+                setMsg(e instanceof Error ? e.message : String(e));
+              } finally {
+                setBusy(false);
+              }
+            }}
+          >
+            {t("admin.secrets.clear")}
           </button>
         </p>
-        {msg ? <p className="admin-ok">{msg}</p> : null}
+        {msg ? <p className={msg === t("admin.saved") || msg === t("admin.secrets.cleared") ? "admin-ok" : "admin-err"}>{msg}</p> : null}
+        {data.sessionSecretIsDefault ? (
+          <p className="admin-err">SESSION_SECRET 仍为默认值（危险，请在服务器 .env 修改，不在此页轮换）</p>
+        ) : null}
       </div>
     </>
   );

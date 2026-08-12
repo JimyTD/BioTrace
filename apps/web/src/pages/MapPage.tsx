@@ -9,9 +9,10 @@ import {
   AUTO_FIT_MAX_ZOOM,
   DEFAULT_MAP_CENTER,
   DEFAULT_MAP_ZOOM,
-  MAP_STYLE,
   USER_MAX_ZOOM,
   attachBasemapFallback,
+  fetchTiandituKeys,
+  mapStyleForKeys,
 } from "../map/style";
 
 export default function MapPage() {
@@ -27,30 +28,41 @@ export default function MapPage() {
 
   useEffect(() => {
     if (!containerRef.current || mapRef.current) return;
-    const map = new maplibregl.Map({
-      container: containerRef.current,
-      style: MAP_STYLE,
-      center: DEFAULT_MAP_CENTER,
-      zoom: DEFAULT_MAP_ZOOM,
-      maxZoom: USER_MAX_ZOOM,
-    });
-    map.addControl(new maplibregl.NavigationControl({ visualizePitch: false }), "top-right");
-    map.on("load", () => setMapReady(true));
-    map.on("click", () => {
-      setSelected(null);
-      popupRef.current?.remove();
-    });
+    let cancelled = false;
+    let detachFallback: (() => void) | undefined;
+    let map: Map | null = null;
 
-    const detachFallback = attachBasemapFallback(map);
+    void (async () => {
+      const keys = await fetchTiandituKeys();
+      if (cancelled || !containerRef.current) return;
+      map = new maplibregl.Map({
+        container: containerRef.current,
+        style: mapStyleForKeys(keys),
+        center: DEFAULT_MAP_CENTER,
+        zoom: DEFAULT_MAP_ZOOM,
+        maxZoom: USER_MAX_ZOOM,
+      });
+      map.addControl(new maplibregl.NavigationControl({ visualizePitch: false }), "top-right");
+      map.on("load", () => {
+        if (!cancelled) setMapReady(true);
+      });
+      map.on("click", () => {
+        setSelected(null);
+        popupRef.current?.remove();
+      });
 
-    mapRef.current = map;
+      detachFallback = attachBasemapFallback(map, keys);
+      mapRef.current = map;
+    })();
+
     return () => {
+      cancelled = true;
       markersRef.current.forEach((m) => m.remove());
       markersRef.current = [];
       popupRef.current?.remove();
       popupRef.current = null;
-      detachFallback();
-      map.remove();
+      detachFallback?.();
+      map?.remove();
       mapRef.current = null;
       setMapReady(false);
     };

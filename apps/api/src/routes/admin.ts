@@ -13,7 +13,7 @@ import {
   type AdminVariables,
 } from "../admin/auth.js";
 import { listAudit, writeAudit } from "../admin/audit.js";
-import { applyRuntimeSecrets, patchRuntimeSecrets, secretsPublicView } from "../admin/runtime-secrets.js";
+import { applyRuntimeSecrets, patchRuntimeSecretSlot, secretsPublicView } from "../admin/runtime-secrets.js";
 import {
   backupStatus,
   deleteOrphanUploadDir,
@@ -678,23 +678,30 @@ adminRoutes.patch("/secrets", async (c) => {
   const admin = c.get("admin");
   const body = z
     .object({
-      geminiApiKey: z.string().nullable().optional(),
-      zhipuApiKey: z.string().nullable().optional(),
-      resendApiKey: z.string().nullable().optional(),
-      tiandituServerKey: z.string().nullable().optional(),
-      geminiModel: z.string().min(1).optional(),
-      zhipuVlModel: z.string().min(1).optional(),
-      zhipuTextModel: z.string().min(1).optional(),
-      identifyDailyLimit: z.number().int().min(0).max(1_000_000).optional(),
-      identifyConcurrency: z.number().int().min(1).max(16).optional(),
+      id: z.string().min(1),
+      value: z.union([z.string(), z.number(), z.null()]),
     })
     .parse(await c.req.json());
 
-  patchRuntimeSecrets(body);
+  try {
+    patchRuntimeSecretSlot(body);
+  } catch (e) {
+    const msg = e instanceof Error ? e.message : String(e);
+    if (msg.startsWith("unknown_secret_slot")) {
+      return c.json({ error: t("admin.secrets.unknownSlot"), code: "unknown_slot" }, 400);
+    }
+    if (msg === "invalid_number") {
+      return c.json({ error: t("admin.secrets.invalidNumber"), code: "invalid_number" }, 400);
+    }
+    throw e;
+  }
+
   await writeAudit({
     admin,
     action: "secrets.patch",
-    summary: Object.keys(body).join(","),
+    targetType: "secret_slot",
+    targetId: body.id,
+    summary: body.value === null || body.value === "" ? "clear" : "set",
   });
   return c.json(secretsPublicView());
 });

@@ -8,10 +8,11 @@ import { hasValidCoords } from "../geo";
 import {
   DEFAULT_MAP_CENTER,
   DEFAULT_MAP_ZOOM,
-  MAP_STYLE,
   PIN_EXISTING_ZOOM,
   USER_MAX_ZOOM,
   attachBasemapFallback,
+  fetchTiandituKeys,
+  mapStyleForKeys,
 } from "../map/style";
 
 export default function PinLocationPage() {
@@ -31,7 +32,10 @@ export default function PinLocationPage() {
 
     async function boot() {
       try {
-        const { observation } = await api.getObservation(id);
+        const [{ observation }, keys] = await Promise.all([
+          api.getObservation(id),
+          fetchTiandituKeys(),
+        ]);
         if (cancelled || !containerRef.current) return;
 
         const hasPoint = hasValidCoords(observation.lat, observation.lng);
@@ -42,13 +46,13 @@ export default function PinLocationPage() {
 
         map = new maplibregl.Map({
           container: containerRef.current,
-          style: MAP_STYLE,
+          style: mapStyleForKeys(keys),
           center,
           zoom,
           maxZoom: USER_MAX_ZOOM,
         });
         map.addControl(new maplibregl.NavigationControl({ visualizePitch: false }), "top-right");
-        detachFallback = attachBasemapFallback(map);
+        detachFallback = attachBasemapFallback(map, keys);
 
         const refreshCenter = () => {
           const c = map!.getCenter();

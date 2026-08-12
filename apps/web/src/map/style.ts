@@ -19,11 +19,14 @@ function parseKeys(...chunks: Array<string | undefined>): string[] {
   return out;
 }
 
-export const TIANDITU_KEYS = parseKeys(
+export const TIANDITU_KEYS_BUILD = parseKeys(
   import.meta.env.VITE_TIANDITU_KEY,
   import.meta.env.VITE_TIANDITU_KEY_FALLBACK,
   import.meta.env.VITE_TIANDITU_KEY_FALLBACK_2,
 );
+
+/** @deprecated 构建期静态列表；运行时请用 fetchTiandituKeys / resolveMapStyle */
+export const TIANDITU_KEYS = TIANDITU_KEYS_BUILD;
 
 /** @deprecated 兼容旧引用；等价于 TIANDITU_KEYS[0] */
 export const TIANDITU_KEY = TIANDITU_KEYS[0];
@@ -125,9 +128,27 @@ export const SIMPLE_STYLE: StyleSpecification = {
   ],
 };
 
-export const MAP_STYLE: StyleSpecification = TIANDITU_KEYS[0]
-  ? tiandituStyle(TIANDITU_KEYS[0])
+export const MAP_STYLE: StyleSpecification = TIANDITU_KEYS_BUILD[0]
+  ? tiandituStyle(TIANDITU_KEYS_BUILD[0])
   : SIMPLE_STYLE;
+
+/** Prefer API-served keys (admin overlay); fall back to build-time VITE_* keys. */
+export async function fetchTiandituKeys(): Promise<string[]> {
+  try {
+    const res = await fetch("/api/map/tianditu-keys", { credentials: "same-origin" });
+    if (res.ok) {
+      const data = (await res.json()) as { keys?: string[] };
+      if (Array.isArray(data.keys) && data.keys.length > 0) return data.keys;
+    }
+  } catch {
+    /* fall through */
+  }
+  return [...TIANDITU_KEYS_BUILD];
+}
+
+export function mapStyleForKeys(keys: string[]): StyleSpecification {
+  return keys[0] ? tiandituStyle(keys[0]!) : SIMPLE_STYLE;
+}
 
 /** 自动定位的落点缩放上限。压低可显著省瓦片配额（自动行为不必钻太深）。 */
 export const AUTO_FIT_MAX_ZOOM = 10;
@@ -151,8 +172,8 @@ const TILE_ERROR_LIMIT = 6;
  * 回落链：主天地图 key → 备用 key（可多个）→ 内置简图。
  * 不再使用 OpenFreeMap（OSM 国界/地名在大陆不合规）。
  */
-export function attachBasemapFallback(map: Map): () => void {
-  if (TIANDITU_KEYS.length === 0) return () => undefined;
+export function attachBasemapFallback(map: Map, keys: string[] = TIANDITU_KEYS_BUILD): () => void {
+  if (keys.length === 0) return () => undefined;
 
   /** 当前正在用的天地图 key 下标；`keys.length` 表示已落到简图。 */
   let keyIndex = 0;
@@ -160,7 +181,7 @@ export function attachBasemapFallback(map: Map): () => void {
   let detached = false;
 
   const onError = (ev: unknown) => {
-    if (detached || keyIndex >= TIANDITU_KEYS.length) return;
+    if (detached || keyIndex >= keys.length) return;
     // MapLibre 的 error 事件在瓦片失败时带 sourceId，但类型定义里没有它。
     const detail = ev as { sourceId?: string; error?: { status?: number } };
     if (detail.sourceId && !detail.sourceId.startsWith("tianditu")) return;
@@ -172,14 +193,14 @@ export function attachBasemapFallback(map: Map): () => void {
     const next = keyIndex + 1;
     tileErrors = 0;
 
-    if (next < TIANDITU_KEYS.length) {
+    if (next < keys.length) {
       console.warn(
-        `[map] 天地图浏览器端 key ${keyIndex + 1}/${TIANDITU_KEYS.length} 瓦片连续失败` +
-          `（最近 status=${status}），切换备用 key ${next + 1}/${TIANDITU_KEYS.length}。` +
+        `[map] 天地图浏览器端 key ${keyIndex + 1}/${keys.length} 瓦片连续失败` +
+          `（最近 status=${status}），切换备用 key ${next + 1}/${keys.length}。` +
           `可能原因：日配额耗尽、域名白名单不匹配、或网络故障。`,
       );
       keyIndex = next;
-      map.setStyle(tiandituStyle(TIANDITU_KEYS[next]!));
+      map.setStyle(tiandituStyle(keys[next]!));
       return;
     }
 
@@ -187,7 +208,7 @@ export function attachBasemapFallback(map: Map): () => void {
       `[map] 天地图全部浏览器端 key 均失败（最近 status=${status}），` +
         `已回落内置简图（Natural Earth 国界 / China POV，无国名注记）。`,
     );
-    keyIndex = TIANDITU_KEYS.length;
+    keyIndex = keys.length;
     map.setStyle(SIMPLE_STYLE);
   };
 

@@ -47,7 +47,7 @@ export const adminApi = {
     req(`/observations/${id}/recompute-settle`, { method: "POST" }),
   deleteObservation: (id: string) => req(`/observations/${id}`, { method: "DELETE" }),
   secrets: () => req<Record<string, unknown>>("/secrets"),
-  patchSecrets: (body: Record<string, unknown>) =>
+  patchSecrets: (body: { id: string; value: string | number | null }) =>
     req("/secrets", { method: "PATCH", body: JSON.stringify(body) }),
   storage: () => req<Record<string, unknown>>("/storage"),
   deleteOrphans: (ids: string[]) =>

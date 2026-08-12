@@ -15,6 +15,7 @@ import { appRoutes } from "./routes/app.js";
 import { authRoutes } from "./routes/auth.js";
 import { collectionRoutes } from "./routes/collection.js";
 import { fileRoutes } from "./routes/files.js";
+import { mapRoutes } from "./routes/map.js";
 import { observationRoutes } from "./routes/observations.js";
 import { tripRoutes } from "./routes/trips.js";
 import { volumeRoutes } from "./routes/volumes.js";
@@ -53,6 +54,7 @@ app.route("/api/observations", observationRoutes);
 app.route("/api/collection", collectionRoutes);
 app.route("/api/volumes", volumeRoutes);
 app.route("/api/files", fileRoutes);
+app.route("/api/map", mapRoutes);
 app.route("/api/admin", adminRoutes);
 
 app.onError((err, c) => {
