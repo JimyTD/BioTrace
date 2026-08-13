@@ -31,6 +31,18 @@ function rankLabel(rank: (typeof RANK_ORDER)[number]) {
   return t(`rank.${rank}` as MessageKey);
 }
 
+function identifyProviderName(provider: string | null | undefined) {
+  if (!provider) return null;
+  const key = `identify.provider.${provider}` as MessageKey;
+  const name = t(key);
+  return name === key ? provider : name;
+}
+
+function locationText(obs: Observation) {
+  if (!hasValidCoords(obs.lat, obs.lng)) return t("detail.noGps");
+  return obs.locationLabel || `${obs.lat!.toFixed(5)}, ${obs.lng!.toFixed(5)}`;
+}
+
 function TaxonomyList({ taxonomy }: { taxonomy: Taxonomy }) {
   const rows = RANK_ORDER.map((rank) => {
     const node = taxonomy[rank];
@@ -136,7 +148,6 @@ export default function ObservationDetailPage() {
       const { observation } = await api.reidentifyObservation(obs.id, description);
       setConfirmKind(null);
       setObs(observation);
-      // Stay on same observation; after done it will go pending_settle → settle page via poll
     } catch (e) {
       setError(e instanceof Error ? e.message : t("detail.reidentifyFailed"));
     } finally {
@@ -146,9 +157,9 @@ export default function ObservationDetailPage() {
 
   if (error && !obs) {
     return (
-      <div className="stack">
-        <Link className="btn secondary" to="/">
-          {t("detail.back")}
+      <div className="stack detail-page">
+        <Link className="text-link" to="/">
+          ← {t("nav.trips")}
         </Link>
         <p className="error">{error}</p>
       </div>
@@ -170,53 +181,28 @@ export default function ObservationDetailPage() {
       (obs.status === "failed" && obs.settleTier === "none"));
   const showTaxonomy = obs.status === "settled" || (obs.status === "failed" && !notCollectible);
   const failHint = obs.status === "failed" ? identifyErrorHint(obs.error) : null;
+  const hasCoords = hasValidCoords(obs.lat, obs.lng);
+  const identifyName = identifyProviderName(obs.identifyProvider);
 
   return (
     <div className="stack detail-page">
-      <div className="row">
-        <Link className="btn secondary" to={`/trips/${obs.tripId}`}>
-          {t("detail.back")}
+      <div className="album-head-row">
+        <Link className="text-link" to={`/trips/${obs.tripId}`}>
+          ← {t("album.back")}
         </Link>
-        <Link className="btn secondary" to="/map">
+        <Link className="text-link" to="/map">
           {t("nav.map")}
         </Link>
       </div>
 
+      <img className="detail-hero" src={heroUrl(obs)} alt={title} />
+
       <header className="page-head">
         <h1 className="page-title">{title}</h1>
         {!notCollectible && obs.scientificName ? (
-          <p className="lede">{obs.scientificName}</p>
+          <p className="lede detail-scientific">{obs.scientificName}</p>
         ) : null}
-        {obs.identifyProvider ? (
-          <p className="muted identify-by">
-            {t("identify.by", {
-              name: (() => {
-                const key = `identify.provider.${obs.identifyProvider}` as MessageKey;
-                const name = t(key);
-                return name === key ? obs.identifyProvider : name;
-              })(),
-            })}
-          </p>
-        ) : null}
-      </header>
-
-      <img className="detail-hero" src={heroUrl(obs)} alt={title} />
-
-      <div className="panel stack">
-        <div className="row">
-          {obs.status === "analyzing" ? (
-            <span className="badge warn">{t("status.analyzing")}</span>
-          ) : null}
-          {obs.status === "settled" ? <span className="badge">{t("status.settled")}</span> : null}
-          {obs.status === "failed" ? (
-            <span className="badge danger">
-              {notCollectible
-                ? t("status.notCollectible")
-                : failedCoarse
-                  ? t("status.tooCoarse")
-                  : t("status.failed")}
-            </span>
-          ) : null}
+        <div className="detail-marks">
           {!notCollectible && obs.rarity ? (
             <span className={`rarity-badge rarity-${obs.rarity}`}>
               {t(`rarity.${obs.rarity}` as MessageKey)}
@@ -227,90 +213,106 @@ export default function ObservationDetailPage() {
               {t("album.reliableTo", { rank: formatRank(obs.finestReliableRank) })}
             </span>
           ) : null}
+          {obs.status === "analyzing" ? (
+            <span className="badge warn">{t("status.analyzing")}</span>
+          ) : null}
+          {obs.status === "failed" ? (
+            <span className="badge danger">
+              {notCollectible
+                ? t("status.notCollectible")
+                : failedCoarse
+                  ? t("status.tooCoarse")
+                  : t("status.failed")}
+            </span>
+          ) : null}
         </div>
+      </header>
 
-        {obs.status === "failed" ? (
-          <div className="stack" style={{ gap: 4 }}>
-            <p className="error">{identifyErrorPrimary(obs.error)}</p>
-            {failHint ? <p className="muted">{failHint}</p> : null}
+      {notice ? <p className="muted">{notice}</p> : null}
+      {error ? <p className="error">{error}</p> : null}
+
+      {obs.status === "failed" ? (
+        <div className="detail-fail">
+          <p className="error">{identifyErrorPrimary(obs.error)}</p>
+          {failHint ? <p className="muted">{failHint}</p> : null}
+        </div>
+      ) : null}
+
+      {!notCollectible ? (
+        <section className="detail-block">
+          <h2 className="section-title">{t("detail.blurb")}</h2>
+          {obs.blurb ? (
+            <p className="blurb">{obs.blurb}</p>
+          ) : (
+            <p className="muted">{t("detail.noBlurb")}</p>
+          )}
+          {obs.description ? <p className="muted detail-caption">{obs.description}</p> : null}
+        </section>
+      ) : obs.description ? (
+        <p className="muted detail-caption">{obs.description}</p>
+      ) : null}
+
+      {!notCollectible && obs.alertIntroduced ? (
+        <div className="alert-banner">
+          <strong>{t("settle.alertIntroduced")}</strong>
+          <p>{t("settle.alertHint")}</p>
+        </div>
+      ) : null}
+
+      {showTaxonomy ? (
+        <section className="detail-block">
+          <h2 className="section-title">{t("detail.taxonomy")}</h2>
+          {obs.taxonomy ? (
+            <TaxonomyList taxonomy={obs.taxonomy} />
+          ) : (
+            <p className="muted">{t("detail.noTaxonomy")}</p>
+          )}
+        </section>
+      ) : null}
+
+      <section className="detail-block detail-record">
+        <h2 className="section-title">{t("detail.record")}</h2>
+        <dl className="detail-facts">
+          <div className="detail-fact">
+            <dt>{t("detail.capturedAt")}</dt>
+            <dd>{obs.capturedAt ? new Date(obs.capturedAt).toLocaleString() : "—"}</dd>
           </div>
-        ) : null}
-
-        {!notCollectible && obs.alertIntroduced ? (
-          <div className="alert-banner">
-            <strong>{t("settle.alertIntroduced")}</strong>
-            <p>{t("settle.alertHint")}</p>
-          </div>
-        ) : null}
-
-        {!obs.locationPrecise && obs.status === "settled" ? (
-          <p className="muted">{t("settle.locationImprecise")}</p>
-        ) : null}
-
-        {showTaxonomy ? (
-          <div>
-            <h2 className="section-title">{t("detail.taxonomy")}</h2>
-            {obs.taxonomy ? (
-              <TaxonomyList taxonomy={obs.taxonomy} />
-            ) : (
-              <p className="muted">{t("detail.noTaxonomy")}</p>
-            )}
-          </div>
-        ) : null}
-
-        {!notCollectible ? (
-          <div>
-            <h2 className="section-title">{t("detail.blurb")}</h2>
-            {obs.blurb ? (
-              <p className="blurb">{obs.blurb}</p>
-            ) : (
-              <p className="muted">{t("detail.noBlurb")}</p>
-            )}
-          </div>
-        ) : null}
-
-        {obs.notes ? (
-          <div>
-            <h2 className="section-title">{t("detail.notes")}</h2>
-            <p className="muted">{obs.notes}</p>
-          </div>
-        ) : null}
-
-        <div className="muted stack" style={{ gap: 4 }}>
-          <span>
-            {t("detail.capturedAt")}：
-            {obs.capturedAt ? new Date(obs.capturedAt).toLocaleString() : "—"}
-          </span>
-          <div className="row" style={{ alignItems: "center" }}>
-            <span className="stack" style={{ gap: 2, flex: 1 }}>
-              <span>
-                {t("detail.location")}：
-                {hasValidCoords(obs.lat, obs.lng)
-                  ? obs.locationLabel ||
-                    `${obs.lat!.toFixed(5)}, ${obs.lng!.toFixed(5)}`
-                  : t("detail.noGps")}
-              </span>
-              {hasValidCoords(obs.lat, obs.lng) && obs.locationLabel ? (
-                <span className="muted" style={{ fontSize: "0.85em" }}>
+          <div className="detail-fact">
+            <dt>{t("detail.location")}</dt>
+            <dd>
+              <span>{locationText(obs)}</span>
+              <Link className="text-link" to={`/observations/${obs.id}/pin`}>
+                {hasCoords ? t("detail.changeLocation") : t("detail.setLocation")}
+              </Link>
+              {hasCoords && obs.locationLabel ? (
+                <span className="muted">
                   {obs.lat!.toFixed(5)}, {obs.lng!.toFixed(5)}
                 </span>
               ) : null}
-            </span>
-            <Link
-              className={hasValidCoords(obs.lat, obs.lng) ? "btn secondary" : "btn"}
-              to={`/observations/${obs.id}/pin`}
-            >
-              {hasValidCoords(obs.lat, obs.lng)
-                ? t("detail.changeLocation")
-                : t("detail.setLocation")}
-            </Link>
+              {!obs.locationPrecise && obs.status === "settled" ? (
+                <span className="muted">{t("settle.locationImprecise")}</span>
+              ) : null}
+            </dd>
           </div>
-        </div>
-      </div>
+          {identifyName ? (
+            <div className="detail-fact">
+              <dt>{t("detail.identify")}</dt>
+              <dd>{identifyName}</dd>
+            </div>
+          ) : null}
+          {obs.notes ? (
+            <div className="detail-fact">
+              <dt>{t("detail.notes")}</dt>
+              <dd>{obs.notes}</dd>
+            </div>
+          ) : null}
+        </dl>
+      </section>
 
-      <div className="row">
+      <div className="detail-danger danger-zone">
         <button
-          className="btn secondary"
+          className="text-link"
+          type="button"
           disabled={busy}
           onClick={() => setConfirmKind("reidentify")}
         >
@@ -319,15 +321,14 @@ export default function ObservationDetailPage() {
             : t("detail.reidentify")}
         </button>
         <button
-          className="btn danger"
+          className="text-link danger"
+          type="button"
           disabled={deleting || reidentifying}
           onClick={() => setConfirmKind("delete")}
         >
           {deleting ? t("detail.deleting") : t("detail.delete")}
         </button>
       </div>
-      {notice ? <p className="muted">{notice}</p> : null}
-      {error ? <p className="error">{error}</p> : null}
 
       <ConfirmDialog
         open={confirmKind === "delete"}

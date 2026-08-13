@@ -80,7 +80,7 @@ docs/        筹划 + 本实现规格
 
 - **API**：`PATCH /api/observations/:id/location`，body `{ lat, lng }`（有限、纬 ±90、经 ±180）。写坐标后，若已有 `finestReliableRank` 则复用 `computeSettle` 重算 `countryCode` / `countrySource` / `locationPrecise` / `alertIntroduced` / `rarity`（及 settle 同类字段）；**不改** `status`、不开包、不 `enqueueIdentify`。已 `settled` 时 `upsertCollectionFromObservation` 刷新图鉴档位。
 - **analyzing 竞态**：允许补标只写坐标；[`jobs/identify.ts`](../apps/api/src/jobs/identify.ts) 在 `computeSettle` 前再读库内最新 lat/lng（Prompt 仍可用上传闭包坐标）。
-- **UI**：观察详情「设位置 / 改位置」→ `/observations/:id/pin`；**挪地图 + 中心准星 +「确认此处」**（不手打地址）。底图与足迹图共用 [`map/style.ts`](../apps/web/src/map/style.ts)（缩放上限；瓦片失败：备用天地图 key → 内置简图）。
+- **UI**：观察详情大图在上；名字 / 学名 / 稀有度徽章（色底）/ 简介 / 分类 / 记录（时间、位置、鉴定、坐标）均展开；重识别与删除沉底。「设位置 / 改位置」→ `/observations/:id/pin`；**挪地图 + 中心准星 +「确认此处」**（不手打地址）。底图与足迹图共用 [`map/style.ts`](../apps/web/src/map/style.ts)（缩放上限；瓦片失败：备用天地图 key → 内置简图）。
 - **文案**：`detail.setLocation` 等，均在 `packages/messages`。
 
 验收：无 GPS 可识图开包；补标后上地图；海外点国别正确（如福冈→JP）；俗名/分类不变。
@@ -144,30 +144,41 @@ docs/        筹划 + 本实现规格
    - `reason`：一句话
    - `extinct_or_unobtainable`：布尔，**唯一通往 XR 的路径**
    - `pest_or_weed`：布尔，命中即锁 N
-   - `encounter_frequency`：0–5 必填整数（主信号）
-   - `iconic_appeal`：−2…+2（嫌恶 ↔ 标志性向往）
+   - `encounter_frequency`：0–5 必填整数（主信号）。rubric 要求**先在 reason 里落一个次数**
+     （「这十年大约能遇到几次」）再据此挑档——只给形容词档名时模型会把大批物种堆到中间档
+   - `iconic_appeal`：0–3（想不想拍，与稀有度无关）
    - `protection_level`：`none|uncertain|you|class_ii|class_i`（**仅作先验，本地不加分**）
    - `swarm_or_habituated`：0–3
    - `hard_to_photograph`：0–3（可助升档）
 2. **本地** [`resolveFromEncounter`](../apps/api/src/rarity/formula.ts)（[`rarity-score-config.json`](../apps/api/data/rarity-score-config.json)）：
 
-| encounter_frequency | 含义（写成频次，不写形容词） | 基础档 |
-|---------------------|------------------------------|--------|
-| 0 | 城乡随处，几乎天天能见 | N |
-| 1 | 到对的环境几乎一定见得到 | R |
-| 2 | 一年能碰上几次 | SR |
-| 3 | 几年才碰上一次 | SSR |
-| 4 | 十年难遇，要专门蹲守 | UR |
-| 5 | 一辈子可能只有一次 | LR |
+| encounter_frequency | 含义（普通旅行者十年内遇到几次） | 基础档 |
+|---------------------|----------------------------------|--------|
+| 0 | 数不清，几乎每次出门都见得到 | R |
+| 1 | 几十次，走到它的生境基本都在 | R |
+| 2 | 五到二十次 | SR |
+| 3 | 一到三次 | SSR |
+| 4 | 十年零次，得专门蹲守或进保护区 | UR |
+| 5 | 专程去也基本无缘 | LR |
+
+频次最低端落 `R` 而非 `N`：`N` 由害虫闸专管，普通常见物种落 `N` 是误伤（实测击中同型巴蜗牛、纹藤壶）。
 
 硬闸优先于频次：`extinct_or_unobtainable` → XR（忽略偏移）；`pest_or_weed` → 锁 N；频次 5 且高成群先盖成 UR 再偏移。
+害虫闸写成**正面四类清单**（卫生害虫吸血类 / 仓储农作物害虫害螨 / 家栖鼠类 / 路旁荒地杂草）并显式排除中大型野生脊椎动物——
+只写「小型有害生物」时野猪会被锁进 N，只写收窄条件时狗尾草、棉蚜又会漏出去。
 
 偏移分（权可调）：\(S = 1.2×向往 − 0.7×成群 + 0.7×难拍\)。  
-\(S\ge 2\Rightarrow +1\)；\(S\le -2\Rightarrow -1\)；否则 0。偏移造不出 XR。缓存键前缀 `enc4`。
+\(S\ge 1.6\Rightarrow +1\)；\(S\le -1.6\Rightarrow -1\)；否则 0。偏移造不出 XR。缓存键前缀 `enc4`。
+
+阈值 1.6 由离线拟合定（[`rarity-tune.mjs`](../apps/api/scripts/rarity-tune.mjs) 穷举映射与权重，不调模型）：
+1.4–1.8 是一段平台，2.0 少两个命中且整体偏低。**膨胀上限就是这 ±1 档**——差两档以上不按膨胀处理，
+按错误查根因（详见 [`docs/wip/稀有度评分-改进.md`](wip/稀有度评分-改进.md) §3.2）。
 
 保护级权重置 0：它高不代表更难遇，之前 `class_i` 单轴就够 +1，等于所有国家一级自动升档，与「保护级高 ≠ 自动 legend」冲突。`protectionScore` 表保留以便日后调权。
 
-**判定键（写在 rubric，勿写成物种名单）**：按「多久碰上一次」判断，不按名气与保护级；夜行/隐蔽/深山类群落 3–5；名字冷门 ≠ 罕见，不起眼的小型无脊椎多为 0–1。
+**判定键（写在 rubric，勿写成物种名单）**：按「多久碰上一次」判断，不按名气与保护级；一律按野外自然种群评，
+笼养养殖栽培个体不算；夜行/隐蔽/深山类群落 3–5；两道自查题——「当地人一辈子见过它的野生个体吗」（基本没有 → 4–5）、
+「走到对的生境翻开石头就能找到吗」（能 → 0–1，但分布狭窄 / 成虫期极短 / 受保护的无脊椎不适用此条）。
 
 档位全序：`N → R → SR → SSR → UR → LR → XR`（文案见 `packages/messages` `rarity.*`）。
 
@@ -200,18 +211,34 @@ docs/        筹划 + 本实现规格
 
 `rarity-seed.json` 是一份物种名单，但**只在 GLM 调用失败后才查**，不参与主路径评分——「禁止物种名单」那条约束针对的是判定键与主路径，不是这个兜底表。别往里加种来「调档」，要调就改 rubric 或 `rarity-score-config.json`。
 
-标定（不进用户请求）：`apps/api` 下 `pnpm exec tsx scripts/rarity-calibrate.ts --model=<id> --thinking=off --delay-ms=1200`；锚点 [`rarity-calibrate-taxa.json`](../apps/api/scripts/rarity-calibrate-taxa.json)。  
+标定（不进用户请求）：`apps/api` 下
+`pnpm exec tsx scripts/rarity-calibrate.ts --model=<id> --thinking=off --samples=3 --delay-ms=1200`；
+锚点 [`rarity-calibrate-taxa.json`](../apps/api/scripts/rarity-calibrate-taxa.json)（39 项，`user` / `agent` 双参考列）。  
 智谱免费档并发 1、约 1 req/s：`glm-4.7-flash` 开 thinking 必撞 `1302` 限流，标定一律关 thinking。
 
-2026-08-11 频次版 20 锚点（相对 agent 预期，`user` 列待填）：`glm-4-flash` exact 9/20、`glm-4-flash-250414` 7/20、`glm-4.7-flash` 10/20。
-三个模型都把小灵猫/黄喉貂/白唇鹿等判得低于 agent 预期，需先由人确认 `user` 档再继续调权。
+每项**采样三次取中位数**（各轴独立取中位数，布尔轴取多数），并记录三次之间的分歧度：
+稀有度每物种只判一次且永久缓存，承担得起；分歧 ≥2 级说明模型对该物种没谱，进复核队列。
+
+验收看四个量，不看单一命中率——命中率把「高一档」「低一档」算同一种错，也把「排序全乱」与「排序全对但整体偏移」
+算同一种错，看不出该调哪里：
+
+| 指标 | 回答什么 | 该动什么 |
+|------|---------|---------|
+| 排序相关 ρ | 排序对不对 | 低 → 改 rubric 或换模型 |
+| 平均偏移 | 整体偏没偏、偏哪边 | 大 → 改映射表或阈值 |
+| 各频次档计数 | 分布有没有塌 | 塌 → 改档位判据（形容词换可数次数） |
+| 采样分歧 | 是噪声还是系统偏差 | 大 → 提高采样次数 |
+
+2026-08-13 · 39 锚点 · `glm-4-flash-250414` · 采样 3 次（对 `user` 列 20 项）：
+排序 ρ 0.967、平均偏移 −0.10 档、命中 16/20、**全部 20 项落在一档以内**。
+同一天三轮的演进与每一处改动的因果见 [`docs/wip/稀有度评分-改进.md`](wip/稀有度评分-改进.md) §3.7。
 
 ### 3.4 环境变量
 
 | 变量 | 默认 | 含义 |
 |------|------|------|
 | `ZHIPU_API_KEY` | — | encounter 文本 + 识图回退 |
-| `ZHIPU_TEXT_MODEL` | `glm-4-flash` | 稀有度频次判定模型（免费可选 `glm-4-flash-250414` / `glm-4.7-flash`） |
+| `ZHIPU_TEXT_MODEL` | `glm-4-flash-250414` | 稀有度频次判定模型（另一免费可选 `glm-4.7-flash`）。旧默认 `glm-4-flash` 守不住「只输出 JSON」，会回 Python 代码 |
 | `RARITY_CACHE_TTL_DAYS` | `30` | encounter 缓存 TTL |
 | `GBIF_ENABLED` | `1` | 遗留；结算主路径不读 |
 

@@ -1,0 +1,211 @@
+<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>观察详情 · 改前 / 改后</title>
+    <style>
+      :root {
+        --ink: #1f2a24; --muted: #6b6258; --line: rgba(42, 64, 51, 0.14);
+        --card: #faf8f3; --nav-bg: #f3efe7; --nav-active-ink: #9a4030;
+        --plate: #efe6d6; --danger: #8b2e2e; --shadow: 0 10px 26px rgba(42, 36, 28, 0.1);
+        --font: "Segoe UI", "PingFang SC", "Microsoft YaHei", sans-serif;
+        --bg:
+          radial-gradient(900px 480px at 8% -8%, rgba(212, 168, 120, 0.22), transparent 55%),
+          linear-gradient(180deg, #f3efe7, #ebe6dc);
+      }
+      * { box-sizing: border-box; }
+      body { margin: 0; padding: 16px 12px 40px; font-family: var(--font); color: var(--ink); background: #d9d0c2; }
+      h1.doc { margin: 0 0 8px; font-size: 1.15rem; }
+      .note { margin: 0 0 10px; color: #5a5248; font-size: 0.92rem; max-width: 58ch; }
+      .diffs { margin: 0 0 16px; padding-left: 1.2em; color: #5a5248; font-size: 0.92rem; max-width: 58ch; }
+      .phones { display: flex; flex-wrap: wrap; gap: 18px; }
+      .phone {
+        width: min(100%, 360px); height: 640px; background: var(--bg);
+        border-radius: 22px; border: 1px solid rgba(42,36,28,.18);
+        box-shadow: 0 16px 40px rgba(42,36,28,.14);
+        display: grid; grid-template-rows: auto 1fr auto; overflow: hidden;
+      }
+      .topbar { padding: 12px 16px 10px; background: var(--nav-bg); border-bottom: 1px solid var(--line); font-weight: 700; }
+      .content { min-height: 0; overflow-y: auto; padding: 16px; display: grid; gap: 12px; align-content: start; }
+      .label { margin: 0 0 6px; font-size: 0.8rem; font-weight: 700; color: #5a5248; }
+      .row { display: flex; gap: 8px; }
+      .head-row { display: flex; justify-content: space-between; color: var(--muted); font-size: 0.9rem; }
+      .title { margin: 0; font-size: 1.45rem; font-weight: 700; }
+      .lede { margin: 0; color: var(--muted); font-size: 0.95rem; }
+      .sci { font-style: italic; }
+      .meta { margin: 0; color: var(--muted); font-size: 0.92rem; }
+      .rarity {
+        display: inline-flex; width: fit-content; padding: 5px 12px; border-radius: 8px;
+        font-size: 0.88rem; font-weight: 700; background: #ebe9e3; color: #4a4f48;
+      }
+      .marks { display: flex; flex-wrap: wrap; align-items: center; gap: 8px; }
+      .block { display: grid; gap: 4px; }
+      .h2 { margin: 0; font-size: 1rem; }
+      .tax { margin: 0; padding: 0; list-style: none; display: grid; gap: 4px; font-size: 0.88rem; }
+      .tax span { color: #9a4030; font-weight: 600; display: inline-block; width: 1.6em; }
+      .btn {
+        border: 1px solid var(--line); border-radius: 10px; padding: 8px 12px;
+        font: inherit; background: #fffaf2; color: var(--ink);
+      }
+      .btn.danger { background: var(--danger); color: #fff; border: 0; }
+      .hero {
+        width: 100%; height: 168px; object-fit: cover; border-radius: 12px;
+        background: var(--plate); border: 1px solid var(--line);
+      }
+      .hero.after {
+        height: 148px; object-fit: contain; border-radius: 6px;
+        background: #e7dfd2; box-shadow: var(--shadow);
+      }
+      .panel {
+        display: grid; gap: 10px; padding: 14px; border-radius: 14px;
+        background: var(--card); border: 1px solid var(--line);
+      }
+      .badge {
+        display: inline-flex; width: fit-content; padding: 2px 8px; border-radius: 8px;
+        font-size: 0.75rem; background: #ebe3d6; color: #3a322c;
+      }
+      .muted, .blurb { color: var(--muted); font-size: 0.92rem; margin: 0; }
+      .blurb { color: var(--ink); line-height: 1.5; }
+      .fold {
+        display: flex; justify-content: space-between; align-items: center;
+        padding: 12px 0; border-top: 1px solid var(--line); font-weight: 600;
+      }
+      .fold span { color: var(--muted); font-weight: 400; }
+      .facts { display: grid; gap: 8px; margin: 0; }
+      .fact { display: grid; grid-template-columns: 5.2rem 1fr; gap: 8px; font-size: 0.9rem; }
+      .fact dt { margin: 0; color: var(--muted); font-size: 0.8rem; }
+      .fact dd { margin: 0; display: grid; gap: 2px; }
+      .record { padding-top: 10px; border-top: 1px solid var(--line); }
+      .danger-row {
+        display: flex; gap: 16px; padding-top: 10px;
+        border-top: 1px dashed rgba(139, 46, 46, 0.35); color: var(--muted); font-size: 0.92rem;
+      }
+      .danger-row .del { color: var(--danger); }
+      .nav {
+        display: grid; grid-template-columns: repeat(4, 1fr);
+        padding: 0 4px 8px; background: var(--nav-bg); border-top: 1px solid var(--line);
+      }
+      .nav span {
+        position: relative; text-align: center; font-size: 0.86rem;
+        color: var(--muted); padding: 12px 6px 14px;
+      }
+      .nav span.on { color: var(--nav-active-ink); font-weight: 700; }
+      .nav span.on::after {
+        content: ""; position: absolute; left: 22%; right: 22%; bottom: 6px;
+        height: 2px; border-radius: 1px; background: var(--nav-active-ink);
+      }
+    </style>
+  </head>
+  <body>
+    <h1 class="doc">观察详情 · 改前 / 改后</h1>
+    <p class="note">
+      还是老相册的一张：大图、名字、简介、分类、记录都摊开。记录只做分组，不折叠。
+      稀有度用色底徽章。「已结算」仍不贴。
+    </p>
+    <ul class="diffs">
+      <li>顶栏两个按钮改成文字链：回旅途、去地图</li>
+      <li>大图在名字上面；稀有度徽章带底色；不贴「已结算」</li>
+      <li>简介、分类、记录都展开；改位置是文字链</li>
+      <li>重识别 · 删除沉底，不是一对主按钮</li>
+    </ul>
+    <div class="phones">
+      <div>
+        <p class="label">改前</p>
+        <div class="phone">
+          <div class="topbar">BioTrace</div>
+          <div class="content">
+            <div class="row">
+              <button class="btn" type="button">返回</button>
+              <button class="btn" type="button">地图</button>
+            </div>
+            <h2 class="title">弹涂鱼</h2>
+            <p class="lede">Periophthalmus modestus</p>
+            <p class="muted">鉴定：iNaturalist</p>
+            <img class="hero" src="../trips/_sample-photo.jpg" alt="" />
+            <div class="panel">
+              <div class="row">
+                <span class="badge">已结算</span>
+                <span class="badge">N</span>
+                <span class="muted">可靠到：种</span>
+              </div>
+              <div>
+                <h3 class="h2">分类</h3>
+                <p class="muted">动物界 · 脊索动物门 · 辐鳍鱼纲 · …</p>
+              </div>
+              <div>
+                <h3 class="h2">简介</h3>
+                <p class="muted">潮间带泥滩上常见的两栖鱼类，退潮后会在滩面上跳来跳去。</p>
+              </div>
+              <p class="muted">拍摄时间：2024/8/12 16:21</p>
+              <div class="row" style="align-items:center;justify-content:space-between">
+                <span class="muted">位置：厦门 · 海沧</span>
+                <button class="btn" type="button">改位置</button>
+              </div>
+            </div>
+            <div class="row">
+              <button class="btn" type="button">重新识别</button>
+              <button class="btn danger" type="button">删除这条观察</button>
+            </div>
+          </div>
+          <div class="nav">
+            <span class="on">旅途</span><span>地图</span><span>图鉴</span><span>我的</span>
+          </div>
+        </div>
+      </div>
+      <div>
+        <p class="label">改后 · 第一屏</p>
+        <div class="phone">
+          <div class="topbar">BioTrace</div>
+          <div class="content">
+            <div class="head-row"><span>← 旅途</span><span>地图</span></div>
+            <img class="hero after" src="../trips/_sample-photo.jpg" alt="" />
+            <h2 class="title">弹涂鱼</h2>
+            <p class="lede sci">Periophthalmus modestus</p>
+            <div class="marks">
+              <span class="rarity">N · 常见</span>
+              <span class="meta">可靠到：种</span>
+            </div>
+            <div class="block">
+              <h3 class="h2">简介</h3>
+              <p class="blurb">潮间带泥滩上常见的两栖鱼类，退潮后会在滩面上跳来跳去。</p>
+            </div>
+            <div class="block">
+              <h3 class="h2">分类</h3>
+              <ul class="tax">
+                <li><span>纲</span>辐鳍鱼纲</li>
+                <li><span>目</span>虾虎鱼目</li>
+                <li><span>科</span>弹涂鱼科</li>
+                <li><span>种</span>弹涂鱼</li>
+              </ul>
+            </div>
+            <div class="block record">
+              <h3 class="h2">记录</h3>
+              <dl class="facts">
+                <div class="fact">
+                  <dt>拍摄时间</dt>
+                  <dd>2024/8/12 16:21</dd>
+                </div>
+                <div class="fact">
+                  <dt>位置</dt>
+                  <dd>厦门 · 海沧<span class="meta">改位置</span></dd>
+                </div>
+                <div class="fact">
+                  <dt>鉴定</dt>
+                  <dd>iNaturalist</dd>
+                </div>
+              </dl>
+            </div>
+            <div class="danger-row">
+              <span>重新识别</span>
+              <span class="del">删除这条观察</span>
+            </div>
+          </div>
+          <div class="nav">
+            <span class="on">旅途</span><span>地图</span><span>图鉴</span><span>我的</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </body>
+</html>

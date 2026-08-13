@@ -1198,11 +1198,103 @@ a {
 
 .detail-hero {
   width: 100%;
-  max-height: min(70vh, 520px);
+  max-height: min(62vh, 480px);
   object-fit: contain;
-  border-radius: var(--radius-lg);
+  border-radius: var(--radius-sm);
   background: var(--surface-wash);
   border: 1px solid var(--line);
+  box-shadow: var(--shadow);
+}
+
+.detail-page .lede {
+  margin: 4px 0 0;
+}
+
+.detail-scientific {
+  font-style: italic;
+}
+
+.detail-marks {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 8px;
+  margin-top: 10px;
+}
+
+.detail-page .rarity-badge {
+  font-size: 0.88rem;
+  padding: 5px 12px;
+}
+
+.detail-block {
+  display: grid;
+  gap: 8px;
+}
+
+.detail-block .section-title {
+  margin: 0;
+}
+
+.detail-caption {
+  margin: 0;
+}
+
+.detail-fail {
+  display: grid;
+  gap: 4px;
+}
+
+.detail-record {
+  padding-top: 12px;
+  border-top: 1px solid var(--line);
+}
+
+.detail-facts {
+  display: grid;
+  gap: 10px;
+  margin: 0;
+}
+
+.detail-fact {
+  display: grid;
+  grid-template-columns: 5.5rem 1fr;
+  gap: 10px;
+  align-items: start;
+}
+
+.detail-fact dt {
+  margin: 0;
+  font-size: 0.8rem;
+  color: var(--muted);
+}
+
+.detail-fact dd {
+  margin: 0;
+  display: grid;
+  gap: 4px;
+  justify-items: start;
+}
+
+.detail-danger {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 16px;
+  margin-top: 8px;
+}
+
+.text-link:disabled {
+  opacity: 0.45;
+  cursor: not-allowed;
+}
+
+.text-link.danger {
+  color: var(--danger);
+}
+
+.text-link.danger:hover:not(:disabled) {
+  color: var(--danger);
+  opacity: 0.82;
 }
 
 .section-title {

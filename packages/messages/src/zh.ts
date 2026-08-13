@@ -316,6 +316,8 @@ export const zh = {
   "detail.back": "返回",
   "detail.title": "观察详情",
   "detail.taxonomy": "分类",
+  "detail.record": "记录",
+  "detail.identify": "鉴定",
   "detail.blurb": "简介",
   "detail.noBlurb": "暂无简介。",
   "detail.noTaxonomy": "暂无分类信息。",
