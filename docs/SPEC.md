@@ -208,10 +208,11 @@ docs/        筹划 + 本实现规格
       → resolveRarity（rarity/index.ts）
           → resolveEncounterRarity（rarity/encounter.ts）
               → 有效国家 = countryCode || CN（无国家按中国常见度）
-              → 读缓存 enc4|有效国家|taxon（source=encounter）
+              → 读缓存 enc4|有效国家|taxon（source=encounter；不过期）
               → 未命中：ZHIPU 文本模型 + ENCOUNTER_RUBRIC（Prompt 同有效国家）
               → resolveFromEncounter → 写缓存
               → 失败：seed → 默认 R（默认不缓存）
+              → 改档：管理后台删缓存或重判；规则语义变了则升 `enc4` 前缀
   → 观测写入 rarity，状态 pending_settle → 开包
 ```
 
@@ -235,6 +236,7 @@ docs/        筹划 + 本实现规格
 
 每项**采样三次取中位数**（各轴独立取中位数，布尔轴取多数），并记录三次之间的分歧度：
 稀有度每物种只判一次且永久缓存，承担得起；分歧 ≥2 级说明模型对该物种没谱，进复核队列。
+缓存不设 TTL。纠错走管理后台（删单条 / 重判并回写观察与图鉴）；判定规则语义变化时把键前缀从 `enc4` 升一档。
 
 验收看四个量，不看单一命中率——命中率把「高一档」「低一档」算同一种错，也把「排序全乱」与「排序全对但整体偏移」
 算同一种错，看不出该调哪里：
@@ -262,7 +264,6 @@ docs/        筹划 + 本实现规格
 |------|------|------|
 | `ZHIPU_API_KEY` | — | encounter 文本 + 识图回退 |
 | `ZHIPU_TEXT_MODEL` | `glm-4-flash-250414` | 稀有度频次判定模型（另一免费可选 `glm-4.7-flash`）。旧默认 `glm-4-flash` 守不住「只输出 JSON」，会回 Python 代码 |
-| `RARITY_CACHE_TTL_DAYS` | `30` | encounter 缓存 TTL |
 | `GBIF_ENABLED` | `1` | 遗留；结算主路径不读 |
 
 ### 3.5 引入/关注种警示（与稀有度分通道）

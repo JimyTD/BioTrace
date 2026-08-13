@@ -1,7 +1,7 @@
-import { useEffect, useState, type FormEvent, type ReactNode } from "react";
+import { Fragment, useEffect, useState, type FormEvent, type ReactNode } from "react";
 import { Link, NavLink, Navigate, Route, Routes, useNavigate, useParams } from "react-router-dom";
 import { t, formatRank } from "@biotrace/messages";
-import { adminApi, type AdminUser } from "./api";
+import { adminApi, type AdminUser, type RarityCacheEntry, type RarityCacheItem } from "./api";
 import {
   auditActionLabel,
   auditTargetTypeLabel,
@@ -112,6 +112,7 @@ function Shell({
         </NavLink>
         <NavLink to="/admin/users">{t("admin.nav.users")}</NavLink>
         <NavLink to="/admin/observations">{t("admin.nav.observations")}</NavLink>
+        <NavLink to="/admin/rarity-cache">{t("admin.nav.rarityCache")}</NavLink>
         <NavLink to="/admin/secrets">{t("admin.nav.secrets")}</NavLink>
         <NavLink to="/admin/storage">{t("admin.nav.storage")}</NavLink>
         <NavLink to="/admin/audit">{t("admin.nav.audit")}</NavLink>
@@ -223,6 +224,13 @@ function Dashboard() {
         <div className="admin-card">
           <div className="label">{t("admin.storage.uploads")}</div>
           <div className="value">{bytes(storage?.uploadsBytes)}</div>
+        </div>
+        <div className="admin-card">
+          <div className="label">{t("admin.nav.rarityCache")}</div>
+          <div className="value">{Number(data.rarityCacheCount ?? 0)}</div>
+          <div className="admin-muted" style={{ marginTop: "0.35rem" }}>
+            <Link to="/admin/rarity-cache">{t("admin.rarityCache.open")}</Link>
+          </div>
         </div>
       </div>
 
@@ -377,16 +385,6 @@ function Dashboard() {
           })}
         </tbody>
       </table>
-      <p className="admin-toolbar" style={{ marginTop: "1rem" }}>
-        <button
-          type="button"
-          onClick={() =>
-            adminApi.clearRarityCache({ all: true }).then(() => alert(t("admin.rarityCleared")))
-          }
-        >
-          {t("admin.clearRarityCache")}
-        </button>
-      </p>
     </>
   );
 }
@@ -1253,6 +1251,224 @@ function AuditPage() {
   );
 }
 
+function RarityCachePage() {
+  const [q, setQ] = useState("");
+  const [items, setItems] = useState<RarityCacheItem[]>([]);
+  const [total, setTotal] = useState(0);
+  const [err, setErr] = useState("");
+  const [msg, setMsg] = useState("");
+  const [busyKey, setBusyKey] = useState<string | null>(null);
+  const [expanded, setExpanded] = useState<string | null>(null);
+  const [detail, setDetail] = useState<RarityCacheEntry | null>(null);
+
+  async function load(query = q) {
+    setErr("");
+    const r = await adminApi.rarityCache({ q: query.trim() });
+    setItems(r.items);
+    setTotal(r.total);
+  }
+
+  useEffect(() => {
+    load("").catch((e) => setErr(String(e.message ?? e)));
+  }, []);
+
+  async function toggleObs(key: string) {
+    if (expanded === key) {
+      setExpanded(null);
+      setDetail(null);
+      return;
+    }
+    setErr("");
+    const entry = await adminApi.rarityCacheEntry(key);
+    setExpanded(key);
+    setDetail(entry);
+  }
+
+  async function remove(key: string) {
+    if (!confirm(t("admin.rarityCache.deleteConfirm"))) return;
+    setBusyKey(key);
+    setErr("");
+    setMsg("");
+    try {
+      await adminApi.deleteRarityCache(key);
+      setMsg(t("admin.rarityCache.deleted"));
+      if (expanded === key) {
+        setExpanded(null);
+        setDetail(null);
+      }
+      await load();
+    } catch (e) {
+      setErr(e instanceof Error ? e.message : String(e));
+    } finally {
+      setBusyKey(null);
+    }
+  }
+
+  async function rescore(key: string) {
+    if (!confirm(t("admin.rarityCache.rescoreConfirm"))) return;
+    setBusyKey(key);
+    setErr("");
+    setMsg("");
+    try {
+      const r = await adminApi.rescoreRarityCache(key);
+      setMsg(
+        t("admin.rarityCache.rescored", {
+          previous: r.previousRarity ?? "—",
+          next: r.rarity,
+          obs: r.observationsUpdated,
+          col: r.collectionsUpdated,
+        }),
+      );
+      await load();
+      if (expanded === key) {
+        setDetail(await adminApi.rarityCacheEntry(key));
+      }
+    } catch (e) {
+      setErr(e instanceof Error ? e.message : String(e));
+    } finally {
+      setBusyKey(null);
+    }
+  }
+
+  async function clearAll() {
+    if (!confirm(t("admin.rarityCache.clearAllConfirm", { count: total }))) return;
+    setBusyKey("*");
+    setErr("");
+    setMsg("");
+    try {
+      await adminApi.clearRarityCache({ all: true });
+      setMsg(t("admin.rarityCleared"));
+      setExpanded(null);
+      setDetail(null);
+      await load();
+    } catch (e) {
+      setErr(e instanceof Error ? e.message : String(e));
+    } finally {
+      setBusyKey(null);
+    }
+  }
+
+  return (
+    <>
+      <h1>{t("admin.nav.rarityCache")}</h1>
+      <p className="admin-muted">{t("admin.rarityCache.hint")}</p>
+      <form
+        className="admin-toolbar"
+        onSubmit={(e) => {
+          e.preventDefault();
+          load().catch((ex) => setErr(String(ex.message ?? ex)));
+        }}
+      >
+        <input
+          value={q}
+          onChange={(e) => setQ(e.target.value)}
+          placeholder={t("admin.rarityCache.search")}
+          style={{ minWidth: "16rem" }}
+        />
+        <button type="submit">{t("admin.search")}</button>
+        <button type="button" onClick={() => void clearAll()} disabled={busyKey !== null || total === 0}>
+          {t("admin.clearRarityCache")}
+        </button>
+        <span className="admin-muted">{t("admin.col.count")}: {total}</span>
+      </form>
+      {err ? <p className="admin-err">{err}</p> : null}
+      {msg ? <p className="admin-ok">{msg}</p> : null}
+      {items.length === 0 ? (
+        <p className="admin-muted">{t("admin.rarityCache.empty")}</p>
+      ) : (
+        <table className="admin-table">
+          <thead>
+            <tr>
+              <th>{t("admin.rarityCache.taxon")}</th>
+              <th>{t("admin.rarityCache.country")}</th>
+              <th>{t("admin.obs.rarity")}</th>
+              <th>{t("admin.rarityCache.source")}</th>
+              <th>{t("admin.rarityCache.fetchedAt")}</th>
+              <th>{t("admin.rarityCache.obsCount")}</th>
+              <th>{t("admin.col.action")}</th>
+            </tr>
+          </thead>
+          <tbody>
+            {items.map((row) => {
+              const busy = busyKey === row.cacheKey || busyKey === "*";
+              return (
+                <Fragment key={row.cacheKey}>
+                  <tr className={expanded === row.cacheKey ? "admin-row-active" : undefined}>
+                    <td>
+                      <div>{dash(row.taxonKey)}</div>
+                      <div className="admin-muted" style={{ wordBreak: "break-all" }}>
+                        {row.cacheKey}
+                      </div>
+                    </td>
+                    <td>{dash(row.countryCode)}</td>
+                    <td>{rarityLabel(row.rarity)}</td>
+                    <td>{row.source}</td>
+                    <td>{formatAdminTime(row.fetchedAt)}</td>
+                    <td>{row.observationCount}</td>
+                    <td>
+                      <div className="admin-toolbar" style={{ margin: 0 }}>
+                        <button type="button" disabled={busy} onClick={() => void toggleObs(row.cacheKey)}>
+                          {expanded === row.cacheKey
+                            ? t("admin.rarityCache.hideObs")
+                            : t("admin.rarityCache.showObs")}
+                        </button>
+                        <button type="button" disabled={busy} onClick={() => void rescore(row.cacheKey)}>
+                          {busyKey === row.cacheKey
+                            ? t("admin.rarityCache.rescoring")
+                            : t("admin.rarityCache.rescore")}
+                        </button>
+                        <button type="button" disabled={busy} onClick={() => void remove(row.cacheKey)}>
+                          {t("admin.rarityCache.delete")}
+                        </button>
+                      </div>
+                    </td>
+                  </tr>
+                  {expanded === row.cacheKey && detail?.cacheKey === row.cacheKey ? (
+                    <tr>
+                      <td colSpan={7}>
+                        {detail.observations.length === 0 ? (
+                          <p className="admin-muted">{t("admin.none")}</p>
+                        ) : (
+                          <table className="admin-table">
+                            <thead>
+                              <tr>
+                                <th>{t("admin.col.obsId")}</th>
+                                <th>{t("admin.obs.commonName")}</th>
+                                <th>{t("admin.obs.scientificName")}</th>
+                                <th>{t("admin.obs.rarity")}</th>
+                                <th>{t("admin.col.status")}</th>
+                                <th>{t("admin.obs.country")}</th>
+                              </tr>
+                            </thead>
+                            <tbody>
+                              {detail.observations.map((o) => (
+                                <tr key={o.id}>
+                                  <td>
+                                    <Link to={`/admin/observations/${o.id}`}>{o.id.slice(0, 8)}</Link>
+                                  </td>
+                                  <td>{dash(o.commonName)}</td>
+                                  <td>{dash(o.scientificName)}</td>
+                                  <td>{rarityLabel(o.rarity)}</td>
+                                  <td>{obsStatusLabel(o.status)}</td>
+                                  <td>{dash(o.countryCode)}</td>
+                                </tr>
+                              ))}
+                            </tbody>
+                          </table>
+                        )}
+                      </td>
+                    </tr>
+                  ) : null}
+                </Fragment>
+              );
+            })}
+          </tbody>
+        </table>
+      )}
+    </>
+  );
+}
+
 export default function AdminApp() {
   const [admin, setAdmin] = useState<AdminUser | null>(null);
   const [booting, setBooting] = useState(true);
@@ -1285,6 +1501,7 @@ export default function AdminApp() {
         <Route path="/admin/users/:id" element={<UserDetailPage />} />
         <Route path="/admin/observations" element={<ObservationsPage />} />
         <Route path="/admin/observations/:id" element={<ObservationDetailPage />} />
+        <Route path="/admin/rarity-cache" element={<RarityCachePage />} />
         <Route path="/admin/secrets" element={<SecretsPage />} />
         <Route path="/admin/storage" element={<StoragePage />} />
         <Route path="/admin/audit" element={<AuditPage />} />

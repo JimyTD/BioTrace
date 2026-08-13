@@ -26,10 +26,25 @@ export type EncounterRarityResolution = {
 };
 
 /** Bump when encounter rubric / formula semantics change enough to invalidate cache. */
-const ENCOUNTER_CACHE_VER = "enc4";
+export const ENCOUNTER_CACHE_VER = "enc4";
 
-function encounterCacheKey(countryCode: string | null, taxonKey: string): string {
+export function encounterCacheKey(countryCode: string | null, taxonKey: string): string {
   return `${ENCOUNTER_CACHE_VER}|${taxonCacheKey(countryCode, taxonKey)}`;
+}
+
+/** `enc4|CN|Passer montanus` → parts; taxon may contain `|`. */
+export function parseEncounterCacheKey(
+  key: string,
+): { version: string; countryCode: string; taxonKey: string } | null {
+  const i1 = key.indexOf("|");
+  if (i1 < 0) return null;
+  const i2 = key.indexOf("|", i1 + 1);
+  if (i2 < 0) return null;
+  const version = key.slice(0, i1);
+  const countryCode = key.slice(i1 + 1, i2);
+  const taxonKey = key.slice(i2 + 1);
+  if (!version || !countryCode || !taxonKey) return null;
+  return { version, countryCode, taxonKey };
 }
 
 function fetchInit(): RequestInit {
@@ -187,19 +202,23 @@ export async function resolveEncounterRarity(input: {
   label?: string | null;
   scientificName?: string | null;
   finestReliableRank?: string | null;
+  /** Skip read (still writes on success). Admin rescore. */
+  skipCache?: boolean;
 }): Promise<EncounterRarityResolution> {
   const countryCode = effectiveCountry(input.countryCode);
   const key = encounterCacheKey(countryCode, input.taxonKey);
-  const cached = await readRarityCache(key);
-  if (cached && cached.source === "encounter") {
-    return {
-      rarity: cached.rarity,
-      source: "cache",
-      frequency: null,
-      adjustments: [],
-      occurrenceCount: null,
-      gbifUsageKey: null,
-    };
+  if (!input.skipCache) {
+    const cached = await readRarityCache(key);
+    if (cached && cached.source === "encounter") {
+      return {
+        rarity: cached.rarity,
+        source: "cache",
+        frequency: null,
+        adjustments: [],
+        occurrenceCount: null,
+        gbifUsageKey: null,
+      };
+    }
   }
 
   if (!env.zhipuApiKey) {

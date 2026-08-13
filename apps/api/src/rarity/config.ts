@@ -68,7 +68,6 @@ export const rarityConfig = {
   ),
   byRankBand: file.byRankBand,
   gbifEnabled: env.gbifEnabled,
-  cacheTtlDays: env.rarityCacheTtlDays,
   dataRoot,
 };
 

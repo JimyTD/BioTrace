@@ -15,6 +15,42 @@ async function req<T>(path: string, init?: RequestInit): Promise<T> {
 
 export type AdminUser = { id: string; username: string; createdAt: string | null };
 
+export type RarityCacheItem = {
+  cacheKey: string;
+  rarity: string;
+  source: string;
+  fetchedAt: string | null;
+  version: string | null;
+  countryCode: string | null;
+  taxonKey: string | null;
+  observationCount: number;
+};
+
+export type RarityCacheEntry = RarityCacheItem & {
+  observations: Array<{
+    id: string;
+    status: string;
+    rarity: string | null;
+    commonName: string | null;
+    scientificName: string | null;
+    countryCode: string | null;
+    userId: string;
+  }>;
+};
+
+export type RarityCacheRescore = {
+  ok: boolean;
+  cacheKey: string;
+  previousRarity: string | null;
+  rarity: string;
+  source: string;
+  frequency: number | null;
+  adjustments: string[];
+  fetchedAt: string | null;
+  observationsUpdated: number;
+  collectionsUpdated: number;
+};
+
 export const adminApi = {
   login: (username: string, password: string) =>
     req<{ admin: AdminUser }>("/login", {
@@ -53,6 +89,25 @@ export const adminApi = {
   deleteOrphans: (ids: string[]) =>
     req("/storage/orphans/delete", { method: "POST", body: JSON.stringify({ ids }) }),
   clearRarityCache: (body: { all?: boolean; prefix?: string }) =>
-    req("/rarity-cache/clear", { method: "POST", body: JSON.stringify(body) }),
+    req<{ ok: boolean; removed: number }>("/rarity-cache/clear", {
+      method: "POST",
+      body: JSON.stringify(body),
+    }),
+  rarityCache: (params?: { q?: string; limit?: string; offset?: string }) => {
+    const qs = new URLSearchParams(params).toString();
+    return req<{ items: RarityCacheItem[]; total: number }>(`/rarity-cache${qs ? `?${qs}` : ""}`);
+  },
+  rarityCacheEntry: (key: string) =>
+    req<RarityCacheEntry>(`/rarity-cache/entry?key=${encodeURIComponent(key)}`),
+  deleteRarityCache: (key: string) =>
+    req<{ ok: boolean; removed: number }>("/rarity-cache/delete", {
+      method: "POST",
+      body: JSON.stringify({ key }),
+    }),
+  rescoreRarityCache: (key: string) =>
+    req<RarityCacheRescore>("/rarity-cache/rescore", {
+      method: "POST",
+      body: JSON.stringify({ key }),
+    }),
   audit: () => req<{ items: unknown[] }>("/audit"),
 };

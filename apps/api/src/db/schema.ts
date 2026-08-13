@@ -146,7 +146,7 @@ export const collectionEntries = sqliteTable(
   (t) => [uniqueIndex("collection_user_taxon").on(t.userId, t.taxonKey)],
 );
 
-/** On-demand GBIF / seed rarity lookups keyed by country|taxon. */
+/** Encounter rarity keyed by encVer|country|taxon. Permanent until admin delete or version bump. */
 export const rarityCache = sqliteTable("rarity_cache", {
   cacheKey: text("cache_key").primaryKey(),
   rarity: text("rarity").notNull(),

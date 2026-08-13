@@ -49,6 +49,12 @@ import {
 import { removeObservationFiles } from "../services/observationFiles.js";
 import { getIdentifyQuota, utcDayKey } from "../services/identify-quota.js";
 import { computeSettle } from "../settle/rules.js";
+import {
+  deleteRarityCacheKey,
+  getRarityCacheEntry,
+  listRarityCache,
+  rescoreRarityCache,
+} from "../admin/rarity-cache.js";
 
 applyRuntimeSecrets();
 
@@ -210,6 +216,7 @@ adminRoutes.get("/dashboard", async (c) => {
     },
     storage,
     recentFailed: await attachOwners(recentFailed),
+    rarityCacheCount: (await db.select({ n: count() }).from(rarityCache))[0]?.n ?? 0,
   });
 });
 
@@ -761,6 +768,77 @@ adminRoutes.post("/storage/orphans/delete", async (c) => {
     summary: `deleted=${deleted.length} skipped=${skipped.length}`,
   });
   return c.json({ deleted, skipped });
+});
+
+adminRoutes.get("/rarity-cache", async (c) => {
+  const q = (c.req.query("q") ?? "").trim();
+  const limit = Math.min(Math.max(Number(c.req.query("limit") ?? 50), 1), 200);
+  const offset = Math.max(Number(c.req.query("offset") ?? 0), 0);
+  return c.json(await listRarityCache({ q: q || undefined, limit, offset }));
+});
+
+adminRoutes.get("/rarity-cache/entry", async (c) => {
+  const key = (c.req.query("key") ?? "").trim();
+  if (!key) return c.json({ error: t("admin.rarityCache.needKey"), code: "need_key" }, 400);
+  const entry = await getRarityCacheEntry(key);
+  if (!entry) {
+    const err = apiError("not found", 404);
+    return c.json(err.body, err.status);
+  }
+  return c.json(entry);
+});
+
+adminRoutes.post("/rarity-cache/delete", async (c) => {
+  const admin = c.get("admin");
+  const body = z.object({ key: z.string().trim().min(1) }).parse(await c.req.json());
+  const removed = await deleteRarityCacheKey(body.key);
+  await writeAudit({
+    admin,
+    action: "rarity_cache.delete",
+    targetType: "rarity_cache",
+    targetId: body.key,
+    summary: `removed=${removed}`,
+  });
+  return c.json({ ok: true, removed });
+});
+
+adminRoutes.post("/rarity-cache/rescore", async (c) => {
+  const admin = c.get("admin");
+  const body = z.object({ key: z.string().trim().min(1) }).parse(await c.req.json());
+  const result = await rescoreRarityCache(body.key);
+  if ("error" in result && result.error === "bad_key") {
+    return c.json({ error: t("admin.rarityCache.badKey"), code: "bad_key" }, 400);
+  }
+  if ("error" in result && result.error === "encounter_failed") {
+    await writeAudit({
+      admin,
+      action: "rarity_cache.rescore",
+      targetType: "rarity_cache",
+      targetId: body.key,
+      summary: `failed source=${result.source}`,
+      ok: false,
+    });
+    return c.json(
+      {
+        error: t("admin.rarityCache.rescoreFailed"),
+        code: "encounter_failed",
+        previousRarity: result.previousRarity,
+        source: result.source,
+      },
+      502,
+    );
+  }
+  if ("error" in result) {
+    return c.json({ error: t("admin.rarityCache.rescoreFailed"), code: result.error }, 400);
+  }
+  await writeAudit({
+    admin,
+    action: "rarity_cache.rescore",
+    targetType: "rarity_cache",
+    targetId: body.key,
+    summary: `${result.previousRarity ?? "?"}→${result.rarity} obs=${result.observationsUpdated}`,
+  });
+  return c.json({ ok: true, ...result });
 });
 
 adminRoutes.post("/rarity-cache/clear", async (c) => {

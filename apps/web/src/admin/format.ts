@@ -154,6 +154,8 @@ export function auditActionLabel(action: string): string {
     "secrets.patch": "admin.audit.secretsPatch",
     "storage.delete_orphans": "admin.audit.deleteOrphans",
     "rarity_cache.clear": "admin.audit.clearRarity",
+    "rarity_cache.delete": "admin.audit.deleteRarity",
+    "rarity_cache.rescore": "admin.audit.rescoreRarity",
   };
   const key = map[action];
   return key ? t(key) : action;
@@ -163,6 +165,7 @@ export function auditTargetTypeLabel(type: string | null | undefined): string {
   const map: Record<string, MessageKey> = {
     user: "admin.nav.users",
     observation: "admin.nav.observations",
+    rarity_cache: "admin.nav.rarityCache",
   };
   if (!type) return "—";
   const key = map[type];

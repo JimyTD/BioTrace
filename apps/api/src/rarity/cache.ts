@@ -1,17 +1,13 @@
 import { eq } from "drizzle-orm";
 import { db } from "../db/index.js";
 import { rarityCache } from "../db/schema.js";
-import { rarityConfig } from "./config.js";
 
 export async function readRarityCache(cacheKey: string) {
-  const row = await db.query.rarityCache.findFirst({
-    where: eq(rarityCache.cacheKey, cacheKey),
-  });
-  if (!row) return null;
-  const ageMs = Date.now() - row.fetchedAt.getTime();
-  const ttlMs = rarityConfig.cacheTtlDays * 24 * 60 * 60 * 1000;
-  if (ageMs > ttlMs) return null;
-  return row;
+  return (
+    (await db.query.rarityCache.findFirst({
+      where: eq(rarityCache.cacheKey, cacheKey),
+    })) ?? null
+  );
 }
 
 export async function writeRarityCache(input: {

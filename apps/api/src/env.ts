@@ -88,7 +88,6 @@ export const env = {
     "",
   /** On-demand GBIF occurrence counts for rarity; disable for offline/dev. */
   gbifEnabled: (process.env.GBIF_ENABLED ?? "1") === "1",
-  rarityCacheTtlDays: Number(process.env.RARITY_CACHE_TTL_DAYS ?? 30),
   identifyConcurrency: Number(process.env.IDENTIFY_CONCURRENCY ?? 1),
   /** Max time to wait on a short Gemini cool-down before switching to GLM. */
   identifyGeminiWaitMaxMs: Number(process.env.IDENTIFY_GEMINI_WAIT_MAX_MS ?? 90_000),

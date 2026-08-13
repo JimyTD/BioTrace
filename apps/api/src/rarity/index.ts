@@ -63,5 +63,11 @@ export {
   collectibleRankFromTier,
   type EncounterInput,
 } from "./formula.js";
-export { resolveEncounterRarity, scoreEncounter } from "./encounter.js";
+export {
+  resolveEncounterRarity,
+  scoreEncounter,
+  ENCOUNTER_CACHE_VER,
+  parseEncounterCacheKey,
+  encounterCacheKey,
+} from "./encounter.js";
 export { ENCOUNTER_RUBRIC } from "./encounter-rubric.js";
