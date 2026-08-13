@@ -161,10 +161,10 @@ export default function MapPage() {
 
   return (
     <div className="stack">
-      <div>
-        <h1 className="brand">{t("map.title")}</h1>
+      <header className="page-head">
+        <h1 className="page-title">{t("map.title")}</h1>
         <p className="lede">{t("map.lede")}</p>
-      </div>
+      </header>
       <div className="map-wrap" ref={containerRef} />
       {selected ? (
         <div className="panel map-selection row">

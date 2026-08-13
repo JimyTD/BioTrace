@@ -41,6 +41,8 @@
   --modal-bg: #f7f3eb;
   --modal-scrim: rgba(31, 42, 36, 0.48);
   --nav-bg: #f3efe7;
+  /* 顶栏/底栏纸纹槽；无文件时 none，勿写死路径 */
+  --nav-texture: none;
   --shadow: 0 8px 22px rgba(42, 36, 28, 0.07);
 
   --radius-sm: 8px;

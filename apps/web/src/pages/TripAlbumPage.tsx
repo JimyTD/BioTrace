@@ -405,7 +405,7 @@ export default function TripAlbumPage({ userId }: { userId: string }) {
 
   return (
     <div className="stack page-album">
-      <header className="album-head">
+      <header className="page-head album-head">
         <div className="album-head-row">
           <Link className="text-link" to="/">
             ← {t("album.back")}

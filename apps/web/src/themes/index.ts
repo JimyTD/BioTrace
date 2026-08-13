@@ -4,6 +4,7 @@
  * - 配色 token：themes/*.css → [data-theme]
  * - 套册资源包：public/volumes/<themeId>/，经 volumeAssets helper 引用
  * - 旅途资源包：public/trips/<themeId>/，经 tripAssets helper 引用
+ * - 壳资源包：public/shell/<themeId>/，经 shellAssets helper 引用（纸纹可空）
  * - 结构 class：styles.css 只用 var(--*)
  */
 export {
@@ -40,3 +41,9 @@ export {
   tripCoverFrameUrl,
   tripFilmFrameUrl,
 } from "./tripAssets";
+
+export {
+  shellNavTextureUrl,
+  themeShellAsset,
+  themeShellBase,
+} from "./shellAssets";

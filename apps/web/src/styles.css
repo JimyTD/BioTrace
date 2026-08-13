@@ -36,18 +36,23 @@ a {
 }
 
 .app-shell {
-  min-height: 100vh;
+  height: 100dvh;
+  max-height: 100dvh;
+  min-height: 100dvh;
   display: grid;
   grid-template-rows: auto 1fr auto;
+  overflow: hidden;
 }
 
 .app-topbar {
-  position: sticky;
-  top: 0;
+  position: relative;
   z-index: 20;
+  isolation: isolate;
   padding: 12px 16px 10px;
   padding-top: calc(10px + env(safe-area-inset-top));
-  background: var(--nav-bg);
+  background-color: var(--nav-bg);
+  background-image: var(--nav-texture);
+  background-repeat: repeat;
   border-bottom: 1px solid var(--line);
 }
 
@@ -59,10 +64,14 @@ a {
 }
 
 .content {
-  width: min(720px, calc(100% - 24px));
+  min-height: 0;
+  overflow-x: hidden;
+  overflow-y: auto;
+  overscroll-behavior-y: contain;
+  -webkit-overflow-scrolling: touch;
+  width: min(720px, 100%);
   margin: 0 auto;
-  /* 底栏 sticky 高度 + safe-area；勿让封面抬升层盖住导航 */
-  padding: 16px 0 calc(96px + env(safe-area-inset-bottom));
+  padding: 16px 16px 20px;
 }
 
 .page-title {
@@ -1219,14 +1228,16 @@ a {
 }
 
 .nav {
-  position: sticky;
-  bottom: 0;
+  position: relative;
   z-index: 30;
+  isolation: isolate;
   display: grid;
   grid-template-columns: repeat(4, 1fr);
   gap: 0;
   padding: 0 4px calc(env(safe-area-inset-bottom));
-  background: var(--nav-bg);
+  background-color: var(--nav-bg);
+  background-image: var(--nav-texture);
+  background-repeat: repeat;
   border-top: 1px solid var(--line);
 }
 

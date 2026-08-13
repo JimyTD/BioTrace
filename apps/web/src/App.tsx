@@ -43,43 +43,45 @@ export default function App() {
   }
 
   return (
-    <div className="app-shell">
+    <>
       <ForceAppUpdateGate enabled />
-      <header className="app-topbar">
-        <span className="app-wordmark">{t("app.name")}</span>
-      </header>
-      <main className="content">
-        <Routes>
-          <Route path="/" element={<TripsPage />} />
-          <Route path="/trips/:id" element={<TripAlbumPage userId={user.id} />} />
-          <Route path="/observations/:id/pin" element={<PinLocationPage />} />
-          <Route path="/observations/:id" element={<ObservationDetailPage />} />
-          <Route path="/settle/:id" element={<ObservationSettlePage />} />
-          <Route path="/dev/settle-art" element={<SettleArtPreviewPage />} />
-          <Route path="/map" element={<MapPage />} />
-          <Route path="/collection" element={<CollectionPage />} />
-          <Route
-            path="/me"
-            element={<MePage user={user} onLogout={() => setUser(null)} />}
-          />
-          <Route
-            path="/me/profile"
-            element={<MeProfilePage user={user} onUserUpdated={setUser} />}
-          />
-          <Route path="/me/security" element={<MeSecurityPage />} />
-          <Route path="/me/identify" element={<MeIdentifyPage />} />
-          <Route path="/me/about" element={<MeAboutPage />} />
-          <Route path="*" element={<Navigate to="/" replace />} />
-        </Routes>
-      </main>
-      <nav className="nav" aria-label={t("app.name")}>
-        <NavLink to="/" end>
-          {t("nav.trips")}
-        </NavLink>
-        <NavLink to="/map">{t("nav.map")}</NavLink>
-        <NavLink to="/collection">{t("nav.collection")}</NavLink>
-        <NavLink to="/me">{t("nav.me")}</NavLink>
-      </nav>
-    </div>
+      <div className="app-shell">
+        <header className="app-topbar">
+          <span className="app-wordmark">{t("app.name")}</span>
+        </header>
+        <main className="content">
+          <Routes>
+            <Route path="/" element={<TripsPage />} />
+            <Route path="/trips/:id" element={<TripAlbumPage userId={user.id} />} />
+            <Route path="/observations/:id/pin" element={<PinLocationPage />} />
+            <Route path="/observations/:id" element={<ObservationDetailPage />} />
+            <Route path="/settle/:id" element={<ObservationSettlePage />} />
+            <Route path="/dev/settle-art" element={<SettleArtPreviewPage />} />
+            <Route path="/map" element={<MapPage />} />
+            <Route path="/collection" element={<CollectionPage />} />
+            <Route
+              path="/me"
+              element={<MePage user={user} onLogout={() => setUser(null)} />}
+            />
+            <Route
+              path="/me/profile"
+              element={<MeProfilePage user={user} onUserUpdated={setUser} />}
+            />
+            <Route path="/me/security" element={<MeSecurityPage />} />
+            <Route path="/me/identify" element={<MeIdentifyPage />} />
+            <Route path="/me/about" element={<MeAboutPage />} />
+            <Route path="*" element={<Navigate to="/" replace />} />
+          </Routes>
+        </main>
+        <nav className="nav" aria-label={t("app.name")}>
+          <NavLink to="/" end>
+            {t("nav.trips")}
+          </NavLink>
+          <NavLink to="/map">{t("nav.map")}</NavLink>
+          <NavLink to="/collection">{t("nav.collection")}</NavLink>
+          <NavLink to="/me">{t("nav.me")}</NavLink>
+        </nav>
+      </div>
+    </>
   );
 }

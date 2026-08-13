@@ -182,8 +182,8 @@ export default function ObservationDetailPage() {
         </Link>
       </div>
 
-      <div>
-        <h1 className="brand">{title}</h1>
+      <header className="page-head">
+        <h1 className="page-title">{title}</h1>
         {!notCollectible && obs.scientificName ? (
           <p className="lede">{obs.scientificName}</p>
         ) : null}
@@ -198,7 +198,7 @@ export default function ObservationDetailPage() {
             })}
           </p>
         ) : null}
-      </div>
+      </header>
 
       <img className="detail-hero" src={heroUrl(obs)} alt={title} />
 

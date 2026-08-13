@@ -105,10 +105,10 @@ export default function PinLocationPage() {
         </Link>
       </div>
 
-      <div>
-        <h1 className="brand">{t("detail.pinTitle")}</h1>
+      <header className="page-head">
+        <h1 className="page-title">{t("detail.pinTitle")}</h1>
         <p className="lede">{t("detail.pinLede")}</p>
-      </div>
+      </header>
 
       <div className="map-wrap map-wrap-pin">
         <div ref={containerRef} className="map-pin-canvas" />

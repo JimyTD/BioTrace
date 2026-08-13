@@ -14,10 +14,10 @@ export default function SettleArtPreviewPage() {
 
   return (
     <div className="stack settle-page settle-art-preview">
-      <div>
+      <header className="page-head">
         <h1 className="page-title">{t("settle.preview.title")}</h1>
         <p className="lede">{t("settle.preview.lede")}</p>
-      </div>
+      </header>
 
       <div className="settle-preview-phases" role="tablist" aria-label={t("settle.preview.phases")}>
         {(

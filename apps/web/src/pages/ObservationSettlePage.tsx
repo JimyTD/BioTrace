@@ -132,10 +132,10 @@ export default function ObservationSettlePage() {
 
   return (
     <div className="stack settle-page">
-      <div>
+      <header className="page-head">
         <h1 className="page-title">{t("settle.title")}</h1>
         <p className="lede">{t("settle.lede")}</p>
-      </div>
+      </header>
 
       <div className={`settle-card ${phase}`}>
         <div className="settle-card-inner">
