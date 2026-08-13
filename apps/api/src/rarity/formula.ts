@@ -11,7 +11,7 @@ export type EncounterInput = {
   extinct?: boolean;
   /** Aversive pest or roadside weed → locked at N. */
   pestOrWeed?: boolean;
-  /** -2…+2: aversion → iconic travel appeal */
+  /** 0–3: how much an ordinary traveller wants this shot */
   iconicAppeal?: number;
   /** 0–3: swarming / tourist-habituated */
   swarmOrHabituated?: number;
@@ -51,7 +51,11 @@ const DEFAULT_OFFSET: OffsetConfig = {
   weightIconic: 1.2,
   weightProtection: 0,
   weightSwarm: -0.7,
-  weightHardPhoto: 0.7,
+  // Weights follow from what each axis is allowed to do, not from fitting hit counts:
+  // appeal 2 alone lifts a tier (2.4 ≥ 2.0) while appeal 1 alone does not (1.2);
+  // max hard alone stays short (1.5) but appeal 1 + hard 3 clears it (2.7);
+  // max swarm alone drops a tier (−2.1) while swarm 2 does not (−1.4).
+  weightHardPhoto: 0.5,
   thresholdUp: 2.0,
   thresholdDown: -2.0,
   protectionScore: {
@@ -66,8 +70,9 @@ const DEFAULT_OFFSET: OffsetConfig = {
 function loadScoreConfig(): ClassScoreConfig {
   const fallback: ClassScoreConfig = {
     tiers: ["XR", "LR", "UR", "SSR", "SR", "R", "N"],
+    // N is produced only by the pest/weed gate, so the frequency floor is R.
     frequencyBaseTier: {
-      "0": "N",
+      "0": "R",
       "1": "R",
       "2": "SR",
       "3": "SSR",
@@ -115,6 +120,18 @@ export function parseBoolFlag(raw: unknown): boolean {
   return /^(1|true|yes|y|是)$/i.test(String(raw ?? "").trim());
 }
 
+/**
+ * The extinct flag alone opens the only door to XR, and the model will reach for
+ * "功能性灭绝" to justify any species it finds very rare — that labelled a living
+ * class-II mustelid (黄喉貂) extinct. So demand a concrete year as well: inventing
+ * one is a far higher bar than reaching for the phrase.
+ */
+export function parseExtinctFlag(raw: unknown, year: unknown): boolean {
+  if (!parseBoolFlag(raw)) return false;
+  const n = Math.round(Number(String(year ?? "").trim()));
+  return Number.isFinite(n) && n >= 1500 && n <= new Date().getFullYear();
+}
+
 export function parseProtectionLevel(raw: unknown): ProtectionLevel {
   const key = String(raw ?? "")
     .trim()
@@ -149,7 +166,7 @@ function clamp(n: number, lo: number, hi: number): number {
 }
 
 export function parseIconicAppeal(raw: unknown): number {
-  return Math.round(clamp(Number(raw ?? 0), -2, 2));
+  return Math.round(clamp(Number(raw ?? 0), 0, 3));
 }
 
 /** Accept 0–3 number, or legacy boolean (true→2, false→0). */

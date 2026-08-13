@@ -61,7 +61,7 @@ export const env = {
   zhipuApiKey: process.env.ZHIPU_API_KEY?.trim() || "",
   zhipuVlModel: process.env.ZHIPU_VL_MODEL?.trim() || "glm-4v-flash",
   /** Text model for encounter-class rarity (not vision). */
-  zhipuTextModel: process.env.ZHIPU_TEXT_MODEL?.trim() || "glm-4-flash",
+  zhipuTextModel: process.env.ZHIPU_TEXT_MODEL?.trim() || "glm-4-flash-250414",
   zhipuBaseUrl: process.env.ZHIPU_BASE_URL?.trim() || "https://open.bigmodel.cn/api/paas/v4",
   displayMaxEdge: Number(process.env.DISPLAY_MAX_EDGE ?? 1600),
   /** 单张上传原图上限（字节）；相册默认传原图，防止极端文件打爆磁盘。 */

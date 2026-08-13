@@ -44,7 +44,7 @@ function zhipuFetchInit(): RequestInit {
 
 async function callZhipu(prompt: string): Promise<string> {
   if (!env.zhipuApiKey) throw new Error("ZHIPU_API_KEY missing");
-  const model = process.env.ZHIPU_TEXT_MODEL?.trim() || "glm-4-flash";
+  const model = process.env.ZHIPU_TEXT_MODEL?.trim() || "glm-4-flash-250414";
   const url = `${env.zhipuBaseUrl.replace(/\/$/, "")}/chat/completions`;
   const res = await undiciFetch(url, {
     ...zhipuFetchInit(),

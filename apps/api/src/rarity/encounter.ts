@@ -7,6 +7,7 @@ import { readRarityCache, writeRarityCache } from "./cache.js";
 import { ENCOUNTER_RUBRIC } from "./encounter-rubric.js";
 import {
   parseBoolFlag,
+  parseExtinctFlag,
   parseFrequency,
   parseHardToPhotograph,
   parseIconicAppeal,
@@ -166,7 +167,7 @@ export async function scoreEncounter(input: {
   }
   return {
     frequency,
-    extinct: parseBoolFlag(parsed.extinct_or_unobtainable),
+    extinct: parseExtinctFlag(parsed.extinct_or_unobtainable, parsed.extinct_year),
     pestOrWeed: parseBoolFlag(parsed.pest_or_weed),
     iconicAppeal: parseIconicAppeal(parsed.iconic_appeal),
     swarmOrHabituated: parseSwarm(parsed.swarm_or_habituated),

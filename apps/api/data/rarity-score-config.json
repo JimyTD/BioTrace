@@ -1,7 +1,7 @@
 {
   "tiers": ["XR", "LR", "UR", "SSR", "SR", "R", "N"],
   "frequencyBaseTier": {
-    "0": "N",
+    "0": "R",
     "1": "R",
     "2": "SR",
     "3": "SSR",
@@ -13,7 +13,7 @@
     "weightIconic": 1.2,
     "weightProtection": 0,
     "weightSwarm": -0.7,
-    "weightHardPhoto": 0.7,
+    "weightHardPhoto": 0.5,
     "thresholdUp": 2.0,
     "thresholdDown": -2.0,
     "protectionScore": {
@@ -24,5 +24,5 @@
       "class_i": 2
     }
   },
-  "notes": "encounter_frequency 0-5 sets base tier (N..LR). XR only via extinct gate; pest/weed locked at N. Multi-axis weighted S maps to Δ∈{-1,0,+1}; protection weight 0 (prior only, kept for tuning). Cache prefix enc4. Rubric: encounter-rubric.ts."
+  "notes": "encounter_frequency 0-5 sets base tier (R..LR); N comes only from the pest/weed gate and XR only from the extinct gate. iconicAppeal is 0-3 (want-this-shot, not fame). Multi-axis weighted S maps to Δ∈{-1,0,+1}; protection weight 0 (prior only, kept for tuning). Cache prefix enc4. Rubric: encounter-rubric.ts."
 }

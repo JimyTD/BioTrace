@@ -12,6 +12,7 @@ import { ENCOUNTER_RUBRIC } from "../src/rarity/encounter-rubric.js";
 import {
   collectibleRankFromTier,
   parseBoolFlag,
+  parseExtinctFlag,
   parseFrequency,
   parseHardToPhotograph,
   parseIconicAppeal,
@@ -41,11 +42,13 @@ function parseArgs() {
   const delayArg = process.argv.find((a) => a.startsWith("--delay-ms="));
   const modelArg = process.argv.find((a) => a.startsWith("--model="));
   const thinkingArg = process.argv.find((a) => a.startsWith("--thinking="));
+  const samplesArg = process.argv.find((a) => a.startsWith("--samples="));
   return {
     limit: limitArg ? Number(limitArg.split("=")[1]) : undefined,
     delayMs: delayArg ? Number(delayArg.split("=")[1]) : 500,
-    model: modelArg?.split("=")[1]?.trim() || process.env.ZHIPU_TEXT_MODEL?.trim() || "glm-4-flash",
+    model: modelArg?.split("=")[1]?.trim() || process.env.ZHIPU_TEXT_MODEL?.trim() || "glm-4-flash-250414",
     thinking: /^(1|on|true|enabled)$/i.test(thinkingArg?.split("=")[1]?.trim() ?? ""),
+    samples: samplesArg ? Math.max(1, Number(samplesArg.split("=")[1])) : 3,
   };
 }
 
@@ -132,7 +135,7 @@ async function callZhipu(prompt: string, opts: { model: string; thinking: boolea
   return content;
 }
 
-async function scoreOne(row: TaxonRow, opts: { model: string; thinking: boolean }) {
+async function scoreOnce(row: TaxonRow, opts: { model: string; thinking: boolean }) {
   const prompt = `${RUBRIC}
 
 对象：
@@ -147,35 +150,122 @@ async function scoreOne(row: TaxonRow, opts: { model: string; thinking: boolean 
   if (frequency == null) {
     throw new Error(`bad encounter_frequency: ${String(parsed.encounter_frequency)}`);
   }
-  const extinct = parseBoolFlag(parsed.extinct_or_unobtainable);
-  const pestOrWeed = parseBoolFlag(parsed.pest_or_weed);
-  const iconicAppeal = parseIconicAppeal(parsed.iconic_appeal);
-  const swarmOrHabituated = parseSwarm(parsed.swarm_or_habituated);
-  const protectionLevel = parseProtectionLevel(parsed.protection_level);
-  const hardToPhotograph = parseHardToPhotograph(parsed.hard_to_photograph);
-  const resolved = resolveFromEncounter({
-    frequency,
-    extinct,
-    pestOrWeed,
-    iconicAppeal,
-    swarmOrHabituated,
-    protectionLevel,
-    hardToPhotograph,
-  });
   return {
-    extinct,
-    pestOrWeed,
-    iconicAppeal,
-    swarmOrHabituated,
-    protectionLevel,
-    hardToPhotograph,
+    frequency,
+    extinct: parseExtinctFlag(parsed.extinct_or_unobtainable, parsed.extinct_year),
+    extinctYear: parsed.extinct_year ?? null,
+    pestOrWeed: parseBoolFlag(parsed.pest_or_weed),
+    iconicAppeal: parseIconicAppeal(parsed.iconic_appeal),
+    swarmOrHabituated: parseSwarm(parsed.swarm_or_habituated),
+    protectionLevel: parseProtectionLevel(parsed.protection_level),
+    hardToPhotograph: parseHardToPhotograph(parsed.hard_to_photograph),
     reason: String(parsed.reason ?? ""),
-    ...resolved,
   };
 }
 
-function tierDistance(a: string, b: string): number {
-  return Math.abs(collectibleRankFromTier(a) - collectibleRankFromTier(b));
+function median(values: number[]): number {
+  const s = [...values].sort((a, b) => a - b);
+  const mid = Math.floor(s.length / 2);
+  return s.length % 2 ? s[mid]! : Math.round((s[mid - 1]! + s[mid]!) / 2);
+}
+
+function majority(values: boolean[]): boolean {
+  return values.filter(Boolean).length * 2 > values.length;
+}
+
+
+/** Sample the model N times and take the median — the axes are noisy per call. */
+async function scoreRow(
+  row: TaxonRow,
+  opts: { model: string; thinking: boolean; samples: number; delayMs: number },
+) {
+  const draws: Awaited<ReturnType<typeof scoreOnce>>[] = [];
+  for (let i = 0; i < opts.samples; i++) {
+    if (i > 0) await sleep(opts.delayMs);
+    draws.push(await withRetry(() => scoreOnce(row, opts), `#${row.id}.${i + 1}`));
+  }
+  const freqs = draws.map((d) => d.frequency);
+  const merged = {
+    frequency: median(freqs),
+    extinct: majority(draws.map((d) => d.extinct)),
+    pestOrWeed: majority(draws.map((d) => d.pestOrWeed)),
+    iconicAppeal: median(draws.map((d) => d.iconicAppeal)),
+    swarmOrHabituated: median(draws.map((d) => d.swarmOrHabituated)),
+    hardToPhotograph: median(draws.map((d) => d.hardToPhotograph)),
+    protectionLevel: draws[0]!.protectionLevel,
+  };
+  // Quote the draw that actually produced the median, not whichever came back first.
+  const representative = draws.find((d) => d.frequency === merged.frequency) ?? draws[0]!;
+  return {
+    ...merged,
+    reason: representative.reason,
+    extinctYear: representative.extinctYear,
+    freqSamples: freqs,
+    /** Spread across draws: >=2 means the model has no firm view on this taxon. */
+    freqSpread: Math.max(...freqs) - Math.min(...freqs),
+    ...resolveFromEncounter(merged),
+  };
+}
+
+/** Signed: >0 means the model ranked it rarer than the reference. */
+function tierDelta(model: string, ref: string): number {
+  return collectibleRankFromTier(model) - collectibleRankFromTier(ref);
+}
+
+function rankOf(values: number[]): number[] {
+  const order = values.map((v, i) => ({ v, i })).sort((a, b) => a.v - b.v);
+  const ranks = new Array<number>(values.length);
+  for (let i = 0; i < order.length; ) {
+    let j = i;
+    while (j + 1 < order.length && order[j + 1]!.v === order[i]!.v) j += 1;
+    const avg = (i + j) / 2 + 1;
+    for (let k = i; k <= j; k++) ranks[order[k]!.i] = avg;
+    i = j + 1;
+  }
+  return ranks;
+}
+
+function spearman(xs: number[], ys: number[]): number | null {
+  if (xs.length < 3) return null;
+  const rx = rankOf(xs);
+  const ry = rankOf(ys);
+  const mx = rx.reduce((a, b) => a + b, 0) / rx.length;
+  const my = ry.reduce((a, b) => a + b, 0) / ry.length;
+  let num = 0;
+  let dx = 0;
+  let dy = 0;
+  for (let i = 0; i < rx.length; i++) {
+    const a = rx[i]! - mx;
+    const b = ry[i]! - my;
+    num += a * b;
+    dx += a * a;
+    dy += b * b;
+  }
+  return dx && dy ? num / Math.sqrt(dx * dy) : null;
+}
+
+/** The four numbers we steer by: ordering, systematic shift, exact hits, near hits. */
+function metrics(pairs: Array<{ model: string; ref: string }>) {
+  const n = pairs.length;
+  if (!n) return null;
+  const m = pairs.map((p) => collectibleRankFromTier(p.model));
+  const r = pairs.map((p) => collectibleRankFromTier(p.ref));
+  const deltas = pairs.map((p) => tierDelta(p.model, p.ref));
+  return {
+    n,
+    spearman: spearman(m, r),
+    bias: deltas.reduce((a, b) => a + b, 0) / n,
+    exact: deltas.filter((d) => d === 0).length,
+    within1: deltas.filter((d) => Math.abs(d) <= 1).length,
+    worst: Math.max(...deltas.map(Math.abs)),
+  };
+}
+
+function fmtMetrics(label: string, m: ReturnType<typeof metrics>) {
+  if (!m) return `${label}: (无参考列)`;
+  const rho = m.spearman == null ? "n/a" : m.spearman.toFixed(3);
+  const bias = (m.bias >= 0 ? "+" : "") + m.bias.toFixed(2);
+  return `${label}: 排序 ρ=${rho} | 偏移 ${bias} 档 | 命中 ${m.exact}/${m.n} | ≤1档 ${m.within1}/${m.n} | 最差 ${m.worst} 档`;
 }
 
 async function main() {
@@ -183,37 +273,31 @@ async function main() {
   const taxa = JSON.parse(readFileSync(taxaPath, "utf8")) as TaxonRow[];
   const list = args.limit ? taxa.slice(0, args.limit) : taxa;
   console.log(
-    `Provider: zhipu | model=${args.model} | thinking=${args.thinking ? "on" : "off"} | mode=frequency+offset | items=${list.length}`,
+    `Provider: zhipu | model=${args.model} | thinking=${args.thinking ? "on" : "off"} | samples=${args.samples} | mode=frequency+offset | items=${list.length}`,
   );
 
   const rows: Array<Record<string, unknown>> = [];
-  let exactUser = 0;
-  let within1User = 0;
-  let exactAgent = 0;
-  let within1Agent = 0;
-  let nUser = 0;
+  const userPairs: Array<{ model: string; ref: string }> = [];
+  const agentPairs: Array<{ model: string; ref: string }> = [];
+  const spreads: number[] = [];
 
   for (const row of list) {
     process.stdout.write(`#${row.id} ${row.label} ... `);
     try {
-      const scored = await withRetry(
-        () => scoreOne(row, { model: args.model, thinking: args.thinking }),
-        `#${row.id}`,
-      );
+      const scored = await scoreRow(row, {
+        model: args.model,
+        thinking: args.thinking,
+        samples: args.samples,
+        delayMs: args.delayMs,
+      });
       await sleep(args.delayMs);
       const userTier = String(row.user ?? "").trim();
       const agentTier = String(row.agent ?? "").trim();
-      const distUser = userTier ? tierDistance(scored.rarity, userTier) : null;
-      const distAgent = agentTier ? tierDistance(scored.rarity, agentTier) : null;
-      if (distUser != null) {
-        nUser += 1;
-        if (distUser === 0) exactUser += 1;
-        if (distUser <= 1) within1User += 1;
-      }
-      if (distAgent != null) {
-        if (distAgent === 0) exactAgent += 1;
-        if (distAgent <= 1) within1Agent += 1;
-      }
+      const distUser = userTier ? tierDelta(scored.rarity, userTier) : null;
+      const distAgent = agentTier ? tierDelta(scored.rarity, agentTier) : null;
+      if (userTier) userPairs.push({ model: scored.rarity, ref: userTier });
+      if (agentTier) agentPairs.push({ model: scored.rarity, ref: agentTier });
+      spreads.push(scored.freqSpread);
       rows.push({
         id: row.id,
         label: row.label,
@@ -223,7 +307,10 @@ async function main() {
         model: scored.rarity,
         base_tier: scored.baseTier,
         encounter_frequency: scored.frequency,
+        freq_samples: scored.freqSamples,
+        freq_spread: scored.freqSpread,
         extinct_or_unobtainable: scored.extinct,
+        extinct_year: scored.extinctYear,
         pest_or_weed: scored.pestOrWeed,
         adjustments: scored.adjustments,
         iconic_appeal: scored.iconicAppeal,
@@ -237,14 +324,15 @@ async function main() {
         reason: scored.reason,
         notes: row.notes ?? "",
       });
+      const sign = (d: number) => (d > 0 ? `+${d}` : String(d));
       const ref =
         distUser != null
-          ? `user ${userTier} Δ${distUser}`
+          ? `user ${userTier} ${sign(distUser)}`
           : distAgent != null
-            ? `agent ${agentTier} Δ${distAgent}`
+            ? `agent ${agentTier} ${sign(distAgent)}`
             : "no ref";
       console.log(
-        `${scored.rarity} (${ref}) freq=${scored.frequency} S=${scored.offsetScore.toFixed(2)} d=${scored.offsetDelta}` +
+        `${scored.rarity} (${ref}) freq=${scored.frequency}[${scored.freqSamples.join("/")}] S=${scored.offsetScore.toFixed(2)} d=${scored.offsetDelta}` +
           (scored.adjustments.length ? ` [${scored.adjustments.join(",")}]` : ""),
       );
     } catch (err) {
@@ -254,9 +342,14 @@ async function main() {
     }
   }
 
+  const userMetrics = metrics(userPairs);
+  const agentMetrics = metrics(agentPairs);
+  const avgSpread = spreads.length ? spreads.reduce((a, b) => a + b, 0) / spreads.length : 0;
+  const shaky = rows.filter((r) => typeof r.freq_spread === "number" && (r.freq_spread as number) >= 2);
+
   mkdirSync(outDir, { recursive: true });
   const stamp = new Date().toISOString().replace(/[:.]/g, "-");
-  const slug = `${args.model.replace(/[^a-z0-9.]+/gi, "-")}-think-${args.thinking ? "on" : "off"}`;
+  const slug = `${args.model.replace(/[^a-z0-9.]+/gi, "-")}-think-${args.thinking ? "on" : "off"}-s${args.samples}`;
   const outJson = join(outDir, `rarity-calibrate-${slug}-${stamp}.json`);
   writeFileSync(
     outJson,
@@ -267,13 +360,13 @@ async function main() {
         provider: "zhipu",
         model: args.model,
         thinking: args.thinking,
+        samples: args.samples,
         summary: {
           n: rows.length,
-          exact_vs_user: exactUser,
-          within1_vs_user: within1User,
-          n_with_user: nUser,
-          exact_vs_agent: exactAgent,
-          within1_vs_agent: within1Agent,
+          vsUser: userMetrics,
+          vsAgent: agentMetrics,
+          avgFreqSpread: Number(avgSpread.toFixed(2)),
+          shakyIds: shaky.map((r) => r.id),
         },
         rows,
       },
@@ -284,7 +377,7 @@ async function main() {
   );
 
   const csv = [
-    "id,label,user,agent,model,freq,extinct,pest,iconic,swarm,hard,offset_score,offset_delta,dist_user,dist_agent,protection_level,reason",
+    "id,label,user,agent,model,freq,spread,extinct,pest,iconic,swarm,hard,offset_score,offset_delta,dist_user,dist_agent,protection_level,reason",
     ...rows.map((r) =>
       [
         r.id,
@@ -293,6 +386,7 @@ async function main() {
         r.agent ?? "",
         r.model ?? "",
         r.encounter_frequency ?? "",
+        r.freq_spread ?? "",
         r.extinct_or_unobtainable ? 1 : 0,
         r.pest_or_weed ? 1 : 0,
         r.iconic_appeal ?? "",
@@ -311,12 +405,10 @@ async function main() {
   writeFileSync(outCsv, csv, "utf8");
 
   console.log("\n=== summary ===");
-  if (nUser > 0) {
-    console.log(`vs user:  exact ${exactUser}/${nUser}, ≤1 ${within1User}/${nUser}`);
-  } else {
-    console.log("vs user:  (user 列为空，待填写)");
-  }
-  console.log(`vs agent: exact ${exactAgent}/${rows.length}, ≤1 ${within1Agent}/${rows.length}`);
+  console.log(fmtMetrics("vs user ", userMetrics));
+  console.log(fmtMetrics("vs agent", agentMetrics));
+  console.log(`采样分歧：平均 ${avgSpread.toFixed(2)} 级，需复核 ${shaky.length} 项` +
+    (shaky.length ? `（${shaky.map((r) => r.label).join("、")}）` : ""));
   console.log(`json: ${outJson}`);
   console.log(`csv:  ${outCsv}`);
 }

@@ -58,6 +58,7 @@ export {
   resolveFromEncounter,
   parseFrequency,
   parseBoolFlag,
+  parseExtinctFlag,
   parseProtectionLevel,
   collectibleRankFromTier,
   type EncounterInput,
