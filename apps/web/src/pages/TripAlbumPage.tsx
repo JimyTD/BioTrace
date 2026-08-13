@@ -1,7 +1,7 @@
 import { useEffect, useMemo, useRef, useState, type FormEvent, type MouseEvent } from "react";
 import { Link, useNavigate, useParams } from "react-router-dom";
 import { formatRank, t } from "@biotrace/messages";
-import { api, type Observation, type Trip, type TripMember } from "../api";
+import { ApiError, api, type Observation, type Trip, type TripMember } from "../api";
 import ConfirmDialog from "../components/ConfirmDialog";
 import {
   identifyErrorPrimary,
@@ -205,6 +205,7 @@ export default function TripAlbumPage({ userId }: { userId: string }) {
     const desc = batch.length === 1 ? description : "";
     let ok = 0;
     let fail = 0;
+    let dup = 0;
     let dailyLimitHits = 0;
     try {
       for (let i = 0; i < batch.length; i++) {
@@ -213,8 +214,12 @@ export default function TripAlbumPage({ userId }: { userId: string }) {
           const res = await api.uploadObservation(id, batch[i]!, desc);
           ok += 1;
           if (res.code === "identify_daily_limit") dailyLimitHits += 1;
-        } catch {
-          fail += 1;
+        } catch (err) {
+          if (err instanceof ApiError && err.code === "duplicate_photo") {
+            dup += 1;
+          } else {
+            fail += 1;
+          }
         }
       }
       setFiles([]);
@@ -222,10 +227,27 @@ export default function TripAlbumPage({ userId }: { userId: string }) {
       clearPickedInputs();
       setShowUploader(false);
       await refresh();
-      if (fail > 0 && ok === 0) {
-        setError(t("album.uploadAllFailed"));
-      } else if (fail > 0) {
-        setToast(t("album.uploadPartial", { ok, fail }));
+      const rejected = fail + dup;
+      if (rejected > 0 && ok === 0) {
+        if (dup > 0 && fail === 0) {
+          setError(
+            dup === 1 && batch.length === 1
+              ? t("album.duplicatePhoto")
+              : t("album.uploadAllDuplicates"),
+          );
+        } else if (dup > 0 && fail > 0) {
+          setError(t("album.uploadPartialMixed", { ok: 0, dup, fail }));
+        } else {
+          setError(t("album.uploadAllFailed"));
+        }
+      } else if (rejected > 0) {
+        const msg =
+          dup > 0 && fail === 0
+            ? t("album.uploadPartialDup", { ok, dup })
+            : dup > 0
+              ? t("album.uploadPartialMixed", { ok, dup, fail })
+              : t("album.uploadPartial", { ok, fail });
+        setToast(msg);
         window.setTimeout(() => setToast(null), 5000);
       } else if (dailyLimitHits > 0) {
         setToast(t("error.identifyDailyLimitShort"));

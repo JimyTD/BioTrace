@@ -102,14 +102,29 @@ export type CollectionEntry = {
   updatedAt: string;
 };
 
+export class ApiError extends Error {
+  readonly code: string | null;
+  readonly status: number;
+
+  constructor(message: string, opts?: { code?: string | null; status?: number }) {
+    super(message);
+    this.name = "ApiError";
+    this.code = opts?.code ?? null;
+    this.status = opts?.status ?? 0;
+  }
+}
+
 async function request<T>(path: string, init?: RequestInit): Promise<T> {
   const res = await fetch(path, {
     credentials: "include",
     ...init,
   });
-  const data = (await res.json().catch(() => ({}))) as T & { error?: string };
+  const data = (await res.json().catch(() => ({}))) as T & { error?: string; code?: string };
   if (!res.ok) {
-    throw new Error(data.error || t("error.http", { status: res.status }));
+    throw new ApiError(data.error || t("error.http", { status: res.status }), {
+      code: data.code ?? null,
+      status: res.status,
+    });
   }
   return data;
 }
