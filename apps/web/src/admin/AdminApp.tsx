@@ -257,7 +257,6 @@ function Dashboard() {
           <tr>
             <th>id</th>
             <th>{t("admin.col.user")}</th>
-            <th>{t("admin.col.errorMeaning")}</th>
             <th>{t("admin.error.code")}</th>
             <th>{t("admin.col.updatedAt")}</th>
           </tr>
@@ -283,7 +282,6 @@ function Dashboard() {
                   )}
                 </td>
                 <td>{ex.title}</td>
-                <td className="admin-muted">{ex.code ?? "—"}</td>
                 <td>{formatAdminTime(r.updatedAt)}</td>
               </tr>
             );
@@ -495,7 +493,7 @@ function ObservationsPage() {
             <th>{t("admin.col.status")}</th>
             <th>{t("admin.col.user")}</th>
             <th>名称</th>
-            <th>{t("admin.col.errorMeaning")}</th>
+            <th>{t("admin.error.code")}</th>
             <th>{t("admin.col.updatedAt")}</th>
           </tr>
         </thead>
@@ -525,10 +523,7 @@ function ObservationsPage() {
               <td>
                 {String(o.commonName ?? "")} {String(o.scientificName ?? "")}
               </td>
-              <td>
-                {ex.title}
-                {ex.code ? <div className="admin-muted">{ex.code}</div> : null}
-              </td>
+              <td>{ex.title}</td>
               <td>{formatAdminTime(o.updatedAt == null ? null : String(o.updatedAt))}</td>
             </tr>
             );

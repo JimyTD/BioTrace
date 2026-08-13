@@ -21,24 +21,23 @@ export function formatAdminTime(value: string | number | null | undefined): stri
 }
 
 const OBS_ERROR_KEYS: Record<string, MessageKey> = {
-  identify_too_coarse: "error.identifyTooCoarse",
-  identify_quota: "error.identifyQuota",
-  identify_daily_limit: "error.identifyDailyLimit",
-  identify_user_key_incomplete: "error.identifyUserKeyIncomplete",
-  identify_unavailable: "error.identifyUnavailable",
-  identify_not_organism: "error.identifyNotCollectible",
-  identify_human: "error.identifyNotCollectible",
-  identify_not_living: "error.identifyNotCollectible",
-  identify_not_collectible: "error.identifyNotCollectible",
+  identify_too_coarse: "admin.error.identifyTooCoarse",
+  identify_quota: "admin.error.identifyQuota",
+  identify_daily_limit: "admin.error.identifyDailyLimit",
+  identify_user_key_incomplete: "admin.error.identifyUserKeyIncomplete",
+  identify_unavailable: "admin.error.identifyUnavailable",
+  identify_not_organism: "admin.error.identifyNotOrganism",
+  identify_human: "admin.error.identifyHuman",
+  identify_not_living: "admin.error.identifyNotLiving",
+  identify_not_collectible: "admin.error.identifyNotCollectible",
 };
 
-/** 观察 error 字段：可能是稳定 code，也可能已是中文/英文原文 */
+/** 观察 error 字段：稳定 code 译成管理端中文；已是中文原文则原样展示 */
 export function explainObsError(raw: string | null | undefined): { title: string; code: string | null } {
   const s = (raw ?? "").trim();
   if (!s) return { title: t("admin.error.none"), code: null };
   const key = OBS_ERROR_KEYS[s];
   if (key) return { title: t(key), code: s };
-  // 已是用户可见中文（identify 落库时 localize 过）
   if (/[\u4e00-\u9fff]/.test(s)) return { title: s, code: null };
   return { title: t("admin.error.unknown", { detail: s.slice(0, 160) }), code: s.slice(0, 80) };
 }
