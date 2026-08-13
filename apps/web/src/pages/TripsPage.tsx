@@ -12,6 +12,7 @@ export default function TripsPage() {
   const [error, setError] = useState<string | null>(null);
   const [loading, setLoading] = useState(true);
   const [joining, setJoining] = useState(false);
+  const [showJoin, setShowJoin] = useState(false);
 
   async function refresh() {
     const { trips: rows } = await api.listTrips();
@@ -45,6 +46,7 @@ export default function TripsPage() {
     try {
       await api.joinTrip(joinCode.trim());
       setJoinCode("");
+      setShowJoin(false);
       await refresh();
     } catch (err) {
       setError(err instanceof Error ? err.message : t("trips.joinFailed"));
@@ -69,28 +71,51 @@ export default function TripsPage() {
           className="input"
           value={title}
           onChange={(e) => setTitle(e.target.value)}
+          placeholder={t("trips.createLabel")}
         />
         <button className="btn secondary" type="submit" disabled={!title.trim()}>
           {t("trips.createAction")}
         </button>
       </form>
 
-      <form className="trip-create-inline" onSubmit={onJoin}>
-        <label className="sr-only" htmlFor="trip-join-code">
+      {!showJoin ? (
+        <button
+          className="text-link trip-join-toggle"
+          type="button"
+          onClick={() => setShowJoin(true)}
+        >
           {t("trips.joinLabel")}
-        </label>
-        <input
-          id="trip-join-code"
-          className="input"
-          value={joinCode}
-          onChange={(e) => setJoinCode(e.target.value.toUpperCase())}
-          placeholder={t("trips.joinLabel")}
-          autoComplete="off"
-        />
-        <button className="btn secondary" type="submit" disabled={!joinCode.trim() || joining}>
-          {t("trips.joinAction")}
         </button>
-      </form>
+      ) : (
+        <div className="trip-join-panel">
+          <form className="trip-create-inline" onSubmit={onJoin}>
+            <label className="sr-only" htmlFor="trip-join-code">
+              {t("trips.joinLabel")}
+            </label>
+            <input
+              id="trip-join-code"
+              className="input"
+              value={joinCode}
+              onChange={(e) => setJoinCode(e.target.value.toUpperCase())}
+              placeholder={t("trips.joinLabel")}
+              autoComplete="off"
+            />
+            <button className="btn secondary" type="submit" disabled={!joinCode.trim() || joining}>
+              {t("trips.joinAction")}
+            </button>
+          </form>
+          <button
+            className="text-link trip-join-toggle"
+            type="button"
+            onClick={() => {
+              setShowJoin(false);
+              setJoinCode("");
+            }}
+          >
+            {t("common.cancel")}
+          </button>
+        </div>
+      )}
 
       {error ? <p className="error">{error}</p> : null}
       {loading ? <p className="muted">{t("trips.loading")}</p> : null}
@@ -112,15 +137,13 @@ export default function TripsPage() {
                   )}
                 </div>
                 <img className="trip-cover-frame" src={tripCoverFrameUrl()} alt="" aria-hidden />
+                {(trip.memberCount ?? 1) > 1 ? (
+                  <span className="trip-cover-share">{t("trips.sharedBadge")}</span>
+                ) : null}
               </div>
               <div className="trip-cover-meta">
                 <strong>{trip.title}</strong>
                 <span className="muted">{tripMetaLine(trip)}</span>
-                {(trip.memberCount ?? 1) > 1 ? (
-                  <span className="muted">
-                    {t("trips.sharedBadge")} · {t("trips.memberCount", { count: trip.memberCount ?? 1 })}
-                  </span>
-                ) : null}
               </div>
             </Link>
           ))}

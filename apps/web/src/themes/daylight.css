@@ -113,6 +113,8 @@
   --trip-cover-shadow-hover: 0 14px 32px rgba(42, 36, 28, 0.14);
   --trip-cover-plate: #efe6d6;
   --trip-create-bg: color-mix(in srgb, var(--card) 82%, var(--volume-cover-empty));
+  --trip-share-badge-bg: var(--volume-complete-soft);
+  --trip-share-badge-ink: var(--volume-complete-ink);
   --trip-pending-veil: color-mix(in srgb, var(--volume-cover-empty) 72%, #2a241c);
   --trip-empty-caption: var(--muted);
 
