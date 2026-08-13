@@ -37,7 +37,7 @@ import {
 } from "../db/schema.js";
 import { env } from "../env.js";
 import { apiError } from "../errors.js";
-import { providerSnapshot } from "../identify/health.js";
+import { identifyRoutingSnapshot } from "../identify/routing.js";
 import { enqueueIdentify } from "../jobs/identify.js";
 import { identifyQueueSize } from "../jobs/identify-queue.js";
 import { hashPassword, verifyPassword } from "../lib/password.js";
@@ -189,6 +189,7 @@ adminRoutes.get("/dashboard", async (c) => {
   });
 
   const storage = await storageSummary();
+  const identifyRoute = await identifyRoutingSnapshot();
 
   return c.json({
     users: { total: userCount[0]?.n ?? 0, today: todayUsers[0]?.n ?? 0 },
@@ -196,9 +197,10 @@ adminRoutes.get("/dashboard", async (c) => {
     identifyQueue: identifyQueueSize(),
     identifyUsageToday: Number(usageSum[0]?.total ?? 0),
     identifyDailyLimit: env.identifyDailyLimit,
+    identifyRoute,
     providers: {
-      gemini: providerSnapshot("gemini", Boolean(env.geminiApiKey)),
-      zhipu: providerSnapshot("zhipu", Boolean(env.zhipuApiKey)),
+      gemini: identifyRoute.gemini,
+      zhipu: identifyRoute.zhipu,
     },
     flags: {
       devAuth: env.devAuth,

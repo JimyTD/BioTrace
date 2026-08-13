@@ -66,6 +66,32 @@ export function providerStatusLabel(status: string): string {
   return key ? t(key) : status;
 }
 
+export function identifyRouteReasonLabel(reason: string): string {
+  const map: Record<string, MessageKey> = {
+    gemini_ok: "admin.identifyRoute.reason.gemini_ok",
+    gemini_daily_exhausted: "admin.identifyRoute.reason.gemini_daily_exhausted",
+    gemini_rate_limited: "admin.identifyRoute.reason.gemini_rate_limited",
+    gemini_down: "admin.identifyRoute.reason.gemini_down",
+    gemini_auth: "admin.identifyRoute.reason.gemini_auth",
+    gemini_no_key: "admin.identifyRoute.reason.gemini_no_key",
+    gemini_unconfigured: "admin.identifyRoute.reason.gemini_unconfigured",
+    both_unavailable: "admin.identifyRoute.reason.both_unavailable",
+  };
+  const key = map[reason];
+  return key ? t(key) : reason;
+}
+
+export function identifyRouteActiveLabel(active: string): string {
+  if (active === "zhipu") return t("admin.identifyRoute.zhipu");
+  if (active === "none") return t("admin.identifyRoute.none");
+  return t("admin.identifyRoute.gemini");
+}
+
+export function identifyProviderName(id: string): string {
+  if (id === "zhipu") return t("admin.identifyRoute.zhipuName");
+  return t("admin.identifyRoute.gemini");
+}
+
 export function flagLabel(key: string): string {
   const map: Record<string, MessageKey> = {
     devAuth: "admin.flag.devAuth",

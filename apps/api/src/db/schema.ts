@@ -216,6 +216,22 @@ export const adminAuditLog = sqliteTable("admin_audit_log", {
   createdAt: integer("created_at", { mode: "timestamp_ms" }).notNull(),
 });
 
+/** Platform Gemini / Zhipu identify calls per UTC day. */
+export const identifyProviderDaily = sqliteTable(
+  "identify_provider_daily",
+  {
+    provider: text("provider").notNull(),
+    day: text("day").notNull(),
+    success: integer("success").notNull(),
+    fail: integer("fail").notNull(),
+    /** First Gemini daily_exhausted this UTC day (ms). */
+    exhaustedAt: integer("exhausted_at", { mode: "timestamp_ms" }),
+    /** Gemini success count when daily quota first tripped. */
+    successAtExhaust: integer("success_at_exhaust"),
+  },
+  (t) => [primaryKey({ columns: [t.provider, t.day] })],
+);
+
 export type User = typeof users.$inferSelect;
 export type Trip = typeof trips.$inferSelect;
 export type TripMember = typeof tripMembers.$inferSelect;
@@ -228,3 +244,4 @@ export type VolumeProgress = typeof volumeProgress.$inferSelect;
 export type IdentifyDailyUsage = typeof identifyDailyUsage.$inferSelect;
 export type AdminUser = typeof adminUsers.$inferSelect;
 export type AdminAuditLog = typeof adminAuditLog.$inferSelect;
+export type IdentifyProviderDaily = typeof identifyProviderDaily.$inferSelect;

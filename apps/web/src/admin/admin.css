@@ -158,6 +158,18 @@
   margin: 0.5rem 0;
 }
 
+.admin-route-on {
+  color: #047857;
+}
+
+.admin-route-fallback {
+  color: #b45309;
+}
+
+.admin-route-none {
+  color: #b91c1c;
+}
+
 .admin-ok {
   color: #15803d;
   margin: 0.5rem 0;

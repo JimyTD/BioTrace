@@ -272,5 +272,28 @@ export async function migrate() {
       created_at INTEGER NOT NULL
     );
     CREATE INDEX IF NOT EXISTS idx_admin_audit_created ON admin_audit_log(created_at);
+    CREATE TABLE IF NOT EXISTS identify_provider_daily (
+      provider TEXT NOT NULL,
+      day TEXT NOT NULL,
+      success INTEGER NOT NULL,
+      fail INTEGER NOT NULL,
+      exhausted_at INTEGER,
+      success_at_exhaust INTEGER,
+      PRIMARY KEY (provider, day)
+    );
+  `);
+
+  await ensureColumn("identify_provider_daily", "exhausted_at", "exhausted_at INTEGER");
+  await ensureColumn("identify_provider_daily", "success_at_exhaust", "success_at_exhaust INTEGER");
+
+  await client.execute(`
+    INSERT OR IGNORE INTO identify_provider_daily (provider, day, success, fail)
+    SELECT identify_provider,
+           strftime('%Y-%m-%d', created_at / 1000, 'unixepoch'),
+           COUNT(*),
+           0
+    FROM observations
+    WHERE identify_provider IN ('gemini', 'zhipu')
+    GROUP BY identify_provider, strftime('%Y-%m-%d', created_at / 1000, 'unixepoch')
   `);
 }

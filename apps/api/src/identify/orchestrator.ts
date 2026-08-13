@@ -1,4 +1,5 @@
 import { env } from "../env.js";
+import { bumpProviderStat, markGeminiExhaustedToday } from "../services/identify-provider-stats.js";
 import { identifyWithGemini } from "./gemini.js";
 import {
   classifyProviderError,
@@ -47,6 +48,17 @@ function configured(id: ProviderId): boolean {
   return id === "gemini" ? Boolean(env.geminiApiKey) : Boolean(env.zhipuApiKey);
 }
 
+async function recordCall(id: ProviderId, kind: "success" | "fail", errorKind?: ErrorKind) {
+  try {
+    await bumpProviderStat(id, kind);
+    if (id === "gemini" && errorKind === "daily_exhausted") {
+      await markGeminiExhaustedToday();
+    }
+  } catch (err) {
+    console.warn("[identify] provider daily stat failed", err);
+  }
+}
+
 async function callProvider(id: ProviderId, input: IdentifyInput): Promise<IdentifyResult> {
   if (!configured(id)) {
     markProviderNoKey(id);
@@ -55,10 +67,14 @@ async function callProvider(id: ProviderId, input: IdentifyInput): Promise<Ident
   try {
     const result = id === "gemini" ? await identifyWithGemini(input) : await identifyWithZhipu(input);
     markProviderOk(id);
+    await recordCall(id, "success");
     return result;
   } catch (err) {
     const message = err instanceof Error ? err.message : String(err);
-    applyError(id, message);
+    const kind = applyError(id, message);
+    if (kind !== "no_key") {
+      await recordCall(id, "fail", kind);
+    }
     throw err instanceof Error ? err : new Error(message);
   }
 }

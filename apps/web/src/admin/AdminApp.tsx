@@ -6,6 +6,9 @@ import {
   explainObsError,
   flagLabel,
   formatAdminTime,
+  identifyProviderName,
+  identifyRouteActiveLabel,
+  identifyRouteReasonLabel,
   obsStatusLabel,
   providerStatusLabel,
 } from "./format";
@@ -127,10 +130,26 @@ function Dashboard() {
   const queuePending = typeof queue === "object" && queue ? Number(queue.pending ?? 0) : 0;
   const queueRunning =
     typeof queue === "object" && queue ? Number(queue.running ?? 0) : Number(queue ?? 0);
-  const providers = (data.providers ?? {}) as Record<
-    string,
-    { configured?: boolean; status?: string; coolUntil?: number | null; lastOkAt?: number | null }
-  >;
+  type ProviderRow = {
+    configured?: boolean;
+    status?: string;
+    coolUntil?: number | null;
+    lastOkAt?: number | null;
+    todaySuccess?: number;
+    todayFail?: number;
+    exhaustedAt?: number | null;
+    successAtExhaust?: number | null;
+  };
+  const identifyRoute = (data.identifyRoute ?? null) as {
+    activeProvider?: string;
+    usingZhipuFallback?: boolean;
+    reason?: string;
+    gemini?: ProviderRow;
+    zhipu?: ProviderRow;
+  } | null;
+  const providers = (identifyRoute
+    ? { gemini: identifyRoute.gemini, zhipu: identifyRoute.zhipu }
+    : ((data.providers ?? {}) as Record<string, ProviderRow>)) as Record<string, ProviderRow>;
   const recentFailed = (data.recentFailed ?? []) as Array<{
     id: string;
     error?: string;
@@ -166,6 +185,9 @@ function Dashboard() {
           <div className="label">{t("admin.identifyUsageToday")}</div>
           <div className="value">
             {String(data.identifyUsageToday)} / {String(data.identifyDailyLimit)}
+          </div>
+          <div className="admin-muted" style={{ marginTop: "0.35rem" }}>
+            {t("admin.identifyUsageTodayHint")}
           </div>
         </div>
         <div className="admin-card">
@@ -216,37 +238,80 @@ function Dashboard() {
         </table>
       </div>
 
-      <div className="admin-panel">
-        <strong>{t("admin.providers")}</strong>
+      <div className="admin-panel" style={{ maxWidth: "960px" }}>
+        <strong>{t("admin.identifyRoute")}</strong>
+        <p className="admin-muted">{t("admin.identifyRoute.hint")}</p>
+        {identifyRoute ? (
+          <>
+            <div className="admin-cards" style={{ marginTop: "0.75rem" }}>
+              <div className="admin-card">
+                <div className="label">{t("admin.identifyRoute.active")}</div>
+                <div
+                  className={
+                    identifyRoute.activeProvider === "none"
+                      ? "value admin-route-none"
+                      : identifyRoute.usingZhipuFallback
+                        ? "value admin-route-fallback"
+                        : "value admin-route-on"
+                  }
+                >
+                  {identifyRouteActiveLabel(String(identifyRoute.activeProvider ?? "gemini"))}
+                </div>
+              </div>
+            </div>
+            <p>{identifyRouteReasonLabel(String(identifyRoute.reason ?? ""))}</p>
+            {identifyRoute.usingZhipuFallback && identifyRoute.gemini?.successAtExhaust != null ? (
+              <p>
+                {t("admin.identifyRoute.switched", {
+                  count: Number(identifyRoute.gemini.successAtExhaust),
+                })}
+              </p>
+            ) : null}
+            {!identifyRoute.usingZhipuFallback && identifyRoute.gemini?.exhaustedAt ? (
+              <p>
+                {t("admin.identifyRoute.exhaustedToday", {
+                  count: Number(identifyRoute.gemini.successAtExhaust ?? 0),
+                })}
+              </p>
+            ) : null}
+          </>
+        ) : null}
         <table className="admin-table" style={{ marginTop: "0.5rem" }}>
           <thead>
             <tr>
-              <th>服务</th>
-              <th>状态</th>
+              <th>{t("admin.col.service")}</th>
+              <th>{t("admin.identifyRoute.todaySuccess")}</th>
+              <th>{t("admin.identifyRoute.todayFail")}</th>
+              <th>{t("admin.col.status")}</th>
               <th>{t("admin.provider.coolUntil")}</th>
               <th>{t("admin.provider.lastOk")}</th>
             </tr>
           </thead>
           <tbody>
-            {Object.entries(providers).map(([name, p]) => (
-              <tr key={name}>
-                <td>
-                  {name}{" "}
-                  <span className="admin-muted">
-                    ({p.configured ? t("admin.provider.configured") : t("admin.provider.notConfigured")})
-                  </span>
-                </td>
-                <td>{providerStatusLabel(String(p.status ?? ""))}</td>
-                <td>
-                  {p.coolUntil
-                    ? formatAdminTime(p.coolUntil)
-                    : t("admin.provider.notCooling")}
-                </td>
-                <td>
-                  {p.lastOkAt ? formatAdminTime(p.lastOkAt) : t("admin.provider.neverOk")}
-                </td>
-              </tr>
-            ))}
+            {["gemini", "zhipu"].map((name) => {
+              const p = providers[name] ?? {};
+              return (
+                <tr key={name}>
+                  <td>
+                    {identifyProviderName(name)}{" "}
+                    <span className="admin-muted">
+                      ({p.configured ? t("admin.provider.configured") : t("admin.provider.notConfigured")})
+                    </span>
+                  </td>
+                  <td>{Number(p.todaySuccess ?? 0)}</td>
+                  <td>{Number(p.todayFail ?? 0)}</td>
+                  <td>{providerStatusLabel(String(p.status ?? ""))}</td>
+                  <td>
+                    {p.coolUntil
+                      ? formatAdminTime(p.coolUntil)
+                      : t("admin.provider.notCooling")}
+                  </td>
+                  <td>
+                    {p.lastOkAt ? formatAdminTime(p.lastOkAt) : t("admin.provider.neverOk")}
+                  </td>
+                </tr>
+              );
+            })}
           </tbody>
         </table>
       </div>
