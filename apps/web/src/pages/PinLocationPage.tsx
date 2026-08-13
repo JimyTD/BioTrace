@@ -65,6 +65,7 @@ export default function PinLocationPage() {
         map.on("move", refreshCenter);
 
         mapRef.current = map;
+        map.resize();
       } catch (e) {
         if (!cancelled) {
           setError(e instanceof Error ? e.message : t("detail.loadFailed"));
@@ -98,17 +99,10 @@ export default function PinLocationPage() {
   }
 
   return (
-    <div className="stack pin-page">
-      <div className="row">
-        <Link className="btn secondary" to={`/observations/${id}`}>
-          {t("detail.pinCancel")}
-        </Link>
-      </div>
-
-      <header className="page-head">
-        <h1 className="page-title">{t("detail.pinTitle")}</h1>
-        <p className="lede">{t("detail.pinLede")}</p>
-      </header>
+    <div className="pin-page">
+      <Link className="text-link pin-back" to={`/observations/${id}`}>
+        ← {t("detail.pinCancel")}
+      </Link>
 
       <div className="map-wrap map-wrap-pin">
         <div ref={containerRef} className="map-pin-canvas" />
@@ -117,16 +111,13 @@ export default function PinLocationPage() {
         </div>
       </div>
 
-      {centerLabel ? <p className="muted pin-center-label">{centerLabel}</p> : null}
-      {error ? <p className="error">{error}</p> : null}
-
-      <div className="row">
-        <button className="btn" disabled={!mapReady || saving} onClick={confirmHere}>
+      <div className="pin-dock">
+        <p className="muted pin-lede">{t("detail.pinLede")}</p>
+        {centerLabel ? <p className="muted pin-center-label">{centerLabel}</p> : null}
+        {error ? <p className="error">{error}</p> : null}
+        <button className="btn" type="button" disabled={!mapReady || saving} onClick={confirmHere}>
           {saving ? t("detail.pinSaving") : t("detail.pinConfirm")}
         </button>
-        <Link className="btn secondary" to={`/observations/${id}`}>
-          {t("detail.pinCancel")}
-        </Link>
       </div>
     </div>
   );

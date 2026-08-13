@@ -251,6 +251,7 @@ export const zh = {
   "map.title": "地图",
   "map.lede": "点一下落点可看详情；再点空白处取消选中。",
   "map.countHint": "已落点 {count} 条 · 点击圆点可选中",
+  "map.empty": "还没有落点。在照片里补标位置后，会出现在这里。",
   "map.openTrip": "打开所属旅途",
   "map.openDetail": "查看详情",
   "map.loadFailed": "地图加载失败",

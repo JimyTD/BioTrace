@@ -80,7 +80,7 @@ docs/        筹划 + 本实现规格
 
 - **API**：`PATCH /api/observations/:id/location`，body `{ lat, lng }`（有限、纬 ±90、经 ±180）。写坐标后，若已有 `finestReliableRank` 则复用 `computeSettle` 重算 `countryCode` / `countrySource` / `locationPrecise` / `alertIntroduced` / `rarity`（及 settle 同类字段）；**不改** `status`、不开包、不 `enqueueIdentify`。已 `settled` 时 `upsertCollectionFromObservation` 刷新图鉴档位。
 - **analyzing 竞态**：允许补标只写坐标；[`jobs/identify.ts`](../apps/api/src/jobs/identify.ts) 在 `computeSettle` 前再读库内最新 lat/lng（Prompt 仍可用上传闭包坐标）。
-- **UI**：观察详情大图在上；名字 / 学名 / 稀有度徽章（色底）/ 简介 / 分类 / 记录（时间、位置、鉴定、坐标）均展开；重识别与删除沉底。「设位置 / 改位置」→ `/observations/:id/pin`；**挪地图 + 中心准星 +「确认此处」**（不手打地址）。底图与足迹图共用 [`map/style.ts`](../apps/web/src/map/style.ts)（缩放上限；瓦片失败：备用天地图 key → 内置简图）。
+- **UI**：观察详情大图在上；名字 / 学名 / 稀有度徽章（色底）/ 简介 / 分类 / 记录（时间、位置、鉴定、坐标）均展开；重识别与删除沉底。「设位置 / 改位置」→ `/observations/:id/pin`；**挪地图 + 中心准星 +「确认此处」**（不手打地址）。足迹图 `/map` 底图铺满主区，选中为底部条（图+名，点进详情），不在地图上弹卡。天地图审图号与 attribution 留在图面右下角。底图与足迹图共用 [`map/style.ts`](../apps/web/src/map/style.ts)（缩放上限；瓦片失败：备用天地图 key → 内置简图）。
 - **文案**：`detail.setLocation` 等，均在 `packages/messages`。
 
 验收：无 GPS 可识图开包；补标后上地图；海外点国别正确（如福冈→JP）；俗名/分类不变。

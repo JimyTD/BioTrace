@@ -1,6 +1,6 @@
 import { useEffect, useRef, useState } from "react";
 import { Link } from "react-router-dom";
-import maplibregl, { Map, Marker, Popup } from "maplibre-gl";
+import maplibregl, { Map, Marker } from "maplibre-gl";
 import "maplibre-gl/dist/maplibre-gl.css";
 import { t } from "@biotrace/messages";
 import { api, type Observation } from "../api";
@@ -15,14 +15,24 @@ import {
   mapStyleForKeys,
 } from "../map/style";
 
+function obsTitle(obs: Observation) {
+  if (obs.status === "pending_settle") return t("status.pending_settle");
+  if (obs.status === "analyzing") return t("status.analyzing");
+  return obs.commonName || obs.scientificName || t("map.observationFallback");
+}
+
+function obsHref(obs: Observation) {
+  return obs.status === "pending_settle" ? `/settle/${obs.id}` : `/observations/${obs.id}`;
+}
+
 export default function MapPage() {
   const containerRef = useRef<HTMLDivElement | null>(null);
   const mapRef = useRef<Map | null>(null);
   const markersRef = useRef<Marker[]>([]);
-  const popupRef = useRef<Popup | null>(null);
   const observationsRef = useRef<Observation[]>([]);
   const [error, setError] = useState<string | null>(null);
   const [count, setCount] = useState(0);
+  const [loaded, setLoaded] = useState(false);
   const [selected, setSelected] = useState<Observation | null>(null);
   const [mapReady, setMapReady] = useState(false);
 
@@ -48,7 +58,7 @@ export default function MapPage() {
       });
       map.on("click", () => {
         setSelected(null);
-        popupRef.current?.remove();
+        markersRef.current.forEach((m) => m.getElement().classList.remove("is-selected"));
       });
 
       detachFallback = attachBasemapFallback(map, keys);
@@ -59,8 +69,6 @@ export default function MapPage() {
       cancelled = true;
       markersRef.current.forEach((m) => m.remove());
       markersRef.current = [];
-      popupRef.current?.remove();
-      popupRef.current = null;
       detachFallback?.();
       map?.remove();
       mapRef.current = null;
@@ -79,6 +87,9 @@ export default function MapPage() {
       })
       .catch((e) => {
         if (!cancelled) setError(e instanceof Error ? e.message : t("map.loadFailed"));
+      })
+      .finally(() => {
+        if (!cancelled) setLoaded(true);
       });
     return () => {
       cancelled = true;
@@ -90,33 +101,18 @@ export default function MapPage() {
     paintMarkers(observationsRef.current);
   }, [mapReady, count]);
 
+  useEffect(() => {
+    mapRef.current?.resize();
+  }, [selected, mapReady]);
+
   function selectObservation(obs: Observation) {
     const map = mapRef.current;
     if (!map || !hasValidCoords(obs.lat, obs.lng)) return;
-    const lat = obs.lat as number;
-    const lng = obs.lng as number;
     setSelected(obs);
-
     markersRef.current.forEach((m) => {
       const el = m.getElement();
       el.classList.toggle("is-selected", el.dataset.obsId === obs.id);
     });
-
-    popupRef.current?.remove();
-    const pending = obs.status === "pending_settle" || obs.status === "analyzing";
-    const title = pending
-      ? t(obs.status === "pending_settle" ? "status.pending_settle" : "status.analyzing")
-      : obs.commonName || obs.scientificName || t("map.observationFallback");
-    const popup = new maplibregl.Popup({ offset: 16, closeButton: true, maxWidth: "240px" })
-      .setLngLat([lng, lat])
-      .setHTML(
-        `<div class="map-popup">
-          <img src="${obs.displayUrl}" alt="" />
-          <strong>${escapeHtml(title)}</strong>
-        </div>`,
-      )
-      .addTo(map);
-    popupRef.current = popup;
   }
 
   function paintMarkers(observations: Observation[]) {
@@ -124,8 +120,6 @@ export default function MapPage() {
     if (!map) return;
     markersRef.current.forEach((m) => m.remove());
     markersRef.current = [];
-    popupRef.current?.remove();
-    popupRef.current = null;
 
     const bounds = new maplibregl.LngLatBounds();
     for (const obs of observations) {
@@ -136,10 +130,7 @@ export default function MapPage() {
       el.type = "button";
       el.className = "map-dot";
       el.dataset.obsId = obs.id;
-      el.setAttribute(
-        "aria-label",
-        obs.commonName || obs.scientificName || t("map.observationFallback"),
-      );
+      el.setAttribute("aria-label", obsTitle(obs));
       el.addEventListener("click", (ev) => {
         ev.stopPropagation();
         selectObservation(obs);
@@ -153,69 +144,34 @@ export default function MapPage() {
     }
 
     if (!bounds.isEmpty()) {
-      // duration: 0 —— 飞行动画会途经十来个 zoom 级别，每级都拉一批瓦片，
-      // 而用户只看得到最终那一屏。直接跳转可省掉这部分配额消耗。
       map.fitBounds(bounds, { padding: 48, maxZoom: AUTO_FIT_MAX_ZOOM, duration: 0 });
     }
   }
 
+  const empty = loaded && !error && count === 0 && !selected;
+
   return (
-    <div className="stack">
-      <header className="page-head">
-        <h1 className="page-title">{t("map.title")}</h1>
-        <p className="lede">{t("map.lede")}</p>
-      </header>
+    <div className="page-map">
       <div className="map-wrap" ref={containerRef} />
+      {empty ? <p className="map-empty">{t("map.empty")}</p> : null}
+      {error ? <p className="map-empty error">{error}</p> : null}
       {selected ? (
-        <div className="panel map-selection row">
-          <img className="map-selection-thumb" src={selected.displayUrl} alt="" />
-          <div className="stack" style={{ gap: 4, flex: 1 }}>
-            <strong>
-              {selected.status === "pending_settle" || selected.status === "analyzing"
-                ? t(
-                    selected.status === "pending_settle"
-                      ? "status.pending_settle"
-                      : "status.analyzing",
-                  )
-                : selected.commonName ||
-                  selected.scientificName ||
-                  t("map.observationFallback")}
-            </strong>
-            <span className="muted">
-              {selected.locationLabel ||
-                `${selected.lat?.toFixed(5)}, ${selected.lng?.toFixed(5)}`}
+        <div className="map-sheet">
+          <Link className="map-sheet-main" to={obsHref(selected)} aria-label={t("map.openDetail")}>
+            <img className="map-sheet-thumb" src={selected.displayUrl} alt="" />
+            <span className="map-sheet-copy">
+              <strong>{obsTitle(selected)}</strong>
+              <span className="muted">
+                {selected.locationLabel ||
+                  `${selected.lat?.toFixed(5)}, ${selected.lng?.toFixed(5)}`}
+              </span>
             </span>
-            <div className="row">
-              <Link
-                className="btn secondary"
-                to={
-                  selected.status === "pending_settle"
-                    ? `/settle/${selected.id}`
-                    : `/observations/${selected.id}`
-                }
-              >
-                {selected.status === "pending_settle" ? t("settle.open") : t("map.openDetail")}
-              </Link>
-              <Link className="btn secondary" to={`/trips/${selected.tripId}`}>
-                {t("map.openTrip")}
-              </Link>
-            </div>
-          </div>
+          </Link>
+          <Link className="text-link" to={`/trips/${selected.tripId}`}>
+            {t("map.openTrip")}
+          </Link>
         </div>
-      ) : (
-        <p className="muted">
-          {t("map.countHint", { count })}
-          {error ? ` · ${error}` : ""}
-        </p>
-      )}
+      ) : null}
     </div>
   );
-}
-
-function escapeHtml(s: string) {
-  return s
-    .replaceAll("&", "&amp;")
-    .replaceAll("<", "&lt;")
-    .replaceAll(">", "&gt;")
-    .replaceAll('"', "&quot;");
 }
