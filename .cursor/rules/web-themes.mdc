@@ -13,7 +13,7 @@ alwaysApply: true
 
 - 配色 / 字体 / 圆角 / 氛围底 / 稀有度徽章色：写在 `apps/web/src/themes/<id>.css` 的 `[data-theme="<id>"]` 下
 - 套册位图：`public/volumes/<id>/`，经 `themes/volumeAssets` helper 引用（见 [`套册美术分层.md`](docs/features/套册美术分层.md)）
-- 壳纸纹（可选）：`public/shell/<id>/`，经 `themes/shellAssets`；无文件时 `--nav-texture: none`
+- 壳纸纹：`public/shell/<id>/page-texture.png`，经 `--page-texture` / `--nav-texture`；日常页不是纯色 hex
 - 结构样式只使用语义 `var(--*)`（见 `apps/web/src/styles.css`）
 - 新增皮肤：加 CSS → 加 `volumes/<id>/` 资源包 → 登记 `ThemeId` / `THEME_IDS` → `main.tsx` import →（可选）`applyTheme`
 - 切换皮肤用 `applyTheme`；不要复制整页组件换皮
@@ -28,4 +28,4 @@ alwaysApply: true
 ## 当前与后置
 
 - 默认：`daylight`（日光胶片 · 旅游）
-- 后置示例：`tide`（潜水/潮间带）— 按皮肤主题手册 §3 清单加，勿改核心流程
+- 第二皮肤：`tide`（潮间带）已落地 token + 资源槽；册皮/开包氛围图可后补，勿为换皮复制 `pages/*`

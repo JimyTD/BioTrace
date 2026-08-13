@@ -1,0 +1,121 @@
+<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>登录 · 改前 / 改后</title>
+    <style>
+      :root {
+        --ink: #1f2a24; --muted: #6b6258; --line: rgba(42, 64, 51, 0.14);
+        --card: #faf8f3; --cta: #d3543c; --cta-ink: #fffaf7;
+        --input: #fffdf9; --font: "Segoe UI", "PingFang SC", "Microsoft YaHei", sans-serif;
+        --bg:
+          radial-gradient(900px 480px at 8% -8%, rgba(212, 168, 120, 0.22), transparent 55%),
+          linear-gradient(180deg, #f3efe7, #ebe6dc);
+      }
+      * { box-sizing: border-box; }
+      body { margin: 0; padding: 16px 12px 40px; font-family: var(--font); color: var(--ink); background: #d9d0c2; }
+      h1.doc { margin: 0 0 8px; font-size: 1.15rem; }
+      .note { margin: 0 0 10px; color: #5a5248; font-size: 0.92rem; max-width: 58ch; }
+      .diffs { margin: 0 0 16px; padding-left: 1.2em; color: #5a5248; font-size: 0.92rem; max-width: 58ch; }
+      .phones { display: flex; flex-wrap: wrap; gap: 18px; }
+      .phone {
+        width: min(100%, 360px); height: 640px; background: var(--bg);
+        border-radius: 22px; border: 1px solid rgba(42,36,28,.18);
+        box-shadow: 0 16px 40px rgba(42,36,28,.14);
+        overflow: hidden; display: grid;
+      }
+      .label { margin: 0 0 6px; font-size: 0.8rem; font-weight: 700; color: #5a5248; }
+      .screen { padding: 36px 22px; display: grid; align-content: center; }
+      .card {
+        display: grid; gap: 12px; padding: 16px; border-radius: 14px;
+        background: var(--card); border: 1px solid var(--line);
+      }
+      .open { display: grid; gap: 14px; }
+      .brand { margin: 0; font-size: 1.65rem; font-weight: 700; }
+      .title { margin: 0; font-size: 1.45rem; font-weight: 700; }
+      .lede { margin: 0; color: var(--muted); font-size: 0.95rem; }
+      .modes { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
+      .field { display: grid; gap: 4px; }
+      .field span { color: var(--muted); font-size: 0.92rem; }
+      .field i {
+        display: block; height: 40px; border-radius: 10px;
+        border: 1px solid var(--line); background: var(--input);
+      }
+      .btn {
+        border: 1px solid var(--line); border-radius: 10px; padding: 10px 12px;
+        font: inherit; background: #fffaf2; color: var(--ink); text-align: center;
+      }
+      .btn.cta { background: var(--cta); color: var(--cta-ink); border: 0; }
+      .links { display: flex; gap: 16px; color: var(--muted); font-size: 0.92rem; }
+      .back { color: var(--muted); font-size: 0.92rem; }
+    </style>
+  </head>
+  <body>
+    <h1 class="doc">登录 · 改前 / 改后</h1>
+    <p class="note">
+      进门是翻开相册，不是后台登录台。默认只看见登录；注册和找回是另一张卡。
+      未登录没有底栏。
+    </p>
+    <ul class="diffs">
+      <li>去掉登录/注册并排按钮</li>
+      <li>一颗主按钮：登录 / 创建账号 / 发送重置码</li>
+      <li>创建账号、忘记密码是文字链</li>
+      <li>不再套一张圆角卡片把表单关进盒子里</li>
+    </ul>
+    <div class="phones">
+      <div>
+        <p class="label">改前</p>
+        <div class="phone">
+          <div class="screen">
+            <div class="card">
+              <h2 class="brand">BioTrace</h2>
+              <p class="lede">旅行自然观察</p>
+              <div class="modes">
+                <button class="btn" type="button">登录</button>
+                <button class="btn" type="button">注册</button>
+              </div>
+              <label class="field"><span>邮箱</span><i></i></label>
+              <label class="field"><span>密码</span><i></i></label>
+              <button class="btn cta" type="button">登录</button>
+              <button class="btn" type="button">忘记密码</button>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div>
+        <p class="label">改后 · 登录</p>
+        <div class="phone">
+          <div class="screen">
+            <div class="open">
+              <h2 class="title">BioTrace</h2>
+              <p class="lede">翻开相册，记下路上遇见的。</p>
+              <label class="field"><span>邮箱</span><i></i></label>
+              <label class="field"><span>密码</span><i></i></label>
+              <button class="btn cta" type="button">登录</button>
+              <div class="links">
+                <span>创建账号</span>
+                <span>忘记密码</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div>
+        <p class="label">改后 · 创建账号</p>
+        <div class="phone">
+          <div class="screen">
+            <div class="open">
+              <span class="back">← 返回登录</span>
+              <h2 class="title">创建账号</h2>
+              <label class="field"><span>邮箱</span><i></i></label>
+              <label class="field"><span>昵称（可选）</span><i></i></label>
+              <label class="field"><span>密码</span><i></i></label>
+              <button class="btn cta" type="button">创建账号</button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </body>
+</html>

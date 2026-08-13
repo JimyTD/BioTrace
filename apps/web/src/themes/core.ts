@@ -1,10 +1,10 @@
 /**
  * 皮肤 id 与切换（配色 CSS 在 *.css；套册位图在 /volumes/<id>/）。
  */
-export type ThemeId = "daylight";
+export type ThemeId = "daylight" | "tide";
 
-/** 已实现的皮肤；tide 等后续加入后再扩类型与 CSS。 */
-export const THEME_IDS = ["daylight"] as const satisfies readonly ThemeId[];
+/** 已实现的皮肤。默认仍是 daylight；tide 走同一套页面，只换 token 与资源槽。 */
+export const THEME_IDS = ["daylight", "tide"] as const satisfies readonly ThemeId[];
 
 export const DEFAULT_THEME: ThemeId = "daylight";
 

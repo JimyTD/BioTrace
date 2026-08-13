@@ -41,8 +41,8 @@
   --modal-bg: #f7f3eb;
   --modal-scrim: rgba(31, 42, 36, 0.48);
   --nav-bg: #f3efe7;
-  /* 顶栏/底栏纸纹槽；无文件时 none，勿写死路径 */
   --nav-texture: none;
+  --page-texture: none;
   --shadow: 0 8px 22px rgba(42, 36, 28, 0.07);
 
   --radius-sm: 8px;
@@ -51,9 +51,10 @@
   --radius-btn: 10px;
 
   --bg-atmosphere:
-    radial-gradient(900px 480px at 8% -8%, rgba(212, 168, 120, 0.22) 0%, transparent 55%),
-    radial-gradient(700px 420px at 100% 0%, rgba(168, 186, 168, 0.18) 0%, transparent 50%),
-    linear-gradient(180deg, var(--bg0), var(--bg1));
+    radial-gradient(ellipse 120% 70% at 8% -18%, rgba(212, 168, 120, 0.34) 0%, transparent 56%),
+    radial-gradient(ellipse 80% 55% at 100% 108%, rgba(90, 70, 48, 0.07) 0%, transparent 52%),
+    linear-gradient(168deg, #f6f1e8 0%, #efe8dc 46%, #e9e1d4 100%);
+  --page-wash: transparent;
 
   --map-dot: #3a322c;
   --map-dot-selected: #d3543c;
@@ -115,10 +116,13 @@
   --trip-create-bg: color-mix(in srgb, var(--card) 82%, var(--volume-cover-empty));
   --trip-share-badge-bg: var(--volume-complete-soft);
   --trip-share-badge-ink: var(--volume-complete-ink);
-  --trip-pending-veil: color-mix(in srgb, var(--volume-cover-empty) 72%, #2a241c);
+  --trip-pending-veil: color-mix(in srgb, var(--volume-cover-empty) 72%, var(--photo-mat));
   --trip-empty-caption: var(--muted);
 
   /* 我的：名片 / 设置行 */
   --me-card-bg: color-mix(in srgb, var(--card) 88%, var(--volume-cover-empty));
   --me-row-line: var(--line);
+
+  /* 开包照片垫 / 未出图时的深底 */
+  --photo-mat: #2a241c;
 }

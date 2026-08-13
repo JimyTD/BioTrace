@@ -16,7 +16,7 @@
 | Cut 5 | 已上线 | 邮箱+密码主路径（取代魔法链接）；Resend 仅用于找回码；持久会话；见 §5 |
 | Cut 6 | 制品就绪 | Capacitor Android 侧载壳；手册 [`features/Android套壳.md`](./features/Android套壳.md) |
 | 套册成就 | 引擎+三本内容已通 | 配置驱动；拓展手册 [`features/旅行套册.md`](./features/旅行套册.md) |
-| 皮肤主题 | 已落地 | 默认 `daylight`；手册 [`features/皮肤主题.md`](./features/皮肤主题.md) |
+| 皮肤主题 | 已落地 | 默认 `daylight`；第二皮肤 `tide`（token + 资源槽）；手册 [`features/皮肤主题.md`](./features/皮肤主题.md) |
 | 管理后台 | 已落地 | 独立登录；总览/用户/观察/平台密钥/存储/审计；手册 [`features/管理后台.md`](./features/管理后台.md) |
 | 地图补标 | 已完成 | 详情准星补标；`PATCH …/location` 重算国别/引入/稀有度（见 §1.3） |
 | 旅途元数据 | 已完成 | 列表/相册时间·地点摘要；自动聚合 + 可选手填覆盖（见 §1.5） |
@@ -142,7 +142,10 @@ docs/        筹划 + 本实现规格
 
 1. **GLM 文本**（[`encounter-rubric.ts`](../apps/api/src/rarity/encounter-rubric.ts)，标定与生产同一份）输出（`reason` 必须在最前，让模型先说理再打分）：
    - `reason`：一句话
-   - `extinct_or_unobtainable`：布尔，**唯一通往 XR 的路径**
+   - **不问灭绝**：XR 的硬闸保留在 `formula.ts`，但**不由模型供给**。模型两个方向都错——
+     对活着的稀有物种张口就说「功能性灭绝」（把黄喉貂判成 XR），对真灭绝的白鲟又答不出依据
+     （不记得 2022 年 IUCN 宣布）。待接 GBIF 的 IUCN 红色名录等级（EX / EW → XR）。
+     优先级低：灭绝物种拍不到，XR 在生产里几乎不出现
    - `pest_or_weed`：布尔，命中即锁 N
    - `encounter_frequency`：0–5 必填整数（主信号）。rubric 要求**先在 reason 里落一个次数**
      （「这十年大约能遇到几次」）再据此挑档——只给形容词档名时模型会把大批物种堆到中间档
@@ -299,7 +302,8 @@ computeSettle
 - **主路径**：`POST /api/auth/register` / `POST /api/auth/login`（邮箱+密码）→ 设 `bt_session`；`/me` 滑动续期（约 90 天）。
 - **不强制验邮**：假邮箱可注册；收不到信则无法找回。
 - **找回**：`POST /api/auth/request-reset` → Resend 发 **6 位码** → `POST /api/auth/reset-password`（App 内填码，利 Android）。
-- **「我的」**：昵称、改密、退出；平台识图日额度与自备密钥已落地（后台可查看/清除，见 [`features/管理后台.md`](./features/管理后台.md)）。
+- **「我的」**：昵称、改密、退出；外观切换皮肤（`daylight` / `tide`）；平台识图日额度与自备密钥已落地（后台可查看/清除，见 [`features/管理后台.md`](./features/管理后台.md)）。
+- **UI**：登录页默认只露登录；注册与找回切卡，不并排抢主按钮。
 - 本机可 `DEV_AUTH=1` 开发登录；生产 `DEV_AUTH=0`。测试库可清（密码模型不迁移旧魔法链接用户）。
 - 发信仍用 Resend（`RESEND_API_KEY` + `MAIL_FROM`）；日常登录不发信。
 
@@ -333,8 +337,7 @@ computeSettle
 
 ## 8. 后置
 
-- 套册：更多主题册策展（内容 only）；手绘册皮
-- 皮肤：潜水/潮间带主题 `tide`；「我的」里主题切换 UI（见 [`features/皮肤主题.md`](./features/皮肤主题.md) §5）
+- 套册：更多主题册策展（内容 only）；手绘级替换生成图
 - 稀有度：灭绝级 XR 稳定性；中档继续靠判定键微调（禁止物种名单）
 - ~~旅途元数据增强（时间 / 地点摘要）~~：已做——自动聚合 + 可选手填覆盖（见旅途列表 / 管理旅途）
 - 完整分类树动态够格（现为固定阶元门槛）；对象存储

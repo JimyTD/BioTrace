@@ -98,33 +98,34 @@ export default function LoginPage({ onLoggedIn }: { onLoggedIn: (user: User) => 
             ? t("auth.sending")
             : t("auth.sendResetCode");
 
+  const title =
+    mode === "login"
+      ? t("app.name")
+      : mode === "register"
+        ? t("auth.registerAction")
+        : t("auth.forgotPassword");
+
   return (
     <div className="login-screen">
-      <div className="panel login-card stack">
-        <h1 className="brand">{t("app.name")}</h1>
-        <p className="lede">{t("app.tagline")}</p>
-
-        <div className="login-mode-row">
+      <div className="login-card stack">
+        {mode !== "login" ? (
           <button
             type="button"
-            className={`btn secondary${mode === "login" ? " active" : ""}`}
+            className="text-link"
+            disabled={busy}
             onClick={() => switchMode("login")}
-            disabled={busy}
           >
-            {t("auth.login")}
+            ← {t("auth.backToLogin")}
           </button>
-          <button
-            type="button"
-            className={`btn secondary${mode === "register" ? " active" : ""}`}
-            onClick={() => switchMode("register")}
-            disabled={busy}
-          >
-            {t("auth.register")}
-          </button>
-        </div>
+        ) : null}
+
+        <header className="page-head">
+          <h1 className="page-title">{title}</h1>
+          {mode === "login" ? <p className="lede">{t("auth.lede")}</p> : null}
+        </header>
 
         <form className="stack" onSubmit={onSubmit}>
-          <label className="stack" style={{ gap: "0.35rem" }}>
+          <label className="field">
             <span className="muted">{t("auth.emailLabel")}</span>
             <input
               className="input"
@@ -138,7 +139,7 @@ export default function LoginPage({ onLoggedIn }: { onLoggedIn: (user: User) => 
           </label>
 
           {mode === "register" ? (
-            <label className="stack" style={{ gap: "0.35rem" }}>
+            <label className="field">
               <span className="muted">{t("auth.displayNameLabel")}</span>
               <input
                 className="input"
@@ -153,7 +154,7 @@ export default function LoginPage({ onLoggedIn }: { onLoggedIn: (user: User) => 
           ) : null}
 
           {mode === "reset" && resetCodeSent ? (
-            <label className="stack" style={{ gap: "0.35rem" }}>
+            <label className="field">
               <span className="muted">{t("auth.resetCodeLabel")}</span>
               <input
                 className="input"
@@ -170,7 +171,7 @@ export default function LoginPage({ onLoggedIn }: { onLoggedIn: (user: User) => 
           ) : null}
 
           {mode !== "reset" || resetCodeSent ? (
-            <label className="stack" style={{ gap: "0.35rem" }}>
+            <label className="field">
               <span className="muted">
                 {mode === "reset" ? t("auth.newPasswordLabel") : t("auth.passwordLabel")}
               </span>
@@ -193,35 +194,26 @@ export default function LoginPage({ onLoggedIn }: { onLoggedIn: (user: User) => 
         </form>
 
         {mode === "login" ? (
-          <button
-            type="button"
-            className="btn secondary"
-            disabled={busy}
-            onClick={() => switchMode("reset")}
-          >
-            {t("auth.forgotPassword")}
-          </button>
-        ) : mode === "reset" ? (
-          <button
-            type="button"
-            className="btn secondary"
-            disabled={busy}
-            onClick={() => switchMode("login")}
-          >
-            {t("auth.backToLogin")}
-          </button>
+          <div className="login-links">
+            <button type="button" className="text-link" disabled={busy} onClick={() => switchMode("register")}>
+              {t("auth.registerAction")}
+            </button>
+            <button type="button" className="text-link" disabled={busy} onClick={() => switchMode("reset")}>
+              {t("auth.forgotPassword")}
+            </button>
+          </div>
         ) : null}
 
         {info ? <p className="muted">{info}</p> : null}
         {error ? <p className="error">{error}</p> : null}
 
         {devAuth ? (
-          <>
-            <button className="btn secondary" type="button" disabled={devBusy} onClick={devLogin}>
+          <div className="login-dev">
+            <button className="text-link" type="button" disabled={devBusy} onClick={devLogin}>
               {devBusy ? t("app.loading") : t("auth.devLogin")}
             </button>
             <p className="muted">{t("auth.devHint")}</p>
-          </>
+          </div>
         ) : null}
       </div>
     </div>

@@ -1,0 +1,17 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 150 100" preserveAspectRatio="none" fill="none">
+  <!-- evenodd cutout; window x=9 y=6 w=132 h=88 (6%); opaque mat -->
+  <path
+    fill="#4a5c62"
+    fill-rule="evenodd"
+    d="M0 0 H150 V100 H0 Z M9 6 H141 V94 H9 Z"
+  />
+  <rect
+    x="9.4"
+    y="6.4"
+    width="131.2"
+    height="87.2"
+    stroke="#1a2a32"
+    stroke-opacity="0.28"
+    stroke-width="0.9"
+  />
+</svg>

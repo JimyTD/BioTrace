@@ -1,6 +1,6 @@
 /**
  * 壳资源包：/shell/<themeId>/
- * 顶栏/底栏纸纹可空；没有文件时 CSS `--nav-texture: none`，纯 token 底。
+ * 衬纸可选；没有文件时皮肤 token `--page-texture` / `--nav-texture` 为 none。
  * 页面禁止写死 /shell/daylight/。
  */
 import { getActiveTheme, type ThemeId } from "./core";
@@ -15,5 +15,5 @@ export function themeShellAsset(file: string, theme: ThemeId = getActiveTheme())
 
 /** 顶栏/底栏纸纹（可选；接入时把皮肤 `--nav-texture` 设为 url(...)） */
 export function shellNavTextureUrl(theme?: ThemeId): string {
-  return themeShellAsset("nav-texture.png", theme ?? getActiveTheme());
+  return themeShellAsset("page-texture.jpg", theme ?? getActiveTheme());
 }

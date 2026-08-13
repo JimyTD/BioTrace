@@ -4,7 +4,10 @@
  */
 :root {
   color: var(--ink);
-  background: var(--bg-atmosphere);
+  background-color: var(--bg0);
+  background-image: var(--bg-atmosphere);
+  background-repeat: no-repeat;
+  background-size: cover;
   font-family: var(--font-sans);
   line-height: 1.45;
 }
@@ -16,12 +19,21 @@
 html,
 body,
 #root {
-  min-height: 100%;
+  height: 100%;
+  max-height: 100dvh;
   margin: 0;
+  overflow: hidden;
 }
 
 body {
-  min-height: 100vh;
+  min-height: 100dvh;
+  overscroll-behavior: none;
+  -webkit-tap-highlight-color: color-mix(in srgb, var(--cta) 16%, transparent);
+}
+
+button,
+a {
+  -webkit-tap-highlight-color: color-mix(in srgb, var(--cta) 16%, transparent);
 }
 
 button,
@@ -36,12 +48,17 @@ a {
 }
 
 .app-shell {
+  position: relative;
   height: 100dvh;
   max-height: 100dvh;
   min-height: 100dvh;
   display: grid;
   grid-template-rows: auto 1fr auto;
   overflow: hidden;
+  background-color: var(--bg0);
+  background-image: var(--bg-atmosphere);
+  background-repeat: no-repeat;
+  background-size: cover;
 }
 
 .app-topbar {
@@ -49,10 +66,11 @@ a {
   z-index: 20;
   isolation: isolate;
   padding: 12px 16px 10px;
-  padding-top: calc(10px + env(safe-area-inset-top));
+  padding-top: calc(10px + env(safe-area-inset-top, 0px));
+  padding-left: max(16px, env(safe-area-inset-left, 0px));
+  padding-right: max(16px, env(safe-area-inset-right, 0px));
   background-color: var(--nav-bg);
-  background-image: var(--nav-texture);
-  background-repeat: repeat;
+  background-image: none;
   border-bottom: 1px solid var(--line);
 }
 
@@ -71,7 +89,8 @@ a {
   -webkit-overflow-scrolling: touch;
   width: min(720px, 100%);
   margin: 0 auto;
-  padding: 16px 16px 20px;
+  padding: 16px max(16px, env(safe-area-inset-right, 0px)) 20px
+    max(16px, env(safe-area-inset-left, 0px));
 }
 
 .page-title {
@@ -194,6 +213,11 @@ a {
   color: var(--danger);
 }
 
+.field {
+  display: grid;
+  gap: 0.35rem;
+}
+
 .page-trips .lede {
   margin-bottom: 14px;
 }
@@ -279,7 +303,14 @@ a {
 }
 
 .trip-cover:hover .trip-cover-photo {
-  transform: scale(1.03);
+  transform: none;
+}
+
+@media (hover: hover) and (pointer: fine) {
+  .trip-cover:hover .trip-cover-photo,
+  .trip-cover:focus-visible .trip-cover-photo {
+    transform: scale(1.03);
+  }
 }
 
 .trip-cover-frame {
@@ -339,6 +370,16 @@ a {
 /* 空态：克制文案，不用整幅插画抢戏 */
 .trip-empty {
   padding: 28px 8px 12px;
+  animation: pageFadeIn 420ms ease;
+}
+
+@keyframes pageFadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
 }
 
 .trip-empty-caption {
@@ -423,9 +464,20 @@ a {
   gap: 8px;
 }
 
+button.me-row {
+  width: 100%;
+  font: inherit;
+  background: transparent;
+  border-left: 0;
+  border-right: 0;
+  border-top: 0;
+  cursor: pointer;
+  text-align: left;
+}
+
 .me-logout {
   margin-top: 8px;
-  justify-self: stretch;
+  justify-self: start;
 }
 
 .me-sub-head {
@@ -687,13 +739,14 @@ a {
   z-index: 40;
   display: grid;
   place-items: center;
-  padding: 20px;
+  padding: max(20px, env(safe-area-inset-top, 0px)) max(20px, env(safe-area-inset-right, 0px))
+    max(20px, env(safe-area-inset-bottom, 0px)) max(20px, env(safe-area-inset-left, 0px));
   background: var(--modal-scrim);
 }
 
 .force-update-backdrop {
   z-index: 60;
-  background: color-mix(in srgb, #2a241c 72%, transparent);
+  background: color-mix(in srgb, var(--ink) 72%, transparent);
 }
 
 .modal-panel {
@@ -872,13 +925,13 @@ a {
   position: absolute;
   inset: 0;
   overflow: hidden;
-  background: #2a241c;
+  background: var(--photo-mat);
 }
 
 .settle-stage.is-open .settle-photo-window {
   inset: 5%;
   border-radius: 2px;
-  background: color-mix(in srgb, var(--surface-wash) 70%, #2a241c);
+  background: color-mix(in srgb, var(--surface-wash) 70%, var(--photo-mat));
 }
 
 .settle-photo-window .settle-blur,
@@ -1374,10 +1427,10 @@ a {
   display: grid;
   grid-template-columns: repeat(4, 1fr);
   gap: 0;
-  padding: 0 4px calc(env(safe-area-inset-bottom));
+  padding: 0 max(4px, env(safe-area-inset-right, 0px)) env(safe-area-inset-bottom, 0px)
+    max(4px, env(safe-area-inset-left, 0px));
   background-color: var(--nav-bg);
-  background-image: var(--nav-texture);
-  background-repeat: repeat;
+  background-image: none;
   border-top: 1px solid var(--line);
 }
 
@@ -1493,7 +1546,7 @@ a {
   position: absolute;
   z-index: 3;
   top: 12px;
-  left: 12px;
+  left: max(12px, env(safe-area-inset-left, 0px));
   padding: 6px 10px;
   border-radius: var(--radius-sm);
   background: var(--card);
@@ -1604,27 +1657,42 @@ a {
 }
 
 .login-screen {
-  min-height: 100vh;
+  position: relative;
+  min-height: 100dvh;
+  height: 100dvh;
+  overflow-y: auto;
+  overscroll-behavior-y: contain;
+  -webkit-overflow-scrolling: touch;
   display: grid;
-  place-items: center;
-  padding: 24px;
+  align-content: center;
+  padding: calc(32px + env(safe-area-inset-top, 0px)) max(20px, env(safe-area-inset-right, 0px))
+    calc(32px + env(safe-area-inset-bottom, 0px)) max(16px, env(safe-area-inset-left, 0px));
+  background-color: var(--bg0);
+  background-image: var(--bg-atmosphere);
+  background-repeat: no-repeat;
+  background-size: cover;
 }
 
 .login-card {
-  width: min(420px, 100%);
+  width: min(400px, 100%);
+  margin: 0 auto;
 }
 
-.login-mode-row {
+.login-card .lede {
+  margin-bottom: 0;
+}
+
+.login-links {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 16px;
+}
+
+.login-dev {
   display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 0.5rem;
-}
-
-.login-mode-row .btn.active {
-  border-color: var(--accent);
-  background: var(--accent-soft);
-  color: var(--accent);
-  opacity: 1;
+  gap: 6px;
+  padding-top: 8px;
+  border-top: 1px solid var(--line);
 }
 
 .taxonomy {
@@ -1738,6 +1806,7 @@ a {
   position: relative;
   aspect-ratio: 1;
   width: 100%;
+  overflow: hidden;
 }
 
 .stamp-photo {
@@ -1884,4 +1953,15 @@ a {
   font-size: 1.25rem;
   letter-spacing: -0.02em;
   line-height: 1.35;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .trip-cover-photo,
+  .settle-pack-shell,
+  .settle-card.revealing .settle-hero,
+  .trip-empty {
+    animation: none;
+    transition: none;
+    transform: none;
+  }
 }

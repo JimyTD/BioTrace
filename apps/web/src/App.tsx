@@ -9,6 +9,7 @@ import CollectionVolumePage from "./pages/CollectionVolumePage";
 import LoginPage from "./pages/LoginPage";
 import MapPage from "./pages/MapPage";
 import MeAboutPage from "./pages/MeAboutPage";
+import MeAppearancePage from "./pages/MeAppearancePage";
 import MeIdentifyPage from "./pages/MeIdentifyPage";
 import MePage from "./pages/MePage";
 import MeProfilePage from "./pages/MeProfilePage";
@@ -75,6 +76,7 @@ export default function App() {
             />
             <Route path="/me/security" element={<MeSecurityPage />} />
             <Route path="/me/identify" element={<MeIdentifyPage />} />
+            <Route path="/me/appearance" element={<MeAppearancePage />} />
             <Route path="/me/about" element={<MeAboutPage />} />
             <Route path="*" element={<Navigate to="/" replace />} />
           </Routes>

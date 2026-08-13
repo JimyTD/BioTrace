@@ -1,0 +1,10 @@
+﻿<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100" preserveAspectRatio="none" fill="none">
+  <!-- evenodd cutout; window 6% inset; opaque mat; no CSS mask -->
+  <path
+    fill="#4a5c62"
+    fill-rule="evenodd"
+    d="M0 0 H100 V100 H0 Z M6 6 H94 V94 H6 Z"
+  />
+  <rect x="6" y="6" width="88" height="88" stroke="#1a2a32" stroke-opacity="0.45" stroke-width="0.7"/>
+  <rect x="4" y="4" width="92" height="92" stroke="#1a2a32" stroke-opacity="0.2" stroke-width="0.4"/>
+</svg>

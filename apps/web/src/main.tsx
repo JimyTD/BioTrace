@@ -5,6 +5,7 @@ import AdminApp from "./admin/AdminApp";
 import App from "./App";
 import { initTheme } from "./themes";
 import "./themes/daylight.css";
+import "./themes/tide.css";
 import "./styles.css";
 
 initTheme();

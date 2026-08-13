@@ -1,0 +1,121 @@
+/**
+ * 潮间带 · 第二皮肤
+ * 冷灰青纸、深潮池字、海璃 CTA；仍是纸质相册，不是霓虹潜水电脑。
+ */
+[data-theme="tide"] {
+  --font-sans: "Outfit", system-ui, sans-serif;
+  --font-brand: "Outfit", system-ui, sans-serif;
+
+  --bg0: #e7eef0;
+  --bg1: #dce6ea;
+  --ink: #1a2a32;
+  --muted: #5a6b72;
+  --line: rgba(26, 42, 50, 0.14);
+
+  --accent: #1e3a42;
+  --accent-soft: #d7e4e8;
+  --accent-border: rgba(30, 58, 66, 0.32);
+  --accent-border-strong: rgba(30, 58, 66, 0.45);
+
+  --cta: #2a7a78;
+  --cta-ink: #f4fbfb;
+
+  --secondary: #4a6e72;
+  --nav-active-bg: #d2e4e4;
+  --nav-active-ink: #1a5c5a;
+  --warn: #8a6a28;
+  --danger: #8b2e3a;
+  --danger-soft: rgba(139, 46, 58, 0.08);
+  --danger-line: rgba(139, 46, 58, 0.35);
+  --danger-badge-bg: #f3d4da;
+  --warn-badge-bg: #f0e4c4;
+  --warn-soft: rgba(138, 106, 40, 0.12);
+  --warn-line: rgba(138, 106, 40, 0.28);
+
+  --card: #f4f8f9;
+  --card-muted: rgba(244, 248, 249, 0.92);
+  --input-bg: #f7fbfc;
+  --surface-wash: rgba(30, 58, 66, 0.06);
+  --modal-bg: #eef4f6;
+  --modal-scrim: rgba(26, 42, 50, 0.48);
+  --nav-bg: #e7eef0;
+  --nav-texture: none;
+  --page-texture: none;
+  --shadow: 0 8px 22px rgba(20, 36, 42, 0.08);
+
+  --radius-sm: 8px;
+  --radius-md: 11px;
+  --radius-lg: 14px;
+  --radius-btn: 10px;
+
+  --bg-atmosphere:
+    radial-gradient(ellipse 120% 70% at 8% -18%, rgba(90, 168, 176, 0.26) 0%, transparent 56%),
+    radial-gradient(ellipse 80% 55% at 100% 108%, rgba(30, 58, 66, 0.08) 0%, transparent 52%),
+    linear-gradient(168deg, #eef4f6 0%, #e4eef1 46%, #dce7eb 100%);
+  --page-wash: transparent;
+
+  --map-dot: #1e3a42;
+  --map-dot-selected: #2a7a78;
+  --map-dot-ring: rgba(42, 122, 120, 0.3);
+  --map-dot-border: #f4fbfb;
+
+  --rarity-N-bg: #e4e8e8;
+  --rarity-N-fg: #4a4f48;
+  --rarity-R-bg: #c8e8ff;
+  --rarity-R-fg: #0b6aa8;
+  --rarity-SR-bg: #f0d8ff;
+  --rarity-SR-fg: #7a22c8;
+  --rarity-SSR-bg: #ffe566;
+  --rarity-SSR-fg: #6b4200;
+  --rarity-UR-bg: #ffb8b4;
+  --rarity-UR-fg: #b00018;
+  --rarity-LR-bg: #f3e2ff;
+  --rarity-LR-fg: #5a1a6e;
+  --rarity-XR-bg: #ffc2f0;
+  --rarity-XR-fg: #9a0070;
+
+  --rarity-N-seal: #7a7e78;
+  --rarity-N-seal-ink: #f7f5f0;
+  --rarity-R-seal: #2eb0f0;
+  --rarity-R-seal-ink: #f0faff;
+  --rarity-SR-seal: #b14ef0;
+  --rarity-SR-seal-ink: #fcf4ff;
+  --rarity-SSR-seal: #f0c400;
+  --rarity-SSR-seal-ink: #3a2800;
+  --rarity-UR-seal: #ff1f3a;
+  --rarity-UR-seal-ink: #fff0f0;
+  --rarity-LR-seal: #f0c400;
+  --rarity-LR-seal-ink: #1a1028;
+  --rarity-XR-seal: #ff00a8;
+  --rarity-XR-seal-ink: #fff5fb;
+
+  --rarity-LR-seal-rainbow: conic-gradient(
+    from 210deg,
+    #b14ef0 0deg,
+    #2eb0f0 60deg,
+    #f0c400 120deg,
+    #ff1f3a 200deg,
+    #ff00a8 280deg,
+    #b14ef0 360deg
+  );
+
+  --volume-cover-empty: #d5e0e4;
+  --volume-stamp-empty-line: rgba(30, 58, 66, 0.28);
+  --volume-complete-line: #2a7a78;
+  --volume-complete-soft: #d2e4e4;
+  --volume-complete-ink: #1a5c5a;
+
+  --trip-cover-shadow: 0 10px 26px rgba(20, 36, 42, 0.1);
+  --trip-cover-shadow-hover: 0 14px 32px rgba(20, 36, 42, 0.14);
+  --trip-cover-plate: #d5e0e4;
+  --trip-create-bg: color-mix(in srgb, var(--card) 82%, var(--volume-cover-empty));
+  --trip-share-badge-bg: var(--volume-complete-soft);
+  --trip-share-badge-ink: var(--volume-complete-ink);
+  --trip-pending-veil: color-mix(in srgb, var(--volume-cover-empty) 72%, var(--photo-mat));
+  --trip-empty-caption: var(--muted);
+
+  --me-card-bg: color-mix(in srgb, var(--card) 88%, var(--volume-cover-empty));
+  --me-row-line: var(--line);
+
+  --photo-mat: #152228;
+}

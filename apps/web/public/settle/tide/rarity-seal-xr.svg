@@ -1,0 +1,11 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 128 128" fill="none">
+  <!-- XR exclusive hex stamp die (luminance mask). -->
+  <path fill="#fff" fill-rule="evenodd" d="M6.00 64.00 L9.87 32.75 L35.00 13.77 L64.00 1.50 L93.00 13.77 L118.13 32.75 L122.00 64.00 L118.13 95.25 L93.00 114.23 L64.00 126.50 L35.00 114.23 L9.87 95.25 Z M30.00 64.00 L47.00 34.56 L81.00 34.56 L98.00 64.00 L81.00 93.44 L47.00 93.44 Z"/>
+  <path d="M24.00 64.00 L44.00 29.36 L84.00 29.36 L104.00 64.00 L84.00 98.64 L44.00 98.64 Z" stroke="#fff" stroke-width="1.5" opacity="0.4"/>
+  <g><line x1="24.00" y1="64.00" x2="16.00" y2="64.00" stroke="#fff" stroke-width="2" stroke-linecap="round" opacity="0.7"/>
+<line x1="44.00" y1="29.36" x2="40.00" y2="22.43" stroke="#fff" stroke-width="2" stroke-linecap="round" opacity="0.7"/>
+<line x1="84.00" y1="29.36" x2="88.00" y2="22.43" stroke="#fff" stroke-width="2" stroke-linecap="round" opacity="0.7"/>
+<line x1="104.00" y1="64.00" x2="112.00" y2="64.00" stroke="#fff" stroke-width="2" stroke-linecap="round" opacity="0.7"/>
+<line x1="84.00" y1="98.64" x2="88.00" y2="105.57" stroke="#fff" stroke-width="2" stroke-linecap="round" opacity="0.7"/>
+<line x1="44.00" y1="98.64" x2="40.00" y2="105.57" stroke="#fff" stroke-width="2" stroke-linecap="round" opacity="0.7"/></g>
+</svg>

@@ -1,6 +1,6 @@
 ﻿# 套册静态美术
 
-按皮肤分目录：`daylight/`、（未来）`tide/`。
+按皮肤分目录：`daylight/`、`tide/`。`tide` 册皮位图暂与 daylight 同构图，几何框已换色。
 
 **分层规范：** [`docs/features/套册美术分层.md`](../../../docs/features/套册美术分层.md)
 
