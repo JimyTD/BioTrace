@@ -11,7 +11,7 @@ export type EncounterInput = {
   extinct?: boolean;
   /** Aversive pest or roadside weed → locked at N. */
   pestOrWeed?: boolean;
-  /** 0–3: how much an ordinary traveller wants this shot */
+  /** -2…+2: aversion → iconic travel appeal */
   iconicAppeal?: number;
   /** 0–3: swarming / tourist-habituated */
   swarmOrHabituated?: number;
@@ -46,16 +46,11 @@ export type ClassScoreConfig = {
   offset: OffsetConfig;
 };
 
-/** Protection level informs the model's frequency call; it no longer adds score locally. */
 const DEFAULT_OFFSET: OffsetConfig = {
   weightIconic: 1.2,
-  weightProtection: 0,
-  weightSwarm: -0.7,
-  // Weights follow from what each axis is allowed to do, not from fitting hit counts:
-  // appeal 2 alone lifts a tier (2.4 ≥ 2.0) while appeal 1 alone does not (1.2);
-  // max hard alone stays short (1.5) but appeal 1 + hard 3 clears it (2.7);
-  // max swarm alone drops a tier (−2.1) while swarm 2 does not (−1.4).
-  weightHardPhoto: 0.5,
+  weightProtection: 1.0,
+  weightSwarm: -0.4,
+  weightHardPhoto: 0.7,
   thresholdUp: 2.0,
   thresholdDown: -2.0,
   protectionScore: {
@@ -70,9 +65,8 @@ const DEFAULT_OFFSET: OffsetConfig = {
 function loadScoreConfig(): ClassScoreConfig {
   const fallback: ClassScoreConfig = {
     tiers: ["XR", "LR", "UR", "SSR", "SR", "R", "N"],
-    // N is produced only by the pest/weed gate, so the frequency floor is R.
     frequencyBaseTier: {
-      "0": "R",
+      "0": "N",
       "1": "R",
       "2": "SR",
       "3": "SSR",
@@ -166,7 +160,7 @@ function clamp(n: number, lo: number, hi: number): number {
 }
 
 export function parseIconicAppeal(raw: unknown): number {
-  return Math.round(clamp(Number(raw ?? 0), 0, 3));
+  return Math.round(clamp(Number(raw ?? 0), -2, 2));
 }
 
 /** Accept 0–3 number, or legacy boolean (true→2, false→0). */
@@ -227,7 +221,6 @@ export function computeOffsetScore(input: {
 /**
  * Frequency 0–5 sets the base tier; weighted axes → Δ∈{-1,0,+1}.
  * - extinct → XR (the only path to XR)
- * - pest / weed → locked at N
  * - top frequency + habituated swarm → base capped to UR before Δ
  */
 export function resolveFromEncounter(input: EncounterInput): EncounterResolution {
@@ -244,17 +237,6 @@ export function resolveFromEncounter(input: EncounterInput): EncounterResolution
       baseTier: "XR",
       frequency,
       adjustments: ["gate:extinct"],
-      offsetScore: 0,
-      offsetDelta: 0,
-    };
-  }
-
-  if (input.pestOrWeed) {
-    return {
-      rarity: "N",
-      baseTier: "N",
-      frequency,
-      adjustments: ["gate:pest_weed"],
       offsetScore: 0,
       offsetDelta: 0,
     };
