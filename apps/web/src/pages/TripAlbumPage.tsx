@@ -680,20 +680,22 @@ export default function TripAlbumPage({ userId }: { userId: string }) {
           >
             <Link className="film-tile-link" to={obsHref(obs)}>
               <div className="film-tile-media">
-                <img
-                  className="film-tile-photo"
-                  src={obs.displayUrl}
-                  alt={
-                    obs.status === "pending_settle"
-                      ? t("status.pending_settle")
-                      : isNotCollectibleError(obs.error)
-                        ? t("status.notCollectible")
-                        : obs.commonName || t("map.observationFallback")
-                  }
-                />
-                {obs.status === "pending_settle" ? (
-                  <div className="film-tile-pending-veil" aria-hidden />
-                ) : null}
+                <div className="film-tile-window">
+                  <img
+                    className="film-tile-photo"
+                    src={obs.displayUrl}
+                    alt={
+                      obs.status === "pending_settle"
+                        ? t("status.pending_settle")
+                        : isNotCollectibleError(obs.error)
+                          ? t("status.notCollectible")
+                          : obs.commonName || t("map.observationFallback")
+                    }
+                  />
+                  {obs.status === "pending_settle" ? (
+                    <div className="film-tile-pending-veil" aria-hidden />
+                  ) : null}
+                </div>
                 <img className="film-tile-frame" src={tripFilmFrameUrl()} alt="" aria-hidden />
                 <div className="film-tile-badge">{statusBadge(obs)}</div>
               </div>

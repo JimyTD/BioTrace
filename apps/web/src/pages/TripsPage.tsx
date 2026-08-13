@@ -104,11 +104,13 @@ export default function TripsPage() {
           {trips.map((trip) => (
             <Link className="trip-cover" key={trip.id} to={`/trips/${trip.id}`}>
               <div className="trip-cover-media">
-                {trip.coverDisplayUrl ? (
-                  <img className="trip-cover-photo" src={trip.coverDisplayUrl} alt="" />
-                ) : (
-                  <div className="trip-cover-placeholder" aria-hidden />
-                )}
+                <div className="trip-cover-window">
+                  {trip.coverDisplayUrl ? (
+                    <img className="trip-cover-photo" src={trip.coverDisplayUrl} alt="" />
+                  ) : (
+                    <div className="trip-cover-placeholder" aria-hidden />
+                  )}
+                </div>
                 <img className="trip-cover-frame" src={tripCoverFrameUrl()} alt="" aria-hidden />
               </div>
               <div className="trip-cover-meta">

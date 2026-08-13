@@ -1,11 +1,10 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 150 100" preserveAspectRatio="none" fill="none">
   <!--
-    列表封面框：evenodd 挖空（勿用 mask——作 <img> 时部分 WebView 会错位/失效）。
-    照片窗：x=9 y=6 w=132 h=88 → inset 6% / 6%。
+    列表封面框：evenodd 挖空。边垫必须不透明，否则照片放大会从垫下透出。
+    照片窗：x=9 y=6 w=132 h=88 → 四周 6%。
   -->
   <path
-    fill="#4a433c"
-    fill-opacity="0.78"
+    fill="#5c534a"
     fill-rule="evenodd"
     d="M0 0 H150 V100 H0 Z M9 6 H141 V94 H9 Z"
   />
@@ -15,7 +14,7 @@
     width="131.2"
     height="87.2"
     stroke="#2a241c"
-    stroke-opacity="0.35"
+    stroke-opacity="0.28"
     stroke-width="0.9"
   />
 </svg>

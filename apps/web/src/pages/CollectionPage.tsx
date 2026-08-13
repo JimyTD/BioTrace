@@ -116,15 +116,17 @@ export default function CollectionPage() {
                   }
                 >
                   <div className="film-tile-media">
-                    {entry.coverDisplayUrl ? (
-                      <img
-                        className="film-tile-photo"
-                        src={entry.coverDisplayUrl}
-                        alt={entry.commonName || entry.scientificName || entry.taxonKey}
-                      />
-                    ) : (
-                      <div className="card-placeholder" />
-                    )}
+                    <div className="film-tile-window">
+                      {entry.coverDisplayUrl ? (
+                        <img
+                          className="film-tile-photo"
+                          src={entry.coverDisplayUrl}
+                          alt={entry.commonName || entry.scientificName || entry.taxonKey}
+                        />
+                      ) : (
+                        <div className="card-placeholder" />
+                      )}
+                    </div>
                     <img className="film-tile-frame" src={tripFilmFrameUrl()} alt="" aria-hidden />
                   </div>
                   <div className="film-tile-meta">
