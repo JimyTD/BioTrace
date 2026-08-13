@@ -16,6 +16,7 @@ import ObservationSettlePage from "./pages/ObservationSettlePage";
 import PinLocationPage from "./pages/PinLocationPage";
 import SettleArtPreviewPage from "./pages/SettleArtPreviewPage";
 import TripAlbumPage from "./pages/TripAlbumPage";
+import TripManagePage from "./pages/TripManagePage";
 import TripsPage from "./pages/TripsPage";
 
 export default function App() {
@@ -52,6 +53,7 @@ export default function App() {
         <main className="content">
           <Routes>
             <Route path="/" element={<TripsPage />} />
+            <Route path="/trips/:id/manage" element={<TripManagePage userId={user.id} />} />
             <Route path="/trips/:id" element={<TripAlbumPage userId={user.id} />} />
             <Route path="/observations/:id/pin" element={<PinLocationPage />} />
             <Route path="/observations/:id" element={<ObservationDetailPage />} />

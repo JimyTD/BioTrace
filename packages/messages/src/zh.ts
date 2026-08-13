@@ -67,6 +67,7 @@ export const zh = {
   "trips.deleteFailed": "删除旅途失败",
   "trips.renameFailed": "修改标题失败",
   "trips.manage": "管理旅途",
+  "trips.manageBack": "相册",
   "trips.metaManual": "手填时间与地点",
   "trips.metaManualHint": "打开后可用手填覆盖列表摘要；某一项留空则该项仍用照片自动汇总。关闭后只显示自动汇总，手填内容会保留。",
   "trips.manualDate": "时间",

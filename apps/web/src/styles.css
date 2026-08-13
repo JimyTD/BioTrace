@@ -460,9 +460,20 @@ a {
 
 .album-toolbar {
   display: flex;
-  gap: 10px;
+  gap: 14px;
   align-items: center;
   margin-top: 2px;
+}
+
+.share-member-list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+.share-member-row {
+  justify-content: space-between;
+  align-items: center;
 }
 
 .album-uploader {

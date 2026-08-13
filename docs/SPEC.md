@@ -97,7 +97,7 @@ docs/        筹划 + 本实现规格
 
 - **自动**：时间 = 观察 `capturedAt`（缺则 `createdAt`）首末日；地点从 `locationLabel` / `countryCode` 抽层级（最细到市），段内 `·`、多处 `-`（如 `江西·井冈山-湖南·湘潭`）。实现：[`trips/summary.ts`](../apps/api/src/trips/summary.ts)。
 - **手填覆盖**：旅途字段 `meta_manual_enabled` + `manual_date_text` / `manual_place_text`。开关开且该项非空才覆盖；关开关仍保留手填、展示回落自动。`PATCH /api/trips/:id` 可改。
-- **UI**：旅途列表副行；相册标题下同行；「管理旅途」里开关与输入框。
+- **UI**：旅途列表副行；相册标题下同行；「管理旅途」二级页里开关与输入框。
 
 ## 1.6 Android 壳应用内更新（已收口）
 
