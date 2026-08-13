@@ -7,12 +7,7 @@ import {
   identifyErrorPrimary,
   isNotCollectibleError,
 } from "../identifyErrors";
-import {
-  canUseNativePicker,
-  MAX_UPLOAD_BATCH,
-  pickImageNative,
-  type PickImageMode,
-} from "../pickImage";
+import { canUseNativePicker, MAX_UPLOAD_BATCH, pickImageNative } from "../pickImage";
 import { tripFilmFrameUrl } from "../themes";
 import { tripMetaLine } from "../tripMeta";
 
@@ -71,7 +66,6 @@ export default function TripAlbumPage({ userId }: { userId: string }) {
   const [picking, setPicking] = useState(false);
   const [toast, setToast] = useState<string | null>(null);
   const fileInputRef = useRef<HTMLInputElement | null>(null);
-  const cameraInputRef = useRef<HTMLInputElement | null>(null);
   const nativePicker = canUseNativePicker();
   const prevPending = useRef(0);
 
@@ -134,7 +128,6 @@ export default function TripAlbumPage({ userId }: { userId: string }) {
 
   function clearPickedInputs() {
     if (fileInputRef.current) fileInputRef.current.value = "";
-    if (cameraInputRef.current) cameraInputRef.current.value = "";
   }
 
   function applyPickedFiles(list: File[] | FileList | null) {
@@ -160,12 +153,12 @@ export default function TripAlbumPage({ userId }: { userId: string }) {
     clearPickedInputs();
   }
 
-  async function onPick(mode: PickImageMode) {
+  async function onPick() {
     setError(null);
     if (nativePicker) {
       setPicking(true);
       try {
-        const picked = await pickImageNative(mode);
+        const picked = await pickImageNative();
         if (picked.length) applyPickedFiles(picked);
       } catch {
         setError(t("album.pickFailed"));
@@ -174,11 +167,7 @@ export default function TripAlbumPage({ userId }: { userId: string }) {
       }
       return;
     }
-    if (mode === "camera") {
-      cameraInputRef.current?.click();
-    } else {
-      fileInputRef.current?.click();
-    }
+    fileInputRef.current?.click();
   }
 
   async function onUpload(e: FormEvent) {
@@ -295,14 +284,6 @@ export default function TripAlbumPage({ userId }: { userId: string }) {
         multiple
         onChange={(e) => applyPickedFiles(e.target.files)}
       />
-      <input
-        ref={cameraInputRef}
-        className="file-input-hidden"
-        type="file"
-        accept="image/*"
-        capture="environment"
-        onChange={(e) => applyPickedFiles(e.target.files)}
-      />
 
       {!pickingOpen ? (
         <div className="album-toolbar">
@@ -310,17 +291,9 @@ export default function TripAlbumPage({ userId }: { userId: string }) {
             className="btn"
             type="button"
             disabled={picking}
-            onClick={() => void onPick("gallery")}
+            onClick={() => void onPick()}
           >
             {picking ? t("album.picking") : t("album.addPhotos")}
-          </button>
-          <button
-            className="text-link"
-            type="button"
-            disabled={picking || uploading}
-            onClick={() => void onPick("camera")}
-          >
-            {t("album.takePhoto")}
           </button>
         </div>
       ) : (
@@ -330,15 +303,7 @@ export default function TripAlbumPage({ userId }: { userId: string }) {
               className="btn secondary"
               type="button"
               disabled={picking || uploading}
-              onClick={() => void onPick("camera")}
-            >
-              {t("album.takePhoto")}
-            </button>
-            <button
-              className="btn secondary"
-              type="button"
-              disabled={picking || uploading}
-              onClick={() => void onPick("gallery")}
+              onClick={() => void onPick()}
             >
               {t("album.pickGallery")}
             </button>
