@@ -1,23 +1,30 @@
-import { t, type MessageKey } from "@biotrace/messages";
+import { t, hasMessage, type MessageKey } from "@biotrace/messages";
 
-/** ISO / epoch → 北京时间可读串；空则「—」 */
-export function formatAdminTime(value: string | number | null | undefined): string {
+const BEIJING_DT = new Intl.DateTimeFormat("sv-SE", {
+  timeZone: "Asia/Shanghai",
+  year: "numeric",
+  month: "2-digit",
+  day: "2-digit",
+  hour: "2-digit",
+  minute: "2-digit",
+  second: "2-digit",
+  hour12: false,
+});
+
+/** ISO / epoch → `2026-08-12 10:49:35`（北京时间）；空则「—」 */
+export function formatAdminTime(value: string | number | Date | null | undefined): string {
   if (value == null || value === "") return "—";
+  if (typeof value === "string" && /^\d{4}-\d{2}-\d{2}$/.test(value)) {
+    return t("admin.utcDay", { day: value });
+  }
   const d =
-    typeof value === "number"
-      ? new Date(value)
-      : new Date(value.includes("T") ? value : Number(value) || value);
+    value instanceof Date
+      ? value
+      : typeof value === "number"
+        ? new Date(value)
+        : new Date(value.includes("T") || value.includes(" ") ? value : Number(value) || value);
   if (Number.isNaN(d.getTime())) return String(value);
-  return d.toLocaleString("zh-CN", {
-    timeZone: "Asia/Shanghai",
-    year: "numeric",
-    month: "2-digit",
-    day: "2-digit",
-    hour: "2-digit",
-    minute: "2-digit",
-    second: "2-digit",
-    hour12: false,
-  });
+  return BEIJING_DT.format(d).replace("T", " ");
 }
 
 const OBS_ERROR_KEYS: Record<string, MessageKey> = {
@@ -87,9 +94,11 @@ export function identifyRouteActiveLabel(active: string): string {
   return t("admin.identifyRoute.gemini");
 }
 
-export function identifyProviderName(id: string): string {
+export function identifyProviderName(id: string | null | undefined): string {
+  if (!id) return "—";
   if (id === "zhipu") return t("admin.identifyRoute.zhipuName");
-  return t("admin.identifyRoute.gemini");
+  if (id === "gemini") return t("admin.identifyRoute.gemini");
+  return id;
 }
 
 export function flagLabel(key: string): string {
@@ -101,4 +110,65 @@ export function flagLabel(key: string): string {
   };
   const mk = map[key];
   return mk ? t(mk) : key;
+}
+
+export function rarityLabel(rarity: string | null | undefined): string {
+  if (!rarity) return "—";
+  const key = `rarity.${rarity}`;
+  return hasMessage(key) ? t(key) : rarity;
+}
+
+export function settleTierLabel(tier: string | null | undefined): string {
+  const map: Record<string, MessageKey> = {
+    full: "admin.settleTier.full",
+    weak: "admin.settleTier.weak",
+    none: "admin.settleTier.none",
+  };
+  if (!tier) return "—";
+  const key = map[tier];
+  return key ? t(key) : tier;
+}
+
+export function countrySourceLabel(source: string | null | undefined): string {
+  const map: Record<string, MessageKey> = {
+    tianditu: "admin.countrySource.tianditu",
+    offline: "admin.countrySource.offline",
+    none: "admin.countrySource.none",
+  };
+  if (!source) return "—";
+  const key = map[source];
+  return key ? t(key) : source;
+}
+
+export function auditActionLabel(action: string): string {
+  const map: Record<string, MessageKey> = {
+    "admin.login": "admin.audit.adminLogin",
+    "user.reset_password": "admin.audit.userResetPassword",
+    "user.clear_byok": "admin.audit.userClearOwnKey",
+    "user.set_identify_usage": "admin.audit.userSetUsage",
+    "user.delete": "admin.audit.userDelete",
+    "observation.requeue": "admin.audit.obsRequeue",
+    "observation.reidentify": "admin.audit.obsReidentify",
+    "observation.recompute_settle": "admin.audit.obsRecompute",
+    "observation.delete": "admin.audit.obsDelete",
+    "secrets.patch": "admin.audit.secretsPatch",
+    "storage.delete_orphans": "admin.audit.deleteOrphans",
+    "rarity_cache.clear": "admin.audit.clearRarity",
+  };
+  const key = map[action];
+  return key ? t(key) : action;
+}
+
+export function auditTargetTypeLabel(type: string | null | undefined): string {
+  const map: Record<string, MessageKey> = {
+    user: "admin.nav.users",
+    observation: "admin.nav.observations",
+  };
+  if (!type) return "—";
+  const key = map[type];
+  return key ? t(key) : type;
+}
+
+export function yesNo(v: unknown): string {
+  return v ? t("admin.yes") : t("admin.no");
 }

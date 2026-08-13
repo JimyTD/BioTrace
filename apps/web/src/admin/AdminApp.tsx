@@ -1,8 +1,11 @@
 import { useEffect, useState, type FormEvent, type ReactNode } from "react";
 import { Link, NavLink, Navigate, Route, Routes, useNavigate, useParams } from "react-router-dom";
-import { t } from "@biotrace/messages";
+import { t, formatRank } from "@biotrace/messages";
 import { adminApi, type AdminUser } from "./api";
 import {
+  auditActionLabel,
+  auditTargetTypeLabel,
+  countrySourceLabel,
   explainObsError,
   flagLabel,
   formatAdminTime,
@@ -11,6 +14,9 @@ import {
   identifyRouteReasonLabel,
   obsStatusLabel,
   providerStatusLabel,
+  rarityLabel,
+  settleTierLabel,
+  yesNo,
 } from "./format";
 import "./admin.css";
 
@@ -21,6 +27,26 @@ function bytes(n: unknown) {
   if (v < 1024 * 1024) return `${(v / 1024).toFixed(1)} KB`;
   if (v < 1024 * 1024 * 1024) return `${(v / 1024 / 1024).toFixed(1)} MB`;
   return `${(v / 1024 / 1024 / 1024).toFixed(2)} GB`;
+}
+
+function dash(v: unknown): string {
+  if (v == null || v === "") return "—";
+  return String(v);
+}
+
+function Kv({ rows }: { rows: Array<[string, ReactNode]> }) {
+  return (
+    <table className="admin-table" style={{ marginTop: "0.5rem" }}>
+      <tbody>
+        {rows.map(([label, value], i) => (
+          <tr key={`${label}-${i}`}>
+            <th style={{ width: "9.5rem", whiteSpace: "nowrap" }}>{label}</th>
+            <td>{value}</td>
+          </tr>
+        ))}
+      </tbody>
+    </table>
+  );
 }
 
 function Login({ onOk }: { onOk: (a: AdminUser) => void }) {
@@ -191,11 +217,11 @@ function Dashboard() {
           </div>
         </div>
         <div className="admin-card">
-          <div className="label">DB</div>
+          <div className="label">{t("admin.storage.db")}</div>
           <div className="value">{bytes(storage?.databaseBytes)}</div>
         </div>
         <div className="admin-card">
-          <div className="label">uploads</div>
+          <div className="label">{t("admin.storage.uploads")}</div>
           <div className="value">{bytes(storage?.uploadsBytes)}</div>
         </div>
       </div>
@@ -212,9 +238,7 @@ function Dashboard() {
           <tbody>
             {statusOrder.map((st) => (
               <tr key={st}>
-                <td>
-                  {obsStatusLabel(st)} <span className="admin-muted">({st})</span>
-                </td>
+                <td>{obsStatusLabel(st)}</td>
                 <td>{byStatus[st] ?? 0}</td>
               </tr>
             ))}
@@ -320,7 +344,7 @@ function Dashboard() {
       <table className="admin-table">
         <thead>
           <tr>
-            <th>id</th>
+            <th>{t("admin.col.obsId")}</th>
             <th>{t("admin.col.user")}</th>
             <th>{t("admin.error.code")}</th>
             <th>{t("admin.col.updatedAt")}</th>
@@ -389,21 +413,22 @@ function UsersPage() {
   return (
     <>
       <h1>{t("admin.nav.users")}</h1>
+      <p className="admin-muted">{t("admin.timeHint")}</p>
       <div className="admin-toolbar">
-        <input placeholder="email" value={q} onChange={(e) => setQ(e.target.value)} />
+        <input placeholder={t("admin.placeholder.email")} value={q} onChange={(e) => setQ(e.target.value)} />
         <button type="button" onClick={() => load(q)}>
-          搜索
+          {t("admin.search")}
         </button>
       </div>
       {err ? <p className="admin-err">{err}</p> : null}
       <table className="admin-table">
         <thead>
           <tr>
-            <th>email</th>
-            <th>昵称</th>
-            <th>今日用量</th>
-            <th>BYOK</th>
-            <th>注册</th>
+            <th>{t("admin.col.email")}</th>
+            <th>{t("admin.col.displayName")}</th>
+            <th>{t("admin.col.usageToday")}</th>
+            <th>{t("admin.col.byok")}</th>
+            <th>{t("admin.col.created")}</th>
           </tr>
         </thead>
         <tbody>
@@ -414,8 +439,8 @@ function UsersPage() {
               </td>
               <td>{String(u.displayName ?? "")}</td>
               <td>{String(u.identifyUsageToday)}</td>
-              <td>{u.identifyUseOwnKey ? "是" : "否"}</td>
-              <td>{String(u.createdAt ?? "")}</td>
+              <td>{yesNo(u.identifyUseOwnKey)}</td>
+              <td>{formatAdminTime(u.createdAt == null ? null : String(u.createdAt))}</td>
             </tr>
           ))}
         </tbody>
@@ -441,70 +466,98 @@ function UserDetailPage() {
     void reload().catch((e) => setMsg(String(e.message ?? e)));
   }, [id]);
 
+  useEffect(() => {
+    const q = data?.identifyQuota as { used?: number } | undefined;
+    if (typeof q?.used === "number") setUsage(String(q.used));
+  }, [data]);
+
   if (!data) return <p className="admin-muted">{msg || t("app.loading")}</p>;
   const user = data.user as Record<string, unknown>;
   const trips = (data.trips ?? []) as Array<{ id: string; title: string; createdAt: string }>;
-  const quota = data.identifyQuota as Record<string, unknown>;
+  const quota = (data.identifyQuota ?? {}) as Record<string, unknown>;
+  const byStatus = (data.observationsByStatus ?? {}) as Record<string, number>;
+  const statusOrder = ["analyzing", "pending_settle", "settled", "failed"];
 
   return (
     <>
       <h1>{String(user.email)}</h1>
-      <div className="admin-panel">
-        <pre className="admin-pre">{JSON.stringify({ user, observationsByStatus: data.observationsByStatus, collectionCount: data.collectionCount, identifyQuota: quota }, null, 2)}</pre>
-        <label>重置密码（≥8）</label>
+      <div className="admin-panel" style={{ maxWidth: "960px" }}>
+        <Kv
+          rows={[
+            [t("admin.col.email"), dash(user.email)],
+            [t("admin.col.displayName"), dash(user.displayName)],
+            [t("admin.user.id"), <span className="admin-muted">{dash(user.id)}</span>],
+            [t("admin.col.created"), formatAdminTime(user.createdAt == null ? null : String(user.createdAt))],
+            [t("admin.user.ownKey"), yesNo(user.identifyUseOwnKey)],
+            [t("admin.user.ownKeyHint"), dash(user.identifyUserKeyHint)],
+            [t("admin.user.ownKeyBaseUrl"), dash(user.identifyUserBaseUrl)],
+            [t("admin.user.ownKeyModel"), dash(user.identifyUserModel)],
+            [t("admin.user.collectionCount"), dash(data.collectionCount)],
+            [
+              t("admin.obsStatus"),
+              statusOrder.map((st) => `${obsStatusLabel(st)} ${byStatus[st] ?? 0}`).join(" · "),
+            ],
+            [t("admin.user.quotaDay"), formatAdminTime(quota.day == null ? null : String(quota.day))],
+            [t("admin.user.quotaUsed"), dash(quota.used)],
+            [t("admin.user.quotaLimit"), dash(quota.limit)],
+            [t("admin.user.quotaRemaining"), dash(quota.remaining)],
+            [t("admin.user.quotaExhausted"), yesNo(quota.exhausted)],
+          ]}
+        />
+        <label>{t("admin.resetPassword")}</label>
         <input type="password" value={pwd} onChange={(e) => setPwd(e.target.value)} />
         <button
           type="button"
           onClick={async () => {
             await adminApi.resetPassword(String(user.id), pwd);
-            setMsg("密码已重置");
+            setMsg(t("admin.passwordResetOk"));
             setPwd("");
           }}
         >
-          重置密码
+          {t("admin.resetPasswordAction")}
         </button>
-        <label>当日识图已用次数</label>
+        <label>{t("admin.usageToday")}</label>
         <input value={usage} onChange={(e) => setUsage(e.target.value)} />
         <button
           type="button"
           onClick={async () => {
             await adminApi.setUsage(String(user.id), Number(usage));
-            setMsg("用量已更新");
+            setMsg(t("admin.usageUpdated"));
             await reload();
           }}
         >
-          写入用量
+          {t("admin.writeUsage")}
         </button>
         <p>
           <button type="button" onClick={() => adminApi.clearByok(String(user.id)).then(reload)}>
-            清除 BYOK
+            {t("admin.clearByok")}
           </button>{" "}
           <button
             type="button"
             onClick={async () => {
-              if (!confirm(`确认删除用户 ${user.email}？不可恢复`)) return;
+              if (!confirm(t("admin.deleteUserConfirm", { email: String(user.email) }))) return;
               await adminApi.deleteUser(String(user.id));
               nav("/admin/users");
             }}
           >
-            删除用户
+            {t("admin.deleteUser")}
           </button>
         </p>
         {msg ? <p className="admin-ok">{msg}</p> : null}
       </div>
-      <h2>旅途</h2>
+      <h2>{t("admin.trips")}</h2>
       <table className="admin-table">
         <thead>
           <tr>
-            <th>标题</th>
-            <th>创建</th>
+            <th>{t("admin.col.title")}</th>
+            <th>{t("admin.col.createdTrip")}</th>
           </tr>
         </thead>
         <tbody>
           {trips.map((tr) => (
             <tr key={tr.id}>
               <td>{tr.title}</td>
-              <td>{tr.createdAt}</td>
+              <td>{formatAdminTime(tr.createdAt)}</td>
             </tr>
           ))}
         </tbody>
@@ -535,29 +588,30 @@ function ObservationsPage() {
   return (
     <>
       <h1>{t("admin.nav.observations")}</h1>
+      <p className="admin-muted">{t("admin.timeHint")}</p>
       <div className="admin-toolbar">
         <select value={status} onChange={(e) => setStatus(e.target.value)}>
-          <option value="">全部状态</option>
-          <option value="analyzing">analyzing</option>
-          <option value="pending_settle">pending_settle</option>
-          <option value="settled">settled</option>
-          <option value="failed">failed</option>
+          <option value="">{t("admin.allStatus")}</option>
+          <option value="analyzing">{obsStatusLabel("analyzing")}</option>
+          <option value="pending_settle">{obsStatusLabel("pending_settle")}</option>
+          <option value="settled">{obsStatusLabel("settled")}</option>
+          <option value="failed">{obsStatusLabel("failed")}</option>
         </select>
-        <input placeholder="email 精确" value={email} onChange={(e) => setEmail(e.target.value)} />
+        <input placeholder={t("admin.placeholder.emailExact")} value={email} onChange={(e) => setEmail(e.target.value)} />
         <label>
-          <input type="checkbox" checked={hasError} onChange={(e) => setHasError(e.target.checked)} /> 有 error
+          <input type="checkbox" checked={hasError} onChange={(e) => setHasError(e.target.checked)} /> {t("admin.hasError")}
         </label>
         <button type="button" onClick={() => load()}>
-          筛选
+          {t("admin.filter")}
         </button>
       </div>
       <table className="admin-table">
         <thead>
           <tr>
-            <th>图</th>
+            <th>{t("admin.col.photo")}</th>
             <th>{t("admin.col.status")}</th>
             <th>{t("admin.col.user")}</th>
-            <th>名称</th>
+            <th>{t("admin.col.name")}</th>
             <th>{t("admin.error.code")}</th>
             <th>{t("admin.col.updatedAt")}</th>
           </tr>
@@ -617,42 +671,86 @@ function ObservationDetailPage() {
 
   if (!data) return <p className="admin-muted">{msg || t("app.loading")}</p>;
   const o = data.observation as Record<string, unknown>;
+  const owner = data.user as { id?: string; email?: string; displayName?: string | null } | null;
+  const ex = explainObsError(o.error == null ? null : String(o.error));
+  const coords =
+    o.lat != null && o.lng != null ? `${Number(o.lat).toFixed(5)}, ${Number(o.lng).toFixed(5)}` : "—";
+  const confidence =
+    typeof o.confidence === "number" && Number.isFinite(o.confidence)
+      ? o.confidence.toFixed(2)
+      : dash(o.confidence);
 
   return (
     <>
-      <h1>观察 {String(o.id).slice(0, 8)}</h1>
-      <div className="admin-panel">
+      <h1>
+        {t("admin.nav.observations")} {String(o.id).slice(0, 8)}
+      </h1>
+      <div className="admin-panel" style={{ maxWidth: "960px" }}>
         {o.displayUrl ? <img src={String(o.displayUrl)} alt="" style={{ maxWidth: "100%", maxHeight: 320 }} /> : null}
-        <pre className="admin-pre">{JSON.stringify(data, null, 2)}</pre>
+        <Kv
+          rows={[
+            [t("admin.col.status"), obsStatusLabel(String(o.status ?? ""))],
+            [
+              t("admin.col.user"),
+              owner?.id ? (
+                <Link to={`/admin/users/${owner.id}`}>{dash(owner.email ?? owner.displayName)}</Link>
+              ) : (
+                dash(o.userEmail)
+              ),
+            ],
+            [t("admin.obs.commonName"), dash(o.commonName)],
+            [t("admin.obs.scientificName"), dash(o.scientificName)],
+            [t("admin.obs.rank"), o.finestReliableRank ? formatRank(String(o.finestReliableRank)) : "—"],
+            [t("admin.obs.confidence"), confidence],
+            [t("admin.obs.rarity"), rarityLabel(o.rarity == null ? null : String(o.rarity))],
+            [t("admin.obs.settleTier"), settleTierLabel(o.settleTier == null ? null : String(o.settleTier))],
+            [t("admin.obs.provider"), identifyProviderName(o.identifyProvider == null ? null : String(o.identifyProvider))],
+            [t("admin.error.code"), ex.title],
+            [t("admin.obs.capturedAt"), formatAdminTime(o.capturedAt == null ? null : String(o.capturedAt))],
+            [t("admin.obs.createdAt"), formatAdminTime(o.createdAt == null ? null : String(o.createdAt))],
+            [t("admin.col.updatedAt"), formatAdminTime(o.updatedAt == null ? null : String(o.updatedAt))],
+            [t("admin.obs.settledAt"), formatAdminTime(o.settledAt == null ? null : String(o.settledAt))],
+            [t("admin.obs.location"), dash(o.locationLabel)],
+            [t("admin.obs.coords"), coords],
+            [t("admin.obs.country"), dash(o.countryCode)],
+            [t("admin.obs.countrySource"), countrySourceLabel(o.countrySource == null ? null : String(o.countrySource))],
+            [t("admin.obs.locationPrecise"), yesNo(o.locationPrecise)],
+            [t("admin.obs.alertIntroduced"), yesNo(o.alertIntroduced)],
+            [t("admin.obs.description"), dash(o.description)],
+            [t("admin.obs.blurb"), dash(o.blurb)],
+            [t("admin.obs.trip"), <span className="admin-muted">{dash(o.tripId)}</span>],
+            [t("admin.col.id"), <span className="admin-muted">{dash(o.id)}</span>],
+          ]}
+        />
         <div className="admin-toolbar">
-          <button type="button" onClick={() => adminApi.requeue(String(o.id)).then(() => setMsg("已重入队"))}>
-            重入队
+          <button type="button" onClick={() => adminApi.requeue(String(o.id)).then(() => setMsg(t("admin.requeued")))}>
+            {t("admin.requeue")}
           </button>
           <button type="button" onClick={() => adminApi.recomputeSettle(String(o.id)).then(reload)}>
-            重算 settle
+            {t("admin.recomputeSettle")}
           </button>
           <button
             type="button"
             onClick={async () => {
-              if (!confirm("删除观察？")) return;
+              if (!confirm(t("admin.deleteObsConfirm"))) return;
               await adminApi.deleteObservation(String(o.id));
               nav("/admin/observations");
             }}
           >
-            删除
+            {t("admin.delete")}
           </button>
         </div>
-        <label>重识别修正说明</label>
+        <label>{t("admin.reidentifyHint")}</label>
         <textarea rows={3} value={desc} onChange={(e) => setDesc(e.target.value)} style={{ width: "100%" }} />
         <button
           type="button"
           onClick={async () => {
             await adminApi.reidentify(String(o.id), desc);
-            setMsg("已触发重识别");
+            setMsg(t("admin.reidentifyOk"));
             await reload();
           }}
         >
-          重识别
+          {t("admin.reidentifyAction")}
         </button>
         {msg ? <p className="admin-ok">{msg}</p> : null}
       </div>
@@ -783,7 +881,7 @@ function SecretsPage() {
         />
         {selected?.kind === "setting" ? (
           <p className="admin-muted" style={{ marginTop: 6 }}>
-            当前值：<code>{String(selected.value ?? "—")}</code>
+            {t("admin.secrets.currentValue")}：<code>{String(selected.value ?? "—")}</code>
           </p>
         ) : null}
         <p className="admin-toolbar">
@@ -834,7 +932,7 @@ function SecretsPage() {
         </p>
         {msg ? <p className={msg === t("admin.saved") || msg === t("admin.secrets.cleared") ? "admin-ok" : "admin-err"}>{msg}</p> : null}
         {data.sessionSecretIsDefault ? (
-          <p className="admin-err">SESSION_SECRET 仍为默认值（危险，请在服务器 .env 修改，不在此页轮换）</p>
+          <p className="admin-err">{t("admin.sessionSecretDefaultWarn")}</p>
         ) : null}
       </div>
     </>
@@ -888,11 +986,11 @@ function StoragePage() {
       <h1>{t("admin.nav.storage")}</h1>
       <div className="admin-cards">
         <div className="admin-card">
-          <div className="label">DB</div>
+          <div className="label">{t("admin.storage.db")}</div>
           <div className="value">{bytes(data.databaseBytes)}</div>
         </div>
         <div className="admin-card">
-          <div className="label">uploads</div>
+          <div className="label">{t("admin.storage.uploads")}</div>
           <div className="value">{bytes(data.uploadsBytes)}</div>
         </div>
       </div>
@@ -1025,7 +1123,7 @@ function StoragePage() {
             <table className="admin-table">
               <thead>
                 <tr>
-                  <th>观察 ID（目录名）</th>
+                  <th>{t("admin.col.obsId")}</th>
                   <th>{t("admin.storage.col.size")}</th>
                 </tr>
               </thead>
@@ -1058,7 +1156,9 @@ function StoragePage() {
                     };
                     setMsg(
                       `${t("admin.deleted")} ${r.deleted?.length ?? 0}` +
-                        (r.skipped?.length ? ` · 跳过 ${r.skipped.length}` : ""),
+                        (r.skipped?.length
+                          ? ` · ${t("admin.skipped", { count: r.skipped.length })}`
+                          : ""),
                     );
                     await reload();
                   } finally {
@@ -1084,9 +1184,9 @@ function StoragePage() {
           <table className="admin-table">
             <thead>
               <tr>
-                <th>观察</th>
+                <th>{t("admin.col.obsId")}</th>
                 <th>{t("admin.storage.col.what")}</th>
-                <th>路径</th>
+                <th>{t("admin.col.path")}</th>
               </tr>
             </thead>
             <tbody>
@@ -1119,26 +1219,32 @@ function AuditPage() {
   return (
     <>
       <h1>{t("admin.nav.audit")}</h1>
+      <p className="admin-muted">{t("admin.timeHint")}</p>
       <table className="admin-table">
         <thead>
           <tr>
-            <th>时间</th>
-            <th>管理员</th>
-            <th>动作</th>
-            <th>目标</th>
-            <th>摘要</th>
+            <th>{t("admin.col.time")}</th>
+            <th>{t("admin.col.admin")}</th>
+            <th>{t("admin.col.action")}</th>
+            <th>{t("admin.col.target")}</th>
+            <th>{t("admin.col.summary")}</th>
           </tr>
         </thead>
         <tbody>
           {items.map((r) => (
             <tr key={String(r.id)}>
-              <td>{String(r.createdAt ?? "")}</td>
+              <td>{formatAdminTime(r.createdAt == null ? null : String(r.createdAt))}</td>
               <td>{String(r.adminUsername)}</td>
-              <td>{String(r.action)}</td>
+              <td>{auditActionLabel(String(r.action))}</td>
               <td>
-                {String(r.targetType ?? "")} {String(r.targetId ?? "")}
+                {auditTargetTypeLabel(r.targetType == null ? null : String(r.targetType))}{" "}
+                <span className="admin-muted">{String(r.targetId ?? "")}</span>
               </td>
-              <td>{String(r.summary ?? "")}</td>
+              <td>
+                {String(r.summary ?? "") === "login ok"
+                  ? t("admin.audit.loginOk")
+                  : dash(r.summary)}
+              </td>
             </tr>
           ))}
         </tbody>
