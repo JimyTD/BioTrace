@@ -1,7 +1,6 @@
 import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import { t } from "@biotrace/messages";
-import { isNativeAndroidShell } from "../androidUpdate";
 import { api, type IdentifyQuota, type User } from "../api";
 
 export default function MePage({
@@ -13,7 +12,6 @@ export default function MePage({
   onUserUpdated?: (user: User) => void;
 }) {
   const [identifyQuota, setIdentifyQuota] = useState<IdentifyQuota | null>(null);
-  const nativeAndroid = isNativeAndroidShell();
   const displayName = user.displayName?.trim() || user.email;
 
   useEffect(() => {
@@ -62,14 +60,12 @@ export default function MePage({
             ›
           </span>
         </Link>
-        {nativeAndroid ? (
-          <Link className="me-row" to="/me/about">
-            <span>{t("me.about")}</span>
-            <span className="me-row-go" aria-hidden>
-              ›
-            </span>
-          </Link>
-        ) : null}
+        <Link className="me-row" to="/me/about">
+          <span>{t("me.about")}</span>
+          <span className="me-row-go" aria-hidden>
+            ›
+          </span>
+        </Link>
       </nav>
 
       <button className="btn secondary me-logout" type="button" onClick={() => void logout()}>

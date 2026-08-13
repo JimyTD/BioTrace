@@ -4,12 +4,14 @@ import {
   downloadAndInstallApk,
   fetchAndroidUpdate,
   getLocalAppVersion,
+  isNativeAndroidShell,
   isNewerVersion,
   type AndroidUpdateInfo,
 } from "../androidUpdate";
 import { MeSubHead } from "../components/MeSubHead";
 
 export default function MeAboutPage() {
+  const nativeAndroid = isNativeAndroidShell();
   const [localVersion, setLocalVersion] = useState<{
     versionName: string;
     versionCode: number;
@@ -20,8 +22,9 @@ export default function MeAboutPage() {
   const [pendingUpdate, setPendingUpdate] = useState<AndroidUpdateInfo | null>(null);
 
   useEffect(() => {
+    if (!nativeAndroid) return;
     void getLocalAppVersion().then(setLocalVersion);
-  }, []);
+  }, [nativeAndroid]);
 
   async function checkUpdate() {
     setBusy(true);
@@ -67,24 +70,30 @@ export default function MeAboutPage() {
     <div className="stack page-me">
       <MeSubHead title={t("me.about")} />
       <div className="me-section stack">
-        <p className="muted">
-          {localVersion
-            ? t("me.appVersion", { version: localVersion.versionName })
-            : t("me.appVersionUnknown")}
-        </p>
-        <div className="row me-actions">
-          <button className="btn secondary" type="button" disabled={busy} onClick={() => void checkUpdate()}>
-            {busy && !pendingUpdate ? t("me.checkingUpdate") : t("me.checkUpdate")}
-          </button>
-          {pendingUpdate ? (
-            <button className="btn" type="button" disabled={busy} onClick={() => void installPendingUpdate()}>
-              {busy ? t("me.updateDownloading") : t("me.updateDownload")}
-            </button>
-          ) : null}
-        </div>
-        {msg ? <p className="muted">{msg}</p> : null}
-        {err ? <p className="error">{err}</p> : null}
-        {pendingUpdate?.notes ? <p className="muted">{pendingUpdate.notes}</p> : null}
+        <strong>{t("app.name")}</strong>
+        <p className="muted">{t("app.tagline")}</p>
+        {nativeAndroid ? (
+          <>
+            <p className="muted">
+              {localVersion
+                ? t("me.appVersion", { version: localVersion.versionName })
+                : t("me.appVersionUnknown")}
+            </p>
+            <div className="row me-actions">
+              <button className="btn secondary" type="button" disabled={busy} onClick={() => void checkUpdate()}>
+                {busy && !pendingUpdate ? t("me.checkingUpdate") : t("me.checkUpdate")}
+              </button>
+              {pendingUpdate ? (
+                <button className="btn" type="button" disabled={busy} onClick={() => void installPendingUpdate()}>
+                  {busy ? t("me.updateDownloading") : t("me.updateDownload")}
+                </button>
+              ) : null}
+            </div>
+            {msg ? <p className="muted">{msg}</p> : null}
+            {err ? <p className="error">{err}</p> : null}
+            {pendingUpdate?.notes ? <p className="muted">{pendingUpdate.notes}</p> : null}
+          </>
+        ) : null}
       </div>
     </div>
   );
