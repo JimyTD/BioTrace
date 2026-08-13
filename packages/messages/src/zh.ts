@@ -254,7 +254,12 @@ export const zh = {
   "map.simpleBasemapAttribution": "Natural Earth",
 
   "me.title": "我的",
-  "me.lede": "账号与环境状态。",
+  "me.lede": "管理你的账号。",
+  "me.back": "返回",
+  "me.editProfile": "编辑资料",
+  "me.accountSecurity": "账号安全",
+  "me.identifyAdvanced": "识图高级设置",
+  "me.about": "关于",
   "me.userId": "用户 ID：{id}",
   "me.displayNameLabel": "昵称",
   "me.saveProfile": "保存昵称",

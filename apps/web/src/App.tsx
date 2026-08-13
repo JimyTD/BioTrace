@@ -6,7 +6,11 @@ import ForceAppUpdateGate from "./components/ForceAppUpdateGate";
 import CollectionPage from "./pages/CollectionPage";
 import LoginPage from "./pages/LoginPage";
 import MapPage from "./pages/MapPage";
+import MeAboutPage from "./pages/MeAboutPage";
+import MeIdentifyPage from "./pages/MeIdentifyPage";
 import MePage from "./pages/MePage";
+import MeProfilePage from "./pages/MeProfilePage";
+import MeSecurityPage from "./pages/MeSecurityPage";
 import ObservationDetailPage from "./pages/ObservationDetailPage";
 import ObservationSettlePage from "./pages/ObservationSettlePage";
 import PinLocationPage from "./pages/PinLocationPage";
@@ -56,10 +60,15 @@ export default function App() {
           <Route path="/collection" element={<CollectionPage />} />
           <Route
             path="/me"
-            element={
-              <MePage user={user} onLogout={() => setUser(null)} onUserUpdated={setUser} />
-            }
+            element={<MePage user={user} onLogout={() => setUser(null)} />}
           />
+          <Route
+            path="/me/profile"
+            element={<MeProfilePage user={user} onUserUpdated={setUser} />}
+          />
+          <Route path="/me/security" element={<MeSecurityPage />} />
+          <Route path="/me/identify" element={<MeIdentifyPage />} />
+          <Route path="/me/about" element={<MeAboutPage />} />
           <Route path="*" element={<Navigate to="/" replace />} />
         </Routes>
       </main>

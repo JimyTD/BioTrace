@@ -308,6 +308,110 @@ a {
   line-height: 1.45;
 }
 
+.page-me .page-head {
+  margin-bottom: 8px;
+}
+
+.me-identity {
+  display: grid;
+  gap: 4px;
+  padding: 16px 16px 14px;
+  border-radius: var(--radius-lg);
+  background: var(--me-card-bg);
+  border: 1px solid var(--line);
+  box-shadow: var(--shadow);
+  color: inherit;
+}
+
+.me-identity strong {
+  font-family: var(--font-brand);
+  font-size: 1.28rem;
+  letter-spacing: -0.02em;
+}
+
+.me-identity-action {
+  margin-top: 4px;
+  font-size: 0.86rem;
+  color: var(--muted);
+}
+
+.me-identity:hover .me-identity-action {
+  color: var(--ink);
+}
+
+.me-quota {
+  margin: 0;
+  padding: 0 4px;
+  color: var(--muted);
+  font-size: 0.92rem;
+}
+
+.me-menu {
+  display: grid;
+  border-radius: var(--radius-lg);
+  border: 1px solid var(--line);
+  background: var(--card);
+  overflow: hidden;
+}
+
+.me-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 14px 16px;
+  color: inherit;
+  border-bottom: 1px solid var(--me-row-line);
+}
+
+.me-row:last-child {
+  border-bottom: 0;
+}
+
+.me-row-go {
+  color: var(--muted);
+  font-size: 1.2rem;
+  line-height: 1;
+}
+
+.me-logout {
+  margin-top: 8px;
+  justify-self: stretch;
+}
+
+.me-sub-head {
+  display: grid;
+  gap: 8px;
+}
+
+.me-section {
+  padding: 16px;
+  border-radius: var(--radius-lg);
+  background: var(--card);
+  border: 1px solid var(--line);
+}
+
+.me-section-title {
+  margin: 0;
+  font-size: 1.05rem;
+}
+
+.me-field {
+  display: grid;
+  gap: 0.35rem;
+}
+
+.me-check {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.me-actions {
+  gap: 0.5rem;
+  flex-wrap: wrap;
+}
+
 .album-lede {
   margin: 4px 0 0;
   max-width: 36ch;

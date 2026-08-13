@@ -113,4 +113,8 @@
   --trip-create-bg: color-mix(in srgb, var(--card) 82%, var(--volume-cover-empty));
   --trip-pending-veil: color-mix(in srgb, var(--volume-cover-empty) 72%, #2a241c);
   --trip-empty-caption: var(--muted);
+
+  /* 我的：名片 / 设置行 */
+  --me-card-bg: color-mix(in srgb, var(--card) 88%, var(--volume-cover-empty));
+  --me-row-line: var(--line);
 }
