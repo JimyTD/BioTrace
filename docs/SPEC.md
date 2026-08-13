@@ -3,7 +3,7 @@
 > **本文件是功能真源**：已做 / 本期要做 / 明确后置。查「某能力做没做」以此为准。  
 > 部署与线上现状看 [`OPS.md`](./OPS.md)；专题手册在 [`features/`](./features/)；当初的取舍理由在 [`planning/`](./planning/)。  
 > 变更历史看 git log，本文不留手抄变更记录。  
-> 更新日期：2026-08-11
+> 更新日期：2026-08-13
 
 ## 0. 当前阶段
 
@@ -17,6 +17,7 @@
 | Cut 6 | 制品就绪 | Capacitor Android 侧载壳；手册 [`features/Android套壳.md`](./features/Android套壳.md) |
 | 套册成就 | 引擎+三本内容已通 | 配置驱动；拓展手册 [`features/旅行套册.md`](./features/旅行套册.md) |
 | 皮肤主题 | 已落地 | 默认 `daylight`；手册 [`features/皮肤主题.md`](./features/皮肤主题.md) |
+| 管理后台 | 已落地 | 独立登录；总览/用户/观察/平台密钥/存储/审计；手册 [`features/管理后台.md`](./features/管理后台.md) |
 | 地图补标 | 已完成 | 详情准星补标；`PATCH …/location` 重算国别/引入/稀有度（见 §1.3） |
 | 旅途元数据 | 已完成 | 列表/相册时间·地点摘要；自动聚合 + 可选手填覆盖（见 §1.5） |
 | 后置 | 未做 | 全量灌库、iOS/上架；更多套册策展 |
@@ -271,7 +272,7 @@ computeSettle
 - **主路径**：`POST /api/auth/register` / `POST /api/auth/login`（邮箱+密码）→ 设 `bt_session`；`/me` 滑动续期（约 90 天）。
 - **不强制验邮**：假邮箱可注册；收不到信则无法找回。
 - **找回**：`POST /api/auth/request-reset` → Resend 发 **6 位码** → `POST /api/auth/reset-password`（App 内填码，利 Android）。
-- **「我的」**：昵称、改密、退出；自备 Key / 日额度后置。
+- **「我的」**：昵称、改密、退出；平台识图日额度与自备密钥已落地（后台可查看/清除，见 [`features/管理后台.md`](./features/管理后台.md)）。
 - 本机可 `DEV_AUTH=1` 开发登录；生产 `DEV_AUTH=0`。测试库可清（密码模型不迁移旧魔法链接用户）。
 - 发信仍用 Resend（`RESEND_API_KEY` + `MAIL_FROM`）；日常登录不发信。
 
@@ -327,3 +328,11 @@ computeSettle
 已拆为独立专题：**[`features/皮肤主题.md`](./features/皮肤主题.md)**（token 表、加皮肤清单、明确不做）。
 
 要点只留一句：色/字/圆角写在 `apps/web/src/themes/<id>.css`，结构样式只用语义 `var(--*)`，**流程页不写死品牌色**。
+
+## 11. 管理后台
+
+独立产品面，与用户登录、共享旅途「管理员」都分开。
+
+**手册：[`features/管理后台.md`](./features/管理后台.md)**（页面、识图线路、密钥、存储、明确不做）。
+
+运维入口与引导账号只在 [`OPS.md` §8.1](./OPS.md)。

@@ -3,7 +3,7 @@
 > **这是 BioTrace 上线与运维的唯一操作手册**，反映真实落地方案，随版本更新持续维护。
 > **本文件是运维真源。** 架构背景、设计约定与天地图接入坑见文末[附录 A](#附录-a架构背景与设计约定)；业务功能见 [`SPEC.md`](./SPEC.md)。
 >
-> 最后更新：2026-08-12 · 当前阶段：**第二阶段（IP + HTTP + Resend 真实邮箱登录）已上线**；`DEV_AUTH=0`、Resend 走自有验证域名 `jettechdog.icu` 发信；已接入**境外出网代理（广州→新加坡 Xray）**保障 Resend/Gemini 出境；运维通道改为 Cursor MCP `tencent-lighthouse`（见 §2.1）；Android APK 为按需制品（见 §7.2）
+> 最后更新：2026-08-13 · 当前阶段：**第二阶段（IP + HTTP + Resend 真实邮箱登录）已上线**；`DEV_AUTH=0`、Resend 走自有验证域名 `jettechdog.icu` 发信；已接入**境外出网代理（广州→新加坡 Xray）**保障 Resend/Gemini 出境；运维通道改为 Cursor MCP `tencent-lighthouse`（见 §2.1）；Android APK 为按需制品（见 §7.2）
 >
 > 🔒 **更新前必读**：[§7.0 数据来源单一性铁律](#70-铁律数据来源单一性错一次后果严重务必遵守)——git 为唯一工程来源、隐私靠服务器本地 `.env`、禁止 `reset --hard`。
 
@@ -575,12 +575,14 @@ curl -s http://127.0.0.1:8787/api/health
 
 **建议**：给备份配一个定时任务；`data/uploads` 会随使用增长，注意 40G 磁盘余量。
 
-### 8.1 管理后台（Admin）
+### 8.1 管理后台（引导与密钥落盘）
 
-- 入口：站点 `/admin`（独立账号，不是普通用户）
-- 首次启动：在 `deploy/.env.production`（或本地 `.env`）设置 `ADMIN_BOOTSTRAP_USERNAME` + `ADMIN_BOOTSTRAP_PASSWORD`（≥8 位）；仅当 `admin_users` 表为空时写入首个管理员
-- 平台 Key 覆盖写在数据目录 `admin-runtime-secrets.json`（与 db 同级，已在 `/data` 卷内，勿提交 git）
-- 备份状态页可选：`BIOTRACE_BACKUP_DIR` 指向存放 `biotrace-data-*.tgz` 的目录
+产品能力见 [`features/管理后台.md`](./features/管理后台.md)。本节只写运行态：
+
+- 入口：站点 `/admin`（独立 Cookie，不是普通用户）
+- 首次启动：`deploy/.env.production`（或本地 `.env`）设 `ADMIN_BOOTSTRAP_USERNAME` + `ADMIN_BOOTSTRAP_PASSWORD`（≥8 位）；仅当 `admin_users` 为空时写入首个管理员
+- 平台密钥覆盖：数据目录 `admin-runtime-secrets.json`（与 db 同级，已在 `/data` 卷内，勿提交 git）
+- 存储页备份状态可选：`BIOTRACE_BACKUP_DIR` 指向存放 `biotrace-data-*.tgz` 的目录（只读展示，恢复仍按本节数据卷操作）
 
 ---
 
