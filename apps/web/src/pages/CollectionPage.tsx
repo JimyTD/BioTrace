@@ -1,36 +1,28 @@
 import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
-import { hasMessage, t, type MessageKey } from "@biotrace/messages";
-import { api, type CollectionEntry, type Rarity, type VolumeListItem } from "../api";
-import VolumeBookDialog from "../components/VolumeBookDialog";
-import { tripFilmFrameUrl, volumeCoverUrl, volumeSealCompleteUrl } from "../themes";
-
-function rarityLabel(r: Rarity) {
-  return t(`rarity.${r}` as MessageKey);
-}
+import { hasMessage, t } from "@biotrace/messages";
+import { api, type VolumeListItem } from "../api";
+import { volumeCoverUrl, volumeSealCompleteUrl } from "../themes";
 
 function msg(key: string) {
   return hasMessage(key) ? t(key) : key;
 }
 
 export default function CollectionPage() {
-  const [entries, setEntries] = useState<CollectionEntry[]>([]);
+  const [entryCount, setEntryCount] = useState(0);
   const [volumes, setVolumes] = useState<VolumeListItem[]>([]);
   const [error, setError] = useState<string | null>(null);
   const [loading, setLoading] = useState(true);
-  const [openVolumeId, setOpenVolumeId] = useState<string | null>(null);
 
   useEffect(() => {
     Promise.all([api.listCollection(), api.listVolumes()])
       .then(([col, vol]) => {
-        setEntries(col.entries);
+        setEntryCount(col.entries.length);
         setVolumes(vol.volumes);
       })
       .catch((e) => setError(e instanceof Error ? e.message : t("collection.loadFailed")))
       .finally(() => setLoading(false));
   }, []);
-
-  const openVolume = volumes.find((v) => v.id === openVolumeId) ?? null;
 
   return (
     <div className="stack page-collection">
@@ -43,21 +35,16 @@ export default function CollectionPage() {
       {error ? <p className="error">{error}</p> : null}
 
       {!loading ? (
-        <section className="stack volumes-section">
-          <div>
-            <h2 className="section-title">{t("collection.volumesTitle")}</h2>
-            <p className="muted">{t("collection.volumesLede")}</p>
-          </div>
+        <section className="volumes-section">
           {volumes.length === 0 ? (
             <p className="muted">{t("collection.volumesEmpty")}</p>
           ) : (
             <div className="volume-rail">
               {volumes.map((vol) => (
-                <button
+                <Link
                   key={vol.id}
-                  type="button"
-                  className={`volume-tile${vol.completed ? " is-complete" : ""}`}
-                  onClick={() => setOpenVolumeId(vol.id)}
+                  className="volume-tile"
+                  to={`/collection/volumes/${vol.id}`}
                 >
                   <div className="volume-tile-cover">
                     <img
@@ -80,71 +67,16 @@ export default function CollectionPage() {
                         aria-hidden
                       />
                     ) : null}
-                    <span className="volume-tile-progress">
-                      {vol.completed
-                        ? t("collection.volumeDone")
-                        : t("collection.volumeProgress", {
-                            lit: vol.litCount,
-                            total: vol.totalSlots,
-                          })}
-                    </span>
                   </div>
                   <strong>{msg(vol.titleKey)}</strong>
-                  <span className="muted volume-tile-open">{t("collection.volumeOpen")}</span>
-                </button>
-              ))}
-            </div>
-          )}
-        </section>
-      ) : null}
-
-      {!loading ? (
-        <section className="stack">
-          <h2 className="section-title">{t("collection.speciesTitle")}</h2>
-          {entries.length === 0 ? (
-            <p className="muted empty-hint">{t("collection.empty")}</p>
-          ) : (
-            <div className="album film-grid">
-              {entries.map((entry) => (
-                <Link
-                  className="film-tile-link"
-                  key={entry.id}
-                  to={
-                    entry.coverObservationId
-                      ? `/observations/${entry.coverObservationId}`
-                      : "/collection"
-                  }
-                >
-                  <div className="film-tile-media">
-                    <div className="film-tile-window">
-                      {entry.coverDisplayUrl ? (
-                        <img
-                          className="film-tile-photo"
-                          src={entry.coverDisplayUrl}
-                          alt={entry.commonName || entry.scientificName || entry.taxonKey}
-                        />
-                      ) : (
-                        <div className="card-placeholder" />
-                      )}
-                    </div>
-                    <img className="film-tile-frame" src={tripFilmFrameUrl()} alt="" aria-hidden />
-                  </div>
-                  <div className="film-tile-meta">
-                    <div className="card-tags">
-                      <span className={`rarity-badge rarity-${entry.rarity}`}>
-                        {rarityLabel(entry.rarity)}
-                      </span>
-                      {entry.alertIntroduced ? (
-                        <span className="intro-tag">{t("settle.alertIntroduced")}</span>
-                      ) : null}
-                    </div>
-                    <strong>
-                      {entry.commonName ||
-                        entry.scientificName ||
-                        entry.taxonKey ||
-                        t("detail.unnamed")}
-                    </strong>
-                  </div>
+                  <span className="muted">
+                    {vol.completed
+                      ? t("collection.volumeDone")
+                      : t("collection.volumeProgress", {
+                          lit: vol.litCount,
+                          total: vol.totalSlots,
+                        })}
+                  </span>
                 </Link>
               ))}
             </div>
@@ -152,7 +84,21 @@ export default function CollectionPage() {
         </section>
       ) : null}
 
-      <VolumeBookDialog volume={openVolume} onClose={() => setOpenVolumeId(null)} />
+      {!loading ? (
+        <div className="me-menu">
+          <Link className="me-row" to="/collection/species">
+            <span>{t("collection.speciesTitle")}</span>
+            <span className="me-row-side">
+              <span className="muted">
+                {t("collection.speciesCount", { count: entryCount })}
+              </span>
+              <span className="me-row-go" aria-hidden>
+                ›
+              </span>
+            </span>
+          </Link>
+        </div>
+      ) : null}
     </div>
   );
 }

@@ -204,9 +204,14 @@ export const zh = {
   "collection.volumeDone": "整册点亮",
   "collection.volumeOpen": "打开套册",
   "collection.volumeClose": "关闭",
+  "collection.volumeBack": "图鉴",
   "collection.volumeStampEmpty": "未点亮",
   "collection.volumeStampsTitle": "邮票",
   "collection.speciesTitle": "已收录",
+  "collection.speciesCount": "{count} 种",
+  "collection.speciesSearch": "俗名或学名",
+  "collection.speciesIdle": "共 {count} 种。输入名字查找。",
+  "collection.speciesNoMatch": "没有匹配的名字。",
 
   // dev fixture only：配置里 enabled:false，正式环境不加载；待分层重构时移出主表
   "volume.fixture_pipeline.title": "管道验收册",

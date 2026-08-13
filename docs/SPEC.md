@@ -299,14 +299,14 @@ computeSettle
 - 开包后：`evaluateVolumesOnObservation`（先 GBIF 临时锚定 taxonomy，再 `taxonomy_in`）
 - API：`GET /api/volumes`；settle 响应带 `volumes.newlyLit / newlyCompleted*`；收下后有反馈则弹出仪式层（成册优先于点亮槽，无则静默回相册）
 - 进度 `lit_slot_ids_json`：兼容旧 `string[]`；新写 `Record<slotId,{observationId}>`，供邮票封面
-- UI：图鉴页紧凑册卡（主题册皮）→ **弹层邮票墙**（照片+几何框分层）；开包点亮/成册仪式弹层（氛围底+火漆分层）
+- UI：图鉴第一屏为套册架；点开 `/collection/volumes/:id` 整页邮票内页；已收录 `/collection/species` 为可搜索目录（种多时不默认铺开）
 - 主题资源：`public/volumes/<themeId>/` + `themes/volumeAssets`；见 [`套册美术分层.md`](./features/套册美术分层.md)
 - 已配三本：`intertidal` / `urban_wild` / `woodland_edge`；`fixture-pipeline` 默认关闭
 - DSL 摘要：[`data/volumes/README.md`](../apps/api/data/volumes/README.md)
 
 ## 8. 后置
 
-- 套册：更多主题册策展（内容 only）；可选独立路由详情 / 手绘册皮
+- 套册：更多主题册策展（内容 only）；手绘册皮
 - 皮肤：潜水/潮间带主题 `tide`；「我的」里主题切换 UI（见 [`features/皮肤主题.md`](./features/皮肤主题.md) §5）
 - 稀有度：灭绝级 XR 稳定性；中档继续靠判定键微调（禁止物种名单）
 - ~~旅途元数据增强（时间 / 地点摘要）~~：已做——自动聚合 + 可选手填覆盖（见旅途列表 / 管理旅途）

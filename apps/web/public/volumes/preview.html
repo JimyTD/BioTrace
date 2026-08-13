@@ -1,0 +1,150 @@
+<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>图鉴 · 交互</title>
+    <style>
+      :root {
+        --ink: #1f2a24; --muted: #6b6258; --line: rgba(42, 64, 51, 0.14);
+        --nav-bg: #f3efe7; --nav-active-ink: #9a4030; --card: #faf8f3;
+        --plate: #e7dfd2; --shadow: 0 10px 26px rgba(42, 36, 28, 0.1);
+        --font: "Segoe UI", "PingFang SC", "Microsoft YaHei", sans-serif;
+        --bg:
+          radial-gradient(900px 480px at 8% -8%, rgba(212, 168, 120, 0.22), transparent 55%),
+          linear-gradient(180deg, #f3efe7, #ebe6dc);
+      }
+      * { box-sizing: border-box; }
+      body { margin: 0; padding: 16px 12px 40px; font-family: var(--font); color: var(--ink); background: #d9d0c2; }
+      h1.doc { margin: 0 0 8px; font-size: 1.15rem; }
+      .note { margin: 0 0 10px; color: #5a5248; font-size: 0.92rem; max-width: 58ch; }
+      .diffs { margin: 0 0 16px; padding-left: 1.2em; color: #5a5248; font-size: 0.92rem; max-width: 58ch; }
+      .phones { display: flex; flex-wrap: wrap; gap: 18px; }
+      .phone {
+        width: min(100%, 360px); height: 640px; background: var(--bg);
+        border-radius: 22px; border: 1px solid rgba(42,36,28,.18);
+        box-shadow: 0 16px 40px rgba(42,36,28,.14);
+        display: grid; grid-template-rows: auto 1fr auto; overflow: hidden;
+      }
+      .topbar { padding: 12px 16px 10px; background: var(--nav-bg); border-bottom: 1px solid var(--line); font-weight: 700; }
+      .content { min-height: 0; overflow-y: auto; padding: 16px; display: grid; gap: 14px; align-content: start; }
+      .label { margin: 0 0 6px; font-size: 0.8rem; font-weight: 700; color: #5a5248; }
+      .title { margin: 0; font-size: 1.45rem; font-weight: 700; }
+      .lede { margin: 0; color: var(--muted); font-size: 0.95rem; }
+      .back { color: var(--muted); font-size: 0.9rem; }
+      .rail { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; }
+      .book { display: grid; gap: 6px; }
+      .cover {
+        aspect-ratio: 4/3; border-radius: 8px; overflow: hidden;
+        background: var(--plate); box-shadow: var(--shadow);
+      }
+      .cover img { width: 100%; height: 100%; object-fit: cover; display: block; }
+      .book strong { font-size: 0.88rem; }
+      .book .muted, .muted { color: var(--muted); font-size: 0.82rem; }
+      .menu {
+        display: flex; justify-content: space-between; align-items: center;
+        padding: 14px 16px; border-radius: 14px; border: 1px solid var(--line); background: var(--card);
+      }
+      .stamps { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; }
+      .stamp { aspect-ratio: 1; background: var(--plate); border: 1px dashed rgba(42,64,51,.28); }
+      .search {
+        border: 1px solid var(--line); border-radius: 11px; padding: 10px 12px;
+        font: inherit; background: #fffdf9; color: var(--muted);
+      }
+      .idx { display: grid; border-radius: 14px; border: 1px solid var(--line); background: var(--card); overflow: hidden; }
+      .row { display: flex; gap: 12px; align-items: center; padding: 10px 12px; border-bottom: 1px solid var(--line); }
+      .row:last-child { border-bottom: 0; }
+      .thumb { width: 48px; height: 48px; object-fit: cover; border-radius: 8px; background: var(--plate); }
+      .nav {
+        display: grid; grid-template-columns: repeat(4, 1fr);
+        padding: 0 4px 8px; background: var(--nav-bg); border-top: 1px solid var(--line);
+      }
+      .nav span {
+        position: relative; text-align: center; font-size: 0.86rem;
+        color: var(--muted); padding: 12px 6px 14px;
+      }
+      .nav span.on { color: var(--nav-active-ink); font-weight: 700; }
+      .nav span.on::after {
+        content: ""; position: absolute; left: 22%; right: 22%; bottom: 6px;
+        height: 2px; border-radius: 1px; background: var(--nav-active-ink);
+      }
+    </style>
+  </head>
+  <body>
+    <h1 class="doc">图鉴 · 交互（先定这件事）</h1>
+    <p class="note">第一屏只回答「有哪几本套册」。已收录是目录，不是一千张胶片墙。点开一本是进内页，不是弹层。</p>
+    <ul class="diffs">
+      <li>架子：三本平铺 +「已收录 N 种」一行</li>
+      <li>内页：书名和邮票，封面留在架子上</li>
+      <li>目录：先搜；种很多时不默认铺开</li>
+    </ul>
+    <div class="phones">
+      <div>
+        <p class="label">1 · 图鉴（套册架）</p>
+        <div class="phone">
+          <div class="topbar">BioTrace</div>
+          <div class="content">
+            <h2 class="title">图鉴</h2>
+            <p class="lede">收下的证书，都在这里。</p>
+            <div class="rail">
+              <div class="book">
+                <div class="cover"><img src="./daylight/cover-intertidal.png" alt="" /></div>
+                <strong>潮间带</strong><span class="muted">3/7</span>
+              </div>
+              <div class="book">
+                <div class="cover"><img src="./daylight/cover-urban_wild.png" alt="" /></div>
+                <strong>城市野趣</strong><span class="muted">1/7</span>
+              </div>
+              <div class="book">
+                <div class="cover"><img src="./daylight/cover-woodland_edge.png" alt="" /></div>
+                <strong>林缘遇见</strong><span class="muted">0/6</span>
+              </div>
+            </div>
+            <div class="menu"><span>已收录</span><span class="muted">128 种 ›</span></div>
+          </div>
+          <nav class="nav"><span>旅途</span><span>地图</span><span class="on">图鉴</span><span>我的</span></nav>
+        </div>
+      </div>
+      <div>
+        <p class="label">2 · 翻开一本（整页）</p>
+        <div class="phone">
+          <div class="topbar">BioTrace</div>
+          <div class="content">
+            <div class="back">← 图鉴</div>
+            <h2 class="title">潮间带</h2>
+            <p class="lede">赶一次礁石潮：从脚边的小螺，到石头下的惊喜。</p>
+            <span class="muted">3/7</span>
+            <div class="stamps">
+              <div class="stamp"></div><div class="stamp"></div><div class="stamp"></div>
+              <div class="stamp"></div><div class="stamp"></div><div class="stamp"></div>
+              <div class="stamp"></div>
+            </div>
+          </div>
+          <nav class="nav"><span>旅途</span><span>地图</span><span class="on">图鉴</span><span>我的</span></nav>
+        </div>
+      </div>
+      <div>
+        <p class="label">3 · 已收录（目录）</p>
+        <div class="phone">
+          <div class="topbar">BioTrace</div>
+          <div class="content">
+            <div class="back">← 图鉴</div>
+            <h2 class="title">已收录</h2>
+            <div class="search">俗名或学名</div>
+            <div class="idx">
+              <div class="row">
+                <img class="thumb" src="../trips/_sample-photo.jpg" alt="" />
+                <div><strong>弹涂鱼</strong><div class="muted">Periophthalmus · R</div></div>
+              </div>
+              <div class="row">
+                <img class="thumb" src="../trips/_sample-photo.jpg" alt="" />
+                <div><strong>白鹭</strong><div class="muted">Egretta · N</div></div>
+              </div>
+            </div>
+          </div>
+          <nav class="nav"><span>旅途</span><span>地图</span><span class="on">图鉴</span><span>我的</span></nav>
+        </div>
+      </div>
+    </div>
+  </body>
+</html>

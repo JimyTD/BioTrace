@@ -4,6 +4,8 @@ import { t } from "@biotrace/messages";
 import { api, type User } from "./api";
 import ForceAppUpdateGate from "./components/ForceAppUpdateGate";
 import CollectionPage from "./pages/CollectionPage";
+import CollectionSpeciesPage from "./pages/CollectionSpeciesPage";
+import CollectionVolumePage from "./pages/CollectionVolumePage";
 import LoginPage from "./pages/LoginPage";
 import MapPage from "./pages/MapPage";
 import MeAboutPage from "./pages/MeAboutPage";
@@ -60,6 +62,8 @@ export default function App() {
             <Route path="/settle/:id" element={<ObservationSettlePage />} />
             <Route path="/dev/settle-art" element={<SettleArtPreviewPage />} />
             <Route path="/map" element={<MapPage />} />
+            <Route path="/collection/volumes/:id" element={<CollectionVolumePage />} />
+            <Route path="/collection/species" element={<CollectionSpeciesPage />} />
             <Route path="/collection" element={<CollectionPage />} />
             <Route
               path="/me"

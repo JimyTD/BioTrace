@@ -417,6 +417,12 @@ a {
   line-height: 1;
 }
 
+.me-row-side {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
 .me-logout {
   margin-top: 8px;
   justify-self: stretch;
@@ -1462,24 +1468,18 @@ a {
 }
 
 .volumes-section {
-  margin-bottom: 0.75rem;
+  margin-bottom: 0.5rem;
 }
 
 .volume-rail {
   display: grid;
   grid-template-columns: repeat(3, minmax(0, 1fr));
-  gap: 10px;
-}
-
-@media (max-width: 560px) {
-  .volume-rail {
-    grid-template-columns: 1fr;
-  }
+  gap: 12px;
 }
 
 .volume-tile {
   display: grid;
-  gap: 6px;
+  gap: 8px;
   padding: 0;
   border: 0;
   background: transparent;
@@ -1492,10 +1492,10 @@ a {
 .volume-tile-cover {
   position: relative;
   aspect-ratio: 4 / 3;
-  border-radius: var(--radius-md);
+  border-radius: var(--radius-sm);
   overflow: hidden;
-  border: 1px solid var(--line);
-  background: var(--volume-cover-empty, var(--surface-wash));
+  background: var(--volume-cover-empty);
+  box-shadow: var(--trip-cover-shadow);
 }
 
 .volume-tile-art,
@@ -1508,14 +1508,14 @@ a {
   object-fit: cover;
 }
 
-.volume-tile-art {
-  filter: saturate(0.92);
-}
-
 .volume-tile-placeholder {
   background:
-    linear-gradient(145deg, rgba(211, 84, 60, 0.14), transparent 50%),
-    linear-gradient(180deg, #e7dfd2, #d5cbbd);
+    linear-gradient(
+      145deg,
+      color-mix(in srgb, var(--cta) 10%, transparent),
+      transparent 55%
+    ),
+    var(--volume-cover-empty);
 }
 
 .volume-tile-placeholder[hidden] {
@@ -1524,100 +1524,21 @@ a {
 
 .volume-tile-seal {
   position: absolute;
-  right: 6px;
-  top: 6px;
-  width: 28%;
-  max-width: 56px;
+  right: 6%;
+  top: 6%;
+  width: 22%;
+  max-width: 48px;
   height: auto;
   object-fit: contain;
   pointer-events: none;
-  filter: drop-shadow(0 2px 4px rgba(42, 36, 28, 0.25));
-}
-
-.volume-tile-progress {
-  position: absolute;
-  left: 8px;
-  bottom: 8px;
   z-index: 1;
-  padding: 3px 8px;
-  border-radius: var(--radius-sm);
-  background: rgba(250, 248, 243, 0.92);
-  color: var(--ink);
-  font-size: 0.75rem;
-  font-weight: 700;
-}
-
-.volume-tile.is-complete .volume-tile-cover {
-  border-color: var(--volume-complete-line, var(--cta));
-  box-shadow: 0 0 0 1px var(--volume-complete-line, var(--cta));
+  filter: drop-shadow(0 2px 4px color-mix(in srgb, var(--ink) 28%, transparent));
 }
 
 .volume-tile strong {
-  font-size: 1rem;
+  font-family: var(--font-brand);
+  font-size: 1.05rem;
   letter-spacing: -0.02em;
-}
-
-.volume-tile-open {
-  font-size: 0.82rem;
-}
-
-.volume-book-panel {
-  width: min(520px, 100%);
-  max-height: min(86vh, 720px);
-  overflow: auto;
-}
-
-.volume-book-cover-wrap {
-  position: relative;
-  border-radius: var(--radius-md);
-  overflow: hidden;
-  border: 1px solid var(--line);
-  background: var(--volume-cover-empty, var(--surface-wash));
-}
-
-.volume-book-cover {
-  display: block;
-  width: 100%;
-  aspect-ratio: 4 / 3;
-  object-fit: cover;
-}
-
-.volume-book-seal {
-  position: absolute;
-  right: 8px;
-  top: 8px;
-  width: 22%;
-  max-width: 72px;
-  height: auto;
-  pointer-events: none;
-  filter: drop-shadow(0 2px 6px rgba(42, 36, 28, 0.28));
-}
-
-.volume-book-head {
-  display: flex;
-  justify-content: space-between;
-  gap: 12px;
-  align-items: flex-start;
-}
-
-.volume-lede {
-  margin: 0.35rem 0 0;
-  font-size: 0.9rem;
-}
-
-.volume-progress-pill {
-  flex-shrink: 0;
-  padding: 4px 10px;
-  border-radius: 999px;
-  background: var(--accent-soft);
-  color: var(--accent);
-  font-size: 0.78rem;
-  font-weight: 700;
-}
-
-.volume-progress-pill.is-done {
-  background: var(--volume-complete-soft, #f0ddd4);
-  color: var(--volume-complete-ink, var(--cta));
 }
 
 .stamp-grid {
@@ -1688,6 +1609,50 @@ a {
 .stamp-lit .stamp-caption {
   color: var(--ink);
   font-weight: 600;
+}
+
+.species-index {
+  display: grid;
+  border-radius: var(--radius-lg);
+  border: 1px solid var(--line);
+  background: var(--card);
+  overflow: hidden;
+}
+
+.species-index-row {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 10px 12px;
+  color: inherit;
+  border-bottom: 1px solid var(--line);
+}
+
+.species-index-row:last-child {
+  border-bottom: 0;
+}
+
+.species-index-thumb {
+  width: 48px;
+  height: 48px;
+  object-fit: cover;
+  border-radius: var(--radius-sm);
+  background: var(--volume-cover-empty);
+  flex-shrink: 0;
+}
+
+.species-index-thumb.is-empty {
+  display: block;
+}
+
+.species-index-copy {
+  display: grid;
+  gap: 2px;
+  min-width: 0;
+}
+
+.species-index-copy strong {
+  font-size: 0.98rem;
 }
 
 .volume-ceremony-backdrop {
