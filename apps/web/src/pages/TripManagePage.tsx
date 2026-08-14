@@ -2,6 +2,7 @@ import { useEffect, useState, type FormEvent } from "react";
 import { Link, useNavigate, useParams } from "react-router-dom";
 import { t } from "@biotrace/messages";
 import { api, type Trip, type TripMember } from "../api";
+import { copyText } from "../copyText";
 
 export default function TripManagePage({ userId }: { userId: string }) {
   const { id = "" } = useParams();
@@ -125,15 +126,19 @@ export default function TripManagePage({ userId }: { userId: string }) {
   }
 
   async function onCopyInvite() {
-    const code = trip?.inviteCode;
-    if (!code) return;
-    try {
-      await navigator.clipboard.writeText(code);
-      setCopiedFlash(true);
-      window.setTimeout(() => setCopiedFlash(false), 2000);
-    } catch {
-      setError(t("share.actionFailed"));
+    const code = trip?.inviteCode?.trim();
+    if (!code) {
+      setError(t("share.inviteMissing"));
+      return;
     }
+    setError(null);
+    const ok = await copyText(code);
+    if (!ok) {
+      setError(t("share.copyFailed"));
+      return;
+    }
+    setCopiedFlash(true);
+    window.setTimeout(() => setCopiedFlash(false), 2000);
   }
 
   async function onLeaveTrip() {
@@ -245,10 +250,17 @@ export default function TripManagePage({ userId }: { userId: string }) {
             <h2 className="me-section-title">{t("share.section")}</h2>
             {isAdmin ? (
               <>
-                <p className="muted">
-                  {t("share.inviteCode")}：<strong>{trip.inviteCode ?? "—"}</strong>
-                </p>
+                <label className="muted" htmlFor="trip-invite-code">
+                  {t("share.inviteCode")}
+                </label>
                 <div className="row">
+                  <input
+                    id="trip-invite-code"
+                    className="input"
+                    value={trip.inviteCode ?? ""}
+                    readOnly
+                    onFocus={(e) => e.currentTarget.select()}
+                  />
                   <button className="btn secondary" type="button" onClick={() => void onCopyInvite()}>
                     {copiedFlash ? t("share.copied") : t("share.copyCode")}
                   </button>

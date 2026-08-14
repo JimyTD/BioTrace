@@ -89,6 +89,8 @@ export const zh = {
   "share.inviteCode": "邀请码",
   "share.copyCode": "复制邀请码",
   "share.copied": "已复制",
+  "share.copyFailed": "复制失败，请长按邀请码手动复制",
+  "share.inviteMissing": "邀请码尚未生成，请先打开「允许持码加入」再试",
   "share.allowJoin": "允许持码加入",
   "share.allowJoinHint": "打开后朋友可用邀请码加入（最多 10 人）；关闭后码仍有效但进不来。",
   "share.members": "同行成员",

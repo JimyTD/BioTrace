@@ -97,13 +97,17 @@ async function tripWithSummary(trip: Trip, userId: string, pack: Awaited<ReturnT
   const obsList = pack.obsByTrip.get(trip.id) ?? [];
   const memberCount = await countTripMembers(trip.id);
   const isAdmin = trip.userId === userId;
+  let inviteCode: string | null = null;
+  if (isAdmin) {
+    inviteCode = trip.inviteCode?.trim() || (await ensureInviteCode(trip.id));
+  }
   return serializeTrip(trip, {
     coverDisplayUrl: pack.coverByTrip.get(trip.id) ?? null,
     observationCount: pack.countByTrip.get(trip.id) ?? obsList.length,
     summary: resolveTripSummary(obsList, trip),
     memberCount,
     isAdmin,
-    inviteCode: isAdmin ? trip.inviteCode ?? null : null,
+    inviteCode,
     allowJoin: Boolean(trip.allowJoin),
   });
 }
