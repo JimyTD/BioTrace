@@ -1,5 +1,5 @@
 import { useEffect, useState, type FormEvent } from "react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { t } from "@biotrace/messages";
 import { api, type Trip } from "../api";
 import { captureCoverBox, setOpenBookHandoff } from "../openBookHandoff";
@@ -13,6 +13,7 @@ export default function TripsPage({
   activeTripId?: string;
   bookOpen?: boolean;
 }) {
+  const navigate = useNavigate();
   const [trips, setTrips] = useState<Trip[]>([]);
   const [title, setTitle] = useState("");
   const [joinCode, setJoinCode] = useState("");
@@ -138,7 +139,7 @@ export default function TripsPage({
               className={`trip-cover${activeTripId === trip.id ? " is-book-source" : ""}`}
               key={trip.id}
               to={`/trips/${trip.id}`}
-              onClick={(e) => {
+              onPointerDown={(e) => {
                 const media = e.currentTarget.querySelector(".trip-cover-media");
                 if (!(media instanceof HTMLElement)) return;
                 setOpenBookHandoff({
@@ -146,6 +147,18 @@ export default function TripsPage({
                   coverUrl: trip.coverDisplayUrl ?? null,
                   source: captureCoverBox(media),
                 });
+              }}
+              onClick={(e) => {
+                e.preventDefault();
+                const media = e.currentTarget.querySelector(".trip-cover-media");
+                if (media instanceof HTMLElement) {
+                  setOpenBookHandoff({
+                    tripId: trip.id,
+                    coverUrl: trip.coverDisplayUrl ?? null,
+                    source: captureCoverBox(media),
+                  });
+                }
+                navigate(`/trips/${trip.id}`);
               }}
             >
               <div className="trip-cover-media">

@@ -119,7 +119,7 @@ function CoverClone({ coverUrl }: { coverUrl: string | null }) {
 export default function TripBookLayer({ tripId, children }: Props) {
   const navigate = useNavigate();
   const [origin] = useState<OpenBookHandoff | null>(() => takeOpenBookHandoff(tripId));
-  const [phase, setPhase] = useState<Phase>(origin ? "opening" : "open");
+  const [phase, setPhase] = useState<Phase>("opening");
   const [stage] = useState(contentBox);
   const coverRef = useRef<HTMLDivElement | null>(null);
   const pagesRef = useRef<HTMLDivElement | null>(null);
@@ -134,11 +134,10 @@ export default function TripBookLayer({ tripId, children }: Props) {
     () => (fromBox ? heldAt(fromBox, stage) : null),
     [fromBox, stage],
   );
-  const canAnimate = Boolean(origin && fromBox && heldBox);
 
   function requestClose() {
     if (phase === "closing") return;
-    if (!canAnimate || phase !== "open") {
+    if (phase !== "open") {
       navigate("/");
       return;
     }
@@ -161,7 +160,7 @@ export default function TripBookLayer({ tripId, children }: Props) {
     const pages = pagesRef.current;
     const mat = matRef.current;
     const shelf = document.querySelector(".page-trips");
-    if (!cover || !pages || !mat || !fromBox || !heldBox) {
+    if (!pages || !mat) {
       setPhase("open");
       return;
     }
@@ -175,7 +174,39 @@ export default function TripBookLayer({ tripId, children }: Props) {
     let cancelled = false;
     const timers: number[] = [];
 
+    function finishOpen() {
+      pagesEl.classList.add("is-in", "is-sharp");
+      matEl.classList.add("is-on");
+      timers.push(
+        window.setTimeout(() => {
+          if (!cancelled && gen === generation.current) setPhase("open");
+        }, 560),
+      );
+    }
+
+    async function runPagesOnly() {
+      matEl.classList.add("is-on");
+      shelf?.classList.add("is-book-back");
+      timers.push(
+        window.setTimeout(() => {
+          if (cancelled || gen !== generation.current) return;
+          pagesEl.classList.add("is-in");
+          timers.push(
+            window.setTimeout(() => {
+              if (cancelled || gen !== generation.current) return;
+              pagesEl.classList.add("is-sharp");
+              finishOpen();
+            }, 200),
+          );
+        }, 40),
+      );
+    }
+
     async function runOpen() {
+      if (!coverEl || !from || !held) {
+        await runPagesOnly();
+        return;
+      }
       applyBox(coverEl, from);
       coverEl.style.transform = "rotateY(0deg) translateZ(0.01px)";
       matEl.classList.add("is-on");
@@ -218,30 +249,35 @@ export default function TripBookLayer({ tripId, children }: Props) {
     }
 
     async function runClose() {
-      applyBox(coverEl, held);
-      coverEl.style.transform = "rotateY(-95deg) translateZ(0.01px)";
-      matEl.classList.add("is-on");
       pagesEl.classList.add("is-in");
       pagesEl.classList.remove("is-sharp");
-      await play(
-        coverEl,
-        [
-          { transform: "rotateY(-95deg) translateZ(0.01px)" },
-          { transform: "rotateY(0deg) translateZ(0.01px)" },
-        ],
-        380,
-        "cubic-bezier(0.45, 0.02, 0.2, 1)",
-      );
-      if (cancelled || gen !== generation.current) return;
-      coverEl.style.transform = "rotateY(0deg) translateZ(0.01px)";
-      pagesEl.classList.remove("is-in");
-      shelf?.classList.remove("is-book-back");
-      await play(
-        coverEl,
-        boxKeyframes(held, from, { transform: "rotateY(0deg) translateZ(0.01px)" }),
-        280,
-        "cubic-bezier(0.4, 0, 0.2, 1)",
-      );
+      matEl.classList.add("is-on");
+      if (coverEl && from && held) {
+        applyBox(coverEl, held);
+        coverEl.style.transform = "rotateY(-95deg) translateZ(0.01px)";
+        await play(
+          coverEl,
+          [
+            { transform: "rotateY(-95deg) translateZ(0.01px)" },
+            { transform: "rotateY(0deg) translateZ(0.01px)" },
+          ],
+          380,
+          "cubic-bezier(0.45, 0.02, 0.2, 1)",
+        );
+        if (cancelled || gen !== generation.current) return;
+        coverEl.style.transform = "rotateY(0deg) translateZ(0.01px)";
+        pagesEl.classList.remove("is-in");
+        shelf?.classList.remove("is-book-back");
+        await play(
+          coverEl,
+          boxKeyframes(held, from, { transform: "rotateY(0deg) translateZ(0.01px)" }),
+          280,
+          "cubic-bezier(0.4, 0, 0.2, 1)",
+        );
+      } else {
+        pagesEl.classList.remove("is-in");
+        shelf?.classList.remove("is-book-back");
+      }
       if (cancelled || gen !== generation.current) return;
       matEl.classList.remove("is-on");
       timers.push(
@@ -255,7 +291,7 @@ export default function TripBookLayer({ tripId, children }: Props) {
     return () => {
       cancelled = true;
       for (const id of timers) window.clearTimeout(id);
-      coverEl.getAnimations().forEach((a) => a.cancel());
+      coverEl?.getAnimations().forEach((a) => a.cancel());
       pagesEl.getAnimations().forEach((a) => a.cancel());
       matEl.getAnimations().forEach((a) => a.cancel());
     };
