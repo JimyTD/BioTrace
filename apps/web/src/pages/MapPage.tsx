@@ -110,17 +110,17 @@ export default function MapPage() {
   }, [sheet, mapReady]);
 
   useLayoutEffect(() => {
-    const wrap = document.querySelector(".page-map .map-wrap");
-    if (!(wrap instanceof HTMLElement) || prefersReducedMotion()) return;
+    const wrap = containerRef.current;
+    if (!wrap || prefersReducedMotion()) return;
     wrap.style.opacity = "0";
-    wrap.style.transform = "translateY(8%)";
+    wrap.style.transform = "translateY(22%)";
     let cancelled = false;
     void tween(
-      420,
+      520,
       (t) => {
         const e = easeOutCubic(t);
         wrap.style.opacity = String(e);
-        wrap.style.transform = `translateY(${(1 - e) * 8}%)`;
+        wrap.style.transform = `translateY(${(1 - e) * 22}%)`;
       },
       () => cancelled,
     ).then(() => {

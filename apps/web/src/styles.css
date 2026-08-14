@@ -1658,7 +1658,7 @@ button.me-row {
   padding: 10px 16px;
   background: var(--nav-bg);
   border-top: 1px solid var(--line);
-  transform: translateY(0);
+  transform: translateY(100%);
 }
 
 .map-sheet-main {
@@ -1852,6 +1852,7 @@ button.stamp {
 
 .stamp-lift-layer {
   position: fixed;
+  inset: 0;
   z-index: 16;
   pointer-events: auto;
 }
@@ -2076,8 +2077,6 @@ button.stamp {
   background-repeat: no-repeat;
   background-size: cover;
   opacity: 0;
-  filter: blur(36px);
-  -webkit-filter: blur(36px);
 }
 
 .trip-book-layer.is-open .trip-book-pages {

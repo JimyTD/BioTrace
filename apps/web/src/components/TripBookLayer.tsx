@@ -132,7 +132,7 @@ function CoverClone({ coverUrl }: { coverUrl: string | null }) {
 export default function TripBookLayer({ tripId, children }: Props) {
   const navigate = useNavigate();
   const [origin] = useState<OpenBookHandoff | null>(() => peekOpenBookHandoff(tripId));
-  const [phase, setPhase] = useState<Phase>("opening");
+  const [phase, setPhase] = useState<Phase>(() => (origin ? "opening" : "open"));
   const layerRef = useRef<HTMLDivElement | null>(null);
   const coverRef = useRef<HTMLDivElement | null>(null);
   const pagesRef = useRef<HTMLDivElement | null>(null);
@@ -149,15 +149,19 @@ export default function TripBookLayer({ tripId, children }: Props) {
   }
 
   useLayoutEffect(() => {
+    const layer = layerRef.current;
+    if (layer) pinLayer(layer);
     const main = document.querySelector("main.content");
     const shelf = document.querySelector(".page-trips");
     main?.classList.add("is-book-open");
     shelf?.classList.add("is-book-back");
+    if (!origin) clearShelfLook(shelf);
+    if (shelf instanceof HTMLElement) shelf.classList.add("is-book-back");
     return () => {
       main?.classList.remove("is-book-open");
       clearShelfLook(document.querySelector(".page-trips"));
     };
-  }, []);
+  }, [origin]);
 
   useLayoutEffect(() => {
     if (phase !== "opening" && phase !== "closing") return;
@@ -172,6 +176,7 @@ export default function TripBookLayer({ tripId, children }: Props) {
     }
 
     pinLayer(layer);
+    if (phase === "opening") clearOpenBookHandoff();
     const pagesEl = pages;
     const matEl = mat;
     const dst = measure(layer);
@@ -182,8 +187,18 @@ export default function TripBookLayer({ tripId, children }: Props) {
     const isCancelled = () => cancelled || gen !== generation.current;
 
     async function runOpen() {
+      if (!cover || !from || !held) {
+        matEl.style.opacity = "1";
+        pagesEl.style.opacity = "1";
+        setBlur(pagesEl, 0);
+        clearOpenBookHandoff();
+        setPhase("open");
+        return;
+      }
+
       matEl.style.opacity = "0";
       pagesEl.style.opacity = "0";
+      setBlur(pagesEl, 36);
       shelf?.classList.add("is-book-back");
       if (shelf instanceof HTMLElement) {
         setBlur(shelf, 0);
@@ -203,77 +218,55 @@ export default function TripBookLayer({ tripId, children }: Props) {
       );
       if (isCancelled()) return;
 
-      if (cover && from && held) {
-        applyBox(cover, from);
-        hingeCover(cover, 0);
-        cover.style.opacity = "1";
-        cover.style.visibility = "visible";
-        const lifted = { ...from, top: from.top - 14 };
-        await tween(
-          160,
-          (t) => {
-            const e = easeOutCubic(t);
-            applyBox(cover, {
-              left: from.left,
-              top: lerp(from.top, lifted.top, e),
-              width: from.width,
-              height: from.height,
-            });
-          },
-          isCancelled,
-        );
-        if (isCancelled()) return;
-        await tween(
-          320,
-          (t) => {
-            const e = easeOutCubic(t);
-            applyBox(cover, {
-              left: lerp(lifted.left, held.left, e),
-              top: lerp(lifted.top, held.top, e),
-              width: from.width,
-              height: from.height,
-            });
-          },
-          isCancelled,
-        );
-        if (isCancelled()) return;
-        applyBox(cover, held);
-        await tween(
-          520,
-          (t) => {
-            const e = easeInOut(t);
-            hingeCover(cover, e);
-            pagesEl.style.opacity = String(e);
-            setBlur(pagesEl, (1 - e) * 36);
-          },
-          isCancelled,
-        );
-        if (isCancelled()) return;
-        hingeCover(cover, 1);
-        cover.style.visibility = "hidden";
-      } else {
-        await tween(
-          420,
-          (t) => {
-            pagesEl.style.opacity = String(easeOutCubic(t));
-          },
-          isCancelled,
-        );
-        if (isCancelled()) return;
-      }
-
+      applyBox(cover, from);
+      hingeCover(cover, 0);
+      cover.style.opacity = "1";
+      cover.style.visibility = "visible";
+      const lifted = { ...from, top: from.top - 14 };
       await tween(
-        480,
+        160,
         (t) => {
           const e = easeOutCubic(t);
-          pagesEl.style.opacity = "1";
+          applyBox(cover, {
+            left: from.left,
+            top: lerp(from.top, lifted.top, e),
+            width: from.width,
+            height: from.height,
+          });
+        },
+        isCancelled,
+      );
+      if (isCancelled()) return;
+      await tween(
+        320,
+        (t) => {
+          const e = easeOutCubic(t);
+          applyBox(cover, {
+            left: lerp(lifted.left, held.left, e),
+            top: lerp(lifted.top, held.top, e),
+            width: from.width,
+            height: from.height,
+          });
+        },
+        isCancelled,
+      );
+      if (isCancelled()) return;
+      applyBox(cover, held);
+      await tween(
+        520,
+        (t) => {
+          const e = easeInOut(t);
+          hingeCover(cover, e);
+          pagesEl.style.opacity = String(e);
           setBlur(pagesEl, (1 - e) * 36);
         },
         isCancelled,
       );
       if (isCancelled()) return;
+      hingeCover(cover, 1);
+      cover.style.visibility = "hidden";
       pagesEl.style.opacity = "1";
-      pagesEl.style.filter = "none";
+      setBlur(pagesEl, 0);
       matEl.style.opacity = "1";
       clearOpenBookHandoff();
       setPhase("open");
@@ -319,15 +312,11 @@ export default function TripBookLayer({ tripId, children }: Props) {
         );
       } else {
         await tween(
-          280,
+          220,
           (t) => {
             const e = easeOutCubic(t);
             pagesEl.style.opacity = String(1 - e);
             matEl.style.opacity = String(1 - e);
-            if (shelf instanceof HTMLElement) {
-              setBlur(shelf, (1 - e) * 44);
-              shelf.style.transform = `scale(${lerp(1.14, 1, e)})`;
-            }
           },
           isCancelled,
         );

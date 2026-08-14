@@ -145,13 +145,15 @@ export default function TripAlbumPage({ userId }: { userId: string }) {
 
   useEffect(() => {
     if (slottingIds.size === 0) return;
-    const photos = [
-      ...document.querySelectorAll<HTMLElement>(".film-tile.is-slotting .film-tile-photo"),
-    ];
-    if (photos.length === 0) return;
     let cancelled = false;
     const reduce = prefersReducedMotion();
     void (async () => {
+      await nextPaint();
+      if (cancelled) return;
+      const photos = [
+        ...document.querySelectorAll<HTMLElement>(".film-tile.is-slotting .film-tile-photo"),
+      ];
+      if (photos.length === 0) return;
       await Promise.all(
         photos.map((img) =>
           img instanceof HTMLImageElement && img.decode
