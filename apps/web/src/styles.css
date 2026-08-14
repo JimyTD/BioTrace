@@ -277,8 +277,9 @@ a {
 }
 
 .page-trips.is-book-back {
-  filter: blur(12px);
-  transform: scale(1.06);
+  filter: blur(44px);
+  -webkit-filter: blur(44px);
+  transform: scale(1.14);
   pointer-events: none;
 }
 
@@ -1980,8 +1981,14 @@ button.me-row {
 .trip-book-mat {
   position: absolute;
   inset: 0;
-  background: color-mix(in srgb, var(--bg0) 42%, transparent);
+  background: color-mix(in srgb, var(--bg0) 88%, var(--ink));
   opacity: 0;
+  transition: opacity 280ms ease-out;
+}
+
+.trip-book-mat.is-on,
+.trip-book-layer.is-open .trip-book-mat {
+  opacity: 1;
 }
 
 .trip-book-pages {
@@ -1997,11 +2004,22 @@ button.me-row {
   background-repeat: no-repeat;
   background-size: cover;
   opacity: 0;
+  filter: blur(36px);
+  -webkit-filter: blur(36px);
+  transition:
+    opacity 280ms ease-out,
+    filter 560ms cubic-bezier(0.22, 1, 0.36, 1);
 }
 
-.trip-book-layer.is-open .trip-book-mat,
+.trip-book-pages.is-in {
+  opacity: 1;
+}
+
+.trip-book-pages.is-sharp,
 .trip-book-layer.is-open .trip-book-pages {
   opacity: 1;
+  filter: blur(0);
+  -webkit-filter: blur(0);
 }
 
 .trip-book-layer.is-open .trip-book-cover {
@@ -2031,11 +2049,9 @@ button.me-row {
   .trip-cover-photo,
   .settle-pack-shell,
   .settle-card.revealing .settle-hero,
-  .trip-empty,
-  .page-trips.is-book-back {
+  .trip-empty {
     animation: none;
     transition: none;
     transform: none;
-    filter: none;
   }
 }

@@ -25,10 +25,6 @@ type Props = {
   children: ReactNode;
 };
 
-function prefersReducedMotion() {
-  return window.matchMedia("(prefers-reduced-motion: reduce)").matches;
-}
-
 function contentBox(): OpenBookBox {
   const el = document.querySelector("main.content");
   if (el) {
@@ -123,7 +119,7 @@ function CoverClone({ coverUrl }: { coverUrl: string | null }) {
 export default function TripBookLayer({ tripId, children }: Props) {
   const navigate = useNavigate();
   const [origin] = useState<OpenBookHandoff | null>(() => takeOpenBookHandoff(tripId));
-  const [phase, setPhase] = useState<Phase>(origin && !prefersReducedMotion() ? "opening" : "open");
+  const [phase, setPhase] = useState<Phase>(origin ? "opening" : "open");
   const [stage] = useState(contentBox);
   const coverRef = useRef<HTMLDivElement | null>(null);
   const pagesRef = useRef<HTMLDivElement | null>(null);
@@ -138,7 +134,7 @@ export default function TripBookLayer({ tripId, children }: Props) {
     () => (fromBox ? heldAt(fromBox, stage) : null),
     [fromBox, stage],
   );
-  const canAnimate = Boolean(origin && fromBox && heldBox && !prefersReducedMotion());
+  const canAnimate = Boolean(origin && fromBox && heldBox);
 
   function requestClose() {
     if (phase === "closing") return;
@@ -152,14 +148,12 @@ export default function TripBookLayer({ tripId, children }: Props) {
   useLayoutEffect(() => {
     const main = document.querySelector("main.content");
     main?.classList.add("is-book-open");
-    if (!canAnimate) {
-      document.querySelector(".page-trips")?.classList.add("is-book-back");
-    }
+    document.querySelector(".page-trips")?.classList.add("is-book-back");
     return () => {
       main?.classList.remove("is-book-open");
       document.querySelector(".page-trips")?.classList.remove("is-book-back");
     };
-  }, [canAnimate]);
+  }, []);
 
   useLayoutEffect(() => {
     if (phase !== "opening" && phase !== "closing") return;
@@ -179,135 +173,88 @@ export default function TripBookLayer({ tripId, children }: Props) {
     const held = heldBox;
     const gen = ++generation.current;
     let cancelled = false;
+    const timers: number[] = [];
 
     async function runOpen() {
       applyBox(coverEl, from);
-      coverEl.style.transform = "rotateY(0deg)";
-      matEl.style.opacity = "0";
-      pagesEl.style.opacity = "0";
-      pagesEl.style.filter = "blur(16px)";
-      void play(matEl, [{ opacity: 0 }, { opacity: 1 }], 240, "ease-out");
-      if (shelf) {
-        void play(
-          shelf,
-          [
-            { filter: "blur(0px)", transform: "scale(1)" },
-            { filter: "blur(12px)", transform: "scale(1.06)" },
-          ],
-          280,
-          "ease-out",
-        );
-      }
+      coverEl.style.transform = "rotateY(0deg) translateZ(0.01px)";
+      matEl.classList.add("is-on");
+      shelf?.classList.add("is-book-back");
       const lifted = { ...from, top: from.top - 14 };
       await play(
         coverEl,
-        boxKeyframes(from, lifted, { transform: "rotateY(0deg)" }),
+        boxKeyframes(from, lifted, { transform: "rotateY(0deg) translateZ(0.01px)" }),
         140,
         "cubic-bezier(0.22, 1, 0.36, 1)",
       );
       if (cancelled || gen !== generation.current) return;
       await play(
         coverEl,
-        boxKeyframes(lifted, held, { transform: "rotateY(0deg)" }),
+        boxKeyframes(lifted, held, { transform: "rotateY(0deg) translateZ(0.01px)" }),
         300,
         "cubic-bezier(0.22, 1, 0.36, 1)",
       );
       if (cancelled || gen !== generation.current) return;
       applyBox(coverEl, held);
-      coverEl.style.transform = "rotateY(0deg)";
-      document.querySelector(".page-trips")?.classList.add("is-book-back");
-      void play(
-        pagesEl,
-        [
-          { opacity: 0, filter: "blur(16px)" },
-          { opacity: 1, filter: "blur(16px)" },
-        ],
-        240,
-        "ease-out",
-      );
+      coverEl.style.transform = "rotateY(0deg) translateZ(0.01px)";
+      pagesEl.classList.add("is-in");
       await play(
         coverEl,
-        [{ transform: "rotateY(0deg)" }, { transform: "rotateY(-95deg)" }],
+        [
+          { transform: "rotateY(0deg) translateZ(0.01px)" },
+          { transform: "rotateY(-95deg) translateZ(0.01px)" },
+        ],
         520,
         "cubic-bezier(0.45, 0.02, 0.2, 1)",
       );
       if (cancelled || gen !== generation.current) return;
-      coverEl.style.transform = "rotateY(-95deg)";
-      matEl.style.opacity = "1";
-      pagesEl.style.opacity = "1";
-      await play(
-        pagesEl,
-        [
-          { opacity: 1, filter: "blur(16px)" },
-          { opacity: 1, filter: "blur(0px)" },
-        ],
-        480,
-        "cubic-bezier(0.22, 1, 0.36, 1)",
+      coverEl.style.transform = "rotateY(-95deg) translateZ(0.01px)";
+      pagesEl.classList.add("is-sharp");
+      timers.push(
+        window.setTimeout(() => {
+          if (!cancelled && gen === generation.current) setPhase("open");
+        }, 560),
       );
-      if (cancelled || gen !== generation.current) return;
-      pagesEl.style.filter = "blur(0px)";
-      setPhase("open");
     }
 
     async function runClose() {
       applyBox(coverEl, held);
-      coverEl.style.transform = "rotateY(-95deg)";
-      matEl.style.opacity = "1";
-      pagesEl.style.opacity = "1";
-      pagesEl.style.filter = "blur(0px)";
-      void play(
-        pagesEl,
-        [
-          { opacity: 1, filter: "blur(0px)" },
-          { opacity: 1, filter: "blur(16px)" },
-        ],
-        220,
-        "ease-in",
-      );
+      coverEl.style.transform = "rotateY(-95deg) translateZ(0.01px)";
+      matEl.classList.add("is-on");
+      pagesEl.classList.add("is-in");
+      pagesEl.classList.remove("is-sharp");
       await play(
         coverEl,
-        [{ transform: "rotateY(-95deg)" }, { transform: "rotateY(0deg)" }],
+        [
+          { transform: "rotateY(-95deg) translateZ(0.01px)" },
+          { transform: "rotateY(0deg) translateZ(0.01px)" },
+        ],
         380,
         "cubic-bezier(0.45, 0.02, 0.2, 1)",
       );
       if (cancelled || gen !== generation.current) return;
-      coverEl.style.transform = "rotateY(0deg)";
-      void play(
-        pagesEl,
-        [
-          { opacity: 1, filter: "blur(16px)" },
-          { opacity: 0, filter: "blur(16px)" },
-        ],
-        160,
-        "ease-in",
-      );
-      if (shelf) {
-        shelf.classList.remove("is-book-back");
-        void play(
-          shelf,
-          [
-            { filter: "blur(12px)", transform: "scale(1.06)" },
-            { filter: "blur(0px)", transform: "scale(1)" },
-          ],
-          260,
-          "ease-out",
-        );
-      }
+      coverEl.style.transform = "rotateY(0deg) translateZ(0.01px)";
+      pagesEl.classList.remove("is-in");
+      shelf?.classList.remove("is-book-back");
       await play(
         coverEl,
-        boxKeyframes(held, from, { transform: "rotateY(0deg)" }),
+        boxKeyframes(held, from, { transform: "rotateY(0deg) translateZ(0.01px)" }),
         280,
         "cubic-bezier(0.4, 0, 0.2, 1)",
       );
       if (cancelled || gen !== generation.current) return;
-      await play(matEl, [{ opacity: 1 }, { opacity: 0 }], 160, "ease-in");
-      if (cancelled || gen !== generation.current) return;
-      navigate("/");
+      matEl.classList.remove("is-on");
+      timers.push(
+        window.setTimeout(() => {
+          if (!cancelled && gen === generation.current) navigate("/");
+        }, 180),
+      );
     }
 
     void (phase === "opening" ? runOpen() : runClose());
     return () => {
       cancelled = true;
+      for (const id of timers) window.clearTimeout(id);
       coverEl.getAnimations().forEach((a) => a.cancel());
       pagesEl.getAnimations().forEach((a) => a.cancel());
       matEl.getAnimations().forEach((a) => a.cancel());

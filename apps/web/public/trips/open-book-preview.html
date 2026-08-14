@@ -77,8 +77,9 @@
       }
 
       #shelf.is-back {
-        filter: blur(12px);
-        transform: scale(1.06);
+        filter: blur(44px);
+        -webkit-filter: blur(44px);
+        transform: scale(1.14);
         pointer-events: none;
       }
       .book-layer {
@@ -89,7 +90,7 @@
       .book-layer.is-on { pointer-events: auto; }
       .book-mat {
         position: absolute; inset: 0;
-        background: color-mix(in srgb, var(--bg) 42%, transparent);
+        background: color-mix(in srgb, var(--bg) 88%, #1f2a24);
         opacity: 0;
       }
       .book-pages {
@@ -332,7 +333,7 @@
         coverEl.style.transform = "rotateY(0deg)";
         mat.style.opacity = "0";
         pages.style.opacity = "0";
-        pages.style.filter = "blur(16px)";
+        pages.style.filter = "blur(36px)";
 
         if (reduced) {
           apply(coverEl, heldBox);
@@ -352,7 +353,7 @@
           shelf,
           [
             { filter: "blur(0px)", transform: "scale(1)" },
-            { filter: "blur(12px)", transform: "scale(1.06)" },
+            { filter: "blur(44px)", transform: "scale(1.14)" },
           ],
           280,
           "ease-out",
@@ -367,8 +368,8 @@
         void play(
           pages,
           [
-            { opacity: 0, filter: "blur(16px)" },
-            { opacity: 1, filter: "blur(16px)" },
+            { opacity: 0, filter: "blur(36px)" },
+            { opacity: 1, filter: "blur(36px)" },
           ],
           240,
           "ease-out",
@@ -381,7 +382,7 @@
         await play(
           pages,
           [
-            { opacity: 1, filter: "blur(16px)" },
+            { opacity: 1, filter: "blur(36px)" },
             { opacity: 1, filter: "blur(0px)" },
           ],
           480,
@@ -415,7 +416,7 @@
           pages,
           [
             { opacity: 1, filter: "blur(0px)" },
-            { opacity: 1, filter: "blur(16px)" },
+            { opacity: 1, filter: "blur(36px)" },
           ],
           220,
           "ease-in",
@@ -423,12 +424,12 @@
         await play(coverEl, [{ transform: "rotateY(-95deg)" }, { transform: "rotateY(0deg)" }], 380, "cubic-bezier(0.45, 0.02, 0.2, 1)");
         if (token !== gen) return;
         coverEl.style.transform = "rotateY(0deg)";
-        void play(pages, [{ opacity: 1, filter: "blur(16px)" }, { opacity: 0, filter: "blur(16px)" }], 160, "ease-in");
+        void play(pages, [{ opacity: 1, filter: "blur(36px)" }, { opacity: 0, filter: "blur(36px)" }], 160, "ease-in");
         shelf.classList.remove("is-back");
         void play(
           shelf,
           [
-            { filter: "blur(12px)", transform: "scale(1.06)" },
+            { filter: "blur(44px)", transform: "scale(1.14)" },
             { filter: "blur(0px)", transform: "scale(1)" },
           ],
           260,
