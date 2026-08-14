@@ -4,7 +4,7 @@ import { formatRank, hasMessage, t, type MessageKey } from "@biotrace/messages";
 import { api, type Observation, type Rarity, type SettleVolumesResult } from "../api";
 import { SettlePackStage } from "../components/SettlePackStage";
 import { measureBox } from "../motion";
-import { playPhotoLift } from "../photoLift";
+import { containedImageBox, playPhotoLift, waitImage } from "../photoLift";
 import { clearPhotoLiftHandoff, peekPhotoLiftHandoff } from "../photoLiftHandoff";
 import { volumeCeremonyBgUrl, volumeSealCompleteUrl } from "../themes";
 
@@ -101,16 +101,22 @@ export default function ObservationSettlePage() {
     liftPlayed.current = true;
     clearPhotoLiftHandoff();
     let cancelled = false;
-    void playPhotoLift({
-      photoUrl: liftOpen.photoUrl,
-      from: liftOpen.box,
-      to: measureBox(target),
-      page,
-      hide: photo instanceof HTMLElement ? photo : null,
-      duration: 480,
-      pageFade: "in",
-      cancelled: () => cancelled,
-    });
+    void (async () => {
+      if (photo instanceof HTMLImageElement) await waitImage(photo);
+      if (cancelled) return;
+      const to =
+        photo instanceof HTMLImageElement ? containedImageBox(photo) : measureBox(target);
+      await playPhotoLift({
+        photoUrl: liftOpen.photoUrl,
+        from: liftOpen.box,
+        to,
+        page,
+        hide: photo instanceof HTMLElement ? photo : null,
+        duration: 480,
+        pageFade: "in",
+        cancelled: () => cancelled,
+      });
+    })();
     return () => {
       cancelled = true;
       liftPlayed.current = false;

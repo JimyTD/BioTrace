@@ -71,6 +71,27 @@ export async function playPhotoLift(opts: {
   if (hide && pageFade !== "out") hide.style.visibility = "";
 }
 
-export function heroBox(el: Element): MotionBox {
-  return measureBox(el);
+export function waitImage(el: HTMLImageElement) {
+  if (el.complete && el.naturalWidth) return Promise.resolve();
+  return new Promise<void>((resolve) => {
+    el.addEventListener("load", () => resolve(), { once: true });
+    el.addEventListener("error", () => resolve(), { once: true });
+  });
+}
+
+/** 观察页 contain 真正画出的那块，不是灰底外框。 */
+export function containedImageBox(el: HTMLImageElement): MotionBox {
+  const box = measureBox(el);
+  const nw = el.naturalWidth;
+  const nh = el.naturalHeight;
+  if (!nw || !nh) return box;
+  const scale = Math.min(box.width / nw, box.height / nh);
+  const width = nw * scale;
+  const height = nh * scale;
+  return {
+    left: box.left + (box.width - width) / 2,
+    top: box.top + (box.height - height) / 2,
+    width,
+    height,
+  };
 }

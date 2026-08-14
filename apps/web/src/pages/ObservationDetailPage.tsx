@@ -10,8 +10,7 @@ import {
   isNotCollectibleError,
 } from "../identifyErrors";
 import { hasValidCoords } from "../geo";
-import { measureBox } from "../motion";
-import { playPhotoLift } from "../photoLift";
+import { containedImageBox, playPhotoLift, waitImage } from "../photoLift";
 import {
   clearPhotoLiftHandoff,
   peekPhotoLiftHandoff,
@@ -133,21 +132,25 @@ export default function ObservationDetailPage() {
     liftPlayed.current = true;
     clearPhotoLiftHandoff();
     let cancelled = false;
-    void playPhotoLift({
-      photoUrl: liftOpen.photoUrl,
-      from: liftOpen.box,
-      to: measureBox(hero),
-      page,
-      hide: hero,
-      duration: 480,
-      pageFade: "in",
-      cancelled: () => cancelled,
-    });
+    void (async () => {
+      await waitImage(hero);
+      if (cancelled) return;
+      await playPhotoLift({
+        photoUrl: liftOpen.photoUrl,
+        from: liftOpen.box,
+        to: containedImageBox(hero),
+        page,
+        hide: hero,
+        duration: 480,
+        pageFade: "in",
+        cancelled: () => cancelled,
+      });
+    })();
     return () => {
       cancelled = true;
       liftPlayed.current = false;
     };
-  }, [liftOpen, obs]);
+  }, [liftOpen]);
 
   function goBackToAlbum() {
     if (!obs) {
@@ -160,7 +163,7 @@ export default function ObservationDetailPage() {
       setPhotoLiftHandoff({
         observationId: obs.id,
         photoUrl: heroUrl(obs),
-        box: measureBox(hero),
+        box: containedImageBox(hero),
         dir: "close",
         origin,
       });
@@ -249,7 +252,7 @@ export default function ObservationDetailPage() {
     <div className="stack detail-page" ref={pageRef}>
       <div className="album-head-row">
         <button className="text-link" type="button" onClick={goBackToAlbum}>
-          ← {t("album.back")}
+          ← {t("detail.back")}
         </button>
         <Link className="text-link" to="/map">
           {t("nav.map")}
