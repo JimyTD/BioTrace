@@ -80,6 +80,14 @@ function setBlur(el: HTMLElement, px: number) {
   el.style.webkitFilter = value;
 }
 
+function clearShelfLook(shelf: Element | null) {
+  if (!(shelf instanceof HTMLElement)) return;
+  shelf.classList.remove("is-book-back");
+  shelf.style.filter = "";
+  shelf.style.webkitFilter = "";
+  shelf.style.transform = "";
+}
+
 function measure(el: Element): OpenBookBox {
   const r = el.getBoundingClientRect();
   return { left: r.left, top: r.top, width: r.width, height: r.height };
@@ -142,11 +150,12 @@ export default function TripBookLayer({ tripId, children }: Props) {
 
   useLayoutEffect(() => {
     const main = document.querySelector("main.content");
+    const shelf = document.querySelector(".page-trips");
     main?.classList.add("is-book-open");
-    document.querySelector(".page-trips")?.classList.add("is-book-back");
+    shelf?.classList.add("is-book-back");
     return () => {
       main?.classList.remove("is-book-open");
-      document.querySelector(".page-trips")?.classList.remove("is-book-back");
+      clearShelfLook(document.querySelector(".page-trips"));
     };
   }, []);
 
@@ -290,7 +299,6 @@ export default function TripBookLayer({ tripId, children }: Props) {
         if (isCancelled()) return;
         hingeCover(cover, 0);
         pagesEl.style.opacity = "0";
-        shelf?.classList.remove("is-book-back");
         await tween(
           280,
           (t) => {
@@ -316,11 +324,15 @@ export default function TripBookLayer({ tripId, children }: Props) {
             const e = easeOutCubic(t);
             pagesEl.style.opacity = String(1 - e);
             matEl.style.opacity = String(1 - e);
+            if (shelf instanceof HTMLElement) {
+              setBlur(shelf, (1 - e) * 44);
+              shelf.style.transform = `scale(${lerp(1.14, 1, e)})`;
+            }
           },
           isCancelled,
         );
-        shelf?.classList.remove("is-book-back");
       }
+      clearShelfLook(shelf);
       if (isCancelled()) return;
       navigate("/");
     }

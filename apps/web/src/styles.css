@@ -290,9 +290,6 @@ button.trip-cover {
 }
 
 .page-trips.is-book-back {
-  filter: blur(44px);
-  -webkit-filter: blur(44px);
-  transform: scale(1.14);
   pointer-events: none;
 }
 
