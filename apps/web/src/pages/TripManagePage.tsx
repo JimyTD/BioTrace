@@ -2,7 +2,7 @@ import { useEffect, useRef, useState, type FormEvent } from "react";
 import { Link, useNavigate, useParams } from "react-router-dom";
 import { t } from "@biotrace/messages";
 import { api, type Trip, type TripMember } from "../api";
-import { copyText } from "../copyText";
+import { copyText, androidInviteUsesShare } from "../copyText";
 
 export default function TripManagePage({ userId }: { userId: string }) {
   const { id = "" } = useParams();
@@ -24,7 +24,10 @@ export default function TripManagePage({ userId }: { userId: string }) {
   const [allowJoinBusy, setAllowJoinBusy] = useState(false);
   const [copiedFlash, setCopiedFlash] = useState(false);
   const [notice, setNotice] = useState<string | null>(null);
+  const [manualCopyOpen, setManualCopyOpen] = useState(false);
   const [leaving, setLeaving] = useState(false);
+  const inviteUsesShare = androidInviteUsesShare();
+  const manualCopyInputRef = useRef<HTMLInputElement | null>(null);
   const [kickingId, setKickingId] = useState<string | null>(null);
   const isAdmin = Boolean(trip?.isAdmin);
 
@@ -127,7 +130,7 @@ export default function TripManagePage({ userId }: { userId: string }) {
     }
   }
 
-  async function onCopyInvite() {
+  function onInviteAction() {
     const code = trip?.inviteCode?.trim();
     if (!code) {
       setError(t("share.inviteMissing"));
@@ -135,19 +138,44 @@ export default function TripManagePage({ userId }: { userId: string }) {
     }
     setError(null);
     setNotice(null);
-    const result = await copyText(code, { selectEl: inviteInputRef.current });
-    if (result === "failed") {
-      inviteInputRef.current?.focus();
-      inviteInputRef.current?.select();
-      setError(t("share.copyFailed"));
+
+    // Android shell without native Clipboard: call share in the same turn as the click.
+    if (inviteUsesShare && typeof navigator.share === "function") {
+      void navigator
+        .share({ text: code })
+        .then(() => {
+          setCopiedFlash(true);
+          setNotice(t("share.shared"));
+          window.setTimeout(() => setNotice(null), 4000);
+          window.setTimeout(() => setCopiedFlash(false), 2000);
+        })
+        .catch(() => {
+          setManualCopyOpen(true);
+          window.setTimeout(() => {
+            manualCopyInputRef.current?.focus();
+            manualCopyInputRef.current?.select();
+          }, 50);
+        });
       return;
     }
-    setCopiedFlash(true);
-    if (result === "shared") {
-      setNotice(t("share.shared"));
-      window.setTimeout(() => setNotice(null), 4000);
-    }
-    window.setTimeout(() => setCopiedFlash(false), 2000);
+
+    void (async () => {
+      const result = await copyText(code, { selectEl: inviteInputRef.current });
+      if (result === "failed") {
+        setManualCopyOpen(true);
+        window.setTimeout(() => {
+          manualCopyInputRef.current?.focus();
+          manualCopyInputRef.current?.select();
+        }, 50);
+        return;
+      }
+      setCopiedFlash(true);
+      if (result === "shared") {
+        setNotice(t("share.shared"));
+        window.setTimeout(() => setNotice(null), 4000);
+      }
+      window.setTimeout(() => setCopiedFlash(false), 2000);
+    })();
   }
 
   async function onLeaveTrip() {
@@ -272,8 +300,14 @@ export default function TripManagePage({ userId }: { userId: string }) {
                     readOnly
                     onFocus={(e) => e.currentTarget.select()}
                   />
-                  <button className="btn secondary" type="button" onClick={() => void onCopyInvite()}>
-                    {copiedFlash ? t("share.copied") : t("share.copyCode")}
+                  <button className="btn secondary" type="button" onClick={onInviteAction}>
+                    {copiedFlash
+                      ? inviteUsesShare
+                        ? t("share.shared")
+                        : t("share.copied")
+                      : inviteUsesShare
+                        ? t("share.shareCode")
+                        : t("share.copyCode")}
                   </button>
                 </div>
                 <label className="row trip-meta-toggle">
@@ -345,6 +379,34 @@ export default function TripManagePage({ userId }: { userId: string }) {
             </form>
           ) : null}
         </>
+      ) : null}
+
+      {manualCopyOpen && trip?.inviteCode ? (
+        <div
+          className="modal-backdrop"
+          role="presentation"
+          onClick={() => setManualCopyOpen(false)}
+        >
+          <div
+            className="modal-panel stack"
+            role="dialog"
+            aria-modal="true"
+            onClick={(e) => e.stopPropagation()}
+          >
+            <h2 className="section-title">{t("share.manualCopyTitle")}</h2>
+            <p className="muted">{t("share.manualCopyHint")}</p>
+            <input
+              ref={manualCopyInputRef}
+              className="input"
+              value={trip.inviteCode}
+              readOnly
+              onFocus={(e) => e.currentTarget.select()}
+            />
+            <button className="btn" type="button" onClick={() => setManualCopyOpen(false)}>
+              {t("share.manualCopyClose")}
+            </button>
+          </div>
+        </div>
       ) : null}
     </div>
   );

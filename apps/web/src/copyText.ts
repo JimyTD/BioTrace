@@ -2,18 +2,28 @@ import { Capacitor } from "@capacitor/core";
 
 export type CopyTextResult = "copied" | "shared" | "failed";
 
-function preferSyncCopyFirst(): boolean {
-  if (typeof window === "undefined") return true;
-  // Capacitor Android loads remote HTTP: Clipboard API often exists but rejects async,
-  // burning the user-gesture before execCommand can run.
-  if (document.documentElement.dataset.webview === "android") return true;
-  try {
-    if (Capacitor.isNativePlatform()) return true;
-  } catch {
-    /* ignore */
+function isAndroidShell(): boolean {
+  if (typeof document !== "undefined" && document.documentElement.dataset.webview === "android") {
+    return true;
   }
-  if (!window.isSecureContext) return true;
-  return false;
+  try {
+    return Capacitor.isNativePlatform() && Capacitor.getPlatform() === "android";
+  } catch {
+    return false;
+  }
+}
+
+function hasNativeClipboardPlugin(): boolean {
+  try {
+    return Capacitor.isNativePlatform() && Capacitor.isPluginAvailable("Clipboard");
+  } catch {
+    return false;
+  }
+}
+
+/** True when the invite button should label itself as share (no silent clipboard). */
+export function androidInviteUsesShare(): boolean {
+  return isAndroidShell() && !hasNativeClipboardPlugin();
 }
 
 function copyViaExecCommand(
@@ -31,7 +41,6 @@ function copyViaExecCommand(
     }
   }
 
-  // Android WebView prefers <input> over hidden <textarea>.
   const input = document.createElement("input");
   input.value = value;
   input.setAttribute("readonly", "");
@@ -52,8 +61,8 @@ function copyViaExecCommand(
 }
 
 async function copyViaCapacitorClipboard(value: string): Promise<boolean> {
+  if (!hasNativeClipboardPlugin()) return false;
   try {
-    if (!Capacitor.isNativePlatform()) return false;
     const { Clipboard } = await import("@capacitor/clipboard");
     await Clipboard.write({ string: value });
     return true;
@@ -68,14 +77,15 @@ async function shareViaNavigator(value: string): Promise<boolean> {
     await navigator.share({ text: value });
     return true;
   } catch {
-    // User cancel or unsupported — treat as failure.
     return false;
   }
 }
 
 /**
- * Copy plain text. On Android / insecure WebViews, sync execCommand runs first
- * so the click gesture is not burned by a rejecting Clipboard API promise.
+ * Capacitor Android + remote HTTP cannot reliably silent-copy via browser APIs.
+ * - APK with @capacitor/clipboard → native write
+ * - Current APK without plugin → Web Share (must run before any other await)
+ * - Do NOT trust execCommand on Android: it may return true without writing clipboard
  */
 export async function copyText(
   text: string,
@@ -84,21 +94,30 @@ export async function copyText(
   const value = text.trim();
   if (!value) return "failed";
 
-  const syncFirst = preferSyncCopyFirst();
+  const android = isAndroidShell();
 
-  if (syncFirst && copyViaExecCommand(value, opts?.selectEl)) return "copied";
-  if (await copyViaCapacitorClipboard(value)) return "copied";
+  if (hasNativeClipboardPlugin()) {
+    if (await copyViaCapacitorClipboard(value)) return "copied";
+  }
 
-  if (!syncFirst && typeof navigator !== "undefined" && navigator.clipboard?.writeText) {
-    try {
-      await navigator.clipboard.writeText(value);
-      return "copied";
-    } catch {
-      /* fall through */
+  // Existing Android APK: share immediately while click gesture is alive.
+  if (android) {
+    if (await shareViaNavigator(value)) return "shared";
+    return "failed";
+  }
+
+  if (typeof window !== "undefined" && window.isSecureContext) {
+    if (typeof navigator !== "undefined" && navigator.clipboard?.writeText) {
+      try {
+        await navigator.clipboard.writeText(value);
+        return "copied";
+      } catch {
+        /* fall through */
+      }
     }
   }
 
-  if (!syncFirst && copyViaExecCommand(value, opts?.selectEl)) return "copied";
+  if (copyViaExecCommand(value, opts?.selectEl)) return "copied";
   if (await shareViaNavigator(value)) return "shared";
   return "failed";
 }
