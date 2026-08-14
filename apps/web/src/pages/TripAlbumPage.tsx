@@ -8,6 +8,7 @@ import {
   type FormEvent,
   type MouseEvent,
 } from "react";
+import { flushSync } from "react-dom";
 import { Link, matchPath, useLocation, useNavigate, useParams } from "react-router-dom";
 import { formatRank, t } from "@biotrace/messages";
 import { ApiError, api, type Observation, type Trip } from "../api";
@@ -266,8 +267,9 @@ export default function TripAlbumPage({ userId }: { userId: string }) {
       duration: 380,
       pageFade: "none",
       cancelled: () => cancelled,
-    }).then(() => {
-      if (!cancelled) setLiftSourceId(null);
+      onLanded: () => {
+        if (!cancelled) flushSync(() => setLiftSourceId(null));
+      },
     });
     return () => {
       cancelled = true;

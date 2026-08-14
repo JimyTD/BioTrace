@@ -1,4 +1,5 @@
 import { useEffect, useLayoutEffect, useRef, useState } from "react";
+import { flushSync } from "react-dom";
 import { Link, useMatch, useNavigate } from "react-router-dom";
 import { hasMessage, t } from "@biotrace/messages";
 import { api, type VolumeListItem } from "../api";
@@ -66,8 +67,9 @@ export default function CollectionPage() {
       duration: 380,
       pageFade: "none",
       cancelled: () => cancelled,
-    }).then(() => {
-      if (!cancelled) setSourceId(null);
+      onLanded: () => {
+        if (!cancelled) flushSync(() => setSourceId(null));
+      },
     });
     return () => {
       cancelled = true;

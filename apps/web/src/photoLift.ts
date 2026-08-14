@@ -49,11 +49,15 @@ export async function playPhotoLift(opts: {
   duration: number;
   pageFade?: "in" | "out" | "none";
   cancelled: () => boolean;
+  /** 落地后、收走飞片前。用来先揭开格子里的图，避免中间空一帧。 */
+  onLanded?: () => void;
 }) {
-  const { photoUrl, from, to, page, hide, duration, pageFade = "none", cancelled } = opts;
+  const { photoUrl, from, to, page, hide, duration, pageFade = "none", cancelled, onLanded } =
+    opts;
   if (prefersReducedMotion()) {
     page.style.opacity = "1";
     if (hide) hide.style.visibility = "";
+    onLanded?.();
     return;
   }
   if (hide) hide.style.visibility = "hidden";
@@ -72,9 +76,15 @@ export async function playPhotoLift(opts: {
     return;
   }
   applyBox(flyer, resolveTo(to));
-  if (hide) hide.style.visibility = "";
+  onLanded?.();
+  if (hide) hide.style.visibility = "visible";
   await nextPaint();
+  if (cancelled()) {
+    flyer.remove();
+    return;
+  }
   flyer.remove();
+  if (hide) hide.style.visibility = "";
   if (pageFade === "out") page.style.opacity = "0";
 }
 
