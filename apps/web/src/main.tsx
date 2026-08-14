@@ -3,12 +3,17 @@ import { createRoot } from "react-dom/client";
 import { BrowserRouter, useLocation } from "react-router-dom";
 import AdminApp from "./admin/AdminApp";
 import App from "./App";
+import { isNativeAndroidShell } from "./androidUpdate";
 import { initTheme } from "./themes";
 import "./themes/daylight.css";
 import "./themes/tide.css";
 import "./styles.css";
 
 initTheme();
+
+if (isNativeAndroidShell()) {
+  document.documentElement.dataset.webview = "android";
+}
 
 function Root() {
   const loc = useLocation();

@@ -1,5 +1,5 @@
 import { useEffect, useState, type FormEvent } from "react";
-import { Link, useNavigate } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import { t } from "@biotrace/messages";
 import { api, type Trip } from "../api";
 import { captureCoverBox, setOpenBookHandoff } from "../openBookHandoff";
@@ -135,10 +135,10 @@ export default function TripsPage({
       ) : (
         <div className="trip-cover-list">
           {trips.map((trip) => (
-            <Link
+            <button
+              type="button"
               className={`trip-cover${activeTripId === trip.id ? " is-book-source" : ""}`}
               key={trip.id}
-              to={`/trips/${trip.id}`}
               onPointerDown={(e) => {
                 const media = e.currentTarget.querySelector(".trip-cover-media");
                 if (!(media instanceof HTMLElement)) return;
@@ -149,7 +149,6 @@ export default function TripsPage({
                 });
               }}
               onClick={(e) => {
-                e.preventDefault();
                 const media = e.currentTarget.querySelector(".trip-cover-media");
                 if (media instanceof HTMLElement) {
                   setOpenBookHandoff({
@@ -178,7 +177,7 @@ export default function TripsPage({
                 <strong>{trip.title}</strong>
                 <span className="muted">{tripMetaLine(trip)}</span>
               </div>
-            </Link>
+            </button>
           ))}
         </div>
       )}
