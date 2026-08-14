@@ -1,0 +1,257 @@
+<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>地图折页 · Cut N</title>
+    <style>
+      :root {
+        --ink: #1f2a24;
+        --muted: #6b6258;
+        --line: rgba(42, 64, 51, 0.14);
+        --nav-bg: #f3efe7;
+        --nav-active-ink: #9a4030;
+        --card: #faf8f3;
+        --dot: #d3543c;
+        --font: "Segoe UI", "PingFang SC", "Microsoft YaHei", sans-serif;
+        --bg:
+          radial-gradient(900px 480px at 8% -8%, rgba(212, 168, 120, 0.22), transparent 55%),
+          linear-gradient(180deg, #f3efe7, #ebe6dc);
+      }
+      * { box-sizing: border-box; }
+      body {
+        margin: 0;
+        padding: 16px 12px 40px;
+        font-family: var(--font);
+        color: var(--ink);
+        background: #d9d0c2;
+      }
+      h1.doc { margin: 0 0 8px; font-size: 1.15rem; }
+      .note { margin: 0 0 14px; color: #5a5248; font-size: 0.92rem; max-width: 56ch; }
+      .phone {
+        width: min(100%, 360px);
+        height: 640px;
+        background: var(--bg);
+        border-radius: 22px;
+        border: 1px solid rgba(42, 36, 28, 0.18);
+        box-shadow: 0 16px 40px rgba(42, 36, 28, 0.14);
+        display: grid;
+        grid-template-rows: auto 1fr auto;
+        overflow: hidden;
+      }
+      .topbar {
+        padding: 12px 16px 10px;
+        background: var(--nav-bg);
+        border-bottom: 1px solid var(--line);
+        font-weight: 700;
+      }
+      .stage {
+        position: relative;
+        min-height: 0;
+        overflow: hidden;
+        display: grid;
+        grid-template-rows: 1fr auto;
+      }
+      .map {
+        position: relative;
+        min-height: 0;
+        background:
+          radial-gradient(circle at 30% 40%, rgba(180, 196, 168, 0.55), transparent 42%),
+          radial-gradient(circle at 72% 62%, rgba(168, 184, 196, 0.4), transparent 38%),
+          repeating-linear-gradient(
+            0deg,
+            transparent,
+            transparent 27px,
+            rgba(42, 64, 51, 0.06) 28px
+          ),
+          repeating-linear-gradient(
+            90deg,
+            transparent,
+            transparent 27px,
+            rgba(42, 64, 51, 0.06) 28px
+          ),
+          #d8d2c4;
+      }
+      .dot {
+        position: absolute;
+        width: 18px;
+        height: 18px;
+        padding: 0;
+        border: 2px solid #fffaf7;
+        border-radius: 50%;
+        background: var(--dot);
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.28);
+        cursor: pointer;
+      }
+      .dot.is-on {
+        width: 22px;
+        height: 22px;
+        box-shadow: 0 0 0 4px rgba(211, 84, 60, 0.28);
+      }
+      .sheet {
+        display: grid;
+        grid-template-columns: 56px 1fr;
+        gap: 10px;
+        align-items: center;
+        padding: 10px 16px;
+        background: var(--nav-bg);
+        border-top: 1px solid var(--line);
+        transform: translateY(100%);
+      }
+      .sheet img {
+        width: 56px;
+        height: 56px;
+        object-fit: cover;
+        border-radius: 6px;
+        background: #efe6d6;
+      }
+      .sheet strong { display: block; }
+      .sheet span { color: var(--muted); font-size: 0.88rem; }
+      .row {
+        position: absolute;
+        z-index: 2;
+        top: 12px;
+        left: 12px;
+      }
+      button.act {
+        border: 0;
+        background: #d3543c;
+        color: #fffaf7;
+        font: inherit;
+        padding: 8px 12px;
+        border-radius: 8px;
+        cursor: pointer;
+      }
+      .nav {
+        display: grid;
+        grid-template-columns: repeat(4, 1fr);
+        padding: 0 4px 8px;
+        background: var(--nav-bg);
+        border-top: 1px solid var(--line);
+      }
+      .nav span {
+        text-align: center;
+        font-size: 0.86rem;
+        color: var(--muted);
+        padding: 12px 6px 14px;
+      }
+      .nav span.on { color: var(--nav-active-ink); font-weight: 700; }
+    </style>
+  </head>
+  <body>
+    <h1 class="doc">Cut N · 地图折页</h1>
+    <p class="note">
+      打开后图面会从下面摊开。点红点：底部抽出一张现场照；再点空白地图收回。点「再摊开一次」可重看进场。须用
+      <code>http://127.0.0.1:5173/trips/fold-preview.html</code> 打开。
+    </p>
+    <div class="phone">
+      <div class="topbar">BioTrace</div>
+      <div class="stage">
+        <div class="row">
+          <button class="act" type="button" id="replay">再摊开一次</button>
+        </div>
+        <div class="map" id="map">
+          <button class="dot" type="button" id="dotA" style="left: 28%; top: 38%" aria-label="点 A"></button>
+          <button class="dot" type="button" id="dotB" style="left: 62%; top: 58%" aria-label="点 B"></button>
+        </div>
+        <div class="sheet" id="sheet" hidden>
+          <img src="/trips/_sample-photo.jpg" alt="" />
+          <div>
+            <strong id="sheetTitle">海边的蟹</strong>
+            <span>从折页里抽出的一张</span>
+          </div>
+        </div>
+      </div>
+      <nav class="nav">
+        <span>旅途</span>
+        <span class="on">地图</span>
+        <span>图鉴</span>
+        <span>我的</span>
+      </nav>
+    </div>
+    <script>
+      const map = document.getElementById("map");
+      const sheet = document.getElementById("sheet");
+      const title = document.getElementById("sheetTitle");
+      const dots = [document.getElementById("dotA"), document.getElementById("dotB")];
+      const names = ["海边的蟹", "堤上的鸟"];
+      let sheetOpen = false;
+      let selected = -1;
+
+      function easeOut(t) {
+        return 1 - (1 - t) ** 3;
+      }
+
+      function tween(ms, update) {
+        return new Promise((resolve) => {
+          const start = performance.now();
+          const step = (now) => {
+            const t = Math.min(1, (now - start) / ms);
+            update(t);
+            if (t < 1) requestAnimationFrame(step);
+            else resolve();
+          };
+          requestAnimationFrame(step);
+        });
+      }
+
+      async function unfold() {
+        map.style.opacity = "0";
+        map.style.transform = "translateY(22%)";
+        await tween(520, (t) => {
+          const e = easeOut(t);
+          map.style.opacity = String(e);
+          map.style.transform = "translateY(" + (1 - e) * 22 + "%)";
+        });
+        map.style.opacity = "";
+        map.style.transform = "";
+      }
+
+      async function showSheet(index) {
+        selected = index;
+        title.textContent = names[index];
+        dots.forEach((el, i) => el.classList.toggle("is-on", i === index));
+        sheet.hidden = false;
+        if (sheetOpen) {
+          sheet.style.transform = "translateY(0)";
+          return;
+        }
+        sheetOpen = true;
+        sheet.style.transform = "translateY(100%)";
+        await tween(320, (t) => {
+          sheet.style.transform = "translateY(" + (1 - easeOut(t)) * 100 + "%)";
+        });
+        sheet.style.transform = "translateY(0)";
+      }
+
+      async function hideSheet() {
+        if (!sheetOpen) return;
+        selected = -1;
+        dots.forEach((el) => el.classList.remove("is-on"));
+        await tween(240, (t) => {
+          sheet.style.transform = "translateY(" + easeOut(t) * 100 + "%)";
+        });
+        sheet.style.transform = "translateY(100%)";
+        sheet.hidden = true;
+        sheetOpen = false;
+      }
+
+      dots.forEach((el, i) => {
+        el.addEventListener("click", (ev) => {
+          ev.stopPropagation();
+          void showSheet(i);
+        });
+      });
+      map.addEventListener("click", () => {
+        void hideSheet();
+      });
+      document.getElementById("replay").onclick = () => {
+        void hideSheet().then(unfold);
+      };
+
+      window.setTimeout(() => {
+        void unfold();
+      }, 280);
+    </script>
+  </body>
+</html>

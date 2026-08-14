@@ -1,0 +1,362 @@
+<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>相册拿起 · 预览</title>
+    <style>
+      :root {
+        --ink: #1f2a24;
+        --muted: #6b6258;
+        --line: rgba(42, 64, 51, 0.14);
+        --nav-bg: #f3efe7;
+        --nav-active-ink: #9a4030;
+        --plate: #efe6d6;
+        --card: #faf8f3;
+        --font: "Segoe UI", "PingFang SC", "Microsoft YaHei", sans-serif;
+        --bg:
+          radial-gradient(900px 480px at 8% -8%, rgba(212, 168, 120, 0.22), transparent 55%),
+          linear-gradient(180deg, #f3efe7, #ebe6dc);
+      }
+      * { box-sizing: border-box; }
+      body {
+        margin: 0;
+        padding: 16px 12px 40px;
+        font-family: var(--font);
+        color: var(--ink);
+        background: #d9d0c2;
+      }
+      h1.doc { margin: 0 0 8px; font-size: 1.15rem; }
+      .note { margin: 0 0 14px; color: #5a5248; font-size: 0.92rem; max-width: 56ch; }
+      .phone {
+        width: min(100%, 360px);
+        height: 640px;
+        background: var(--bg);
+        border-radius: 22px;
+        border: 1px solid rgba(42, 36, 28, 0.18);
+        box-shadow: 0 16px 40px rgba(42, 36, 28, 0.14);
+        display: grid;
+        grid-template-rows: auto 1fr auto;
+        overflow: hidden;
+      }
+      .topbar {
+        padding: 12px 16px 10px;
+        background: var(--nav-bg);
+        border-bottom: 1px solid var(--line);
+        font-weight: 700;
+      }
+      .stage {
+        position: relative;
+        min-height: 0;
+        overflow: hidden;
+      }
+      .album,
+      .detail {
+        position: absolute;
+        inset: 0;
+        overflow-y: auto;
+        padding: 16px;
+        display: grid;
+        gap: 14px;
+        align-content: start;
+      }
+      .album { z-index: 1; }
+      .detail {
+        z-index: 2;
+        opacity: 0;
+        pointer-events: none;
+        background:
+          radial-gradient(900px 480px at 8% -8%, rgba(212, 168, 120, 0.22), transparent 55%),
+          linear-gradient(180deg, #f3efe7, #ebe6dc);
+      }
+      .detail.is-on {
+        pointer-events: auto;
+      }
+      .title { margin: 0; font-size: 1.45rem; font-weight: 700; }
+      .lede { margin: 0; color: var(--muted); font-size: 0.95rem; }
+      .grid {
+        display: grid;
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        gap: 16px 12px;
+      }
+      .tile {
+        display: grid;
+        gap: 6px;
+        margin: 0;
+        padding: 0;
+        border: 0;
+        background: none;
+        font: inherit;
+        color: inherit;
+        text-align: left;
+        cursor: pointer;
+      }
+      .media {
+        position: relative;
+        aspect-ratio: 1;
+        border-radius: 3px;
+        overflow: hidden;
+        background: var(--plate);
+        box-shadow: 0 4px 14px rgba(42, 36, 28, 0.08);
+      }
+      .window {
+        position: absolute;
+        top: 8%;
+        left: 8%;
+        width: 84%;
+        height: 84%;
+        overflow: hidden;
+      }
+      .photo {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+        display: block;
+      }
+      .tile.is-source .photo { visibility: hidden; }
+      .frame {
+        position: absolute;
+        inset: 0;
+        width: 100%;
+        height: 100%;
+        object-fit: fill;
+        z-index: 2;
+        pointer-events: none;
+      }
+      .meta { color: var(--muted); font-size: 0.88rem; }
+      .back {
+        border: 0;
+        background: none;
+        padding: 0;
+        font: inherit;
+        color: inherit;
+        cursor: pointer;
+        text-align: left;
+      }
+      .hero-slot {
+        width: 100%;
+        aspect-ratio: 4 / 3;
+        border-radius: 8px;
+        background: #efe6d6;
+        border: 1px solid var(--line);
+        overflow: hidden;
+      }
+      .hero-slot img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+        display: block;
+        visibility: hidden;
+      }
+      .hero-slot.is-set img { visibility: visible; }
+      .detail-copy { display: grid; gap: 6px; }
+      .flyer {
+        position: absolute;
+        z-index: 4;
+        margin: 0;
+        padding: 0;
+        border: 0;
+        overflow: hidden;
+        border-radius: 2px;
+        box-shadow: 0 10px 26px rgba(42, 36, 28, 0.16);
+        pointer-events: none;
+        visibility: hidden;
+      }
+      .flyer img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+        display: block;
+      }
+      .nav {
+        display: grid;
+        grid-template-columns: repeat(4, 1fr);
+        padding: 0 4px 8px;
+        background: var(--nav-bg);
+        border-top: 1px solid var(--line);
+      }
+      .nav span {
+        text-align: center;
+        font-size: 0.86rem;
+        color: var(--muted);
+        padding: 12px 6px 14px;
+      }
+      .nav span.on { color: var(--nav-active-ink); font-weight: 700; }
+    </style>
+  </head>
+  <body>
+    <h1 class="doc">相册拿起一张</h1>
+    <p class="note">
+      点格子里的相片：它从齿孔窗里走出来，变成观察页那张大图。点「旅途」落回格子。框不动。须用
+      <code>http://127.0.0.1:5173/trips/lift-photo-preview.html</code> 打开。
+    </p>
+    <div class="phone">
+      <div class="topbar">BioTrace</div>
+      <div class="stage" id="stage">
+        <div class="album" id="album">
+          <h1 class="title">海岸线</h1>
+          <p class="lede">点一张。相片自己走过去。</p>
+          <div class="grid">
+            <button class="tile" type="button" data-name="海边的蟹" data-sci="Grapsus albolineatus">
+              <div class="media">
+                <div class="window">
+                  <img class="photo" src="/trips/_sample-photo.jpg" alt="" />
+                </div>
+                <img class="frame" src="/trips/daylight/film-frame.svg" alt="" />
+              </div>
+              <span class="meta">海边的蟹</span>
+            </button>
+            <button class="tile" type="button" data-name="堤上的鸟" data-sci="Egretta garzetta">
+              <div class="media">
+                <div class="window">
+                  <img class="photo" src="/trips/_sample-photo.jpg" alt="" />
+                </div>
+                <img class="frame" src="/trips/daylight/film-frame.svg" alt="" />
+              </div>
+              <span class="meta">堤上的鸟</span>
+            </button>
+          </div>
+        </div>
+        <div class="detail" id="detail">
+          <button class="back" type="button" id="back">← 旅途</button>
+          <div class="hero-slot" id="hero"><img src="/trips/_sample-photo.jpg" alt="" /></div>
+          <header>
+            <h1 class="title" id="dName">海边的蟹</h1>
+            <p class="lede" id="dSci">Grapsus albolineatus</p>
+          </header>
+          <div class="detail-copy">
+            <p class="lede">可靠到属。退潮后趴在堤缝里。</p>
+          </div>
+        </div>
+        <div class="flyer" id="flyer" aria-hidden><img src="/trips/_sample-photo.jpg" alt="" /></div>
+      </div>
+      <nav class="nav">
+        <span class="on">旅途</span>
+        <span>地图</span>
+        <span>图鉴</span>
+        <span>我的</span>
+      </nav>
+    </div>
+    <script>
+      const stage = document.getElementById("stage");
+      const album = document.getElementById("album");
+      const detail = document.getElementById("detail");
+      const hero = document.getElementById("hero");
+      const flyer = document.getElementById("flyer");
+      const dName = document.getElementById("dName");
+      const dSci = document.getElementById("dSci");
+      const tiles = [...document.querySelectorAll(".tile")];
+      let sourceTile = null;
+      let busy = false;
+      let open = false;
+
+      function easeOut(t) {
+        return 1 - (1 - t) ** 3;
+      }
+      function lerp(a, b, t) {
+        return a + (b - a) * t;
+      }
+      function tween(ms, update) {
+        return new Promise((resolve) => {
+          const start = performance.now();
+          const step = (now) => {
+            const t = Math.min(1, (now - start) / ms);
+            update(t);
+            if (t < 1) requestAnimationFrame(step);
+            else resolve();
+          };
+          requestAnimationFrame(step);
+        });
+      }
+      function boxOf(el) {
+        const s = stage.getBoundingClientRect();
+        const r = el.getBoundingClientRect();
+        return {
+          left: r.left - s.left,
+          top: r.top - s.top,
+          width: r.width,
+          height: r.height,
+        };
+      }
+      function apply(el, box) {
+        el.style.left = box.left + "px";
+        el.style.top = box.top + "px";
+        el.style.width = box.width + "px";
+        el.style.height = box.height + "px";
+      }
+      function mix(a, b, t) {
+        return {
+          left: lerp(a.left, b.left, t),
+          top: lerp(a.top, b.top, t),
+          width: lerp(a.width, b.width, t),
+          height: lerp(a.height, b.height, t),
+        };
+      }
+
+      async function lift(tile) {
+        if (busy || open) return;
+        busy = true;
+        sourceTile = tile;
+        dName.textContent = tile.dataset.name;
+        dSci.textContent = tile.dataset.sci;
+        const from = boxOf(tile.querySelector(".window"));
+        tile.classList.add("is-source");
+        detail.style.opacity = "0";
+        detail.classList.add("is-on");
+        hero.classList.remove("is-set");
+        const to = boxOf(hero);
+        apply(flyer, from);
+        flyer.style.visibility = "visible";
+        await tween(480, (t) => {
+          const e = easeOut(t);
+          apply(flyer, mix(from, to, e));
+          detail.style.opacity = String(e);
+        });
+        apply(flyer, to);
+        hero.classList.add("is-set");
+        flyer.style.visibility = "hidden";
+        detail.style.opacity = "1";
+        album.style.visibility = "hidden";
+        open = true;
+        busy = false;
+      }
+
+      async function putBack() {
+        if (busy || !open || !sourceTile) return;
+        busy = true;
+        album.style.visibility = "visible";
+        const to = boxOf(sourceTile.querySelector(".window"));
+        const from = boxOf(hero);
+        hero.classList.remove("is-set");
+        apply(flyer, from);
+        flyer.style.visibility = "visible";
+        await tween(380, (t) => {
+          const e = easeOut(t);
+          apply(flyer, mix(from, to, e));
+          detail.style.opacity = String(1 - e);
+        });
+        apply(flyer, to);
+        flyer.style.visibility = "hidden";
+        sourceTile.classList.remove("is-source");
+        detail.classList.remove("is-on");
+        detail.style.opacity = "0";
+        open = false;
+        sourceTile = null;
+        busy = false;
+      }
+
+      tiles.forEach((tile) => {
+        tile.addEventListener("click", () => {
+          void lift(tile);
+        });
+      });
+      document.getElementById("back").onclick = () => {
+        void putBack();
+      };
+
+      window.setTimeout(() => {
+        void lift(tiles[0]);
+      }, 480);
+    </script>
+  </body>
+</html>

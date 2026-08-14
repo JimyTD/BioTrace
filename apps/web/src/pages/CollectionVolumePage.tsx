@@ -1,10 +1,20 @@
-import { useEffect, useState } from "react";
-import { Link, useParams } from "react-router-dom";
+import { useEffect, useLayoutEffect, useRef, useState } from "react";
+import { useNavigate, useParams } from "react-router-dom";
 import { hasMessage, t } from "@biotrace/messages";
 import { api, type VolumeListItem } from "../api";
-import StampLiftLayer, { type StampLift } from "../components/StampLiftLayer";
 import { measureBox } from "../motion";
-import { volumeStampFrameUrl } from "../themes";
+import { playPhotoLift } from "../photoLift";
+import {
+  clearPhotoLiftHandoff,
+  peekPhotoLiftHandoff,
+  setPhotoLiftHandoff,
+} from "../photoLiftHandoff";
+import { volumeCoverUrl, volumeStampFrameUrl } from "../themes";
+import {
+  clearVolumeOpenHandoff,
+  peekVolumeOpenHandoff,
+  setVolumeOpenHandoff,
+} from "../volumeOpenHandoff";
 
 function msg(key: string) {
   return hasMessage(key) ? t(key) : key;
@@ -35,10 +45,28 @@ function StampFace({
 
 export default function CollectionVolumePage() {
   const { id = "" } = useParams();
+  const navigate = useNavigate();
   const [volume, setVolume] = useState<VolumeListItem | null>(null);
   const [error, setError] = useState<string | null>(null);
   const [loading, setLoading] = useState(true);
-  const [lift, setLift] = useState<StampLift | null>(null);
+  const [liftSourceId, setLiftSourceId] = useState<string | null>(null);
+  const pageRef = useRef<HTMLDivElement | null>(null);
+  const coverRef = useRef<HTMLImageElement | null>(null);
+  const openPlayed = useRef(false);
+  const returnPlayed = useRef(false);
+  const [opening] = useState(() => {
+    const found = peekVolumeOpenHandoff();
+    return found && found.dir === "open" && found.volumeId === id ? found : null;
+  });
+  const [returning] = useState(() => {
+    const found = peekPhotoLiftHandoff();
+    return found &&
+      found.dir === "close" &&
+      found.origin.kind === "volume" &&
+      found.origin.volumeId === id
+      ? found
+      : null;
+  });
 
   useEffect(() => {
     setLoading(true);
@@ -53,28 +81,113 @@ export default function CollectionVolumePage() {
       .finally(() => setLoading(false));
   }, [id]);
 
+  useLayoutEffect(() => {
+    if (!opening || openPlayed.current) return;
+    const page = pageRef.current;
+    const cover = coverRef.current;
+    if (!page || !cover) return;
+    openPlayed.current = true;
+    clearVolumeOpenHandoff();
+    let cancelled = false;
+    void playPhotoLift({
+      photoUrl: opening.coverUrl,
+      from: opening.box,
+      to: measureBox(cover),
+      page,
+      hide: cover,
+      duration: 420,
+      pageFade: "in",
+      cancelled: () => cancelled,
+    });
+    return () => {
+      cancelled = true;
+      openPlayed.current = false;
+    };
+  }, [opening]);
+
+  useLayoutEffect(() => {
+    if (!returning || !volume || returnPlayed.current) return;
+    const face = document.querySelector<HTMLElement>(
+      `.stamp[data-obs-id="${returning.observationId}"] .stamp-face`,
+    );
+    const page = pageRef.current;
+    if (!face || !page) return;
+    returnPlayed.current = true;
+    clearPhotoLiftHandoff();
+    setLiftSourceId(returning.observationId);
+    let cancelled = false;
+    void playPhotoLift({
+      photoUrl: returning.photoUrl,
+      from: returning.box,
+      to: measureBox(face),
+      page,
+      hide: face,
+      duration: 380,
+      pageFade: "none",
+      cancelled: () => cancelled,
+    }).then(() => {
+      if (!cancelled) setLiftSourceId(null);
+    });
+    return () => {
+      cancelled = true;
+      returnPlayed.current = false;
+    };
+  }, [returning, volume]);
+
+  function goBackToShelf() {
+    const cover = coverRef.current;
+    if (cover) {
+      setVolumeOpenHandoff({
+        volumeId: id,
+        coverUrl: volumeCoverUrl(id),
+        box: measureBox(cover),
+        dir: "close",
+      });
+    }
+    navigate("/collection");
+  }
+
+  function openStamp(observationId: string, photoUrl: string, face: HTMLElement) {
+    setPhotoLiftHandoff({
+      observationId,
+      photoUrl,
+      box: measureBox(face),
+      dir: "open",
+      origin: { kind: "volume", volumeId: id },
+    });
+    navigate(`/observations/${observationId}`);
+  }
+
   return (
-    <div className="stack page-collection-volume">
+    <div className="stack page-collection-volume" ref={pageRef}>
       <header className="page-head me-sub-head">
-        <Link className="text-link" to="/collection">
+        <button className="text-link" type="button" onClick={goBackToShelf}>
           ← {t("collection.volumeBack")}
-        </Link>
-        {volume ? (
-          <>
-            <h1 className="page-title">{msg(volume.titleKey)}</h1>
-            <p className="lede">{msg(volume.ledeKey)}</p>
-            <p className="muted">
-              {volume.completed
-                ? t("collection.volumeDone")
-                : t("collection.volumeProgress", {
-                    lit: volume.litCount,
-                    total: volume.totalSlots,
-                  })}
-            </p>
-          </>
-        ) : (
-          <h1 className="page-title">{t("collection.title")}</h1>
-        )}
+        </button>
+        <div className="volume-head">
+          <img
+            className="volume-head-cover"
+            ref={coverRef}
+            src={volumeCoverUrl(id)}
+            alt=""
+          />
+          {volume ? (
+            <div>
+              <h1 className="page-title">{msg(volume.titleKey)}</h1>
+              <p className="lede">{msg(volume.ledeKey)}</p>
+              <p className="muted">
+                {volume.completed
+                  ? t("collection.volumeDone")
+                  : t("collection.volumeProgress", {
+                      lit: volume.litCount,
+                      total: volume.totalSlots,
+                    })}
+              </p>
+            </div>
+          ) : (
+            <h1 className="page-title">{t("collection.title")}</h1>
+          )}
+        </div>
       </header>
 
       {loading ? <p className="muted">{t("app.loading")}</p> : null}
@@ -86,7 +199,7 @@ export default function CollectionVolumePage() {
             const label = msg(slot.titleKey);
             const photoUrl = slot.lit ? slot.coverDisplayUrl : null;
             const face = <StampFace photoUrl={photoUrl} label={label} lit={slot.lit} />;
-            const sourceHidden = lift?.observationId === slot.coverObservationId;
+            const sourceHidden = liftSourceId === slot.coverObservationId;
 
             if (slot.lit && slot.coverObservationId && photoUrl) {
               return (
@@ -94,16 +207,23 @@ export default function CollectionVolumePage() {
                   key={slot.id}
                   type="button"
                   className={`stamp stamp-lit${sourceHidden ? " is-lift-source" : ""}`}
+                  data-obs-id={slot.coverObservationId}
                   aria-label={t("collection.stampLift")}
+                  onPointerDown={(e) => {
+                    const media = e.currentTarget.querySelector(".stamp-face");
+                    if (!(media instanceof HTMLElement)) return;
+                    setPhotoLiftHandoff({
+                      observationId: slot.coverObservationId!,
+                      photoUrl,
+                      box: measureBox(media),
+                      dir: "open",
+                      origin: { kind: "volume", volumeId: id },
+                    });
+                  }}
                   onClick={(e) => {
                     const media = e.currentTarget.querySelector(".stamp-face");
                     if (!(media instanceof HTMLElement)) return;
-                    setLift({
-                      observationId: slot.coverObservationId!,
-                      photoUrl,
-                      label,
-                      source: measureBox(media),
-                    });
+                    openStamp(slot.coverObservationId!, photoUrl, media);
                   }}
                 >
                   {face}
@@ -125,8 +245,6 @@ export default function CollectionVolumePage() {
           })}
         </div>
       ) : null}
-
-      {lift ? <StampLiftLayer lift={lift} onClose={() => setLift(null)} /> : null}
     </div>
   );
 }

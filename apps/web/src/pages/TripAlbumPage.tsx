@@ -1,5 +1,14 @@
-import { useContext, useEffect, useMemo, useRef, useState, type FormEvent, type MouseEvent } from "react";
-import { Link, useParams } from "react-router-dom";
+import {
+  useContext,
+  useEffect,
+  useLayoutEffect,
+  useMemo,
+  useRef,
+  useState,
+  type FormEvent,
+  type MouseEvent,
+} from "react";
+import { Link, useNavigate, useParams } from "react-router-dom";
 import { formatRank, t } from "@biotrace/messages";
 import { ApiError, api, type Observation, type Trip } from "../api";
 import ConfirmDialog from "../components/ConfirmDialog";
@@ -9,7 +18,13 @@ import {
   isNotCollectibleError,
 } from "../identifyErrors";
 import { canUseNativePicker, MAX_UPLOAD_BATCH, pickImageNative } from "../pickImage";
-import { easeOutCubic, nextPaint, prefersReducedMotion, tween } from "../motion";
+import { easeOutCubic, measureBox, nextPaint, prefersReducedMotion, tween } from "../motion";
+import { playPhotoLift } from "../photoLift";
+import {
+  clearPhotoLiftHandoff,
+  peekPhotoLiftHandoff,
+  setPhotoLiftHandoff,
+} from "../photoLiftHandoff";
 import { tripFilmFrameUrl } from "../themes";
 import { tripMetaLine } from "../tripMeta";
 
@@ -52,6 +67,7 @@ function albumMetaLine(trip: Trip): string {
 
 export default function TripAlbumPage({ userId }: { userId: string }) {
   const { id = "" } = useParams();
+  const navigate = useNavigate();
   const closeBook = useContext(OpenBookCloseContext);
   const [trip, setTrip] = useState<Trip | null>(null);
   const [observations, setObservations] = useState<Observation[]>([]);
@@ -73,6 +89,18 @@ export default function TripAlbumPage({ userId }: { userId: string }) {
   const prevPending = useRef(0);
   const seenIds = useRef<Set<string> | null>(null);
   const [slottingIds, setSlottingIds] = useState<Set<string>>(() => new Set());
+  const [liftSourceId, setLiftSourceId] = useState<string | null>(null);
+  const pageRef = useRef<HTMLDivElement | null>(null);
+  const returnPlayed = useRef(false);
+  const [returning] = useState(() => {
+    const found = peekPhotoLiftHandoff();
+    return found &&
+      found.dir === "close" &&
+      found.origin.kind === "album" &&
+      found.origin.tripId === id
+      ? found
+      : null;
+  });
 
   const analyzingIds = useMemo(
     () => observations.filter((o) => o.status === "analyzing").map((o) => o.id),
@@ -132,7 +160,10 @@ export default function TripAlbumPage({ userId }: { userId: string }) {
       seenIds.current = new Set(ids);
       return;
     }
-    const fresh = ids.filter((obsId) => !seenIds.current!.has(obsId));
+    const skipId = returning?.observationId ?? null;
+    const fresh = ids.filter(
+      (obsId) => !seenIds.current!.has(obsId) && obsId !== skipId,
+    );
     if (fresh.length === 0) return;
     for (const obsId of fresh) seenIds.current.add(obsId);
     setSlottingIds((prev) => {
@@ -184,6 +215,48 @@ export default function TripAlbumPage({ userId }: { userId: string }) {
       cancelled = true;
     };
   }, [slottingIds]);
+
+  useLayoutEffect(() => {
+    if (!returning || !loaded || returnPlayed.current) return;
+    const photo = document.querySelector<HTMLElement>(
+      `.film-tile[data-obs-id="${returning.observationId}"] .film-tile-photo`,
+    );
+    const page = pageRef.current;
+    if (!photo || !page) return;
+    returnPlayed.current = true;
+    clearPhotoLiftHandoff();
+    setLiftSourceId(returning.observationId);
+    let cancelled = false;
+    void playPhotoLift({
+      photoUrl: returning.photoUrl,
+      from: returning.box,
+      to: measureBox(photo),
+      page,
+      hide: photo,
+      duration: 380,
+      pageFade: "none",
+      cancelled: () => cancelled,
+    }).then(() => {
+      if (!cancelled) setLiftSourceId(null);
+    });
+    return () => {
+      cancelled = true;
+      returnPlayed.current = false;
+    };
+  }, [returning, loaded, observations, id]);
+
+  function openPhoto(obs: Observation, windowEl: HTMLElement | null) {
+    if (windowEl) {
+      setPhotoLiftHandoff({
+        observationId: obs.id,
+        photoUrl: obs.displayUrl,
+        box: measureBox(windowEl),
+        dir: "open",
+        origin: { kind: "album", tripId: id },
+      });
+    }
+    navigate(obsHref(obs));
+  }
 
   useEffect(() => {
     if (analyzingIds.length === 0) return;
@@ -329,7 +402,7 @@ export default function TripAlbumPage({ userId }: { userId: string }) {
     : t("album.upload");
 
   return (
-    <div className="stack page-album">
+    <div className="stack page-album" ref={pageRef}>
       <header className="page-head album-head">
         <div className="album-head-row">
           <Link
@@ -426,10 +499,31 @@ export default function TripAlbumPage({ userId }: { userId: string }) {
           <article
             className={`film-tile${obs.status === "pending_settle" ? " is-pending" : ""}${
               slottingIds.has(obs.id) ? " is-slotting" : ""
-            }`}
+            }${liftSourceId === obs.id ? " is-lift-source" : ""}`}
             key={obs.id}
+            data-obs-id={obs.id}
           >
-            <Link className="film-tile-link" to={obsHref(obs)}>
+            <button
+              type="button"
+              className="film-tile-link"
+              aria-label={t("album.liftPhoto")}
+              onPointerDown={(e) => {
+                const windowEl = e.currentTarget.querySelector(".film-tile-window");
+                if (windowEl instanceof HTMLElement) {
+                  setPhotoLiftHandoff({
+                    observationId: obs.id,
+                    photoUrl: obs.displayUrl,
+                    box: measureBox(windowEl),
+                    dir: "open",
+                    origin: { kind: "album", tripId: id },
+                  });
+                }
+              }}
+              onClick={(e) => {
+                const windowEl = e.currentTarget.querySelector(".film-tile-window");
+                openPhoto(obs, windowEl instanceof HTMLElement ? windowEl : null);
+              }}
+            >
               <div className="film-tile-media">
                 <div className="film-tile-window">
                   <img
@@ -478,7 +572,7 @@ export default function TripAlbumPage({ userId }: { userId: string }) {
                   <span className="error">{identifyErrorPrimary(obs.error)}</span>
                 ) : null}
               </div>
-            </Link>
+            </button>
             {obs.userId === userId ? (
               <button
                 className="film-tile-delete"

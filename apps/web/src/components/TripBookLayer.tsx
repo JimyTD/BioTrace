@@ -199,6 +199,10 @@ export default function TripBookLayer({ tripId, children }: Props) {
       matEl.style.opacity = "0";
       pagesEl.style.opacity = "0";
       setBlur(pagesEl, 36);
+      applyBox(cover, from);
+      hingeCover(cover, 0);
+      cover.style.opacity = "1";
+      cover.style.visibility = "visible";
       shelf?.classList.add("is-book-back");
       if (shelf instanceof HTMLElement) {
         setBlur(shelf, 0);
@@ -218,10 +222,6 @@ export default function TripBookLayer({ tripId, children }: Props) {
       );
       if (isCancelled()) return;
 
-      applyBox(cover, from);
-      hingeCover(cover, 0);
-      cover.style.opacity = "1";
-      cover.style.visibility = "visible";
       const lifted = { ...from, top: from.top - 14 };
       await tween(
         160,

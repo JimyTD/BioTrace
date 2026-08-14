@@ -625,6 +625,40 @@ button.me-row {
   color: inherit;
 }
 
+button.film-tile-link {
+  appearance: none;
+  -webkit-appearance: none;
+  border: 0;
+  background: transparent;
+  padding: 0;
+  width: 100%;
+  font: inherit;
+  text-align: left;
+  cursor: pointer;
+}
+
+.film-tile.is-lift-source .film-tile-photo {
+  visibility: hidden;
+}
+
+.photo-lift-flyer {
+  position: fixed;
+  z-index: 20;
+  margin: 0;
+  padding: 0;
+  overflow: hidden;
+  border-radius: 2px;
+  box-shadow: var(--trip-cover-shadow-hover);
+  pointer-events: none;
+}
+
+.photo-lift-flyer img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+
 .film-tile-media {
   position: relative;
   aspect-ratio: 1;
@@ -666,14 +700,19 @@ button.me-row {
 
 .film-tile-pending-seal {
   position: absolute;
-  inset: 0 0 8% 0;
+  left: 0;
+  right: 0;
+  top: 34%;
+  height: 26%;
   z-index: 1;
   pointer-events: none;
   background-color: var(--trip-pending-veil);
   background-image: var(--bg-atmosphere);
   background-repeat: no-repeat;
   background-size: cover;
-  box-shadow: inset 0 0 0 1px var(--line);
+  box-shadow:
+    inset 0 1px 0 var(--line),
+    0 1px 0 color-mix(in srgb, var(--ink) 10%, transparent);
 }
 
 .film-tile.is-pending .film-tile-photo {
@@ -1758,6 +1797,8 @@ button.me-row {
 }
 
 .volume-tile {
+  appearance: none;
+  -webkit-appearance: none;
   display: grid;
   gap: 8px;
   padding: 0;
@@ -1767,6 +1808,26 @@ button.me-row {
   color: inherit;
   font: inherit;
   cursor: pointer;
+}
+
+.volume-tile.is-open-source .volume-tile-cover {
+  visibility: hidden;
+}
+
+.volume-head {
+  display: grid;
+  grid-template-columns: 72px minmax(0, 1fr);
+  gap: 12px;
+  align-items: start;
+}
+
+.volume-head-cover {
+  width: 72px;
+  aspect-ratio: 4 / 3;
+  object-fit: cover;
+  border-radius: var(--radius-sm);
+  background: var(--volume-cover-empty);
+  box-shadow: var(--trip-cover-shadow);
 }
 
 .volume-tile-cover {
@@ -2093,6 +2154,7 @@ button.stamp {
   position: absolute;
   z-index: 2;
   overflow: hidden;
+  visibility: hidden;
   background: var(--trip-cover-plate);
   box-shadow: var(--trip-cover-shadow-hover);
   border-radius: calc(var(--radius-md) + 1px);

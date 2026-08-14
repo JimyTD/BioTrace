@@ -112,6 +112,7 @@ export const zh = {
   "share.actionFailed": "操作失败",
 
   "album.back": "旅途",
+  "album.liftPhoto": "拿起这张",
   "album.lede": "选几张照片放进这本册子，我们来认一认。",
   "album.addPhotos": "加入照片",
   "album.upload": "上传并鉴定",

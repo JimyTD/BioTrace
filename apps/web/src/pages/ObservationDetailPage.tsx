@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useLayoutEffect, useRef, useState } from "react";
 import { Link, useLocation, useNavigate, useParams } from "react-router-dom";
 import { formatRank, t, type MessageKey } from "@biotrace/messages";
 import { api, type Observation, type Taxonomy } from "../api";
@@ -10,6 +10,14 @@ import {
   isNotCollectibleError,
 } from "../identifyErrors";
 import { hasValidCoords } from "../geo";
+import { measureBox } from "../motion";
+import { playPhotoLift } from "../photoLift";
+import {
+  clearPhotoLiftHandoff,
+  peekPhotoLiftHandoff,
+  photoLiftReturnPath,
+  setPhotoLiftHandoff,
+} from "../photoLiftHandoff";
 
 function heroUrl(obs: Observation): string {
   const original = obs.originalUrl;
@@ -77,6 +85,13 @@ export default function ObservationDetailPage() {
   const [deleting, setDeleting] = useState(false);
   const [reidentifying, setReidentifying] = useState(false);
   const [confirmKind, setConfirmKind] = useState<"delete" | "reidentify" | null>(null);
+  const [liftOpen] = useState(() => {
+    const found = peekPhotoLiftHandoff();
+    return found && found.dir === "open" && found.observationId === id ? found : null;
+  });
+  const pageRef = useRef<HTMLDivElement | null>(null);
+  const heroRef = useRef<HTMLImageElement | null>(null);
+  const liftPlayed = useRef(false);
 
   useEffect(() => {
     const state = location.state as { locationSaved?: boolean } | null;
@@ -109,6 +124,49 @@ export default function ObservationDetailPage() {
       cancelled = true;
     };
   }, [id, navigate]);
+
+  useLayoutEffect(() => {
+    if (!liftOpen || liftPlayed.current) return;
+    const page = pageRef.current;
+    const hero = heroRef.current;
+    if (!page || !hero) return;
+    liftPlayed.current = true;
+    clearPhotoLiftHandoff();
+    let cancelled = false;
+    void playPhotoLift({
+      photoUrl: liftOpen.photoUrl,
+      from: liftOpen.box,
+      to: measureBox(hero),
+      page,
+      hide: hero,
+      duration: 480,
+      pageFade: "in",
+      cancelled: () => cancelled,
+    });
+    return () => {
+      cancelled = true;
+      liftPlayed.current = false;
+    };
+  }, [liftOpen, obs]);
+
+  function goBackToAlbum() {
+    if (!obs) {
+      navigate("/");
+      return;
+    }
+    const origin = liftOpen?.origin ?? { kind: "album" as const, tripId: obs.tripId };
+    const hero = heroRef.current;
+    if (hero) {
+      setPhotoLiftHandoff({
+        observationId: obs.id,
+        photoUrl: heroUrl(obs),
+        box: measureBox(hero),
+        dir: "close",
+        origin,
+      });
+    }
+    navigate(photoLiftReturnPath(origin));
+  }
 
   useEffect(() => {
     if (!obs || obs.status !== "analyzing") return;
@@ -166,37 +224,42 @@ export default function ObservationDetailPage() {
     );
   }
 
-  if (!obs) {
+  if (!obs && !liftOpen) {
     return <p className="muted">{t("app.loading")}</p>;
   }
 
-  const notCollectible = isNotCollectibleError(obs.error);
+  const notCollectible = isNotCollectibleError(obs?.error);
   const title = notCollectible
     ? t("detail.notCollectibleTitle")
-    : obs.commonName || obs.scientificName || t("detail.unnamed");
-  const busy = deleting || reidentifying || obs.status === "analyzing";
+    : obs?.commonName || obs?.scientificName || t("detail.unnamed");
+  const photoSrc = obs ? heroUrl(obs) : liftOpen?.photoUrl ?? "";
+  const busy = deleting || reidentifying || obs?.status === "analyzing";
   const failedCoarse =
+    !!obs &&
     !notCollectible &&
     (obs.error === "identify_too_coarse" ||
       (obs.status === "failed" && obs.settleTier === "none"));
-  const showTaxonomy = obs.status === "settled" || (obs.status === "failed" && !notCollectible);
-  const failHint = obs.status === "failed" ? identifyErrorHint(obs.error) : null;
-  const hasCoords = hasValidCoords(obs.lat, obs.lng);
-  const identifyName = identifyProviderName(obs.identifyProvider);
+  const showTaxonomy =
+    !!obs && (obs.status === "settled" || (obs.status === "failed" && !notCollectible));
+  const failHint = obs?.status === "failed" ? identifyErrorHint(obs.error) : null;
+  const hasCoords = obs ? hasValidCoords(obs.lat, obs.lng) : false;
+  const identifyName = obs ? identifyProviderName(obs.identifyProvider) : null;
 
   return (
-    <div className="stack detail-page">
+    <div className="stack detail-page" ref={pageRef}>
       <div className="album-head-row">
-        <Link className="text-link" to={`/trips/${obs.tripId}`}>
+        <button className="text-link" type="button" onClick={goBackToAlbum}>
           ← {t("album.back")}
-        </Link>
+        </button>
         <Link className="text-link" to="/map">
           {t("nav.map")}
         </Link>
       </div>
 
-      <img className="detail-hero" src={heroUrl(obs)} alt={title} />
+      {photoSrc ? <img className="detail-hero" ref={heroRef} src={photoSrc} alt={title} /> : null}
 
+      {obs ? (
+      <>
       <header className="page-head">
         <h1 className="page-title">{title}</h1>
         {!notCollectible && obs.scientificName ? (
@@ -351,6 +414,10 @@ export default function ObservationDetailPage() {
         }}
         onConfirm={confirmReidentify}
       />
+      </>
+      ) : (
+        <p className="muted">{t("app.loading")}</p>
+      )}
     </div>
   );
 }

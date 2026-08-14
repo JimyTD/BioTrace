@@ -1,8 +1,11 @@
-import { useEffect, useState } from "react";
+import { useEffect, useLayoutEffect, useRef, useState } from "react";
 import { Link, useNavigate, useParams } from "react-router-dom";
 import { formatRank, hasMessage, t, type MessageKey } from "@biotrace/messages";
 import { api, type Observation, type Rarity, type SettleVolumesResult } from "../api";
 import { SettlePackStage } from "../components/SettlePackStage";
+import { measureBox } from "../motion";
+import { playPhotoLift } from "../photoLift";
+import { clearPhotoLiftHandoff, peekPhotoLiftHandoff } from "../photoLiftHandoff";
 import { volumeCeremonyBgUrl, volumeSealCompleteUrl } from "../themes";
 
 function rarityLabel(r: Rarity | null) {
@@ -61,6 +64,12 @@ export default function ObservationSettlePage() {
   const [phase, setPhase] = useState<"sealed" | "revealing" | "open" | "claimed">("sealed");
   const [claiming, setClaiming] = useState(false);
   const [ceremony, setCeremony] = useState<{ kind: CeremonyKind; line: string } | null>(null);
+  const [liftOpen] = useState(() => {
+    const found = peekPhotoLiftHandoff();
+    return found && found.dir === "open" && found.observationId === id ? found : null;
+  });
+  const pageRef = useRef<HTMLDivElement | null>(null);
+  const liftPlayed = useRef(false);
 
   useEffect(() => {
     api
@@ -82,6 +91,31 @@ export default function ObservationSettlePage() {
       })
       .catch((e) => setError(e instanceof Error ? e.message : t("settle.failed")));
   }, [id, navigate]);
+
+  useLayoutEffect(() => {
+    if (!liftOpen || !obs || liftPlayed.current) return;
+    const page = pageRef.current;
+    const target = page?.querySelector(".settle-photo-window");
+    const photo = target?.querySelector("img");
+    if (!page || !(target instanceof HTMLElement)) return;
+    liftPlayed.current = true;
+    clearPhotoLiftHandoff();
+    let cancelled = false;
+    void playPhotoLift({
+      photoUrl: liftOpen.photoUrl,
+      from: liftOpen.box,
+      to: measureBox(target),
+      page,
+      hide: photo instanceof HTMLElement ? photo : null,
+      duration: 480,
+      pageFade: "in",
+      cancelled: () => cancelled,
+    });
+    return () => {
+      cancelled = true;
+      liftPlayed.current = false;
+    };
+  }, [liftOpen, obs]);
 
   function onOpen() {
     setPhase("revealing");
@@ -131,7 +165,7 @@ export default function ObservationSettlePage() {
   const stagePhase = phase === "claimed" ? "open" : phase;
 
   return (
-    <div className="stack settle-page">
+    <div className="stack settle-page" ref={pageRef}>
       <header className="page-head">
         <h1 className="page-title">{t("settle.title")}</h1>
         <p className="lede">{t("settle.lede")}</p>
