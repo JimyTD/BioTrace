@@ -81,6 +81,7 @@ async function callProvider(id: ProviderId, input: IdentifyInput): Promise<Ident
 
 /**
  * Prefer Gemini; short cool → wait while still analyzing; long/daily → GLM.
+ * 429: up to 3 tries while cool ≤ waitMax. Transient 5xx: one retry after ~20s.
  * Throws identify_unavailable only when both sides cannot serve within deadline.
  */
 export async function identifyWithFallback(input: IdentifyInput): Promise<IdentifyOutcome> {
@@ -111,10 +112,15 @@ export async function identifyWithFallback(input: IdentifyInput): Promise<Identi
           const nextCool = coolRemainingMs("gemini");
           console.warn(`[identify] Gemini failed (${kind}): ${message.slice(0, 160)}`);
 
-          if (kind === "rate_limited" && nextCool > 0 && nextCool <= waitMax && geminiTries < 3) {
+          const retryGemini =
+            nextCool > 0 &&
+            nextCool <= waitMax &&
+            ((kind === "rate_limited" && geminiTries < 3) ||
+              (kind === "transient" && geminiTries < 2));
+          if (retryGemini) {
             continue;
           }
-          // daily / long cool / auth / fatal → fall through to GLM
+          // daily / long cool / auth / fatal / transient already retried → GLM
         }
       } else if (g.status === "rate_limited" && cool > waitMax) {
         console.warn(`[identify] Gemini cool ${Math.ceil(cool / 1000)}s > wait max — use GLM`);
