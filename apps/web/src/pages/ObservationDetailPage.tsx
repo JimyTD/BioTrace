@@ -15,6 +15,7 @@ import { peekObservation, rememberObservation } from "../pageCache";
 import { containedImageBox, playPhotoLift, waitImage } from "../photoLift";
 import {
   clearPhotoLiftHandoff,
+  peekLiftBackground,
   peekPhotoLiftHandoff,
   photoLiftReturnPath,
   setPhotoLiftHandoff,
@@ -80,6 +81,7 @@ export default function ObservationDetailPage() {
   const { id = "" } = useParams();
   const navigate = useNavigate();
   const location = useLocation();
+  const background = peekLiftBackground(location);
   const [obs, setObs] = useState<Observation | null>(() => peekObservation(id));
   const [error, setError] = useState<string | null>(null);
   const [notice, setNotice] = useState<string | null>(null);
@@ -110,7 +112,10 @@ export default function ObservationDetailPage() {
         const { observation } = await api.getObservation(id);
         if (cancelled) return;
         if (observation.status === "pending_settle") {
-          navigate(`/settle/${id}`, { replace: true });
+          navigate(`/settle/${id}`, {
+            replace: true,
+            state: background ? { background } : undefined,
+          });
           return;
         }
         setObs(observation);
@@ -125,7 +130,7 @@ export default function ObservationDetailPage() {
     return () => {
       cancelled = true;
     };
-  }, [id, navigate]);
+  }, [id, navigate, background]);
 
   useLayoutEffect(() => {
     if (!liftOpen || liftPlayed.current) return;
@@ -152,7 +157,6 @@ export default function ObservationDetailPage() {
     })();
     return () => {
       cancelled = true;
-      liftPlayed.current = false;
     };
   }, [liftOpen]);
 
@@ -182,7 +186,10 @@ export default function ObservationDetailPage() {
         .getObservation(id)
         .then(({ observation }) => {
           if (observation.status === "pending_settle") {
-            navigate(`/settle/${id}`, { replace: true });
+            navigate(`/settle/${id}`, {
+              replace: true,
+              state: background ? { background } : undefined,
+            });
             return;
           }
           setObs(observation);
@@ -190,7 +197,7 @@ export default function ObservationDetailPage() {
         .catch(() => undefined);
     }, 2000);
     return () => window.clearInterval(timer);
-  }, [id, obs?.status, navigate]);
+  }, [id, obs?.status, navigate, background]);
 
   async function confirmDelete() {
     if (!obs) return;

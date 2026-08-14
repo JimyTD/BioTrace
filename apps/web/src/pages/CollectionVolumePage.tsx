@@ -1,17 +1,19 @@
 import { useEffect, useLayoutEffect, useRef, useState } from "react";
-import { useNavigate, useParams } from "react-router-dom";
+import { matchPath, useLocation, useNavigate, useParams } from "react-router-dom";
 import { hasMessage, t } from "@biotrace/messages";
 import { api, type VolumeListItem } from "../api";
 import { measureBox } from "../motion";
 import { playPhotoLift } from "../photoLift";
 import {
   clearPhotoLiftHandoff,
+  liftBackgroundState,
   peekPhotoLiftHandoff,
   setPhotoLiftHandoff,
 } from "../photoLiftHandoff";
 import { peekVolume, rememberVolume } from "../pageCache";
 import { volumeCoverUrl, volumeStampFrameUrl } from "../themes";
-import { restoreContentScroll, saveContentScroll } from "../scrollMemory";
+import { restoreNamedScroll, saveNamedScroll } from "../scrollMemory";
+import { useRealLocation } from "../realLocation";
 import {
   clearVolumeOpenHandoff,
   peekVolumeOpenHandoff,
@@ -48,6 +50,11 @@ function StampFace({
 export default function CollectionVolumePage() {
   const { id = "" } = useParams();
   const navigate = useNavigate();
+  const location = useLocation();
+  const real = useRealLocation();
+  const onThisVolume = Boolean(
+    real && matchPath("/collection/volumes/:id", real.pathname)?.params.id === id,
+  );
   const [volume, setVolume] = useState<VolumeListItem | null>(() => peekVolume(id));
   const [error, setError] = useState<string | null>(null);
   const [loading, setLoading] = useState(() => !peekVolume(id));
@@ -59,15 +66,6 @@ export default function CollectionVolumePage() {
   const [opening] = useState(() => {
     const found = peekVolumeOpenHandoff();
     return found && found.dir === "open" && found.volumeId === id ? found : null;
-  });
-  const [returning] = useState(() => {
-    const found = peekPhotoLiftHandoff();
-    return found &&
-      found.dir === "close" &&
-      found.origin.kind === "volume" &&
-      found.origin.volumeId === id
-      ? found
-      : null;
   });
 
   useEffect(() => {
@@ -110,26 +108,37 @@ export default function CollectionVolumePage() {
     });
     return () => {
       cancelled = true;
-      openPlayed.current = false;
     };
   }, [opening]);
 
   useLayoutEffect(() => {
-    if (!volume) return;
-    restoreContentScroll(`volume:${id}`);
-    if (!returning || returnPlayed.current) return;
+    if (!onThisVolume || !volume) {
+      if (!onThisVolume) returnPlayed.current = false;
+      return;
+    }
+    restoreNamedScroll(`volume:${id}`, ".page-lift-overlay.is-volume");
+    if (returnPlayed.current) return;
+    const found = peekPhotoLiftHandoff();
+    if (
+      !found ||
+      found.dir !== "close" ||
+      found.origin.kind !== "volume" ||
+      found.origin.volumeId !== id
+    ) {
+      return;
+    }
     const face = document.querySelector<HTMLElement>(
-      `.stamp[data-obs-id="${returning.observationId}"] .stamp-face`,
+      `.stamp[data-obs-id="${found.observationId}"] .stamp-face`,
     );
     const page = pageRef.current;
     if (!face || !page) return;
     returnPlayed.current = true;
     clearPhotoLiftHandoff();
-    setLiftSourceId(returning.observationId);
+    setLiftSourceId(found.observationId);
     let cancelled = false;
     void playPhotoLift({
-      photoUrl: returning.photoUrl,
-      from: returning.box,
+      photoUrl: found.photoUrl,
+      from: found.box,
       to: () => measureBox(face),
       page,
       hide: face,
@@ -141,9 +150,8 @@ export default function CollectionVolumePage() {
     });
     return () => {
       cancelled = true;
-      returnPlayed.current = false;
     };
-  }, [returning, volume, id]);
+  }, [onThisVolume, volume, id]);
 
   function goBackToShelf() {
     const cover = coverRef.current;
@@ -159,7 +167,7 @@ export default function CollectionVolumePage() {
   }
 
   function openStamp(observationId: string, photoUrl: string, face: HTMLElement) {
-    saveContentScroll(`volume:${id}`);
+    saveNamedScroll(`volume:${id}`, ".page-lift-overlay.is-volume");
     setPhotoLiftHandoff({
       observationId,
       photoUrl,
@@ -167,7 +175,7 @@ export default function CollectionVolumePage() {
       dir: "open",
       origin: { kind: "volume", volumeId: id },
     });
-    navigate(`/observations/${observationId}`);
+    navigate(`/observations/${observationId}`, { state: liftBackgroundState(location) });
   }
 
   return (

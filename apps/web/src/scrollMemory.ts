@@ -55,3 +55,14 @@ export function restoreContentScroll(key: string) {
   const top = peekScroll(key);
   if (main && top != null) main.scrollTop = top;
 }
+
+export function saveNamedScroll(key: string, selector: string) {
+  const el = asElement(document.querySelector(selector));
+  if (el) saveScroll(key, el.scrollTop);
+}
+
+export function restoreNamedScroll(key: string, selector: string) {
+  const el = asElement(document.querySelector(selector));
+  const top = peekScroll(key);
+  if (el && top != null) el.scrollTop = top;
+}

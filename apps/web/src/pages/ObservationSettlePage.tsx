@@ -1,11 +1,11 @@
 import { useEffect, useLayoutEffect, useRef, useState } from "react";
-import { Link, useNavigate, useParams } from "react-router-dom";
+import { Link, useLocation, useNavigate, useParams } from "react-router-dom";
 import { formatRank, hasMessage, t, type MessageKey } from "@biotrace/messages";
 import { api, type Observation, type Rarity, type SettleVolumesResult } from "../api";
 import { SettlePackStage } from "../components/SettlePackStage";
 import { measureBox, nextPaint } from "../motion";
 import { containedImageBox, playPhotoLift, waitImage } from "../photoLift";
-import { clearPhotoLiftHandoff, peekPhotoLiftHandoff } from "../photoLiftHandoff";
+import { clearPhotoLiftHandoff, peekLiftBackground, peekPhotoLiftHandoff } from "../photoLiftHandoff";
 import { volumeCeremonyBgUrl, volumeSealCompleteUrl } from "../themes";
 
 function rarityLabel(r: Rarity | null) {
@@ -59,6 +59,8 @@ function buildCeremony(volumes: SettleVolumesResult): {
 export default function ObservationSettlePage() {
   const { id = "" } = useParams();
   const navigate = useNavigate();
+  const location = useLocation();
+  const background = peekLiftBackground(location);
   const [obs, setObs] = useState<Observation | null>(null);
   const [error, setError] = useState<string | null>(null);
   const [phase, setPhase] = useState<"sealed" | "revealing" | "open" | "claimed">("sealed");
@@ -76,7 +78,10 @@ export default function ObservationSettlePage() {
       .getObservation(id, true)
       .then(({ observation }) => {
         if (observation.status === "settled") {
-          navigate(`/observations/${id}`, { replace: true });
+          navigate(`/observations/${id}`, {
+            replace: true,
+            state: background ? { background } : undefined,
+          });
           return;
         }
         if (observation.status === "analyzing") {
@@ -84,13 +89,16 @@ export default function ObservationSettlePage() {
           return;
         }
         if (observation.status === "failed") {
-          navigate(`/observations/${id}`, { replace: true });
+          navigate(`/observations/${id}`, {
+            replace: true,
+            state: background ? { background } : undefined,
+          });
           return;
         }
         setObs(observation);
       })
       .catch((e) => setError(e instanceof Error ? e.message : t("settle.failed")));
-  }, [id, navigate]);
+  }, [id, navigate, background]);
 
   useLayoutEffect(() => {
     if (!liftOpen || !obs || liftPlayed.current) return;
@@ -119,7 +127,6 @@ export default function ObservationSettlePage() {
     })();
     return () => {
       cancelled = true;
-      liftPlayed.current = false;
     };
   }, [liftOpen, obs]);
 

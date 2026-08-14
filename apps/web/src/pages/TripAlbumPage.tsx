@@ -8,7 +8,7 @@ import {
   type FormEvent,
   type MouseEvent,
 } from "react";
-import { Link, useNavigate, useParams } from "react-router-dom";
+import { Link, matchPath, useLocation, useNavigate, useParams } from "react-router-dom";
 import { formatRank, t } from "@biotrace/messages";
 import { ApiError, api, type Observation, type Trip } from "../api";
 import ConfirmDialog from "../components/ConfirmDialog";
@@ -22,11 +22,13 @@ import { easeOutCubic, measureBox, nextPaint, prefersReducedMotion, tween } from
 import { playPhotoLift } from "../photoLift";
 import {
   clearPhotoLiftHandoff,
+  liftBackgroundState,
   peekPhotoLiftHandoff,
   setPhotoLiftHandoff,
 } from "../photoLiftHandoff";
 import { restoreAlbumScroll, saveAlbumScroll, saveContentScroll } from "../scrollMemory";
 import { peekAlbum, rememberAlbum } from "../pageCache";
+import { useRealLocation } from "../realLocation";
 import { tripFilmFrameUrl } from "../themes";
 import { tripMetaLine } from "../tripMeta";
 
@@ -70,6 +72,9 @@ function albumMetaLine(trip: Trip): string {
 export default function TripAlbumPage({ userId }: { userId: string }) {
   const { id = "" } = useParams();
   const navigate = useNavigate();
+  const location = useLocation();
+  const real = useRealLocation();
+  const onAlbum = Boolean(real && matchPath("/trips/:id", real.pathname)?.params.id === id);
   const closeBook = useContext(OpenBookCloseContext);
   const [trip, setTrip] = useState<Trip | null>(() => peekAlbum(id)?.trip ?? null);
   const [observations, setObservations] = useState<Observation[]>(
@@ -96,15 +101,6 @@ export default function TripAlbumPage({ userId }: { userId: string }) {
   const [liftSourceId, setLiftSourceId] = useState<string | null>(null);
   const pageRef = useRef<HTMLDivElement | null>(null);
   const returnPlayed = useRef(false);
-  const [returning] = useState(() => {
-    const found = peekPhotoLiftHandoff();
-    return found &&
-      found.dir === "close" &&
-      found.origin.kind === "album" &&
-      found.origin.tripId === id
-      ? found
-      : null;
-  });
 
   const analyzingIds = useMemo(
     () => observations.filter((o) => o.status === "analyzing").map((o) => o.id),
@@ -177,7 +173,10 @@ export default function TripAlbumPage({ userId }: { userId: string }) {
       seenIds.current = new Set(ids);
       return;
     }
-    const skipId = returning?.observationId ?? null;
+    const skipId =
+      peekPhotoLiftHandoff()?.dir === "close"
+        ? peekPhotoLiftHandoff()?.observationId ?? null
+        : null;
     const fresh = ids.filter(
       (obsId) => !seenIds.current!.has(obsId) && obsId !== skipId,
     );
@@ -234,21 +233,33 @@ export default function TripAlbumPage({ userId }: { userId: string }) {
   }, [slottingIds]);
 
   useLayoutEffect(() => {
-    if (!loaded) return;
+    if (!onAlbum || !loaded) {
+      if (!onAlbum) returnPlayed.current = false;
+      return;
+    }
     restoreAlbumScroll(id);
-    if (!returning || returnPlayed.current) return;
+    if (returnPlayed.current) return;
+    const found = peekPhotoLiftHandoff();
+    if (
+      !found ||
+      found.dir !== "close" ||
+      found.origin.kind !== "album" ||
+      found.origin.tripId !== id
+    ) {
+      return;
+    }
     const photo = document.querySelector<HTMLElement>(
-      `.film-tile[data-obs-id="${returning.observationId}"] .film-tile-photo`,
+      `.film-tile[data-obs-id="${found.observationId}"] .film-tile-photo`,
     );
     const page = pageRef.current;
     if (!photo || !page) return;
     returnPlayed.current = true;
     clearPhotoLiftHandoff();
-    setLiftSourceId(returning.observationId);
+    setLiftSourceId(found.observationId);
     let cancelled = false;
     void playPhotoLift({
-      photoUrl: returning.photoUrl,
-      from: returning.box,
+      photoUrl: found.photoUrl,
+      from: found.box,
       to: () => measureBox(photo),
       page,
       hide: photo,
@@ -260,9 +271,8 @@ export default function TripAlbumPage({ userId }: { userId: string }) {
     });
     return () => {
       cancelled = true;
-      returnPlayed.current = false;
     };
-  }, [returning, loaded, observations, id]);
+  }, [onAlbum, loaded, observations, id]);
 
   function openPhoto(obs: Observation, windowEl: HTMLElement | null) {
     saveAlbumScroll(id);
@@ -276,7 +286,7 @@ export default function TripAlbumPage({ userId }: { userId: string }) {
         origin: { kind: "album", tripId: id },
       });
     }
-    navigate(obsHref(obs));
+    navigate(obsHref(obs), { state: liftBackgroundState(location) });
   }
 
   useEffect(() => {

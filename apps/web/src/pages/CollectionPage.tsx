@@ -1,5 +1,5 @@
 import { useEffect, useLayoutEffect, useRef, useState } from "react";
-import { Link, useNavigate } from "react-router-dom";
+import { Link, useMatch, useNavigate } from "react-router-dom";
 import { hasMessage, t } from "@biotrace/messages";
 import { api, type VolumeListItem } from "../api";
 import { measureBox } from "../motion";
@@ -18,6 +18,7 @@ function msg(key: string) {
 }
 
 export default function CollectionPage() {
+  const volumeOpen = Boolean(useMatch("/collection/volumes/:id"));
   const navigate = useNavigate();
   const [entryCount, setEntryCount] = useState(() => peekCollection()?.entryCount ?? 0);
   const [volumes, setVolumes] = useState<VolumeListItem[]>(() => peekCollection()?.volumes ?? []);
@@ -26,10 +27,6 @@ export default function CollectionPage() {
   const [sourceId, setSourceId] = useState<string | null>(null);
   const pageRef = useRef<HTMLDivElement | null>(null);
   const returnPlayed = useRef(false);
-  const [returning] = useState(() => {
-    const found = peekVolumeOpenHandoff();
-    return found && found.dir === "close" ? found : null;
-  });
 
   useEffect(() => {
     Promise.all([api.listCollection(), api.listVolumes()])
@@ -43,21 +40,26 @@ export default function CollectionPage() {
   }, []);
 
   useLayoutEffect(() => {
-    if (loading) return;
+    if (volumeOpen) {
+      returnPlayed.current = false;
+      return;
+    }
     restoreContentScroll("collection");
-    if (!returning || returnPlayed.current) return;
+    if (returnPlayed.current) return;
+    const found = peekVolumeOpenHandoff();
+    if (!found || found.dir !== "close") return;
     const cover = document.querySelector<HTMLElement>(
-      `.volume-tile[data-volume-id="${returning.volumeId}"] .volume-tile-cover`,
+      `.volume-tile[data-volume-id="${found.volumeId}"] .volume-tile-cover`,
     );
     const page = pageRef.current;
     if (!cover || !page) return;
     returnPlayed.current = true;
     clearVolumeOpenHandoff();
-    setSourceId(returning.volumeId);
+    setSourceId(found.volumeId);
     let cancelled = false;
     void playPhotoLift({
-      photoUrl: returning.coverUrl,
-      from: returning.box,
+      photoUrl: found.coverUrl,
+      from: found.box,
       to: () => measureBox(cover),
       page,
       hide: cover,
@@ -69,9 +71,8 @@ export default function CollectionPage() {
     });
     return () => {
       cancelled = true;
-      returnPlayed.current = false;
     };
-  }, [returning, loading, volumes]);
+  }, [loading, volumes, volumeOpen]);
 
   function openVolume(vol: VolumeListItem, coverEl: HTMLElement | null) {
     saveContentScroll("collection");
@@ -87,7 +88,11 @@ export default function CollectionPage() {
   }
 
   return (
-    <div className="stack page-collection" ref={pageRef}>
+    <div
+      className={`stack page-collection${volumeOpen ? " is-covered" : ""}`}
+      ref={pageRef}
+      {...(volumeOpen ? { inert: true } : {})}
+    >
       <header className="page-head">
         <h1 className="page-title">{t("collection.title")}</h1>
         <p className="lede">{t("collection.lede")}</p>

@@ -1,3 +1,4 @@
+import type { Location } from "react-router-dom";
 import type { MotionBox } from "./motion";
 
 export type PhotoLiftDir = "open" | "close";
@@ -64,4 +65,13 @@ export function photoLiftReturnPath(origin: PhotoLiftOrigin) {
   return origin.kind === "volume"
     ? `/collection/volumes/${origin.volumeId}`
     : `/trips/${origin.tripId}`;
+}
+
+export function liftBackgroundState(location: Location) {
+  return { background: location };
+}
+
+export function peekLiftBackground(location: Location): Location | undefined {
+  const state = location.state as { background?: Location } | null;
+  return state?.background;
 }
