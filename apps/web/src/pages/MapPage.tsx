@@ -1,10 +1,11 @@
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useLayoutEffect, useRef, useState } from "react";
 import { Link } from "react-router-dom";
 import maplibregl, { Map, Marker } from "maplibre-gl";
 import "maplibre-gl/dist/maplibre-gl.css";
 import { t } from "@biotrace/messages";
 import { api, type Observation } from "../api";
 import { hasValidCoords } from "../geo";
+import { easeOutCubic, prefersReducedMotion, tween } from "../motion";
 import {
   AUTO_FIT_MAX_ZOOM,
   DEFAULT_MAP_CENTER,
@@ -34,7 +35,10 @@ export default function MapPage() {
   const [count, setCount] = useState(0);
   const [loaded, setLoaded] = useState(false);
   const [selected, setSelected] = useState<Observation | null>(null);
+  const [sheet, setSheet] = useState<Observation | null>(null);
   const [mapReady, setMapReady] = useState(false);
+  const sheetRef = useRef<HTMLDivElement | null>(null);
+  const sheetOpen = useRef(false);
 
   useEffect(() => {
     if (!containerRef.current || mapRef.current) return;
@@ -103,7 +107,82 @@ export default function MapPage() {
 
   useEffect(() => {
     mapRef.current?.resize();
-  }, [selected, mapReady]);
+  }, [sheet, mapReady]);
+
+  useLayoutEffect(() => {
+    const wrap = document.querySelector(".page-map .map-wrap");
+    if (!(wrap instanceof HTMLElement) || prefersReducedMotion()) return;
+    wrap.style.opacity = "0";
+    wrap.style.transform = "translateY(8%)";
+    let cancelled = false;
+    void tween(
+      420,
+      (t) => {
+        const e = easeOutCubic(t);
+        wrap.style.opacity = String(e);
+        wrap.style.transform = `translateY(${(1 - e) * 8}%)`;
+      },
+      () => cancelled,
+    ).then(() => {
+      if (cancelled) return;
+      wrap.style.opacity = "";
+      wrap.style.transform = "";
+      mapRef.current?.resize();
+    });
+    return () => {
+      cancelled = true;
+    };
+  }, []);
+
+  useLayoutEffect(() => {
+    if (selected) setSheet(selected);
+  }, [selected]);
+
+  useLayoutEffect(() => {
+    const el = sheetRef.current;
+    if (!el || !sheet) return;
+    const opening = Boolean(selected);
+    if (opening && sheetOpen.current) {
+      el.style.transform = "translateY(0)";
+      return;
+    }
+    if (!opening && !sheetOpen.current) return;
+    if (prefersReducedMotion()) {
+      el.style.transform = opening ? "translateY(0)" : "translateY(100%)";
+      sheetOpen.current = opening;
+      if (!opening) setSheet(null);
+      return;
+    }
+    let cancelled = false;
+    if (opening) {
+      sheetOpen.current = true;
+      el.style.transform = "translateY(100%)";
+      void tween(
+        320,
+        (t) => {
+          el.style.transform = `translateY(${(1 - easeOutCubic(t)) * 100}%)`;
+        },
+        () => cancelled,
+      ).then(() => {
+        if (!cancelled) el.style.transform = "translateY(0)";
+      });
+    } else {
+      void tween(
+        240,
+        (t) => {
+          el.style.transform = `translateY(${easeOutCubic(t) * 100}%)`;
+        },
+        () => cancelled,
+      ).then(() => {
+        if (cancelled) return;
+        sheetOpen.current = false;
+        setSheet(null);
+      });
+    }
+    return () => {
+      cancelled = true;
+    };
+  }, [selected, sheet]);
 
   function selectObservation(obs: Observation) {
     const map = mapRef.current;
@@ -155,19 +234,19 @@ export default function MapPage() {
       <div className="map-wrap" ref={containerRef} />
       {empty ? <p className="map-empty">{t("map.empty")}</p> : null}
       {error ? <p className="map-empty error">{error}</p> : null}
-      {selected ? (
-        <div className="map-sheet">
-          <Link className="map-sheet-main" to={obsHref(selected)} aria-label={t("map.openDetail")}>
-            <img className="map-sheet-thumb" src={selected.displayUrl} alt="" />
+      {sheet ? (
+        <div className="map-sheet" ref={sheetRef}>
+          <Link className="map-sheet-main" to={obsHref(sheet)} aria-label={t("map.openDetail")}>
+            <img className="map-sheet-thumb" src={sheet.displayUrl} alt="" />
             <span className="map-sheet-copy">
-              <strong>{obsTitle(selected)}</strong>
+              <strong>{obsTitle(sheet)}</strong>
               <span className="muted">
-                {selected.locationLabel ||
-                  `${selected.lat?.toFixed(5)}, ${selected.lng?.toFixed(5)}`}
+                {sheet.locationLabel ||
+                  `${sheet.lat?.toFixed(5)}, ${sheet.lng?.toFixed(5)}`}
               </span>
             </span>
           </Link>
-          <Link className="text-link" to={`/trips/${selected.tripId}`}>
+          <Link className="text-link" to={`/trips/${sheet.tripId}`}>
             {t("map.openTrip")}
           </Link>
         </div>

@@ -650,6 +650,10 @@ button.me-row {
   display: block;
 }
 
+.film-tile.is-slotting .film-tile-photo {
+  transform: translateY(108%);
+}
+
 .film-tile-frame {
   position: absolute;
   inset: 0;
@@ -660,18 +664,20 @@ button.me-row {
   z-index: 2;
 }
 
-.film-tile-pending-veil {
+.film-tile-pending-seal {
   position: absolute;
-  inset: 0;
+  inset: 0 0 8% 0;
   z-index: 1;
-  background:
-    linear-gradient(160deg, color-mix(in srgb, var(--trip-pending-veil) 55%, transparent), transparent 62%),
-    color-mix(in srgb, var(--trip-pending-veil) 28%, transparent);
   pointer-events: none;
+  background-color: var(--trip-pending-veil);
+  background-image: var(--bg-atmosphere);
+  background-repeat: no-repeat;
+  background-size: cover;
+  box-shadow: inset 0 0 0 1px var(--line);
 }
 
 .film-tile.is-pending .film-tile-photo {
-  filter: saturate(0.72) brightness(0.9);
+  filter: saturate(0.85) brightness(0.92);
 }
 
 .film-tile-badge {
@@ -1500,6 +1506,7 @@ button.me-row {
   min-height: 100%;
   display: grid;
   grid-template-rows: 1fr auto;
+  overflow: hidden;
 }
 
 .page-map .map-wrap,
@@ -1651,6 +1658,7 @@ button.me-row {
   padding: 10px 16px;
   background: var(--nav-bg);
   border-top: 1px solid var(--line);
+  transform: translateY(0);
 }
 
 .map-sheet-main {
@@ -1824,6 +1832,61 @@ button.me-row {
   gap: 4px;
   color: inherit;
   text-decoration: none;
+}
+
+button.stamp {
+  appearance: none;
+  -webkit-appearance: none;
+  border: 0;
+  background: transparent;
+  padding: 0;
+  width: 100%;
+  font: inherit;
+  text-align: left;
+  cursor: pointer;
+}
+
+.stamp.is-lift-source {
+  visibility: hidden;
+}
+
+.stamp-lift-layer {
+  position: fixed;
+  z-index: 16;
+  pointer-events: auto;
+}
+
+.stamp-lift-mat {
+  appearance: none;
+  -webkit-appearance: none;
+  position: absolute;
+  inset: 0;
+  border: 0;
+  padding: 0;
+  background: var(--bg0);
+  opacity: 0;
+  cursor: pointer;
+}
+
+.stamp-lift-card {
+  position: absolute;
+  z-index: 1;
+  display: grid;
+  gap: 8px;
+  margin: 0;
+  padding: 0;
+  border: 0;
+  background: transparent;
+  font: inherit;
+  color: inherit;
+  text-align: left;
+  cursor: pointer;
+}
+
+.stamp-lift-card .stamp-caption {
+  color: var(--ink);
+  font-weight: 600;
+  font-size: 0.95rem;
 }
 
 /* 照片窗 8% inset，与 stamp-frame.svg 内窗一致 */

@@ -2,6 +2,8 @@ import { useEffect, useState } from "react";
 import { Link, useParams } from "react-router-dom";
 import { hasMessage, t } from "@biotrace/messages";
 import { api, type VolumeListItem } from "../api";
+import StampLiftLayer, { type StampLift } from "../components/StampLiftLayer";
+import { measureBox } from "../motion";
 import { volumeStampFrameUrl } from "../themes";
 
 function msg(key: string) {
@@ -36,6 +38,7 @@ export default function CollectionVolumePage() {
   const [volume, setVolume] = useState<VolumeListItem | null>(null);
   const [error, setError] = useState<string | null>(null);
   const [loading, setLoading] = useState(true);
+  const [lift, setLift] = useState<StampLift | null>(null);
 
   useEffect(() => {
     setLoading(true);
@@ -83,17 +86,29 @@ export default function CollectionVolumePage() {
             const label = msg(slot.titleKey);
             const photoUrl = slot.lit ? slot.coverDisplayUrl : null;
             const face = <StampFace photoUrl={photoUrl} label={label} lit={slot.lit} />;
+            const sourceHidden = lift?.observationId === slot.coverObservationId;
 
-            if (slot.lit && slot.coverObservationId) {
+            if (slot.lit && slot.coverObservationId && photoUrl) {
               return (
-                <Link
+                <button
                   key={slot.id}
-                  className="stamp stamp-lit"
-                  to={`/observations/${slot.coverObservationId}`}
+                  type="button"
+                  className={`stamp stamp-lit${sourceHidden ? " is-lift-source" : ""}`}
+                  aria-label={t("collection.stampLift")}
+                  onClick={(e) => {
+                    const media = e.currentTarget.querySelector(".stamp-face");
+                    if (!(media instanceof HTMLElement)) return;
+                    setLift({
+                      observationId: slot.coverObservationId!,
+                      photoUrl,
+                      label,
+                      source: measureBox(media),
+                    });
+                  }}
                 >
                   {face}
                   <span className="stamp-caption">{label}</span>
-                </Link>
+                </button>
               );
             }
 
@@ -110,6 +125,8 @@ export default function CollectionVolumePage() {
           })}
         </div>
       ) : null}
+
+      {lift ? <StampLiftLayer lift={lift} onClose={() => setLift(null)} /> : null}
     </div>
   );
 }

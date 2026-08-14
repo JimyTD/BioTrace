@@ -9,6 +9,7 @@ import {
   isNotCollectibleError,
 } from "../identifyErrors";
 import { canUseNativePicker, MAX_UPLOAD_BATCH, pickImageNative } from "../pickImage";
+import { easeOutCubic, nextPaint, prefersReducedMotion, tween } from "../motion";
 import { tripFilmFrameUrl } from "../themes";
 import { tripMetaLine } from "../tripMeta";
 
@@ -70,6 +71,8 @@ export default function TripAlbumPage({ userId }: { userId: string }) {
   const fileInputRef = useRef<HTMLInputElement | null>(null);
   const nativePicker = canUseNativePicker();
   const prevPending = useRef(0);
+  const seenIds = useRef<Set<string> | null>(null);
+  const [slottingIds, setSlottingIds] = useState<Set<string>>(() => new Set());
 
   const analyzingIds = useMemo(
     () => observations.filter((o) => o.status === "analyzing").map((o) => o.id),
@@ -112,6 +115,8 @@ export default function TripAlbumPage({ userId }: { userId: string }) {
 
   useEffect(() => {
     setLoaded(false);
+    seenIds.current = null;
+    setSlottingIds(new Set());
     refresh()
       .then(() => undefined)
       .catch((e) => {
@@ -119,6 +124,64 @@ export default function TripAlbumPage({ userId }: { userId: string }) {
         setLoaded(true);
       });
   }, [id]);
+
+  useEffect(() => {
+    if (!loaded) return;
+    const ids = observations.map((o) => o.id);
+    if (seenIds.current === null) {
+      seenIds.current = new Set(ids);
+      return;
+    }
+    const fresh = ids.filter((obsId) => !seenIds.current!.has(obsId));
+    if (fresh.length === 0) return;
+    for (const obsId of fresh) seenIds.current.add(obsId);
+    setSlottingIds((prev) => {
+      const next = new Set(prev);
+      for (const obsId of fresh) next.add(obsId);
+      return next;
+    });
+    return undefined;
+  }, [loaded, observations]);
+
+  useEffect(() => {
+    if (slottingIds.size === 0) return;
+    const photos = [
+      ...document.querySelectorAll<HTMLElement>(".film-tile.is-slotting .film-tile-photo"),
+    ];
+    if (photos.length === 0) return;
+    let cancelled = false;
+    const reduce = prefersReducedMotion();
+    void (async () => {
+      await Promise.all(
+        photos.map((img) =>
+          img instanceof HTMLImageElement && img.decode
+            ? img.decode().catch(() => undefined)
+            : Promise.resolve(),
+        ),
+      );
+      await nextPaint();
+      if (cancelled) return;
+      if (reduce) {
+        for (const photo of photos) photo.style.transform = "translateY(0)";
+        setSlottingIds(new Set());
+        return;
+      }
+      await tween(
+        640,
+        (t) => {
+          const y = (1 - easeOutCubic(t)) * 108;
+          for (const photo of photos) photo.style.transform = `translateY(${y}%)`;
+        },
+        () => cancelled,
+      );
+      if (cancelled) return;
+      for (const photo of photos) photo.style.transform = "translateY(0)";
+      setSlottingIds(new Set());
+    })();
+    return () => {
+      cancelled = true;
+    };
+  }, [slottingIds]);
 
   useEffect(() => {
     if (analyzingIds.length === 0) return;
@@ -359,7 +422,9 @@ export default function TripAlbumPage({ userId }: { userId: string }) {
       <div className="album film-grid">
         {observations.map((obs) => (
           <article
-            className={`film-tile${obs.status === "pending_settle" ? " is-pending" : ""}`}
+            className={`film-tile${obs.status === "pending_settle" ? " is-pending" : ""}${
+              slottingIds.has(obs.id) ? " is-slotting" : ""
+            }`}
             key={obs.id}
           >
             <Link className="film-tile-link" to={obsHref(obs)}>
@@ -376,8 +441,8 @@ export default function TripAlbumPage({ userId }: { userId: string }) {
                           : obs.commonName || t("map.observationFallback")
                     }
                   />
-                  {obs.status === "pending_settle" ? (
-                    <div className="film-tile-pending-veil" aria-hidden />
+                  {obs.status === "pending_settle" && !slottingIds.has(obs.id) ? (
+                    <div className="film-tile-pending-seal" aria-hidden />
                   ) : null}
                 </div>
                 <img className="film-tile-frame" src={tripFilmFrameUrl()} alt="" aria-hidden />

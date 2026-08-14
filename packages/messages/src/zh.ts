@@ -208,6 +208,8 @@ export const zh = {
   "collection.volumeClose": "关闭",
   "collection.volumeBack": "图鉴",
   "collection.volumeStampEmpty": "未点亮",
+  "collection.stampLift": "拿起细看",
+  "collection.stampToRecord": "看这张记录",
   "collection.volumeStampsTitle": "邮票",
   "collection.speciesTitle": "已收录",
   "collection.speciesCount": "{count} 种",
