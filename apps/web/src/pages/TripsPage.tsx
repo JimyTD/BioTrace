@@ -148,6 +148,15 @@ export default function TripsPage({
                   source: captureCoverBox(media),
                 });
               }}
+              onTouchStart={(e) => {
+                const media = e.currentTarget.querySelector(".trip-cover-media");
+                if (!(media instanceof HTMLElement)) return;
+                setOpenBookHandoff({
+                  tripId: trip.id,
+                  coverUrl: trip.coverDisplayUrl ?? null,
+                  source: captureCoverBox(media),
+                });
+              }}
               onClick={(e) => {
                 const media = e.currentTarget.querySelector(".trip-cover-media");
                 if (media instanceof HTMLElement) {

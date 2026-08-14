@@ -70,9 +70,11 @@ export default function App() {
         </header>
         <main className="content">
           <Routes>
-            <Route path="/" element={<TripsShelf userId={user.id} />} />
+            <Route element={<TripsShelf userId={user.id} />}>
+              <Route index element={null} />
+              <Route path="trips/:id" element={null} />
+            </Route>
             <Route path="/trips/:id/manage" element={<TripManagePage userId={user.id} />} />
-            <Route path="/trips/:id" element={<TripsShelf userId={user.id} />} />
             <Route path="/observations/:id/pin" element={<PinLocationPage />} />
             <Route path="/observations/:id" element={<ObservationDetailPage />} />
             <Route path="/settle/:id" element={<ObservationSettlePage />} />

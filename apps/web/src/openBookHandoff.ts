@@ -9,9 +9,11 @@ export type OpenBookHandoff = {
   tripId: string;
   coverUrl: string | null;
   source: OpenBookBox;
+  at?: number;
 };
 
 const STORAGE_KEY = "bt_open_book";
+const FRESH_MS = 8000;
 
 let current: OpenBookHandoff | null = null;
 
@@ -34,17 +36,25 @@ function readStore(): OpenBookHandoff | null {
   }
 }
 
-export function setOpenBookHandoff(handoff: OpenBookHandoff) {
-  current = handoff;
-  writeStore(handoff);
+function isFresh(handoff: OpenBookHandoff) {
+  if (!handoff.at) return true;
+  return Date.now() - handoff.at < FRESH_MS;
 }
 
-export function takeOpenBookHandoff(tripId: string): OpenBookHandoff | null {
+export function setOpenBookHandoff(handoff: OpenBookHandoff) {
+  current = { ...handoff, at: Date.now() };
+  writeStore(current);
+}
+
+export function peekOpenBookHandoff(tripId: string): OpenBookHandoff | null {
   const found = current ?? readStore();
-  if (!found || found.tripId !== tripId) return null;
+  if (!found || found.tripId !== tripId || !isFresh(found)) return null;
+  return found;
+}
+
+export function clearOpenBookHandoff() {
   current = null;
   writeStore(null);
-  return found;
 }
 
 export function captureCoverBox(el: HTMLElement): OpenBookBox {

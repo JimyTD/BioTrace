@@ -7,7 +7,8 @@ import {
 } from "react";
 import { useNavigate } from "react-router-dom";
 import {
-  takeOpenBookHandoff,
+  clearOpenBookHandoff,
+  peekOpenBookHandoff,
   type OpenBookBox,
   type OpenBookHandoff,
 } from "../openBookHandoff";
@@ -52,13 +53,6 @@ function heldAt(from: OpenBookBox, dst: OpenBookBox): OpenBookBox {
   };
 }
 
-function isAndroidWebView() {
-  return (
-    document.documentElement.dataset.webview === "android" ||
-    /Android/i.test(navigator.userAgent)
-  );
-}
-
 function pinLayer(layer: HTMLElement) {
   const main = document.querySelector("main.content");
   const r = (main ?? layer).getBoundingClientRect();
@@ -76,20 +70,14 @@ function applyBox(el: HTMLElement, box: OpenBookBox) {
   el.style.height = `${box.height}px`;
 }
 
-function useFlatHinge() {
-  return (
-    isAndroidWebView() ||
-    window.matchMedia("(pointer: coarse)").matches
-  );
+function hingeCover(el: HTMLElement, opened: number) {
+  el.style.transform = `rotateY(${lerp(0, -95, opened)}deg)`;
 }
 
-function hingeCover(el: HTMLElement, opened: number) {
-  if (useFlatHinge()) {
-    el.style.transform = `scaleX(${lerp(1, 0.04, opened)})`;
-    el.style.opacity = String(1 - opened * 0.35);
-  } else {
-    el.style.transform = `rotateY(${lerp(0, -95, opened)}deg)`;
-  }
+function setBlur(el: HTMLElement, px: number) {
+  const value = px <= 0.5 ? "none" : `blur(${px}px)`;
+  el.style.filter = value;
+  el.style.webkitFilter = value;
 }
 
 function measure(el: Element): OpenBookBox {
@@ -135,7 +123,7 @@ function CoverClone({ coverUrl }: { coverUrl: string | null }) {
 
 export default function TripBookLayer({ tripId, children }: Props) {
   const navigate = useNavigate();
-  const [origin] = useState<OpenBookHandoff | null>(() => takeOpenBookHandoff(tripId));
+  const [origin] = useState<OpenBookHandoff | null>(() => peekOpenBookHandoff(tripId));
   const [phase, setPhase] = useState<Phase>("opening");
   const layerRef = useRef<HTMLDivElement | null>(null);
   const coverRef = useRef<HTMLDivElement | null>(null);
@@ -188,10 +176,19 @@ export default function TripBookLayer({ tripId, children }: Props) {
       matEl.style.opacity = "0";
       pagesEl.style.opacity = "0";
       shelf?.classList.add("is-book-back");
+      if (shelf instanceof HTMLElement) {
+        setBlur(shelf, 0);
+        shelf.style.transform = "scale(1)";
+      }
       await tween(
         280,
         (t) => {
-          matEl.style.opacity = String(easeOutCubic(t));
+          const e = easeOutCubic(t);
+          matEl.style.opacity = String(e);
+          if (shelf instanceof HTMLElement) {
+            setBlur(shelf, e * 44);
+            shelf.style.transform = `scale(${lerp(1, 1.14, e)})`;
+          }
         },
         isCancelled,
       );
@@ -238,6 +235,7 @@ export default function TripBookLayer({ tripId, children }: Props) {
             const e = easeInOut(t);
             hingeCover(cover, e);
             pagesEl.style.opacity = String(e);
+            setBlur(pagesEl, (1 - e) * 36);
           },
           isCancelled,
         );
@@ -255,15 +253,12 @@ export default function TripBookLayer({ tripId, children }: Props) {
         if (isCancelled()) return;
       }
 
-      const android = isAndroidWebView();
       await tween(
-        android ? 220 : 480,
+        480,
         (t) => {
           const e = easeOutCubic(t);
           pagesEl.style.opacity = "1";
-          if (!android) {
-            pagesEl.style.filter = `blur(${(1 - e) * 36}px)`;
-          }
+          setBlur(pagesEl, (1 - e) * 36);
         },
         isCancelled,
       );
@@ -271,6 +266,7 @@ export default function TripBookLayer({ tripId, children }: Props) {
       pagesEl.style.opacity = "1";
       pagesEl.style.filter = "none";
       matEl.style.opacity = "1";
+      clearOpenBookHandoff();
       setPhase("open");
     }
 
@@ -287,6 +283,7 @@ export default function TripBookLayer({ tripId, children }: Props) {
             const e = easeInOut(t);
             hingeCover(cover, 1 - e);
             pagesEl.style.opacity = String(1 - e);
+            setBlur(pagesEl, e * 36);
           },
           isCancelled,
         );
@@ -305,6 +302,10 @@ export default function TripBookLayer({ tripId, children }: Props) {
               height: from.height,
             });
             matEl.style.opacity = String(1 - e);
+            if (shelf instanceof HTMLElement) {
+              setBlur(shelf, (1 - e) * 44);
+              shelf.style.transform = `scale(${lerp(1.14, 1, e)})`;
+            }
           },
           isCancelled,
         );
