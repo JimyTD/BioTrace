@@ -11,7 +11,7 @@ import "./styles.css";
 
 initTheme();
 
-if (isNativeAndroidShell()) {
+if (/Android/i.test(navigator.userAgent) || isNativeAndroidShell()) {
   document.documentElement.dataset.webview = "android";
 }
 

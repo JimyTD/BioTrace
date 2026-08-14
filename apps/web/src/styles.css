@@ -290,10 +290,15 @@ button.trip-cover {
 }
 
 .page-trips.is-book-back {
-  filter: blur(44px);
-  -webkit-filter: blur(44px);
-  transform: scale(1.14);
   pointer-events: none;
+}
+
+@media (hover: hover) and (pointer: fine) {
+  .page-trips.is-book-back {
+    filter: blur(44px);
+    -webkit-filter: blur(44px);
+    transform: scale(1.14);
+  }
 }
 
 .trip-cover-media {
@@ -1984,8 +1989,7 @@ button.me-row {
 }
 
 .trip-book-layer {
-  position: absolute;
-  inset: 0;
+  position: fixed;
   z-index: 15;
   perspective: 1400px;
   perspective-origin: 50% 50%;
@@ -1996,7 +2000,7 @@ button.me-row {
 .trip-book-mat {
   position: absolute;
   inset: 0;
-  background: color-mix(in srgb, var(--bg0) 88%, var(--ink));
+  background: var(--bg0);
   opacity: 0;
 }
 
@@ -2017,14 +2021,31 @@ button.me-row {
   background-repeat: no-repeat;
   background-size: cover;
   opacity: 0;
-  filter: blur(36px);
-  -webkit-filter: blur(36px);
+}
+
+@media (hover: hover) and (pointer: fine) {
+  .trip-book-pages {
+    filter: blur(36px);
+    -webkit-filter: blur(36px);
+  }
 }
 
 .trip-book-layer.is-open .trip-book-pages {
   opacity: 1;
-  filter: blur(0);
-  -webkit-filter: blur(0);
+  filter: none;
+  -webkit-filter: none;
+}
+
+@media (pointer: coarse) {
+  .trip-book-layer {
+    perspective: none;
+  }
+
+  .trip-book-cover {
+    transform-style: flat;
+    backface-visibility: visible;
+    -webkit-backface-visibility: visible;
+  }
 }
 
 html[data-webview="android"] .trip-book-layer {

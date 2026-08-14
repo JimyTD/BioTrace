@@ -53,7 +53,20 @@ function heldAt(from: OpenBookBox, dst: OpenBookBox): OpenBookBox {
 }
 
 function isAndroidWebView() {
-  return document.documentElement.dataset.webview === "android";
+  return (
+    document.documentElement.dataset.webview === "android" ||
+    /Android/i.test(navigator.userAgent)
+  );
+}
+
+function pinLayer(layer: HTMLElement) {
+  const main = document.querySelector("main.content");
+  const r = (main ?? layer).getBoundingClientRect();
+  layer.style.position = "fixed";
+  layer.style.left = `${r.left}px`;
+  layer.style.top = `${r.top}px`;
+  layer.style.width = `${r.width}px`;
+  layer.style.height = `${r.height}px`;
 }
 
 function applyBox(el: HTMLElement, box: OpenBookBox) {
@@ -63,8 +76,15 @@ function applyBox(el: HTMLElement, box: OpenBookBox) {
   el.style.height = `${box.height}px`;
 }
 
+function useFlatHinge() {
+  return (
+    isAndroidWebView() ||
+    window.matchMedia("(pointer: coarse)").matches
+  );
+}
+
 function hingeCover(el: HTMLElement, opened: number) {
-  if (isAndroidWebView()) {
+  if (useFlatHinge()) {
     el.style.transform = `scaleX(${lerp(1, 0.04, opened)})`;
     el.style.opacity = String(1 - opened * 0.35);
   } else {
@@ -154,6 +174,7 @@ export default function TripBookLayer({ tripId, children }: Props) {
       return;
     }
 
+    pinLayer(layer);
     const pagesEl = pages;
     const matEl = mat;
     const dst = measure(layer);
