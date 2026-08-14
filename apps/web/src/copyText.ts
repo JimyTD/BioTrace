@@ -1,30 +1,5 @@
+import { Clipboard } from "@capacitor/clipboard";
 import { Capacitor } from "@capacitor/core";
-
-export type CopyTextResult = "copied" | "shared" | "failed";
-
-function isAndroidShell(): boolean {
-  if (typeof document !== "undefined" && document.documentElement.dataset.webview === "android") {
-    return true;
-  }
-  try {
-    return Capacitor.isNativePlatform() && Capacitor.getPlatform() === "android";
-  } catch {
-    return false;
-  }
-}
-
-function hasNativeClipboardPlugin(): boolean {
-  try {
-    return Capacitor.isNativePlatform() && Capacitor.isPluginAvailable("Clipboard");
-  } catch {
-    return false;
-  }
-}
-
-/** True when the invite button should label itself as share (no silent clipboard). */
-export function androidInviteUsesShare(): boolean {
-  return isAndroidShell() && !hasNativeClipboardPlugin();
-}
 
 function copyViaExecCommand(
   value: string,
@@ -60,64 +35,31 @@ function copyViaExecCommand(
   }
 }
 
-async function copyViaCapacitorClipboard(value: string): Promise<boolean> {
-  if (!hasNativeClipboardPlugin()) return false;
-  try {
-    const { Clipboard } = await import("@capacitor/clipboard");
-    await Clipboard.write({ string: value });
-    return true;
-  } catch {
-    return false;
-  }
-}
-
-async function shareViaNavigator(value: string): Promise<boolean> {
-  if (typeof navigator === "undefined" || typeof navigator.share !== "function") return false;
-  try {
-    await navigator.share({ text: value });
-    return true;
-  } catch {
-    return false;
-  }
-}
-
 /**
- * Capacitor Android + remote HTTP cannot reliably silent-copy via browser APIs.
- * - APK with @capacitor/clipboard → native write
- * - Current APK without plugin → Web Share (must run before any other await)
- * - Do NOT trust execCommand on Android: it may return true without writing clipboard
+ * Copy plain text to the system clipboard.
+ * Native Capacitor shell → @capacitor/clipboard（需带该插件的 APK）.
+ * Browser → Clipboard API，必要时回退 execCommand.
  */
 export async function copyText(
   text: string,
   opts?: { selectEl?: HTMLInputElement | HTMLTextAreaElement | null },
-): Promise<CopyTextResult> {
+): Promise<boolean> {
   const value = text.trim();
-  if (!value) return "failed";
+  if (!value) return false;
 
-  const android = isAndroidShell();
-
-  if (hasNativeClipboardPlugin()) {
-    if (await copyViaCapacitorClipboard(value)) return "copied";
+  if (Capacitor.isNativePlatform()) {
+    await Clipboard.write({ string: value });
+    return true;
   }
 
-  // Existing Android APK: share immediately while click gesture is alive.
-  if (android) {
-    if (await shareViaNavigator(value)) return "shared";
-    return "failed";
-  }
-
-  if (typeof window !== "undefined" && window.isSecureContext) {
-    if (typeof navigator !== "undefined" && navigator.clipboard?.writeText) {
-      try {
-        await navigator.clipboard.writeText(value);
-        return "copied";
-      } catch {
-        /* fall through */
-      }
+  if (typeof navigator !== "undefined" && navigator.clipboard?.writeText) {
+    try {
+      await navigator.clipboard.writeText(value);
+      return true;
+    } catch {
+      /* fall through */
     }
   }
 
-  if (copyViaExecCommand(value, opts?.selectEl)) return "copied";
-  if (await shareViaNavigator(value)) return "shared";
-  return "failed";
+  return copyViaExecCommand(value, opts?.selectEl);
 }
