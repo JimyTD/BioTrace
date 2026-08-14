@@ -1,4 +1,4 @@
-import { useEffect, useState, type FormEvent } from "react";
+import { useEffect, useRef, useState, type FormEvent } from "react";
 import { Link, useNavigate, useParams } from "react-router-dom";
 import { t } from "@biotrace/messages";
 import { api, type Trip, type TripMember } from "../api";
@@ -7,6 +7,7 @@ import { copyText } from "../copyText";
 export default function TripManagePage({ userId }: { userId: string }) {
   const { id = "" } = useParams();
   const navigate = useNavigate();
+  const inviteInputRef = useRef<HTMLInputElement | null>(null);
   const [trip, setTrip] = useState<Trip | null>(null);
   const [members, setMembers] = useState<TripMember[]>([]);
   const [error, setError] = useState<string | null>(null);
@@ -22,6 +23,7 @@ export default function TripManagePage({ userId }: { userId: string }) {
   const [deletingTrip, setDeletingTrip] = useState(false);
   const [allowJoinBusy, setAllowJoinBusy] = useState(false);
   const [copiedFlash, setCopiedFlash] = useState(false);
+  const [notice, setNotice] = useState<string | null>(null);
   const [leaving, setLeaving] = useState(false);
   const [kickingId, setKickingId] = useState<string | null>(null);
   const isAdmin = Boolean(trip?.isAdmin);
@@ -132,12 +134,19 @@ export default function TripManagePage({ userId }: { userId: string }) {
       return;
     }
     setError(null);
-    const ok = await copyText(code);
-    if (!ok) {
+    setNotice(null);
+    const result = await copyText(code, { selectEl: inviteInputRef.current });
+    if (result === "failed") {
+      inviteInputRef.current?.focus();
+      inviteInputRef.current?.select();
       setError(t("share.copyFailed"));
       return;
     }
     setCopiedFlash(true);
+    if (result === "shared") {
+      setNotice(t("share.shared"));
+      window.setTimeout(() => setNotice(null), 4000);
+    }
     window.setTimeout(() => setCopiedFlash(false), 2000);
   }
 
@@ -178,6 +187,7 @@ export default function TripManagePage({ userId }: { userId: string }) {
 
       {!loaded ? <p className="muted">{t("app.loading")}</p> : null}
       {error ? <p className="error">{error}</p> : null}
+      {notice ? <p className="muted">{notice}</p> : null}
 
       {loaded && trip ? (
         <>
@@ -256,6 +266,7 @@ export default function TripManagePage({ userId }: { userId: string }) {
                 <div className="row">
                   <input
                     id="trip-invite-code"
+                    ref={inviteInputRef}
                     className="input"
                     value={trip.inviteCode ?? ""}
                     readOnly
