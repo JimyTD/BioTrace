@@ -2,10 +2,17 @@ import { useEffect, useState, type FormEvent } from "react";
 import { Link } from "react-router-dom";
 import { t } from "@biotrace/messages";
 import { api, type Trip } from "../api";
+import { captureCoverBox, setOpenBookHandoff } from "../openBookHandoff";
 import { tripCoverFrameUrl } from "../themes";
 import { tripMetaLine } from "../tripMeta";
 
-export default function TripsPage() {
+export default function TripsPage({
+  activeTripId,
+  bookOpen = false,
+}: {
+  activeTripId?: string;
+  bookOpen?: boolean;
+}) {
   const [trips, setTrips] = useState<Trip[]>([]);
   const [title, setTitle] = useState("");
   const [joinCode, setJoinCode] = useState("");
@@ -56,7 +63,7 @@ export default function TripsPage() {
   }
 
   return (
-    <div className="stack page-trips">
+    <div className="stack page-trips" {...(bookOpen ? { inert: true } : {})}>
       <header className="page-head">
         <h1 className="page-title">{t("trips.title")}</h1>
         <p className="lede">{t("trips.lede")}</p>
@@ -127,7 +134,20 @@ export default function TripsPage() {
       ) : (
         <div className="trip-cover-list">
           {trips.map((trip) => (
-            <Link className="trip-cover" key={trip.id} to={`/trips/${trip.id}`}>
+            <Link
+              className={`trip-cover${activeTripId === trip.id ? " is-book-source" : ""}`}
+              key={trip.id}
+              to={`/trips/${trip.id}`}
+              onClick={(e) => {
+                const media = e.currentTarget.querySelector(".trip-cover-media");
+                if (!(media instanceof HTMLElement)) return;
+                setOpenBookHandoff({
+                  tripId: trip.id,
+                  coverUrl: trip.coverDisplayUrl ?? null,
+                  source: captureCoverBox(media),
+                });
+              }}
+            >
               <div className="trip-cover-media">
                 <div className="trip-cover-window">
                   {trip.coverDisplayUrl ? (

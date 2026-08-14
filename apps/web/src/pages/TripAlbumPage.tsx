@@ -1,8 +1,9 @@
-import { useEffect, useMemo, useRef, useState, type FormEvent, type MouseEvent } from "react";
+import { useContext, useEffect, useMemo, useRef, useState, type FormEvent, type MouseEvent } from "react";
 import { Link, useParams } from "react-router-dom";
 import { formatRank, t } from "@biotrace/messages";
 import { ApiError, api, type Observation, type Trip } from "../api";
 import ConfirmDialog from "../components/ConfirmDialog";
+import { OpenBookCloseContext } from "../components/TripBookLayer";
 import {
   identifyErrorPrimary,
   isNotCollectibleError,
@@ -50,6 +51,7 @@ function albumMetaLine(trip: Trip): string {
 
 export default function TripAlbumPage({ userId }: { userId: string }) {
   const { id = "" } = useParams();
+  const closeBook = useContext(OpenBookCloseContext);
   const [trip, setTrip] = useState<Trip | null>(null);
   const [observations, setObservations] = useState<Observation[]>([]);
   const [files, setFiles] = useState<File[]>([]);
@@ -265,7 +267,15 @@ export default function TripAlbumPage({ userId }: { userId: string }) {
     <div className="stack page-album">
       <header className="page-head album-head">
         <div className="album-head-row">
-          <Link className="text-link" to="/">
+          <Link
+            className="text-link"
+            to="/"
+            onClick={(e) => {
+              if (!closeBook) return;
+              e.preventDefault();
+              closeBook();
+            }}
+          >
             ← {t("album.back")}
           </Link>
           <Link className="text-link" to={`/trips/${id}/manage`}>

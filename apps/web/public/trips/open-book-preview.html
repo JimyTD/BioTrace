@@ -1,0 +1,469 @@
+<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>翻开一本 · Cut K</title>
+    <style>
+      :root {
+        --ink: #1f2a24; --muted: #6b6258; --line: rgba(42, 64, 51, 0.14);
+        --cta: #d3543c; --cta-ink: #fffaf7;
+        --nav-bg: #f3efe7; --nav-active-ink: #9a4030;
+        --plate: #efe6d6; --shadow: 0 10px 26px rgba(42, 36, 28, 0.1);
+        --shadow-hover: 0 14px 32px rgba(42, 36, 28, 0.14);
+        --font: "Segoe UI", "PingFang SC", "Microsoft YaHei", sans-serif;
+        --bg:
+          radial-gradient(900px 480px at 8% -8%, rgba(212, 168, 120, 0.22), transparent 55%),
+          linear-gradient(180deg, #f3efe7, #ebe6dc);
+      }
+      * { box-sizing: border-box; }
+      body {
+        margin: 0; padding: 16px 12px 40px;
+        font-family: var(--font); color: var(--ink); background: #d9d0c2;
+      }
+      h1.doc { margin: 0 0 8px; font-size: 1.15rem; }
+      .note { margin: 0 0 14px; color: #5a5248; font-size: 0.92rem; max-width: 56ch; }
+      .phone {
+        width: min(100%, 360px); height: 640px; background: var(--bg);
+        border-radius: 22px; border: 1px solid rgba(42,36,28,.18);
+        box-shadow: 0 16px 40px rgba(42,36,28,.14);
+        display: grid; grid-template-rows: auto 1fr auto; overflow: hidden;
+      }
+      .topbar {
+        padding: 12px 16px 10px; background: var(--nav-bg);
+        border-bottom: 1px solid var(--line); font-weight: 700;
+      }
+      .stage { position: relative; min-height: 0; overflow: hidden; }
+      .content {
+        height: 100%; overflow-y: auto; padding: 16px;
+        display: grid; gap: 12px; align-content: start;
+      }
+      .title { margin: 0; font-size: 1.45rem; font-weight: 700; }
+      .lede { margin: 0; color: var(--muted); font-size: 0.95rem; }
+      .covers { display: grid; gap: 18px; }
+      .cover {
+        display: grid; gap: 10px; width: 100%; margin: 0; padding: 0;
+        border: 0; background: none; font: inherit; color: inherit;
+        text-align: start; cursor: pointer;
+      }
+      .cover.is-source { visibility: hidden; }
+      .media {
+        position: relative; aspect-ratio: 3/2; border-radius: 12px; overflow: hidden;
+        background: var(--plate); box-shadow: var(--shadow);
+      }
+      .media .window {
+        position: absolute; top: 6%; left: 6%; width: 88%; height: 88%; overflow: hidden;
+      }
+      .media .photo { width: 100%; height: 100%; object-fit: cover; display: block; }
+      .media .ph {
+        width: 100%; height: 100%;
+        background: linear-gradient(145deg, rgba(211,84,60,.1), transparent 55%), var(--plate);
+      }
+      .media .frame { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: fill; z-index: 1; }
+      .meta strong { display: block; font-size: 1.12rem; }
+      .meta span { display: block; color: var(--muted); font-size: 0.9rem; }
+      .nav {
+        display: grid; grid-template-columns: repeat(4, 1fr);
+        padding: 0 4px 8px; background: var(--nav-bg); border-top: 1px solid var(--line);
+      }
+      .nav span {
+        position: relative; text-align: center; font-size: 0.86rem;
+        color: var(--muted); padding: 12px 6px 14px;
+      }
+      .nav span.on { color: var(--nav-active-ink); font-weight: 700; }
+      .nav span.on::after {
+        content: ""; position: absolute; left: 22%; right: 22%; bottom: 6px;
+        height: 2px; border-radius: 1px; background: var(--nav-active-ink);
+      }
+
+      #shelf.is-back {
+        filter: blur(12px);
+        transform: scale(1.06);
+        pointer-events: none;
+      }
+      .book-layer {
+        position: absolute; inset: 0; z-index: 4;
+        perspective: 1400px; perspective-origin: 50% 50%;
+        overflow: hidden; pointer-events: none;
+      }
+      .book-layer.is-on { pointer-events: auto; }
+      .book-mat {
+        position: absolute; inset: 0;
+        background: color-mix(in srgb, var(--bg) 42%, transparent);
+        opacity: 0;
+      }
+      .book-pages {
+        position: absolute; inset: 0; overflow-y: auto;
+        padding: 16px; opacity: 0; background: var(--bg);
+      }
+      .book-layer.is-open .book-mat { opacity: 1; }
+      .book-layer.is-open .book-pages { opacity: 1; }
+      .book-layer.is-open .book-cover { transform: rotateY(-95deg); }
+      .book-cover {
+        position: absolute; z-index: 2; overflow: hidden;
+        background: var(--plate); box-shadow: var(--shadow-hover);
+        border-radius: 12px; transform-origin: left center; transform-style: preserve-3d;
+        backface-visibility: hidden; -webkit-backface-visibility: hidden; pointer-events: none;
+      }
+      .book-cover .media { width: 100%; height: 100%; }
+      .head-row { display: flex; justify-content: space-between; }
+      .text-link {
+        border: 0; background: none; padding: 0; font: inherit;
+        color: var(--muted); cursor: pointer;
+      }
+      .album-title { margin: 0; font-size: 1.45rem; font-weight: 700; }
+      .album-meta { margin: 0; color: var(--muted); font-size: 0.92rem; }
+      .btn {
+        justify-self: start; border: 0; border-radius: 10px; padding: 8px 14px;
+        font: inherit; background: var(--cta); color: var(--cta-ink);
+      }
+      .btn:disabled { opacity: 0.55; }
+      .film { display: grid; grid-template-columns: 1fr 1fr; gap: 14px 10px; }
+      .tile-media {
+        position: relative; aspect-ratio: 1; border-radius: 3px; overflow: hidden;
+        background: var(--plate); box-shadow: 0 4px 14px rgba(42,36,28,.08);
+      }
+      .tile-media .photo { position: absolute; inset: 8%; width: 84%; height: 84%; object-fit: cover; }
+      .tile-media .frame { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: fill; z-index: 2; }
+      .tile-media .veil {
+        position: absolute; inset: 8%; z-index: 1;
+        background: linear-gradient(160deg, rgba(231,223,210,.55), transparent 62%);
+      }
+      .tile-name { margin: 6px 0 0; font-size: 0.92rem; }
+      .tile-name span { color: var(--muted); display: block; font-size: 0.82rem; }
+      .empty { margin: 12px 0 0; color: var(--muted); }
+      @media (prefers-reduced-motion: reduce) {
+        .book-cover { transition: none; }
+      }
+    </style>
+  </head>
+  <body>
+    <h1 class="doc">翻开一本 · Cut K</h1>
+    <p class="note">
+      点封面：封面走到屏幕中间再掀。墙模糊退后，不靠空白纸去挡。
+      点「旅途」或 Esc 合上。静态演示，不进 App。
+    </p>
+    <div class="phone">
+      <div class="topbar">BioTrace</div>
+      <div class="stage" id="stage">
+        <div class="content" id="shelf">
+          <h2 class="title">旅途</h2>
+          <p class="lede">每一次出门，都是一本新相册。</p>
+          <div class="covers">
+            <button class="cover" type="button" data-title="潮间带三日" data-album="a">
+              <div class="media">
+                <div class="window"><img class="photo" src="../volumes/daylight/cover-intertidal.png" alt="" /></div>
+                <img class="frame" src="./daylight/cover-frame.svg" alt="" />
+              </div>
+              <div class="meta"><strong>潮间带三日</strong><span>12 张 · 3 人</span></div>
+            </button>
+            <button class="cover" type="button" data-title="林缘早班" data-album="b">
+              <div class="media">
+                <div class="window"><img class="photo" src="../volumes/daylight/cover-woodland_edge.png" alt="" /></div>
+                <img class="frame" src="./daylight/cover-frame.svg" alt="" />
+              </div>
+              <div class="meta"><strong>林缘早班</strong><span>5 张</span></div>
+            </button>
+            <button class="cover" type="button" data-title="空白的一本" data-album="c">
+              <div class="media">
+                <div class="window"><div class="ph" aria-hidden></div></div>
+                <img class="frame" src="./daylight/cover-frame.svg" alt="" />
+              </div>
+              <div class="meta"><strong>空白的一本</strong><span>还没有照片</span></div>
+            </button>
+          </div>
+        </div>
+        <div class="book-layer" id="layer" hidden>
+          <div class="book-mat" id="mat"></div>
+          <div class="book-pages" id="pages"></div>
+          <div class="book-cover" id="cover"></div>
+        </div>
+      </div>
+      <nav class="nav" aria-label="BioTrace">
+        <span class="on">旅途</span><span>地图</span><span>图鉴</span><span>我的</span>
+      </nav>
+    </div>
+
+    <template id="album-a">
+      <div class="head-row"><button class="text-link" type="button" data-close>← 旅途</button></div>
+      <h2 class="album-title">潮间带三日</h2>
+      <p class="album-meta">12 张 · 3 人</p>
+      <button class="btn" type="button" disabled>加入照片</button>
+      <div class="film">
+        <div>
+          <div class="tile-media">
+            <img class="photo" src="../volumes/daylight/cover-intertidal.png" alt="" />
+            <img class="frame" src="./daylight/film-frame.svg" alt="" />
+          </div>
+          <p class="tile-name">寄居蟹</p>
+        </div>
+        <div>
+          <div class="tile-media">
+            <img class="photo" src="./_sample-photo.jpg" alt="" />
+            <div class="veil"></div>
+            <img class="frame" src="./daylight/film-frame.svg" alt="" />
+          </div>
+          <p class="tile-name"><span>结论已经落笔。</span></p>
+        </div>
+        <div>
+          <div class="tile-media">
+            <img class="photo" src="../volumes/daylight/cover-urban_wild.png" alt="" />
+            <img class="frame" src="./daylight/film-frame.svg" alt="" />
+          </div>
+          <p class="tile-name">矶沙蚕</p>
+        </div>
+        <div>
+          <div class="tile-media">
+            <img class="photo" src="../volumes/daylight/cover-woodland_edge.png" alt="" />
+            <img class="frame" src="./daylight/film-frame.svg" alt="" />
+          </div>
+          <p class="tile-name">海葵</p>
+        </div>
+      </div>
+    </template>
+    <template id="album-b">
+      <div class="head-row"><button class="text-link" type="button" data-close>← 旅途</button></div>
+      <h2 class="album-title">林缘早班</h2>
+      <p class="album-meta">5 张</p>
+      <button class="btn" type="button" disabled>加入照片</button>
+      <div class="film">
+        <div>
+          <div class="tile-media">
+            <img class="photo" src="../volumes/daylight/cover-woodland_edge.png" alt="" />
+            <img class="frame" src="./daylight/film-frame.svg" alt="" />
+          </div>
+          <p class="tile-name">海葵</p>
+        </div>
+        <div>
+          <div class="tile-media">
+            <img class="photo" src="../volumes/daylight/cover-urban_wild.png" alt="" />
+            <img class="frame" src="./daylight/film-frame.svg" alt="" />
+          </div>
+          <p class="tile-name">矶沙蚕</p>
+        </div>
+      </div>
+    </template>
+    <template id="album-c">
+      <div class="head-row"><button class="text-link" type="button" data-close>← 旅途</button></div>
+      <h2 class="album-title">空白的一本</h2>
+      <p class="album-meta">还没有照片</p>
+      <button class="btn" type="button" disabled>加入照片</button>
+      <p class="empty">册页还空着。加入照片，开始记录。</p>
+    </template>
+
+    <script>
+      const stage = document.getElementById("stage");
+      const shelf = document.getElementById("shelf");
+      const layer = document.getElementById("layer");
+      const mat = document.getElementById("mat");
+      const pages = document.getElementById("pages");
+      const coverEl = document.getElementById("cover");
+      const reduced = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+
+      let phase = "shelf";
+      let sourceBtn = null;
+      let fromBox = null;
+      let heldBox = null;
+      let gen = 0;
+
+      function rect(el) {
+        const r = el.getBoundingClientRect();
+        return { left: r.left, top: r.top, width: r.width, height: r.height };
+      }
+      function local(src, dst) {
+        return {
+          left: src.left - dst.left,
+          top: src.top - dst.top,
+          width: src.width,
+          height: src.height,
+        };
+      }
+      function heldAt(from, dst) {
+        return {
+          left: (dst.width - from.width) / 2,
+          top: (dst.height - from.height) / 2,
+          width: from.width,
+          height: from.height,
+        };
+      }
+      function apply(el, box) {
+        el.style.left = box.left + "px";
+        el.style.top = box.top + "px";
+        el.style.width = box.width + "px";
+        el.style.height = box.height + "px";
+      }
+      function kf(a, b, extra) {
+        extra = extra || {};
+        return [
+          { left: a.left + "px", top: a.top + "px", width: a.width + "px", height: a.height + "px", ...extra },
+          { left: b.left + "px", top: b.top + "px", width: b.width + "px", height: b.height + "px", ...extra },
+        ];
+      }
+      async function play(el, frames, duration, easing) {
+        const anim = el.animate(frames, { duration: duration, easing: easing, fill: "forwards" });
+        try {
+          await anim.finished;
+          anim.commitStyles();
+        } catch (e) {
+          /* cancelled */
+        } finally {
+          anim.cancel();
+        }
+      }
+
+      async function openBook(btn) {
+        if (phase !== "shelf") return;
+        const media = btn.querySelector(".media");
+        const tpl = document.getElementById("album-" + btn.dataset.album);
+        const dst = rect(stage);
+        fromBox = local(rect(media), dst);
+        heldBox = heldAt(fromBox, dst);
+        sourceBtn = btn;
+        sourceBtn.classList.add("is-source");
+        coverEl.innerHTML = media.outerHTML;
+        pages.innerHTML = tpl.innerHTML;
+        pages.querySelector("[data-close]").addEventListener("click", closeBook);
+        layer.hidden = false;
+        layer.className = "book-layer is-on is-opening";
+        phase = "opening";
+        const token = ++gen;
+
+        apply(coverEl, fromBox);
+        coverEl.style.transform = "rotateY(0deg)";
+        mat.style.opacity = "0";
+        pages.style.opacity = "0";
+        pages.style.filter = "blur(16px)";
+
+        if (reduced) {
+          apply(coverEl, heldBox);
+          coverEl.style.transform = "rotateY(-95deg)";
+          mat.style.opacity = "1";
+          pages.style.opacity = "1";
+          pages.style.filter = "blur(0px)";
+          shelf.classList.add("is-back");
+          layer.className = "book-layer is-on is-open";
+          phase = "open";
+          return;
+        }
+
+        const lifted = { ...fromBox, top: fromBox.top - 14 };
+        void play(mat, [{ opacity: 0 }, { opacity: 1 }], 240, "ease-out");
+        void play(
+          shelf,
+          [
+            { filter: "blur(0px)", transform: "scale(1)" },
+            { filter: "blur(12px)", transform: "scale(1.06)" },
+          ],
+          280,
+          "ease-out",
+        );
+        await play(coverEl, kf(fromBox, lifted, { transform: "rotateY(0deg)" }), 140, "cubic-bezier(0.22, 1, 0.36, 1)");
+        if (token !== gen) return;
+        await play(coverEl, kf(lifted, heldBox, { transform: "rotateY(0deg)" }), 300, "cubic-bezier(0.22, 1, 0.36, 1)");
+        if (token !== gen) return;
+        apply(coverEl, heldBox);
+        coverEl.style.transform = "rotateY(0deg)";
+        shelf.classList.add("is-back");
+        void play(
+          pages,
+          [
+            { opacity: 0, filter: "blur(16px)" },
+            { opacity: 1, filter: "blur(16px)" },
+          ],
+          240,
+          "ease-out",
+        );
+        await play(coverEl, [{ transform: "rotateY(0deg)" }, { transform: "rotateY(-95deg)" }], 520, "cubic-bezier(0.45, 0.02, 0.2, 1)");
+        if (token !== gen) return;
+        coverEl.style.transform = "rotateY(-95deg)";
+        mat.style.opacity = "1";
+        pages.style.opacity = "1";
+        await play(
+          pages,
+          [
+            { opacity: 1, filter: "blur(16px)" },
+            { opacity: 1, filter: "blur(0px)" },
+          ],
+          480,
+          "cubic-bezier(0.22, 1, 0.36, 1)",
+        );
+        if (token !== gen) return;
+        pages.style.filter = "blur(0px)";
+        layer.className = "book-layer is-on is-open";
+        phase = "open";
+      }
+
+      async function closeBook() {
+        if (phase === "shelf" || phase === "closing") return;
+        phase = "closing";
+        layer.className = "book-layer is-on is-closing";
+        const token = ++gen;
+        const from = fromBox;
+        const held = heldBox;
+
+        if (reduced) {
+          finishClose();
+          return;
+        }
+
+        apply(coverEl, held);
+        coverEl.style.transform = "rotateY(-95deg)";
+        mat.style.opacity = "1";
+        pages.style.opacity = "1";
+        pages.style.filter = "blur(0px)";
+        void play(
+          pages,
+          [
+            { opacity: 1, filter: "blur(0px)" },
+            { opacity: 1, filter: "blur(16px)" },
+          ],
+          220,
+          "ease-in",
+        );
+        await play(coverEl, [{ transform: "rotateY(-95deg)" }, { transform: "rotateY(0deg)" }], 380, "cubic-bezier(0.45, 0.02, 0.2, 1)");
+        if (token !== gen) return;
+        coverEl.style.transform = "rotateY(0deg)";
+        void play(pages, [{ opacity: 1, filter: "blur(16px)" }, { opacity: 0, filter: "blur(16px)" }], 160, "ease-in");
+        shelf.classList.remove("is-back");
+        void play(
+          shelf,
+          [
+            { filter: "blur(12px)", transform: "scale(1.06)" },
+            { filter: "blur(0px)", transform: "scale(1)" },
+          ],
+          260,
+          "ease-out",
+        );
+        await play(coverEl, kf(held, from, { transform: "rotateY(0deg)" }), 280, "cubic-bezier(0.4, 0, 0.2, 1)");
+        if (token !== gen) return;
+        await play(mat, [{ opacity: 1 }, { opacity: 0 }], 160, "ease-in");
+        if (token !== gen) return;
+        finishClose();
+      }
+
+      function finishClose() {
+        layer.hidden = true;
+        layer.className = "book-layer";
+        coverEl.removeAttribute("style");
+        pages.removeAttribute("style");
+        mat.removeAttribute("style");
+        coverEl.innerHTML = "";
+        pages.innerHTML = "";
+        shelf.classList.remove("is-back");
+        shelf.removeAttribute("style");
+        if (sourceBtn) sourceBtn.classList.remove("is-source");
+        sourceBtn = null;
+        fromBox = null;
+        heldBox = null;
+        phase = "shelf";
+      }
+
+      document.querySelectorAll(".cover").forEach(function (btn) {
+        btn.addEventListener("click", function () { openBook(btn); });
+      });
+      document.addEventListener("keydown", function (e) {
+        if (e.key === "Escape") closeBook();
+      });
+    </script>
+  </body>
+</html>

@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { NavLink, Navigate, Route, Routes } from "react-router-dom";
+import { NavLink, Navigate, Route, Routes, useParams } from "react-router-dom";
 import { t } from "@biotrace/messages";
 import { api, type User } from "./api";
 import ForceAppUpdateGate from "./components/ForceAppUpdateGate";
@@ -18,9 +18,24 @@ import ObservationDetailPage from "./pages/ObservationDetailPage";
 import ObservationSettlePage from "./pages/ObservationSettlePage";
 import PinLocationPage from "./pages/PinLocationPage";
 import SettleArtPreviewPage from "./pages/SettleArtPreviewPage";
+import TripBookLayer from "./components/TripBookLayer";
 import TripAlbumPage from "./pages/TripAlbumPage";
 import TripManagePage from "./pages/TripManagePage";
 import TripsPage from "./pages/TripsPage";
+
+function TripsShelf({ userId }: { userId: string }) {
+  const { id } = useParams();
+  return (
+    <>
+      <TripsPage activeTripId={id} bookOpen={Boolean(id)} />
+      {id ? (
+        <TripBookLayer tripId={id}>
+          <TripAlbumPage userId={userId} />
+        </TripBookLayer>
+      ) : null}
+    </>
+  );
+}
 
 export default function App() {
   const [user, setUser] = useState<User | null>(null);
@@ -55,9 +70,9 @@ export default function App() {
         </header>
         <main className="content">
           <Routes>
-            <Route path="/" element={<TripsPage />} />
+            <Route path="/" element={<TripsShelf userId={user.id} />} />
             <Route path="/trips/:id/manage" element={<TripManagePage userId={user.id} />} />
-            <Route path="/trips/:id" element={<TripAlbumPage userId={user.id} />} />
+            <Route path="/trips/:id" element={<TripsShelf userId={user.id} />} />
             <Route path="/observations/:id/pin" element={<PinLocationPage />} />
             <Route path="/observations/:id" element={<ObservationDetailPage />} />
             <Route path="/settle/:id" element={<ObservationSettlePage />} />
