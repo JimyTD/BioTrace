@@ -648,7 +648,6 @@ button.film-tile-link {
   padding: 0;
   overflow: hidden;
   border-radius: 2px;
-  box-shadow: var(--trip-cover-shadow-hover);
   pointer-events: none;
 }
 
@@ -2118,11 +2117,11 @@ button.stamp {
   position: absolute;
   inset: 0;
   background: color-mix(in srgb, var(--bg0) 88%, var(--ink));
-  opacity: 0;
+  opacity: 1;
 }
 
-.trip-book-layer.is-open .trip-book-mat {
-  opacity: 1;
+.trip-book-layer.is-opening .trip-book-mat {
+  opacity: 0;
 }
 
 .trip-book-pages {
@@ -2137,11 +2136,14 @@ button.stamp {
   background-image: var(--bg-atmosphere);
   background-repeat: no-repeat;
   background-size: cover;
+  opacity: 1;
+}
+
+.trip-book-layer.is-opening .trip-book-pages {
   opacity: 0;
 }
 
 .trip-book-layer.is-open .trip-book-pages {
-  opacity: 1;
   filter: none;
   -webkit-filter: none;
 }

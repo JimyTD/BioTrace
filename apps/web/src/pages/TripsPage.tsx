@@ -1,9 +1,10 @@
-import { useEffect, useState, type FormEvent } from "react";
+import { useEffect, useLayoutEffect, useState, type FormEvent } from "react";
 import { useNavigate } from "react-router-dom";
 import { t } from "@biotrace/messages";
 import { api, type Trip } from "../api";
 import { captureCoverBox, setOpenBookHandoff } from "../openBookHandoff";
 import { tripCoverFrameUrl } from "../themes";
+import { restoreContentScroll, saveContentScroll } from "../scrollMemory";
 import { tripMetaLine } from "../tripMeta";
 
 export default function TripsPage({
@@ -32,6 +33,11 @@ export default function TripsPage({
       .catch((e) => setError(e instanceof Error ? e.message : t("trips.loadFailed")))
       .finally(() => setLoading(false));
   }, []);
+
+  useLayoutEffect(() => {
+    if (loading) return;
+    restoreContentScroll("trips");
+  }, [loading]);
 
   async function onCreate(e: FormEvent) {
     e.preventDefault();
@@ -166,6 +172,7 @@ export default function TripsPage({
                     source: captureCoverBox(media),
                   });
                 }
+                saveContentScroll("trips");
                 navigate(`/trips/${trip.id}`);
               }}
             >

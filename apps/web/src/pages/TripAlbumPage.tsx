@@ -25,6 +25,8 @@ import {
   peekPhotoLiftHandoff,
   setPhotoLiftHandoff,
 } from "../photoLiftHandoff";
+import { restoreAlbumScroll, saveAlbumScroll, saveContentScroll } from "../scrollMemory";
+import { peekAlbum, rememberAlbum } from "../pageCache";
 import { tripFilmFrameUrl } from "../themes";
 import { tripMetaLine } from "../tripMeta";
 
@@ -69,8 +71,10 @@ export default function TripAlbumPage({ userId }: { userId: string }) {
   const { id = "" } = useParams();
   const navigate = useNavigate();
   const closeBook = useContext(OpenBookCloseContext);
-  const [trip, setTrip] = useState<Trip | null>(null);
-  const [observations, setObservations] = useState<Observation[]>([]);
+  const [trip, setTrip] = useState<Trip | null>(() => peekAlbum(id)?.trip ?? null);
+  const [observations, setObservations] = useState<Observation[]>(
+    () => peekAlbum(id)?.observations ?? [],
+  );
   const [files, setFiles] = useState<File[]>([]);
   const [previewUrls, setPreviewUrls] = useState<string[]>([]);
   const [description, setDescription] = useState("");
@@ -81,7 +85,7 @@ export default function TripAlbumPage({ userId }: { userId: string }) {
   );
   const [deletingId, setDeletingId] = useState<string | null>(null);
   const [pendingDeleteId, setPendingDeleteId] = useState<string | null>(null);
-  const [loaded, setLoaded] = useState(false);
+  const [loaded, setLoaded] = useState(() => Boolean(peekAlbum(id)));
   const [picking, setPicking] = useState(false);
   const [toast, setToast] = useState<string | null>(null);
   const fileInputRef = useRef<HTMLInputElement | null>(null);
@@ -138,12 +142,25 @@ export default function TripAlbumPage({ userId }: { userId: string }) {
     ]);
     setTrip(tripRes.trip);
     setObservations(obsRes.observations);
+    rememberAlbum(id, { trip: tripRes.trip, observations: obsRes.observations });
     setLoaded(true);
   }
 
   useEffect(() => {
-    setLoaded(false);
-    seenIds.current = null;
+    const hit = peekAlbum(id);
+    if (hit) {
+      setTrip(hit.trip);
+      setObservations(hit.observations);
+      setLoaded(true);
+      if (seenIds.current === null) {
+        seenIds.current = new Set(hit.observations.map((o) => o.id));
+      }
+    } else {
+      setLoaded(false);
+      setTrip(null);
+      setObservations([]);
+      seenIds.current = null;
+    }
     setSlottingIds(new Set());
     refresh()
       .then(() => undefined)
@@ -217,7 +234,9 @@ export default function TripAlbumPage({ userId }: { userId: string }) {
   }, [slottingIds]);
 
   useLayoutEffect(() => {
-    if (!returning || !loaded || returnPlayed.current) return;
+    if (!loaded) return;
+    restoreAlbumScroll(id);
+    if (!returning || returnPlayed.current) return;
     const photo = document.querySelector<HTMLElement>(
       `.film-tile[data-obs-id="${returning.observationId}"] .film-tile-photo`,
     );
@@ -230,7 +249,7 @@ export default function TripAlbumPage({ userId }: { userId: string }) {
     void playPhotoLift({
       photoUrl: returning.photoUrl,
       from: returning.box,
-      to: measureBox(photo),
+      to: () => measureBox(photo),
       page,
       hide: photo,
       duration: 380,
@@ -246,6 +265,8 @@ export default function TripAlbumPage({ userId }: { userId: string }) {
   }, [returning, loaded, observations, id]);
 
   function openPhoto(obs: Observation, windowEl: HTMLElement | null) {
+    saveAlbumScroll(id);
+    saveContentScroll("trips");
     if (windowEl) {
       setPhotoLiftHandoff({
         observationId: obs.id,
@@ -416,7 +437,14 @@ export default function TripAlbumPage({ userId }: { userId: string }) {
           >
             ← {t("album.back")}
           </Link>
-          <Link className="text-link" to={`/trips/${id}/manage`}>
+          <Link
+            className="text-link"
+            to={`/trips/${id}/manage`}
+            onClick={() => {
+              saveAlbumScroll(id);
+              saveContentScroll("trips");
+            }}
+          >
             {t("trips.manage")}
           </Link>
         </div>

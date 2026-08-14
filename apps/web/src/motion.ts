@@ -21,9 +21,20 @@ export function prefersReducedMotion() {
   return window.matchMedia("(prefers-reduced-motion: reduce)").matches;
 }
 
+export function snapBox(box: MotionBox): MotionBox {
+  const dpr = window.devicePixelRatio || 1;
+  const snap = (n: number) => Math.round(n * dpr) / dpr;
+  return {
+    left: snap(box.left),
+    top: snap(box.top),
+    width: snap(box.width),
+    height: snap(box.height),
+  };
+}
+
 export function measureBox(el: Element): MotionBox {
   const r = el.getBoundingClientRect();
-  return { left: r.left, top: r.top, width: r.width, height: r.height };
+  return snapBox({ left: r.left, top: r.top, width: r.width, height: r.height });
 }
 
 export function tween(

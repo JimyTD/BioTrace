@@ -9,7 +9,9 @@ import {
   peekPhotoLiftHandoff,
   setPhotoLiftHandoff,
 } from "../photoLiftHandoff";
+import { peekVolume, rememberVolume } from "../pageCache";
 import { volumeCoverUrl, volumeStampFrameUrl } from "../themes";
+import { restoreContentScroll, saveContentScroll } from "../scrollMemory";
 import {
   clearVolumeOpenHandoff,
   peekVolumeOpenHandoff,
@@ -46,9 +48,9 @@ function StampFace({
 export default function CollectionVolumePage() {
   const { id = "" } = useParams();
   const navigate = useNavigate();
-  const [volume, setVolume] = useState<VolumeListItem | null>(null);
+  const [volume, setVolume] = useState<VolumeListItem | null>(() => peekVolume(id));
   const [error, setError] = useState<string | null>(null);
-  const [loading, setLoading] = useState(true);
+  const [loading, setLoading] = useState(() => !peekVolume(id));
   const [liftSourceId, setLiftSourceId] = useState<string | null>(null);
   const pageRef = useRef<HTMLDivElement | null>(null);
   const coverRef = useRef<HTMLImageElement | null>(null);
@@ -69,10 +71,18 @@ export default function CollectionVolumePage() {
   });
 
   useEffect(() => {
-    setLoading(true);
+    const hit = peekVolume(id);
+    if (hit) {
+      setVolume(hit);
+      setLoading(false);
+    } else {
+      setVolume(null);
+      setLoading(true);
+    }
     api
       .listVolumes()
       .then((res) => {
+        for (const item of res.volumes) rememberVolume(item);
         const found = res.volumes.find((v) => v.id === id) ?? null;
         setVolume(found);
         if (!found) setError(t("collection.volumesLoadFailed"));
@@ -92,11 +102,10 @@ export default function CollectionVolumePage() {
     void playPhotoLift({
       photoUrl: opening.coverUrl,
       from: opening.box,
-      to: measureBox(cover),
+      to: () => measureBox(cover),
       page,
       hide: cover,
       duration: 420,
-      pageFade: "in",
       cancelled: () => cancelled,
     });
     return () => {
@@ -106,7 +115,9 @@ export default function CollectionVolumePage() {
   }, [opening]);
 
   useLayoutEffect(() => {
-    if (!returning || !volume || returnPlayed.current) return;
+    if (!volume) return;
+    restoreContentScroll(`volume:${id}`);
+    if (!returning || returnPlayed.current) return;
     const face = document.querySelector<HTMLElement>(
       `.stamp[data-obs-id="${returning.observationId}"] .stamp-face`,
     );
@@ -119,7 +130,7 @@ export default function CollectionVolumePage() {
     void playPhotoLift({
       photoUrl: returning.photoUrl,
       from: returning.box,
-      to: measureBox(face),
+      to: () => measureBox(face),
       page,
       hide: face,
       duration: 380,
@@ -132,7 +143,7 @@ export default function CollectionVolumePage() {
       cancelled = true;
       returnPlayed.current = false;
     };
-  }, [returning, volume]);
+  }, [returning, volume, id]);
 
   function goBackToShelf() {
     const cover = coverRef.current;
@@ -148,6 +159,7 @@ export default function CollectionVolumePage() {
   }
 
   function openStamp(observationId: string, photoUrl: string, face: HTMLElement) {
+    saveContentScroll(`volume:${id}`);
     setPhotoLiftHandoff({
       observationId,
       photoUrl,
@@ -190,7 +202,7 @@ export default function CollectionVolumePage() {
         </div>
       </header>
 
-      {loading ? <p className="muted">{t("app.loading")}</p> : null}
+      {loading && !volume ? <p className="muted">{t("app.loading")}</p> : null}
       {error ? <p className="error">{error}</p> : null}
 
       {volume ? (

@@ -10,6 +10,8 @@ import {
   isNotCollectibleError,
 } from "../identifyErrors";
 import { hasValidCoords } from "../geo";
+import { nextPaint } from "../motion";
+import { peekObservation, rememberObservation } from "../pageCache";
 import { containedImageBox, playPhotoLift, waitImage } from "../photoLift";
 import {
   clearPhotoLiftHandoff,
@@ -78,7 +80,7 @@ export default function ObservationDetailPage() {
   const { id = "" } = useParams();
   const navigate = useNavigate();
   const location = useLocation();
-  const [obs, setObs] = useState<Observation | null>(null);
+  const [obs, setObs] = useState<Observation | null>(() => peekObservation(id));
   const [error, setError] = useState<string | null>(null);
   const [notice, setNotice] = useState<string | null>(null);
   const [deleting, setDeleting] = useState(false);
@@ -112,6 +114,7 @@ export default function ObservationDetailPage() {
           return;
         }
         setObs(observation);
+        rememberObservation(observation);
         setError(null);
       } catch (e) {
         if (!cancelled) setError(e instanceof Error ? e.message : t("detail.loadFailed"));
@@ -135,14 +138,15 @@ export default function ObservationDetailPage() {
     void (async () => {
       await waitImage(hero);
       if (cancelled) return;
+      await nextPaint();
+      if (cancelled) return;
       await playPhotoLift({
         photoUrl: liftOpen.photoUrl,
         from: liftOpen.box,
-        to: containedImageBox(hero),
+        to: () => containedImageBox(hero),
         page,
         hide: hero,
         duration: 480,
-        pageFade: "in",
         cancelled: () => cancelled,
       });
     })();

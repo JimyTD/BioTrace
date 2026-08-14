@@ -5,6 +5,8 @@ import { api, type VolumeListItem } from "../api";
 import { measureBox } from "../motion";
 import { playPhotoLift } from "../photoLift";
 import { volumeCoverUrl, volumeSealCompleteUrl } from "../themes";
+import { peekCollection, rememberCollection } from "../pageCache";
+import { restoreContentScroll, saveContentScroll } from "../scrollMemory";
 import {
   clearVolumeOpenHandoff,
   peekVolumeOpenHandoff,
@@ -17,10 +19,10 @@ function msg(key: string) {
 
 export default function CollectionPage() {
   const navigate = useNavigate();
-  const [entryCount, setEntryCount] = useState(0);
-  const [volumes, setVolumes] = useState<VolumeListItem[]>([]);
+  const [entryCount, setEntryCount] = useState(() => peekCollection()?.entryCount ?? 0);
+  const [volumes, setVolumes] = useState<VolumeListItem[]>(() => peekCollection()?.volumes ?? []);
   const [error, setError] = useState<string | null>(null);
-  const [loading, setLoading] = useState(true);
+  const [loading, setLoading] = useState(() => !peekCollection());
   const [sourceId, setSourceId] = useState<string | null>(null);
   const pageRef = useRef<HTMLDivElement | null>(null);
   const returnPlayed = useRef(false);
@@ -34,13 +36,16 @@ export default function CollectionPage() {
       .then(([col, vol]) => {
         setEntryCount(col.entries.length);
         setVolumes(vol.volumes);
+        rememberCollection({ entryCount: col.entries.length, volumes: vol.volumes });
       })
       .catch((e) => setError(e instanceof Error ? e.message : t("collection.loadFailed")))
       .finally(() => setLoading(false));
   }, []);
 
   useLayoutEffect(() => {
-    if (!returning || loading || returnPlayed.current) return;
+    if (loading) return;
+    restoreContentScroll("collection");
+    if (!returning || returnPlayed.current) return;
     const cover = document.querySelector<HTMLElement>(
       `.volume-tile[data-volume-id="${returning.volumeId}"] .volume-tile-cover`,
     );
@@ -53,7 +58,7 @@ export default function CollectionPage() {
     void playPhotoLift({
       photoUrl: returning.coverUrl,
       from: returning.box,
-      to: measureBox(cover),
+      to: () => measureBox(cover),
       page,
       hide: cover,
       duration: 380,
@@ -69,6 +74,7 @@ export default function CollectionPage() {
   }, [returning, loading, volumes]);
 
   function openVolume(vol: VolumeListItem, coverEl: HTMLElement | null) {
+    saveContentScroll("collection");
     if (coverEl) {
       setVolumeOpenHandoff({
         volumeId: vol.id,
@@ -87,10 +93,10 @@ export default function CollectionPage() {
         <p className="lede">{t("collection.lede")}</p>
       </header>
 
-      {loading ? <p className="muted">{t("app.loading")}</p> : null}
+      {loading && volumes.length === 0 ? <p className="muted">{t("app.loading")}</p> : null}
       {error ? <p className="error">{error}</p> : null}
 
-      {!loading ? (
+      {!loading || volumes.length > 0 ? (
         <section className="volumes-section">
           {volumes.length === 0 ? (
             <p className="muted">{t("collection.volumesEmpty")}</p>
@@ -157,9 +163,13 @@ export default function CollectionPage() {
         </section>
       ) : null}
 
-      {!loading ? (
+      {!loading || volumes.length > 0 ? (
         <div className="me-menu">
-          <Link className="me-row" to="/collection/species">
+          <Link
+            className="me-row"
+            to="/collection/species"
+            onClick={() => saveContentScroll("collection")}
+          >
             <span>{t("collection.speciesTitle")}</span>
             <span className="me-row-side">
               <span className="muted">

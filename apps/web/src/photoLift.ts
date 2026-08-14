@@ -1,8 +1,9 @@
 import {
   easeOutCubic,
   lerp,
-  measureBox,
+  nextPaint,
   prefersReducedMotion,
+  snapBox,
   tween,
   type MotionBox,
 } from "./motion";
@@ -35,40 +36,46 @@ function makeFlyer(photoUrl: string) {
   return flyer;
 }
 
+function resolveTo(to: MotionBox | (() => MotionBox)): MotionBox {
+  return snapBox(typeof to === "function" ? to() : to);
+}
+
 export async function playPhotoLift(opts: {
   photoUrl: string;
   from: MotionBox;
-  to: MotionBox;
+  to: MotionBox | (() => MotionBox);
   page: HTMLElement;
   hide?: HTMLElement | null;
   duration: number;
-  pageFade: "in" | "out" | "none";
+  pageFade?: "in" | "out" | "none";
   cancelled: () => boolean;
 }) {
-  const { photoUrl, from, to, page, hide, duration, pageFade, cancelled } = opts;
+  const { photoUrl, from, to, page, hide, duration, pageFade = "none", cancelled } = opts;
   if (prefersReducedMotion()) {
     page.style.opacity = "1";
     if (hide) hide.style.visibility = "";
     return;
   }
-  if (pageFade === "in") page.style.opacity = "0";
   if (hide) hide.style.visibility = "hidden";
   const flyer = makeFlyer(photoUrl);
-  applyBox(flyer, from);
+  const start = snapBox(from);
+  applyBox(flyer, start);
   await tween(
     duration,
     (t) => {
-      const e = easeOutCubic(t);
-      applyBox(flyer, mix(from, to, e));
-      if (pageFade === "in") page.style.opacity = String(e);
-      if (pageFade === "out") page.style.opacity = String(1 - e);
+      applyBox(flyer, mix(start, resolveTo(to), easeOutCubic(t)));
     },
     cancelled,
   );
+  if (cancelled()) {
+    flyer.remove();
+    return;
+  }
+  applyBox(flyer, resolveTo(to));
+  if (hide) hide.style.visibility = "";
+  await nextPaint();
   flyer.remove();
-  if (cancelled()) return;
-  page.style.opacity = pageFade === "out" ? "0" : "1";
-  if (hide && pageFade !== "out") hide.style.visibility = "";
+  if (pageFade === "out") page.style.opacity = "0";
 }
 
 export function waitImage(el: HTMLImageElement) {
@@ -81,17 +88,28 @@ export function waitImage(el: HTMLImageElement) {
 
 /** 观察页 contain 真正画出的那块，不是灰底外框。 */
 export function containedImageBox(el: HTMLImageElement): MotionBox {
-  const box = measureBox(el);
+  const r = el.getBoundingClientRect();
+  const cs = getComputedStyle(el);
+  const bl = parseFloat(cs.borderLeftWidth) || 0;
+  const br = parseFloat(cs.borderRightWidth) || 0;
+  const bt = parseFloat(cs.borderTopWidth) || 0;
+  const bb = parseFloat(cs.borderBottomWidth) || 0;
+  const left = r.left + bl;
+  const top = r.top + bt;
+  const contentW = Math.max(0, r.width - bl - br);
+  const contentH = Math.max(0, r.height - bt - bb);
   const nw = el.naturalWidth;
   const nh = el.naturalHeight;
-  if (!nw || !nh) return box;
-  const scale = Math.min(box.width / nw, box.height / nh);
+  if (!nw || !nh || contentW <= 0 || contentH <= 0) {
+    return snapBox({ left, top, width: contentW, height: contentH });
+  }
+  const scale = Math.min(contentW / nw, contentH / nh);
   const width = nw * scale;
   const height = nh * scale;
-  return {
-    left: box.left + (box.width - width) / 2,
-    top: box.top + (box.height - height) / 2,
+  return snapBox({
+    left: left + (contentW - width) / 2,
+    top: top + (contentH - height) / 2,
     width,
     height,
-  };
+  });
 }
