@@ -246,7 +246,7 @@ export default function MapPage() {
               </span>
             </span>
           </Link>
-          <Link className="text-link" to={`/trips/${sheet.tripId}`}>
+          <Link className="btn secondary" to={`/trips/${sheet.tripId}`}>
             {t("map.openTrip")}
           </Link>
         </div>

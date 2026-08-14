@@ -358,7 +358,7 @@ export default function ObservationDetailPage() {
             <dt>{t("detail.location")}</dt>
             <dd>
               <span>{locationText(obs)}</span>
-              <Link className="text-link" to={`/observations/${obs.id}/pin`}>
+              <Link className="btn secondary" to={`/observations/${obs.id}/pin`}>
                 {hasCoords ? t("detail.changeLocation") : t("detail.setLocation")}
               </Link>
               {hasCoords && obs.locationLabel ? (
@@ -388,7 +388,7 @@ export default function ObservationDetailPage() {
 
       <div className="detail-danger danger-zone">
         <button
-          className="text-link"
+          className="btn secondary"
           type="button"
           disabled={busy}
           onClick={() => setConfirmKind("reidentify")}
@@ -398,7 +398,7 @@ export default function ObservationDetailPage() {
             : t("detail.reidentify")}
         </button>
         <button
-          className="text-link danger"
+          className="btn secondary danger"
           type="button"
           disabled={deleting || reidentifying}
           onClick={() => setConfirmKind("delete")}

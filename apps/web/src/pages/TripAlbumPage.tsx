@@ -450,7 +450,7 @@ export default function TripAlbumPage({ userId }: { userId: string }) {
             ← {t("album.back")}
           </Link>
           <Link
-            className="text-link"
+            className="btn secondary"
             to={`/trips/${id}/manage`}
             onClick={() => {
               saveAlbumScroll(id);

@@ -94,7 +94,7 @@ export default function TripsPage({
 
       {!showJoin ? (
         <button
-          className="text-link trip-join-toggle"
+          className="btn secondary trip-join-toggle"
           type="button"
           onClick={() => setShowJoin(true)}
         >

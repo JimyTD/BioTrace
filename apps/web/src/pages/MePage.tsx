@@ -84,7 +84,7 @@ export default function MePage({
         </Link>
       </nav>
 
-      <button className="text-link me-logout" type="button" onClick={() => void logout()}>
+      <button className="btn secondary me-logout" type="button" onClick={() => void logout()}>
         {t("auth.logout")}
       </button>
     </div>
