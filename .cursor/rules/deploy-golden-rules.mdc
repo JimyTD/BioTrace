@@ -15,6 +15,7 @@ alwaysApply: true
 - 构建 / 拉取用 `nohup … &` 后台跑再轮询日志（Lighthouse 单命令会超时中断）
 - `docker-compose.override.yml` 必须保留 `deploy/Dockerfile.cn` 与 `extra_hosts: host.docker.internal:host-gateway`（出境代理链路靠它）
 - 更新后验证出境：`curl -s -m 12 -x http://127.0.0.1:10809 https://api.ipify.org` 应为新加坡出口 IP
+- 用户说「更新服务器」时：按 §7.1 拉代码并重建 Web/API；若相对当前侧载包有 `apps/mobile` 原生壳 / Manifest / 权限 / 插件 / `server-url` 改动，**同一轮还要打新 APK**（tag `android-vX.Y.Z` → Actions → 覆盖 `/opt/biotrace/data/android-release/` 的 `BioTrace.apk` + `latest.json`）。仅 Web/API 改动则不打 APK
 
 ## 禁止
 
