@@ -2157,7 +2157,7 @@ button.stamp {
 
 .species-index-row {
   display: flex;
-  align-items: center;
+  align-items: flex-start;
   gap: 12px;
   padding: 10px 12px;
   color: inherit;
@@ -2189,6 +2189,62 @@ button.stamp {
 
 .species-index-copy strong {
   font-size: 0.98rem;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.species-index-sci {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.species-toolbar {
+  display: grid;
+  gap: 10px;
+}
+
+.species-chips,
+.species-sort {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+}
+
+.species-chip,
+.species-sort-btn {
+  appearance: none;
+  -webkit-appearance: none;
+  margin: 0;
+  padding: 5px 10px;
+  border: 1px solid var(--line);
+  border-radius: var(--radius-sm);
+  background: var(--card);
+  color: var(--ink);
+  font: inherit;
+  font-size: 0.82rem;
+  cursor: pointer;
+}
+
+.species-chip.is-on,
+.species-sort-btn.is-on {
+  border-color: var(--cta);
+  color: var(--cta);
+  background: color-mix(in srgb, var(--cta) 12%, var(--card));
+}
+
+.species-index-marks {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 8px;
+  margin-top: 2px;
+}
+
+.species-index .rarity-badge {
+  padding: 2px 7px;
+  font-size: 0.7rem;
 }
 
 .volume-ceremony-backdrop {

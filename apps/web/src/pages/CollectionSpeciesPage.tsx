@@ -1,29 +1,31 @@
 import { useEffect, useMemo, useState } from "react";
 import { Link } from "react-router-dom";
-import { t, type MessageKey } from "@biotrace/messages";
+import { hasMessage, t, type MessageKey } from "@biotrace/messages";
 import { api, type CollectionEntry, type Rarity } from "../api";
-
-const IDLE_LIST_MAX = 24;
+import {
+  buildSpeciesFuse,
+  filterSpecies,
+  indexSpecies,
+  raritiesInEntries,
+  sortSpecies,
+  speciesEntryName,
+  type SpeciesSort,
+} from "../speciesSearch";
 
 function rarityLabel(r: Rarity) {
-  return t(`rarity.${r}` as MessageKey);
+  const key = `rarity.${r}`;
+  return hasMessage(key) ? t(key as MessageKey) : r;
 }
 
 function entryName(entry: CollectionEntry) {
-  return entry.commonName || entry.scientificName || entry.taxonKey || t("detail.unnamed");
-}
-
-function matchesQuery(entry: CollectionEntry, q: string) {
-  const hay = [entry.commonName, entry.scientificName, entry.taxonKey]
-    .filter(Boolean)
-    .join(" ")
-    .toLowerCase();
-  return hay.includes(q);
+  return speciesEntryName(entry, t("detail.unnamed"));
 }
 
 export default function CollectionSpeciesPage() {
   const [entries, setEntries] = useState<CollectionEntry[]>([]);
   const [query, setQuery] = useState("");
+  const [rarityFilter, setRarityFilter] = useState<string | null>(null);
+  const [sort, setSort] = useState<SpeciesSort>("recent");
   const [error, setError] = useState<string | null>(null);
   const [loading, setLoading] = useState(true);
 
@@ -35,14 +37,21 @@ export default function CollectionSpeciesPage() {
       .finally(() => setLoading(false));
   }, []);
 
-  const q = query.trim().toLowerCase();
-  const visible = useMemo(() => {
-    if (q) return entries.filter((e) => matchesQuery(e, q));
-    if (entries.length <= IDLE_LIST_MAX) return entries;
-    return [];
-  }, [entries, q]);
+  const indexed = useMemo(() => entries.map(indexSpecies), [entries]);
+  const fuse = useMemo(() => (indexed.length ? buildSpeciesFuse(indexed) : null), [indexed]);
+  const rarityChips = useMemo(() => raritiesInEntries(entries), [entries]);
 
-  const idleSearch = !q && entries.length > IDLE_LIST_MAX;
+  const visible = useMemo(() => {
+    const byName = filterSpecies(indexed, fuse, query);
+    const byRarity = rarityFilter ? byName.filter((e) => e.rarity === rarityFilter) : byName;
+    return sortSpecies(byRarity, sort);
+  }, [indexed, fuse, query, rarityFilter, sort]);
+
+  const sorts: { id: SpeciesSort; label: string }[] = [
+    { id: "recent", label: t("collection.speciesSortRecent") },
+    { id: "rarity", label: t("collection.speciesSortRarity") },
+    { id: "name", label: t("collection.speciesSortName") },
+  ];
 
   return (
     <div className="stack page-collection-species">
@@ -62,24 +71,59 @@ export default function CollectionSpeciesPage() {
 
       {!loading && entries.length > 0 ? (
         <>
-          <label className="sr-only" htmlFor="collection-species-q">
-            {t("collection.speciesSearch")}
-          </label>
-          <input
-            id="collection-species-q"
-            className="input"
-            value={query}
-            onChange={(e) => setQuery(e.target.value)}
-            placeholder={t("collection.speciesSearch")}
-            autoComplete="off"
-          />
-          {idleSearch ? (
-            <p className="muted">{t("collection.speciesIdle", { count: entries.length })}</p>
-          ) : null}
-          {!idleSearch && q && visible.length === 0 ? (
+          <div className="species-toolbar">
+            <label className="sr-only" htmlFor="collection-species-q">
+              {t("collection.speciesSearch")}
+            </label>
+            <input
+              id="collection-species-q"
+              className="input"
+              value={query}
+              onChange={(e) => setQuery(e.target.value)}
+              placeholder={t("collection.speciesSearch")}
+              autoComplete="off"
+            />
+            {rarityChips.length > 1 ? (
+              <div className="species-chips" role="group" aria-label={t("collection.speciesSortRarity")}>
+                <button
+                  type="button"
+                  className={`species-chip${rarityFilter === null ? " is-on" : ""}`}
+                  aria-pressed={rarityFilter === null}
+                  onClick={() => setRarityFilter(null)}
+                >
+                  {t("collection.speciesFilterAll")}
+                </button>
+                {rarityChips.map((r) => (
+                  <button
+                    key={r}
+                    type="button"
+                    className={`species-chip${rarityFilter === r ? " is-on" : ""}`}
+                    aria-label={rarityLabel(r)}
+                    aria-pressed={rarityFilter === r}
+                    onClick={() => setRarityFilter(rarityFilter === r ? null : r)}
+                  >
+                    {r}
+                  </button>
+                ))}
+              </div>
+            ) : null}
+            <div className="species-sort" role="group">
+              {sorts.map((item) => (
+                <button
+                  key={item.id}
+                  type="button"
+                  className={`species-sort-btn${sort === item.id ? " is-on" : ""}`}
+                  aria-pressed={sort === item.id}
+                  onClick={() => setSort(item.id)}
+                >
+                  {item.label}
+                </button>
+              ))}
+            </div>
+          </div>
+          {visible.length === 0 ? (
             <p className="muted">{t("collection.speciesNoMatch")}</p>
-          ) : null}
-          {visible.length > 0 ? (
+          ) : (
             <div className="species-index">
               {visible.map((entry) => (
                 <Link
@@ -98,17 +142,22 @@ export default function CollectionSpeciesPage() {
                   )}
                   <span className="species-index-copy">
                     <strong>{entryName(entry)}</strong>
-                    <span className="muted">
-                      {entry.scientificName && entry.commonName ? entry.scientificName : ""}
-                      {entry.scientificName && entry.commonName ? " · " : ""}
-                      {rarityLabel(entry.rarity)}
-                      {entry.alertIntroduced ? ` · ${t("settle.alertIntroduced")}` : ""}
+                    {entry.scientificName && entry.commonName ? (
+                      <span className="muted species-index-sci">{entry.scientificName}</span>
+                    ) : null}
+                    <span className="species-index-marks">
+                      <span className={`rarity-badge rarity-${entry.rarity}`}>
+                        {rarityLabel(entry.rarity)}
+                      </span>
+                      {entry.alertIntroduced ? (
+                        <span className="muted">{t("settle.alertIntroduced")}</span>
+                      ) : null}
                     </span>
                   </span>
                 </Link>
               ))}
             </div>
-          ) : null}
+          )}
         </>
       ) : null}
     </div>

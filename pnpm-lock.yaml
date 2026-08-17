@@ -117,9 +117,15 @@ importers:
       '@capawesome/capacitor-file-picker':
         specifier: 7.2.0
         version: 7.2.0(@capacitor/core@7.6.8)
+      fuse.js:
+        specifier: ^7.5.0
+        version: 7.5.0
       maplibre-gl:
         specifier: ^5.7.0
         version: 5.24.0
+      pinyin-pro:
+        specifier: ^3.29.2
+        version: 3.29.2
       react:
         specifier: ^19.1.1
         version: 19.2.8
@@ -1536,6 +1542,10 @@ packages:
     engines: {node: ^8.16.0 || ^10.6.0 || >=11.0.0}
     os: [darwin]
 
+  fuse.js@7.5.0:
+    resolution: {integrity: sha512-sQtrEfA+ez/3G0cCZecF70oqpCRttCexYUG4mUrtWL49ULUzUyxokt5kyqwtKzj1270RaKih+hcP3qLcumccow==}
+    engines: {node: '>=10'}
+
   gensync@1.0.0-beta.2:
     resolution: {integrity: sha512-3hN7NaskYvMDLQY55gnW3NQ+mesEAepTqlg+VEbj7zzqEMBVNhzcGYYeqFo/TlYz6eQiFcp1HcsCZO+nGgS8zg==}
     engines: {node: '>=6.9.0'}
@@ -1705,6 +1715,9 @@ packages:
   picomatch@4.0.5:
     resolution: {integrity: sha512-RvwwcruNjI1ncT5xRakeyS9Lf8lcItv34KD+aif+VH9kduAyfYBipGh12274xtenIPZ119/R9BdTBa8gAwSh0A==}
     engines: {node: '>=12'}
+
+  pinyin-pro@3.29.2:
+    resolution: {integrity: sha512-L2AemHDHVFIgr207HFdjiU+4i8Hu15kcHX0Ab5iZCWH0NDmX404tyCQ06kglotGpqOLXNst2NK/A2K8qdC301Q==}
 
   plist@3.1.1:
     resolution: {integrity: sha512-ZIfcLJC+7E7FBFnDxm9MPmt7D+DidyQ26lewieO75AdhA2ayMtsJSES0iWzqJQbcVRSrTufQoy0DR94xHue0oA==}
@@ -3079,6 +3092,8 @@ snapshots:
   fsevents@2.3.3:
     optional: true
 
+  fuse.js@7.5.0: {}
+
   gensync@1.0.0-beta.2: {}
 
   get-tsconfig@4.14.1:
@@ -3248,6 +3263,8 @@ snapshots:
   picocolors@1.1.1: {}
 
   picomatch@4.0.5: {}
+
+  pinyin-pro@3.29.2: {}
 
   plist@3.1.1:
     dependencies:

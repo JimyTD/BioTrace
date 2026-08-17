@@ -215,9 +215,12 @@ export const zh = {
   "collection.volumeStampsTitle": "邮票",
   "collection.speciesTitle": "已收录",
   "collection.speciesCount": "{count} 种",
-  "collection.speciesSearch": "俗名或学名",
-  "collection.speciesIdle": "共 {count} 种。输入名字查找。",
-  "collection.speciesNoMatch": "没有匹配的名字。",
+  "collection.speciesSearch": "筛选名字",
+  "collection.speciesNoMatch": "没有匹配的收录。",
+  "collection.speciesFilterAll": "全部",
+  "collection.speciesSortRecent": "最近",
+  "collection.speciesSortRarity": "稀有度",
+  "collection.speciesSortName": "名字",
 
   // dev fixture only：配置里 enabled:false，正式环境不加载；待分层重构时移出主表
   "volume.fixture_pipeline.title": "管道验收册",
