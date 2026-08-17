@@ -149,31 +149,50 @@ function AppShell({
 export default function App() {
   const [user, setUser] = useState<User | null>(null);
   const [booting, setBooting] = useState(true);
+  const [flyleaf, setFlyleaf] = useState(false);
 
   useEffect(() => {
     api
       .me()
-      .then((r) => setUser(r.user))
-      .catch(() => setUser(null))
+      .then((r) => {
+        setUser(r.user);
+        setFlyleaf(!r.user);
+      })
+      .catch(() => {
+        setUser(null);
+        setFlyleaf(true);
+      })
       .finally(() => setBooting(false));
   }, []);
 
   if (booting) {
     return (
-      <div className="login-screen">
+      <div className="login-screen is-boot">
         <p className="muted">{t("app.loading")}</p>
       </div>
     );
   }
 
-  if (!user) {
-    return <LoginPage onLoggedIn={setUser} />;
-  }
-
   return (
     <>
-      <ForceAppUpdateGate enabled />
-      <AppShell user={user} setUser={setUser} />
+      {user ? (
+        <>
+          <ForceAppUpdateGate enabled />
+          <AppShell
+            user={user}
+            setUser={(next) => {
+              setUser(next);
+              if (!next) setFlyleaf(true);
+            }}
+          />
+        </>
+      ) : null}
+      {flyleaf ? (
+        <LoginPage
+          onLoggedIn={setUser}
+          onOpened={() => setFlyleaf(false)}
+        />
+      ) : null}
     </>
   );
 }

@@ -18,6 +18,7 @@ export const zh = {
   "auth.displayNameLabel": "昵称（可选）",
   "auth.login": "登录",
   "auth.lede": "翻开相册，记下路上遇见的。",
+  "auth.registerLede": "记下路上遇见的，从这一本开始。",
   "auth.register": "注册",
   "auth.registerAction": "创建账号",
   "auth.loggingIn": "登录中…",

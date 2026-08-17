@@ -1,0 +1,426 @@
+<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>登录扉页 · Cut O</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;600;700&display=swap" rel="stylesheet" />
+    <style>
+      :root {
+        --ink: #1f2a24;
+        --muted: #6b6258;
+        --line: rgba(42, 64, 51, 0.28);
+        --cta: #d3543c;
+        --cta-ink: #fffaf7;
+        --nav-bg: #f3efe7;
+        --nav-active-ink: #9a4030;
+        --plate: #efe6d6;
+        --font: "Outfit", "PingFang SC", "Microsoft YaHei", sans-serif;
+        --paper:
+          radial-gradient(ellipse 120% 70% at 8% -18%, rgba(212, 168, 120, 0.34) 0%, transparent 56%),
+          radial-gradient(ellipse 80% 55% at 100% 108%, rgba(90, 70, 48, 0.07) 0%, transparent 52%),
+          linear-gradient(168deg, #f6f1e8 0%, #efe8dc 46%, #e9e1d4 100%);
+      }
+      * { box-sizing: border-box; }
+      body {
+        margin: 0;
+        padding: 16px 12px 48px;
+        font-family: var(--font);
+        color: var(--ink);
+        background: #cfc6b8;
+      }
+      h1.doc { margin: 0 0 8px; font-size: 1.15rem; }
+      .note {
+        margin: 0 0 16px;
+        color: #5a5248;
+        font-size: 0.92rem;
+        max-width: 68ch;
+        line-height: 1.55;
+      }
+      .phone {
+        position: relative;
+        width: min(100%, 360px);
+        height: 640px;
+        border-radius: 22px;
+        border: 1px solid rgba(42, 36, 28, 0.18);
+        box-shadow: 0 16px 40px rgba(42, 36, 28, 0.16);
+        overflow: hidden;
+        background: var(--paper);
+      }
+      .stage {
+        position: absolute;
+        inset: 0;
+        perspective: 1800px;
+      }
+
+      .app {
+        position: absolute;
+        inset: 0;
+        display: grid;
+        grid-template-rows: auto 1fr auto;
+        background: var(--paper);
+      }
+      .topbar {
+        padding: 12px 16px 10px;
+        background: var(--nav-bg);
+        border-bottom: 1px solid rgba(42, 64, 51, 0.14);
+        font-weight: 700;
+      }
+      .content {
+        min-height: 0;
+        overflow-y: auto;
+        padding: 16px;
+        display: grid;
+        gap: 14px;
+        align-content: start;
+      }
+      .title { margin: 0; font-size: 1.45rem; font-weight: 700; }
+      .shelf-lede { margin: 0; color: var(--muted); font-size: 0.95rem; }
+      .covers { display: grid; gap: 18px; }
+      .trip { display: grid; gap: 10px; }
+      .media {
+        position: relative;
+        aspect-ratio: 3 / 2;
+        border-radius: 12px;
+        overflow: hidden;
+        background: var(--plate);
+        box-shadow: 0 10px 26px rgba(42, 36, 28, 0.1);
+      }
+      .media .window {
+        position: absolute;
+        top: 6%;
+        left: 6%;
+        width: 88%;
+        height: 88%;
+        overflow: hidden;
+      }
+      .media .photo { width: 100%; height: 100%; object-fit: cover; display: block; }
+      .media .frame {
+        position: absolute;
+        inset: 0;
+        width: 100%;
+        height: 100%;
+        object-fit: fill;
+        pointer-events: none;
+      }
+      .meta strong { display: block; font-size: 1.12rem; }
+      .meta span { display: block; color: var(--muted); font-size: 0.9rem; }
+      .nav {
+        display: grid;
+        grid-template-columns: repeat(4, 1fr);
+        padding: 0 4px 8px;
+        background: var(--nav-bg);
+        border-top: 1px solid rgba(42, 64, 51, 0.14);
+      }
+      .nav span {
+        position: relative;
+        text-align: center;
+        font-size: 0.86rem;
+        color: var(--muted);
+        padding: 12px 6px 14px;
+      }
+      .nav span.on { color: var(--nav-active-ink); font-weight: 700; }
+      .nav span.on::after {
+        content: "";
+        position: absolute;
+        left: 22%;
+        right: 22%;
+        bottom: 6px;
+        height: 2px;
+        background: var(--nav-active-ink);
+      }
+      .replay {
+        justify-self: start;
+        border: 0;
+        background: none;
+        padding: 0;
+        font: inherit;
+        color: var(--ink);
+        text-decoration: underline;
+        cursor: pointer;
+      }
+
+      .folio {
+        position: absolute;
+        inset: 0;
+        z-index: 5;
+        perspective: 1800px;
+        perspective-origin: left center;
+      }
+      .folio.is-gone {
+        pointer-events: none;
+        visibility: hidden;
+      }
+      .page {
+        position: absolute;
+        inset: 0;
+        transform-origin: left center;
+        transform-style: preserve-3d;
+      }
+      .page-front,
+      .page-back {
+        position: absolute;
+        inset: 0;
+        backface-visibility: hidden;
+        -webkit-backface-visibility: hidden;
+      }
+      .page-front { background: var(--paper); }
+      .page-back {
+        background: #e7dcc8;
+        transform: rotateY(180deg);
+      }
+
+      .face {
+        position: absolute;
+        inset: 0;
+        z-index: 3;
+        display: grid;
+        grid-template-rows: 1fr auto;
+        padding: 0 40px 40px;
+      }
+      .mast {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        padding-bottom: 8%;
+      }
+      .brand {
+        margin: 0;
+        font-size: 2.15rem;
+        font-weight: 700;
+        letter-spacing: 0.12em;
+        line-height: 1.1;
+        text-align: center;
+      }
+      .lede {
+        margin: 16px 0 0;
+        max-width: 12em;
+        color: var(--muted);
+        font-size: 0.95rem;
+        line-height: 1.55;
+        text-align: center;
+      }
+      .rule {
+        width: 40px;
+        height: 1px;
+        margin: 28px 0 0;
+        background: color-mix(in srgb, var(--ink) 35%, transparent);
+      }
+      .lid-form {
+        display: grid;
+        gap: 14px;
+        width: min(100%, 248px);
+        margin: 0 auto;
+      }
+      .field { display: grid; gap: 6px; }
+      .field span {
+        color: var(--muted);
+        font-size: 0.78rem;
+        letter-spacing: 0.08em;
+      }
+      .input {
+        width: 100%;
+        border: 0;
+        border-bottom: 1px solid var(--line);
+        border-radius: 0;
+        padding: 8px 0 9px;
+        font: inherit;
+        font-size: 1rem;
+        background: transparent;
+        color: inherit;
+        outline: none;
+      }
+      .input:focus { border-bottom-color: var(--ink); }
+      .btn {
+        margin-top: 4px;
+        border: 0;
+        border-radius: 10px;
+        padding: 12px 14px;
+        font: inherit;
+        font-weight: 600;
+        background: var(--cta);
+        color: var(--cta-ink);
+        cursor: pointer;
+      }
+      .links { display: flex; gap: 18px; }
+      .text-link {
+        border: 0;
+        background: none;
+        padding: 0;
+        font: inherit;
+        color: var(--ink);
+        text-decoration: underline;
+        text-underline-offset: 3px;
+        cursor: pointer;
+      }
+    </style>
+  </head>
+  <body>
+    <h1 class="doc">登录扉页 · Cut O</h1>
+    <p class="note">
+      合上时按书名页排。登录后这一页从书脊翻过去，不是从中间撕开。须用
+      <code>http://127.0.0.1:5173/trips/flyleaf-preview.html</code> 打开。
+    </p>
+    <div class="phone">
+      <div class="stage">
+        <div class="app">
+          <div class="topbar">BioTrace</div>
+          <div class="content">
+            <h2 class="title">旅途</h2>
+            <p class="shelf-lede">每一次出门，都是一本新相册。</p>
+            <button class="replay" type="button" id="replay">再看一次</button>
+            <div class="covers">
+              <div class="trip">
+                <div class="media">
+                  <div class="window">
+                    <img class="photo" src="../volumes/daylight/cover-intertidal.png" alt="" />
+                  </div>
+                  <img class="frame" src="./daylight/cover-frame.svg" alt="" />
+                </div>
+                <div class="meta"><strong>潮间带三日</strong><span>12 张</span></div>
+              </div>
+              <div class="trip">
+                <div class="media">
+                  <div class="window">
+                    <img class="photo" src="../volumes/daylight/cover-woodland_edge.png" alt="" />
+                  </div>
+                  <img class="frame" src="./daylight/cover-frame.svg" alt="" />
+                </div>
+                <div class="meta"><strong>林缘早班</strong><span>5 张</span></div>
+              </div>
+            </div>
+          </div>
+          <nav class="nav">
+            <span class="on">旅途</span>
+            <span>地图</span>
+            <span>图鉴</span>
+            <span>我的</span>
+          </nav>
+        </div>
+
+        <div class="folio" id="folio">
+          <div class="page" id="page">
+            <div class="page-front">
+              <div class="face" id="face">
+            <div class="mast">
+              <h2 class="brand">BioTrace</h2>
+              <p class="lede" id="lede">翻开相册，记下路上遇见的。</p>
+              <div class="rule" aria-hidden></div>
+            </div>
+            <form class="lid-form" id="form">
+              <label class="field">
+                <span>邮箱</span>
+                <input class="input" type="email" value="you@example.com" autocomplete="username" />
+              </label>
+              <label class="field">
+                <span>密码</span>
+                <input class="input" type="password" value="••••••••" autocomplete="current-password" />
+              </label>
+              <button class="btn" type="submit" id="submit">登录</button>
+              <div class="links">
+                <button class="text-link" type="button" id="toRegister">创建账号</button>
+                <button class="text-link" type="button" id="toLogin" hidden>返回登录</button>
+              </div>
+            </form>
+              </div>
+            </div>
+            <div class="page-back"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <script>
+      const folio = document.getElementById("folio");
+      const face = document.getElementById("face");
+      const form = document.getElementById("form");
+      const page = document.getElementById("page");
+      const reduced = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+      let phase = "closed";
+      let gen = 0;
+      let mode = "login";
+
+      async function play(el, frames, duration, easing) {
+        const anim = el.animate(frames, { duration: duration, easing: easing, fill: "forwards" });
+        try {
+          await anim.finished;
+          anim.commitStyles();
+        } catch (e) {
+          /* cancelled */
+        } finally {
+          anim.cancel();
+        }
+      }
+
+      function setMode(next) {
+        if (phase !== "closed") return;
+        mode = next;
+        const register = next === "register";
+        document.getElementById("lede").textContent = register
+          ? "记下路上遇见的，从这一本开始。"
+          : "翻开相册，记下路上遇见的。";
+        document.getElementById("submit").textContent = register ? "创建账号" : "登录";
+        document.getElementById("toRegister").hidden = register;
+        document.getElementById("toLogin").hidden = !register;
+      }
+
+      async function openFolio() {
+        if (phase !== "closed") return;
+        phase = "opening";
+        const token = ++gen;
+        form.style.pointerEvents = "none";
+
+        if (reduced) {
+          finishOpen();
+          return;
+        }
+
+        await play(
+          page,
+          [{ transform: "rotateY(0deg)" }, { transform: "rotateY(-118deg)" }],
+          780,
+          "cubic-bezier(0.45, 0.02, 0.16, 1)",
+        );
+        if (token !== gen) return;
+        await play(folio, [{ opacity: 1 }, { opacity: 0 }], 140, "ease-in");
+        if (token !== gen) return;
+        finishOpen();
+      }
+
+      function finishOpen() {
+        folio.classList.add("is-gone");
+        folio.style.opacity = "1";
+        form.style.pointerEvents = "";
+        page.style.transform = "rotateY(0deg)";
+        phase = "open";
+      }
+
+      function closeFolio() {
+        gen += 1;
+        folio.classList.remove("is-gone");
+        folio.removeAttribute("style");
+        form.removeAttribute("style");
+        page.removeAttribute("style");
+        setMode("login");
+        phase = "closed";
+      }
+
+      form.addEventListener("submit", function (e) {
+        e.preventDefault();
+        void openFolio();
+      });
+      document.getElementById("toRegister").addEventListener("click", function () {
+        setMode("register");
+      });
+      document.getElementById("toLogin").addEventListener("click", function () {
+        setMode("login");
+      });
+      document.getElementById("replay").addEventListener("click", closeFolio);
+      document.addEventListener("keydown", function (e) {
+        if (e.key === "Escape") closeFolio();
+      });
+    </script>
+  </body>
+</html>
