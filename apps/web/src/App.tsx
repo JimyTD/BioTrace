@@ -16,6 +16,7 @@ import PageOverlay from "./PageOverlay";
 import CollectionPage from "./pages/CollectionPage";
 import CollectionSpeciesCardPage from "./pages/CollectionSpeciesCardPage";
 import CollectionSpeciesPage from "./pages/CollectionSpeciesPage";
+import CollectionTreePage from "./pages/CollectionTreePage";
 import CollectionVolumePage from "./pages/CollectionVolumePage";
 import LoginPage from "./pages/LoginPage";
 import MapPage from "./pages/MapPage";
@@ -128,6 +129,8 @@ function AppShell({
                 }
               />
             </Route>
+            <Route path="/collection/tree" element={<CollectionTreePage />} />
+            <Route path="/collection/tree/*" element={<CollectionTreePage />} />
             <Route path="/me" element={<MePage user={user} onLogout={() => setUser(null)} />} />
             <Route
               path="/me/profile"

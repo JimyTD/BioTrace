@@ -176,7 +176,9 @@ export default function ObservationDetailPage() {
         origin,
       });
     }
-    navigate(photoLiftReturnPath(origin));
+    navigate(photoLiftReturnPath(origin), {
+      state: background?.state,
+    });
   }
 
   useEffect(() => {

@@ -2446,6 +2446,114 @@ button.species-card-cover {
   pointer-events: none;
 }
 
+.tree-head-row {
+  display: grid;
+  grid-template-columns: 0fr minmax(0, 1fr);
+  gap: 12px;
+  align-items: start;
+  transition: grid-template-columns 420ms cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+.tree-head-row.has-cover {
+  grid-template-columns: 72px minmax(0, 1fr);
+}
+
+.tree-head-cover {
+  width: 72px;
+  min-width: 0;
+  aspect-ratio: 4 / 3;
+  border-radius: var(--radius-sm);
+  overflow: hidden;
+  background: var(--volume-cover-empty);
+  box-shadow: var(--trip-cover-shadow);
+  opacity: 0;
+}
+
+.tree-head-row.has-cover .tree-head-cover {
+  opacity: 1;
+}
+
+.tree-head-cover.is-open-dest,
+.tree-plate.is-source .tree-plate-art {
+  visibility: hidden;
+}
+
+.tree-head-cover img,
+.tree-plate-art img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+
+.tree-deck {
+  display: grid;
+  gap: 12px;
+  align-content: start;
+}
+
+.tree-deck.is-split {
+  grid-template-columns: 1fr 1fr;
+}
+
+.tree-plate,
+.tree-tile {
+  appearance: none;
+  -webkit-appearance: none;
+  border: 0;
+  padding: 0;
+  background: transparent;
+  font: inherit;
+  color: inherit;
+  text-align: left;
+  cursor: pointer;
+  display: grid;
+  gap: 6px;
+  min-width: 0;
+}
+
+.tree-plate-art {
+  aspect-ratio: 4 / 3;
+  border-radius: var(--radius-md);
+  overflow: hidden;
+  background: var(--volume-cover-empty);
+  box-shadow: var(--trip-cover-shadow);
+}
+
+.tree-plate strong {
+  font-family: var(--font-brand);
+  font-size: 1.05rem;
+  letter-spacing: -0.02em;
+}
+
+.tree-tile-photo {
+  aspect-ratio: 1;
+  width: 100%;
+  border-radius: var(--radius-sm);
+  overflow: hidden;
+  object-fit: cover;
+  display: block;
+  background: var(--volume-cover-empty);
+  box-shadow: var(--trip-cover-shadow);
+}
+
+.tree-tile-photo.is-empty {
+  display: block;
+}
+
+.tree-tile strong {
+  font-size: 0.88rem;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.tree-tile .rarity-badge {
+  padding: 2px 7px;
+  font-size: 0.7rem;
+  width: fit-content;
+}
+
 .page-lift-overlay {
   z-index: 16;
   overflow-x: hidden;
@@ -2465,6 +2573,10 @@ button.species-card-cover {
 }
 
 @media (prefers-reduced-motion: reduce) {
+  .tree-head-row {
+    transition: none;
+  }
+
   .trip-cover-photo,
   .settle-pack-shell,
   .settle-card.revealing .settle-hero,

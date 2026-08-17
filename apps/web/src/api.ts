@@ -108,6 +108,7 @@ export type CollectionEntry = {
   coverDisplayUrl: string | null;
   firstCollectedAt: string;
   updatedAt: string;
+  taxonomy?: Taxonomy | null;
 };
 
 export class ApiError extends Error {

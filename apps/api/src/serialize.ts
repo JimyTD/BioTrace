@@ -1,4 +1,4 @@
-import { normalizeTaxonomy } from "./identify/types.js";
+import { normalizeTaxonomy, type Taxonomy } from "./identify/types.js";
 import type { CollectionEntry, Observation, Trip, User } from "./db/schema.js";
 import type { TripSummaryResolved } from "./trips/summary.js";
 
@@ -102,7 +102,7 @@ export function serializeObservation(
 export function serializeCollectionEntry(
   entry: CollectionEntry,
   coverDisplayUrl?: string | null,
-  opts?: { alertIntroduced?: boolean },
+  opts?: { alertIntroduced?: boolean; taxonomy?: Taxonomy | null },
 ) {
   return {
     id: entry.id,
@@ -116,5 +116,6 @@ export function serializeCollectionEntry(
     coverDisplayUrl: coverDisplayUrl ?? null,
     firstCollectedAt: entry.firstCollectedAt.toISOString(),
     updatedAt: entry.updatedAt.toISOString(),
+    taxonomy: opts?.taxonomy ?? null,
   };
 }

@@ -1,7 +1,12 @@
-import type { Observation, Trip, VolumeListItem } from "./api";
+import type { CollectionEntry, Observation, Trip, VolumeListItem } from "./api";
 
 type AlbumSnap = { trip: Trip; observations: Observation[] };
-type CollectionSnap = { entryCount: number; volumes: VolumeListItem[] };
+type CollectionSnap = {
+  entryCount: number;
+  classCount?: number;
+  entries?: CollectionEntry[];
+  volumes: VolumeListItem[];
+};
 
 const albums = new Map<string, AlbumSnap>();
 const observations = new Map<string, Observation>();

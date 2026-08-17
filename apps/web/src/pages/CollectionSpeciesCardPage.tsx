@@ -24,6 +24,11 @@ function shortDate(iso: string) {
   return new Date(iso).toLocaleDateString();
 }
 
+function treeReturnPath(state: unknown) {
+  const from = (state as { from?: unknown } | null)?.from;
+  return typeof from === "string" && from.startsWith("/collection/tree") ? from : null;
+}
+
 export default function CollectionSpeciesCardPage() {
   const { id = "" } = useParams();
   const navigate = useNavigate();
@@ -119,13 +124,18 @@ export default function CollectionSpeciesCardPage() {
     navigate(`/observations/${observationId}`, { state: liftBackgroundState(location) });
   }
 
+  const fromTree = treeReturnPath(location.state);
   const title = entry ? speciesEntryName(entry, t("detail.unnamed")) : t("collection.speciesTitle");
 
   return (
     <div className="stack page-species-card" ref={pageRef}>
       <header className="page-head me-sub-head">
-        <button className="text-link" type="button" onClick={() => navigate("/collection/species")}>
-          ← {t("collection.speciesTitle")}
+        <button
+          className="text-link"
+          type="button"
+          onClick={() => navigate(fromTree ?? "/collection/species")}
+        >
+          ← {fromTree ? t("collection.treeTitle") : t("collection.speciesTitle")}
         </button>
         <h1 className="page-title">{title}</h1>
         {entry?.scientificName && entry.commonName ? (

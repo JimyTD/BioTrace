@@ -7,6 +7,7 @@ import { measureBox } from "../motion";
 import { playPhotoLift } from "../photoLift";
 import { volumeCoverUrl, volumeSealCompleteUrl } from "../themes";
 import { peekCollection, rememberCollection } from "../pageCache";
+import { countTreeClasses } from "../treeBuild";
 import { restoreContentScroll, saveContentScroll } from "../scrollMemory";
 import {
   clearVolumeOpenHandoff,
@@ -22,6 +23,7 @@ export default function CollectionPage() {
   const volumeOpen = Boolean(useMatch("/collection/volumes/:id"));
   const navigate = useNavigate();
   const [entryCount, setEntryCount] = useState(() => peekCollection()?.entryCount ?? 0);
+  const [classCount, setClassCount] = useState(() => peekCollection()?.classCount ?? 0);
   const [volumes, setVolumes] = useState<VolumeListItem[]>(() => peekCollection()?.volumes ?? []);
   const [error, setError] = useState<string | null>(null);
   const [loading, setLoading] = useState(() => !peekCollection());
@@ -34,8 +36,14 @@ export default function CollectionPage() {
     Promise.all([api.listCollection(), api.listVolumes()])
       .then(([col, vol]) => {
         setEntryCount(col.entries.length);
+        setClassCount(countTreeClasses(col.entries));
         setVolumes(vol.volumes);
-        rememberCollection({ entryCount: col.entries.length, volumes: vol.volumes });
+        rememberCollection({
+          entryCount: col.entries.length,
+          classCount: countTreeClasses(col.entries),
+          entries: col.entries,
+          volumes: vol.volumes,
+        });
       })
       .catch((e) => setError(e instanceof Error ? e.message : t("collection.loadFailed")))
       .finally(() => setLoading(false));
@@ -187,6 +195,21 @@ export default function CollectionPage() {
             <span className="me-row-side">
               <span className="muted">
                 {t("collection.speciesCount", { count: entryCount })}
+              </span>
+              <span className="me-row-go" aria-hidden>
+                ›
+              </span>
+            </span>
+          </Link>
+          <Link
+            className="me-row"
+            to="/collection/tree"
+            onClick={() => saveContentScroll("collection")}
+          >
+            <span>{t("collection.treeTitle")}</span>
+            <span className="me-row-side">
+              <span className="muted">
+                {t("collection.treeCount", { count: classCount })}
               </span>
               <span className="me-row-go" aria-hidden>
                 ›

@@ -8,6 +8,7 @@ import { sanitizeUserCollection } from "../services/collection.js";
 import { rebuildCollectionTaxonForUser } from "../services/shared-progress.js";
 import { listTripsForUser } from "../services/trip-share.js";
 import { observationDisplayUrl, serializeCollectionEntry } from "../serialize.js";
+import { parseTaxonomy } from "../settle/taxon.js";
 
 export const collectionRoutes = new Hono<{ Variables: Variables }>();
 
@@ -36,16 +37,19 @@ collectionRoutes.get("/", async (c) => {
   const payload = await Promise.all(
     rows.map(async (entry) => {
       let coverUrl: string | null = null;
+      let taxonomy = null;
       if (entry.coverObservationId) {
         const obs = await db.query.observations.findFirst({
           where: eq(observations.id, entry.coverObservationId),
         });
         if (obs) {
-          coverUrl = `/api/files/${obs.displayPath.replace(/\\/g, "/")}`;
+          coverUrl = observationDisplayUrl(obs.displayPath);
+          taxonomy = parseTaxonomy(obs.taxonomyJson);
         }
       }
       return serializeCollectionEntry(entry, coverUrl, {
         alertIntroduced: alertedTaxa.has(entry.taxonKey),
+        taxonomy,
       });
     }),
   );
@@ -74,11 +78,15 @@ collectionRoutes.get("/:id", async (c) => {
   }
 
   let coverUrl: string | null = null;
+  let taxonomy = null;
   if (entry.coverObservationId) {
     const cover = await db.query.observations.findFirst({
       where: eq(observations.id, entry.coverObservationId),
     });
-    if (cover) coverUrl = observationDisplayUrl(cover.displayPath);
+    if (cover) {
+      coverUrl = observationDisplayUrl(cover.displayPath);
+      taxonomy = parseTaxonomy(cover.taxonomyJson);
+    }
   }
 
   const alerted = await db.query.observations.findFirst({
@@ -116,6 +124,7 @@ collectionRoutes.get("/:id", async (c) => {
   return c.json({
     entry: serializeCollectionEntry(entry, coverUrl, {
       alertIntroduced: Boolean(alerted),
+      taxonomy,
     }),
     sightings: sightingRows.map((obs) => {
       const when = obs.capturedAt ?? obs.settledAt ?? obs.createdAt;
