@@ -111,7 +111,8 @@
   --trip-create-bg: color-mix(in srgb, var(--card) 82%, var(--volume-cover-empty));
   --trip-share-badge-bg: var(--volume-complete-soft);
   --trip-share-badge-ink: var(--volume-complete-ink);
-  --trip-pending-veil: color-mix(in srgb, var(--volume-cover-empty) 64%, var(--card));
+  --trip-pending-veil: color-mix(in srgb, var(--volume-cover-empty) 88%, var(--card));
+  --trip-pending-band-ink: var(--accent);
   --trip-empty-caption: var(--muted);
 
   --me-card-bg: color-mix(in srgb, var(--card) 88%, var(--volume-cover-empty));

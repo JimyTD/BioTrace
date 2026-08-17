@@ -584,11 +584,11 @@ export default function TripAlbumPage({ userId }: { userId: string }) {
                           : obs.commonName || t("map.observationFallback")
                     }
                   />
-                  {obs.status === "pending_settle" && !slottingIds.has(obs.id) ? (
-                    <div className="film-tile-pending-seal" aria-hidden />
-                  ) : null}
                 </div>
                 <img className="film-tile-frame" src={tripFilmFrameUrl()} alt="" aria-hidden />
+                {obs.status === "pending_settle" && !slottingIds.has(obs.id) ? (
+                  <div className="film-tile-pending-seal">{t("settle.open")}</div>
+                ) : null}
                 <div className="film-tile-badge">{statusBadge(obs)}</div>
               </div>
               <div className="film-tile-meta">

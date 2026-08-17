@@ -75,7 +75,7 @@
         position: relative;
         aspect-ratio: 1;
         border-radius: 3px;
-        overflow: hidden;
+        overflow: visible;
         background: var(--plate);
         box-shadow: 0 4px 14px rgba(42, 36, 28, 0.08);
       }
@@ -103,15 +103,30 @@
         z-index: 2;
         pointer-events: none;
       }
+      .tile.is-pending .photo {
+        filter: blur(6px) saturate(0.55) brightness(0.72);
+        transform: scale(1.12);
+      }
       .seal {
         position: absolute;
-        left: 0;
-        right: 0;
-        top: 34%;
-        height: 26%;
-        z-index: 1;
+        left: -8%;
+        right: -8%;
+        top: 38%;
+        z-index: 4;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        padding: 0.55em 0.4em 0.6em;
         background: var(--seal);
-        box-shadow: inset 0 1px 0 rgba(42, 64, 51, 0.14);
+        color: #3a322c;
+        font-size: 0.82rem;
+        font-weight: 700;
+        letter-spacing: 0.22em;
+        line-height: 1;
+        box-shadow:
+          inset 0 1px 0 rgba(42, 64, 51, 0.14),
+          0 3px 8px rgba(42, 36, 28, 0.18);
+        transform: rotate(-1.4deg);
         pointer-events: none;
       }
       .meta { color: var(--muted); font-size: 0.88rem; }
@@ -134,7 +149,7 @@
   <body>
     <h1 class="doc">Cut L · 相册入槽</h1>
     <p class="note">
-      打开后会自动推进一张。再点「加入一张」可重看。格子先在，照片从窗下卡进齿孔。旁边那张是待开包的封。须用
+      右侧是待开包真腰封：箍在齿孔框上、照片虚化、封条写「请过目」。左侧会自动推进一张已收录。须用
       <code>http://127.0.0.1:5173/trips/slot-in-preview.html</code> 打开。
     </p>
     <div class="phone">
@@ -179,16 +194,16 @@
 
       function tile({ pending, empty }) {
         const el = document.createElement("article");
-        el.className = "tile";
+        el.className = "tile" + (pending ? " is-pending" : "");
         el.innerHTML =
           '<div class="media">' +
           '<div class="window">' +
           (empty
             ? ""
             : '<img class="photo" src="' + src + '" alt="" />') +
-          (pending ? '<div class="seal" aria-hidden></div>' : "") +
           "</div>" +
           '<img class="frame" src="' + frame + '" alt="" />' +
+          (pending ? '<div class="seal">请过目</div>' : "") +
           "</div>" +
           '<span class="meta">' +
           (empty ? "空齿孔" : pending ? "结论已经落笔。" : "已收录") +
@@ -224,10 +239,11 @@
         });
         img.style.transform = "translateY(0)";
         if (pending) {
+          host.classList.add("is-pending");
           const seal = document.createElement("div");
           seal.className = "seal";
-          seal.setAttribute("aria-hidden", "");
-          windowEl.append(seal);
+          seal.textContent = "请过目";
+          host.querySelector(".media").append(seal);
           meta.textContent = "结论已经落笔。";
         } else {
           meta.textContent = "已收录";
@@ -237,7 +253,6 @@
 
       const empty = tile({ pending: false, empty: true });
       const sealed = tile({ pending: true, empty: false });
-      sealed.querySelector(".photo").style.filter = "saturate(0.85) brightness(0.92)";
       grid.append(empty, sealed);
 
       document.getElementById("add").onclick = () => {
