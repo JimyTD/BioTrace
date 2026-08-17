@@ -64,6 +64,7 @@ export default function CollectionVolumePage() {
   const coverRef = useRef<HTMLImageElement | null>(null);
   const openPlayed = useRef(false);
   const returnPlayed = useRef(false);
+  const scrollRestoredFor = useRef<string | null>(null);
   const [opening] = useState(() => {
     const found = peekVolumeOpenHandoff();
     return found && found.dir === "open" && found.volumeId === id ? found : null;
@@ -114,10 +115,16 @@ export default function CollectionVolumePage() {
 
   useLayoutEffect(() => {
     if (!onThisVolume || !volume) {
-      if (!onThisVolume) returnPlayed.current = false;
+      if (!onThisVolume) {
+        returnPlayed.current = false;
+        scrollRestoredFor.current = null;
+      }
       return;
     }
-    restoreNamedScroll(`volume:${id}`, ".page-lift-overlay.is-volume");
+    if (scrollRestoredFor.current !== id) {
+      restoreNamedScroll(`volume:${id}`, ".page-lift-overlay.is-volume");
+      scrollRestoredFor.current = id;
+    }
     if (returnPlayed.current) return;
     const found = peekPhotoLiftHandoff();
     if (

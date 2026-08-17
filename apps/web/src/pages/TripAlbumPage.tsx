@@ -102,6 +102,7 @@ export default function TripAlbumPage({ userId }: { userId: string }) {
   const [liftSourceId, setLiftSourceId] = useState<string | null>(null);
   const pageRef = useRef<HTMLDivElement | null>(null);
   const returnPlayed = useRef(false);
+  const scrollRestoredFor = useRef<string | null>(null);
 
   const analyzingIds = useMemo(
     () => observations.filter((o) => o.status === "analyzing").map((o) => o.id),
@@ -235,10 +236,16 @@ export default function TripAlbumPage({ userId }: { userId: string }) {
 
   useLayoutEffect(() => {
     if (!onAlbum || !loaded) {
-      if (!onAlbum) returnPlayed.current = false;
+      if (!onAlbum) {
+        returnPlayed.current = false;
+        scrollRestoredFor.current = null;
+      }
       return;
     }
-    restoreAlbumScroll(id);
+    if (scrollRestoredFor.current !== id) {
+      restoreAlbumScroll(id);
+      scrollRestoredFor.current = id;
+    }
     if (returnPlayed.current) return;
     const found = peekPhotoLiftHandoff();
     if (

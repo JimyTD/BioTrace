@@ -28,6 +28,7 @@ export default function CollectionPage() {
   const [sourceId, setSourceId] = useState<string | null>(null);
   const pageRef = useRef<HTMLDivElement | null>(null);
   const returnPlayed = useRef(false);
+  const scrollRestored = useRef(false);
 
   useEffect(() => {
     Promise.all([api.listCollection(), api.listVolumes()])
@@ -43,9 +44,14 @@ export default function CollectionPage() {
   useLayoutEffect(() => {
     if (volumeOpen) {
       returnPlayed.current = false;
+      scrollRestored.current = false;
       return;
     }
-    restoreContentScroll("collection");
+    if (loading) return;
+    if (!scrollRestored.current) {
+      restoreContentScroll("collection");
+      scrollRestored.current = true;
+    }
     if (returnPlayed.current) return;
     const found = peekVolumeOpenHandoff();
     if (!found || found.dir !== "close") return;
