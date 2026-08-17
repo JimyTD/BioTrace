@@ -1,7 +1,15 @@
 import type { CollectionEntry, Taxonomy, TaxonomyName } from "./api";
 import { rarityCollectibleRank } from "./speciesSearch";
 
-export const TREE_RANKS = ["class", "order", "family", "genus", "species"] as const;
+export const TREE_RANKS = [
+  "kingdom",
+  "phylum",
+  "class",
+  "order",
+  "family",
+  "genus",
+  "species",
+] as const;
 export type TreeRank = (typeof TREE_RANKS)[number];
 
 export const UNPLACED_LATIN = "__unplaced__";
@@ -58,13 +66,13 @@ export function homeRank(entry: CollectionEntry): keyof Taxonomy | null {
 }
 
 export function isPlaced(entry: CollectionEntry) {
-  return Boolean(latinKey(nameAt(entry.taxonomy, "class")?.name_la));
+  return Boolean(latinKey(nameAt(entry.taxonomy, "kingdom")?.name_la));
 }
 
-export function countTreeClasses(entries: CollectionEntry[]) {
+export function countTreeKingdoms(entries: CollectionEntry[]) {
   const seen = new Set<string>();
   for (const entry of entries) {
-    const key = latinKey(nameAt(entry.taxonomy, "class")?.name_la);
+    const key = latinKey(nameAt(entry.taxonomy, "kingdom")?.name_la);
     if (key) seen.add(key);
   }
   return seen.size;
@@ -96,12 +104,6 @@ function displayName(entries: CollectionEntry[], rank: keyof Taxonomy, fallback:
   return fallback;
 }
 
-function chainCaption(entries: CollectionEntry[]) {
-  const sample = entries[0]?.taxonomy;
-  if (!sample) return "";
-  return sample.kingdom.name_zh || sample.kingdom.name_la || "";
-}
-
 function matchesPath(entry: CollectionEntry, path: string[]) {
   if (!isPlaced(entry)) return false;
   for (let i = 0; i < path.length; i++) {
@@ -112,11 +114,9 @@ function matchesPath(entry: CollectionEntry, path: string[]) {
   return true;
 }
 
-const RANK_ORDER = ["kingdom", "phylum", "class", "order", "family", "genus", "species"] as const;
-
 function rankIndex(rank: keyof Taxonomy | null) {
   if (!rank) return -1;
-  return RANK_ORDER.indexOf(rank as (typeof RANK_ORDER)[number]);
+  return TREE_RANKS.indexOf(rank as TreeRank);
 }
 
 function groupByRank(entries: CollectionEntry[], rank: TreeRank) {
@@ -183,12 +183,8 @@ export function buildTreeLayer(entries: CollectionEntry[], path: string[]): Tree
       else unplaced.push(entry);
     }
     const items: TreeItem[] = [];
-    for (const { latin, subset } of groupByRank(placed, "class").values()) {
-      const kingdom =
-        nameAt(subset[0]?.taxonomy, "kingdom")?.name_zh ||
-        nameAt(subset[0]?.taxonomy, "kingdom")?.name_la ||
-        "";
-      items.push(folderFrom(subset, "class", latin, kingdom));
+    for (const { latin, subset } of groupByRank(placed, "kingdom").values()) {
+      items.push(folderFrom(subset, "kingdom", latin, ""));
     }
     if (unplaced.length > 0) {
       const cover = pickCover(unplaced);
@@ -254,7 +250,10 @@ export function buildTreeLayer(entries: CollectionEntry[], path: string[]): Tree
   const cover = pickCover(scoped);
   return {
     title: parentRank ? displayName(scoped, parentRank, parentLatin) : "",
-    lede: parentRank === "class" ? chainCaption(scoped) : displayName(scoped, TREE_RANKS[path.length - 2] ?? "class", ""),
+    lede:
+      path.length >= 2
+        ? displayName(scoped, TREE_RANKS[path.length - 2] ?? "kingdom", "")
+        : "",
     coverUrl: cover?.coverDisplayUrl ?? null,
     split: true,
     items: sortItems(items),

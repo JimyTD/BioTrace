@@ -7,7 +7,7 @@ import { measureBox } from "../motion";
 import { playPhotoLift } from "../photoLift";
 import { volumeCoverUrl, volumeSealCompleteUrl } from "../themes";
 import { peekCollection, rememberCollection } from "../pageCache";
-import { countTreeClasses } from "../treeBuild";
+import { countTreeKingdoms } from "../treeBuild";
 import { restoreContentScroll, saveContentScroll } from "../scrollMemory";
 import {
   clearVolumeOpenHandoff,
@@ -23,7 +23,7 @@ export default function CollectionPage() {
   const volumeOpen = Boolean(useMatch("/collection/volumes/:id"));
   const navigate = useNavigate();
   const [entryCount, setEntryCount] = useState(() => peekCollection()?.entryCount ?? 0);
-  const [classCount, setClassCount] = useState(() => peekCollection()?.classCount ?? 0);
+  const [kingdomCount, setKingdomCount] = useState(() => peekCollection()?.kingdomCount ?? 0);
   const [volumes, setVolumes] = useState<VolumeListItem[]>(() => peekCollection()?.volumes ?? []);
   const [error, setError] = useState<string | null>(null);
   const [loading, setLoading] = useState(() => !peekCollection());
@@ -36,11 +36,11 @@ export default function CollectionPage() {
     Promise.all([api.listCollection(), api.listVolumes()])
       .then(([col, vol]) => {
         setEntryCount(col.entries.length);
-        setClassCount(countTreeClasses(col.entries));
+        setKingdomCount(countTreeKingdoms(col.entries));
         setVolumes(vol.volumes);
         rememberCollection({
           entryCount: col.entries.length,
-          classCount: countTreeClasses(col.entries),
+          kingdomCount: countTreeKingdoms(col.entries),
           entries: col.entries,
           volumes: vol.volumes,
         });
@@ -209,7 +209,7 @@ export default function CollectionPage() {
             <span>{t("collection.treeTitle")}</span>
             <span className="me-row-side">
               <span className="muted">
-                {t("collection.treeCount", { count: classCount })}
+                {t("collection.treeCount", { count: kingdomCount })}
               </span>
               <span className="me-row-go" aria-hidden>
                 ›

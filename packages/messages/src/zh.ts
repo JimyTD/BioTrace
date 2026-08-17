@@ -226,7 +226,7 @@ export const zh = {
   "collection.speciesLoadFailed": "加载这种失败",
   "collection.treeTitle": "收集树",
   "collection.treeLede": "按分类看已经收到的枝。",
-  "collection.treeCount": "{count} 纲",
+  "collection.treeCount": "{count} 界",
   "collection.treeUnplaced": "未归类",
 
   // dev fixture only：配置里 enabled:false，正式环境不加载；待分层重构时移出主表

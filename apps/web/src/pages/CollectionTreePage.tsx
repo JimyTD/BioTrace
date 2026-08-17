@@ -8,7 +8,7 @@ import { playPhotoLift } from "../photoLift";
 import { peekCollection, rememberCollection } from "../pageCache";
 import {
   buildTreeLayer,
-  countTreeClasses,
+  countTreeKingdoms,
   folderIsUnaryGenus,
   parseTreePath,
   treePathUrl,
@@ -69,7 +69,7 @@ export default function CollectionTreePage() {
         const prev = peekCollection();
         rememberCollection({
           entryCount: col.entries.length,
-          classCount: countTreeClasses(col.entries),
+          kingdomCount: countTreeKingdoms(col.entries),
           entries: col.entries,
           volumes: prev?.volumes ?? [],
         });
