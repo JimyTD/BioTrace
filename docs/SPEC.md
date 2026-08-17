@@ -3,7 +3,7 @@
 > **本文件是功能真源**：已做 / 本期要做 / 明确后置。查「某能力做没做」以此为准。  
 > 部署与线上现状看 [`OPS.md`](./OPS.md)；专题手册在 [`features/`](./features/)；当初的取舍理由在 [`planning/`](./planning/)。  
 > 变更历史看 git log，本文不留手抄变更记录。  
-> 更新日期：2026-08-13
+> 更新日期：2026-08-17
 
 ## 0. 当前阶段
 
@@ -20,7 +20,9 @@
 | 管理后台 | 已落地 | 独立登录；总览/用户/观察/平台密钥/存储/审计；手册 [`features/管理后台.md`](./features/管理后台.md) |
 | 地图补标 | 已完成 | 详情准星补标；`PATCH …/location` 重算国别/引入/稀有度（见 §1.3） |
 | 旅途元数据 | 已完成 | 列表/相册时间·地点摘要；自动聚合 + 可选手填覆盖（见 §1.5） |
-| 后置 | 未做 | 全量灌库、iOS/上架；更多套册策展 |
+| 识图护栏 | 已收口 | 账号日额度 + 自备 OpenAI 兼容 Key；手册 [`features/识图护栏.md`](./features/识图护栏.md) |
+| 共享旅途 | 已收口 | 邀请码共享相册（≤10）；手册 [`features/共享旅途.md`](./features/共享旅途.md) |
+| 后置 | 未做 | 全量灌库、iOS/上架；更多套册策展；好友/Feed |
 
 本机：`pnpm.cmd dev` → Web `http://127.0.0.1:5173/` · API `http://127.0.0.1:8787`
 
@@ -42,7 +44,7 @@ data/        本地 DB 与 uploads（gitignore）
 docs/        筹划 + 本实现规格
 ```
 
-数据对象：`User` / `Trip` / `Observation` / `CollectionEntry` / `rarity_cache`。
+数据对象：`User` / `Trip` / `TripMember` / `Observation` / `CollectionEntry` / `SharedCollectionCredit` / `rarity_cache`。
 
 **表现层三分离（加功能时勿搅在一起）：**
 
@@ -105,6 +107,22 @@ docs/        筹划 + 本实现规格
 - **真源**：服务器 `/opt/biotrace/data/android-release/`（`BioTrace.apk` + `latest.json`，只留最新）；`GET /api/app/android` / `.../apk`。
 - **行为**：「我的」检查更新；下载后唤起系统安装。minor/major 落后 → 进 App 强提示不可跳过；仅 patch 落后不挡用。
 - **运维**：发版后必须把包覆盖到上述目录，见 [`OPS.md`](./OPS.md) §7.2。
+
+## 1.7 识图护栏（已收口）
+
+挡住刷平台 Key。**手册：[`features/识图护栏.md`](./features/识图护栏.md)**。
+
+- 账号日额度：默认 100 / UTC 日；`IDENTIFY_DAILY_LIMIT`（`0`=关）；只计平台 Key 实际调用。
+- 超限可上传、不识图（`identify_daily_limit`）；自备 OpenAI 兼容 Key + 开关，开则硬失败不回落平台。
+- 「我的」展示今日已用；后台可查看/改配额/清自备 Key。
+
+## 1.8 共享旅途相册（已收口）
+
+共同出行共享相册（不做好友/Feed）。**手册：[`features/共享旅途.md`](./features/共享旅途.md)**。
+
+- 邀请码 +「允许加入」；上限 10；创建者为管理员（退出顺位继承）。
+- 谁传谁额度；只能删自己的；团员共看、可代开包；开包全员图鉴/套册加点；入伙补算、离团收回。
+- 解散：各自同名私有旅途承接自己的观察。
 
 ---
 
@@ -323,7 +341,7 @@ computeSettle
 - **主路径**：`POST /api/auth/register` / `POST /api/auth/login`（邮箱+密码）→ 设 `bt_session`；`/me` 滑动续期（约 90 天）。
 - **不强制验邮**：假邮箱可注册；收不到信则无法找回。
 - **找回**：`POST /api/auth/request-reset` → Resend 发 **6 位码** → `POST /api/auth/reset-password`（App 内填码，利 Android）。
-- **「我的」**：昵称、改密、退出；外观切换皮肤（`daylight` / `tide`）；平台识图日额度与自备密钥已落地（后台可查看/清除，见 [`features/管理后台.md`](./features/管理后台.md)）。
+- **「我的」**：昵称、改密、退出；外观切换皮肤（`daylight` / `tide`）；**平台识图日额度与自备 OpenAI 兼容 Key**（见 §1.7 / [`features/识图护栏.md`](./features/识图护栏.md)；后台可查看/清除，见 [`features/管理后台.md`](./features/管理后台.md)）。
 - **UI**：登录页默认只露登录；注册与找回切卡，不并排抢主按钮。
 - 本机可 `DEV_AUTH=1` 开发登录；生产 `DEV_AUTH=0`。测试库可清（密码模型不迁移旧魔法链接用户）。
 - 发信仍用 Resend（`RESEND_API_KEY` + `MAIL_FROM`）；日常登录不发信。
@@ -361,8 +379,11 @@ computeSettle
 - 套册：更多主题册策展（内容 only）；手绘级替换生成图
 - 稀有度：灭绝级 XR 稳定性；中档继续靠判定键微调（禁止物种名单）
 - ~~旅途元数据增强（时间 / 地点摘要）~~：已做——自动聚合 + 可选手填覆盖（见旅途列表 / 管理旅途）
+- ~~识图账号日额度 / 自备 Key~~：已做——见 §1.7
+- ~~共享旅途相册~~：已做——见 §1.8；好友 / Feed / 广场仍后置
 - 完整分类树动态够格（现为固定阶元门槛）；对象存储
 - iOS / Play 上架 / 备案后 HTTPS 域名 + App Links
+- IP / 全局限流、识图用量看板（护栏明确不做项）
 
 ---
 
