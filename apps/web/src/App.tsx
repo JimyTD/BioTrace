@@ -14,6 +14,7 @@ import { api, type User } from "./api";
 import ForceAppUpdateGate from "./components/ForceAppUpdateGate";
 import PageOverlay from "./PageOverlay";
 import CollectionPage from "./pages/CollectionPage";
+import CollectionSpeciesCardPage from "./pages/CollectionSpeciesCardPage";
 import CollectionSpeciesPage from "./pages/CollectionSpeciesPage";
 import CollectionVolumePage from "./pages/CollectionVolumePage";
 import LoginPage from "./pages/LoginPage";
@@ -53,6 +54,15 @@ function CollectionLayout() {
   return (
     <>
       <CollectionPage />
+      <Outlet />
+    </>
+  );
+}
+
+function SpeciesListLayout() {
+  return (
+    <>
+      <CollectionSpeciesPage />
       <Outlet />
     </>
   );
@@ -107,7 +117,17 @@ function AppShell({
                 }
               />
             </Route>
-            <Route path="/collection/species" element={<CollectionSpeciesPage />} />
+            <Route path="/collection/species" element={<SpeciesListLayout />}>
+              <Route index element={null} />
+              <Route
+                path=":id"
+                element={
+                  <PageOverlay className="is-species">
+                    <CollectionSpeciesCardPage />
+                  </PageOverlay>
+                }
+              />
+            </Route>
             <Route path="/me" element={<MePage user={user} onLogout={() => setUser(null)} />} />
             <Route
               path="/me/profile"

@@ -221,6 +221,9 @@ export const zh = {
   "collection.speciesSortRecent": "最近",
   "collection.speciesSortRarity": "稀有度",
   "collection.speciesSortName": "名字",
+  "collection.speciesFirstCollected": "首次收录 {date}",
+  "collection.speciesSightings": "历次遇见",
+  "collection.speciesLoadFailed": "加载这种失败",
 
   // dev fixture only：配置里 enabled:false，正式环境不加载；待分层重构时移出主表
   "volume.fixture_pipeline.title": "管道验收册",

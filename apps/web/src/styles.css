@@ -2247,6 +2247,79 @@ button.stamp {
   font-size: 0.7rem;
 }
 
+.species-card-cover {
+  appearance: none;
+  -webkit-appearance: none;
+  display: block;
+  width: 100%;
+  margin: 0;
+  padding: 0;
+  border: 0;
+  border-radius: var(--radius-md);
+  overflow: hidden;
+  background: var(--volume-cover-empty);
+  box-shadow: var(--trip-cover-shadow);
+}
+
+button.species-card-cover {
+  cursor: pointer;
+}
+
+.species-card-cover img {
+  display: block;
+  width: 100%;
+  aspect-ratio: 4 / 3;
+  object-fit: cover;
+}
+
+.species-card-cover.is-lift-source img,
+.species-sighting.is-lift-source .species-sighting-photo {
+  visibility: hidden;
+}
+
+.species-card-marks {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 8px;
+}
+
+.species-sightings {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 12px 10px;
+}
+
+.species-sighting {
+  appearance: none;
+  -webkit-appearance: none;
+  display: grid;
+  gap: 4px;
+  margin: 0;
+  padding: 0;
+  border: 0;
+  background: transparent;
+  color: inherit;
+  font: inherit;
+  text-align: left;
+  cursor: pointer;
+}
+
+.species-sighting-photo {
+  width: 100%;
+  aspect-ratio: 1;
+  object-fit: cover;
+  border-radius: var(--radius-sm);
+  background: var(--volume-cover-empty);
+}
+
+.species-sighting strong {
+  font-size: 0.88rem;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
 .volume-ceremony-backdrop {
   z-index: 50;
 }
@@ -2367,7 +2440,8 @@ button.stamp {
   height: 100%;
 }
 
-.page-collection.is-covered {
+.page-collection.is-covered,
+.page-collection-species.is-covered {
   visibility: hidden;
   pointer-events: none;
 }

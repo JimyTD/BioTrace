@@ -88,6 +88,14 @@ export type Observation = {
   pendingReveal?: boolean;
 };
 
+export type CollectionSighting = {
+  observationId: string;
+  displayUrl: string;
+  tripId: string;
+  tripTitle: string;
+  occurredAt: string;
+};
+
 export type CollectionEntry = {
   id: string;
   taxonKey: string;
@@ -322,6 +330,8 @@ export const api = {
   listMappedObservations: () =>
     request<{ observations: Observation[] }>("/api/observations?mapped=1"),
   listCollection: () => request<{ entries: CollectionEntry[] }>("/api/collection"),
+  getCollectionEntry: (id: string) =>
+    request<{ entry: CollectionEntry; sightings: CollectionSighting[] }>(`/api/collection/${id}`),
   listVolumes: () => request<{ volumes: VolumeListItem[] }>("/api/volumes"),
 };
 

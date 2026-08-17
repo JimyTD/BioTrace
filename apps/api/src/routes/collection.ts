@@ -1,10 +1,13 @@
 import { Hono } from "hono";
-import { and, desc, eq } from "drizzle-orm";
+import { and, desc, eq, inArray } from "drizzle-orm";
 import { requireUser, type Variables } from "../auth.js";
 import { db } from "../db/index.js";
 import { collectionEntries, observations } from "../db/schema.js";
+import { apiError } from "../errors.js";
 import { sanitizeUserCollection } from "../services/collection.js";
-import { serializeCollectionEntry } from "../serialize.js";
+import { rebuildCollectionTaxonForUser } from "../services/shared-progress.js";
+import { listTripsForUser } from "../services/trip-share.js";
+import { observationDisplayUrl, serializeCollectionEntry } from "../serialize.js";
 
 export const collectionRoutes = new Hono<{ Variables: Variables }>();
 
@@ -48,4 +51,81 @@ collectionRoutes.get("/", async (c) => {
   );
 
   return c.json({ entries: payload });
+});
+
+collectionRoutes.get("/:id", async (c) => {
+  const user = c.get("user");
+  const id = c.req.param("id");
+  const row = await db.query.collectionEntries.findFirst({
+    where: and(eq(collectionEntries.id, id), eq(collectionEntries.userId, user.id)),
+  });
+  if (!row) {
+    const err = apiError("not found", 404);
+    return c.json(err.body, err.status);
+  }
+
+  await rebuildCollectionTaxonForUser(user.id, row.taxonKey);
+  const entry = await db.query.collectionEntries.findFirst({
+    where: and(eq(collectionEntries.id, id), eq(collectionEntries.userId, user.id)),
+  });
+  if (!entry) {
+    const err = apiError("not found", 404);
+    return c.json(err.body, err.status);
+  }
+
+  let coverUrl: string | null = null;
+  if (entry.coverObservationId) {
+    const cover = await db.query.observations.findFirst({
+      where: eq(observations.id, entry.coverObservationId),
+    });
+    if (cover) coverUrl = observationDisplayUrl(cover.displayPath);
+  }
+
+  const alerted = await db.query.observations.findFirst({
+    where: and(
+      eq(observations.userId, user.id),
+      eq(observations.taxonKey, entry.taxonKey),
+      eq(observations.status, "settled"),
+      eq(observations.alertIntroduced, true),
+    ),
+    columns: { id: true },
+  });
+
+  const memberTrips = await listTripsForUser(user.id);
+  const tripTitle = new Map(memberTrips.map((trip) => [trip.id, trip.title]));
+  const tripIds = memberTrips.map((trip) => trip.id);
+  const sightingRows =
+    tripIds.length > 0
+      ? await db.query.observations.findMany({
+          where: and(
+            eq(observations.taxonKey, entry.taxonKey),
+            eq(observations.status, "settled"),
+            inArray(observations.tripId, tripIds),
+          ),
+          orderBy: [desc(observations.settledAt), desc(observations.createdAt)],
+        })
+      : await db.query.observations.findMany({
+          where: and(
+            eq(observations.userId, user.id),
+            eq(observations.taxonKey, entry.taxonKey),
+            eq(observations.status, "settled"),
+          ),
+          orderBy: [desc(observations.settledAt), desc(observations.createdAt)],
+        });
+
+  return c.json({
+    entry: serializeCollectionEntry(entry, coverUrl, {
+      alertIntroduced: Boolean(alerted),
+    }),
+    sightings: sightingRows.map((obs) => {
+      const when = obs.capturedAt ?? obs.settledAt ?? obs.createdAt;
+      return {
+        observationId: obs.id,
+        displayUrl: observationDisplayUrl(obs.displayPath),
+        tripId: obs.tripId,
+        tripTitle: tripTitle.get(obs.tripId) ?? "",
+        occurredAt: when.toISOString(),
+      };
+    }),
+  });
 });

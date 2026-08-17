@@ -1,5 +1,5 @@
-import { useEffect, useMemo, useState } from "react";
-import { Link } from "react-router-dom";
+import { useEffect, useLayoutEffect, useMemo, useRef, useState } from "react";
+import { Link, useMatch } from "react-router-dom";
 import { hasMessage, t, type MessageKey } from "@biotrace/messages";
 import { api, type CollectionEntry, type Rarity } from "../api";
 import {
@@ -11,6 +11,7 @@ import {
   speciesEntryName,
   type SpeciesSort,
 } from "../speciesSearch";
+import { restoreContentScroll, saveContentScroll } from "../scrollMemory";
 
 function rarityLabel(r: Rarity) {
   const key = `rarity.${r}`;
@@ -22,12 +23,14 @@ function entryName(entry: CollectionEntry) {
 }
 
 export default function CollectionSpeciesPage() {
+  const cardOpen = Boolean(useMatch("/collection/species/:id"));
   const [entries, setEntries] = useState<CollectionEntry[]>([]);
   const [query, setQuery] = useState("");
   const [rarityFilter, setRarityFilter] = useState<string | null>(null);
   const [sort, setSort] = useState<SpeciesSort>("recent");
   const [error, setError] = useState<string | null>(null);
   const [loading, setLoading] = useState(true);
+  const scrollRestored = useRef(false);
 
   useEffect(() => {
     api
@@ -36,6 +39,18 @@ export default function CollectionSpeciesPage() {
       .catch((e) => setError(e instanceof Error ? e.message : t("collection.loadFailed")))
       .finally(() => setLoading(false));
   }, []);
+
+  useLayoutEffect(() => {
+    if (cardOpen) {
+      scrollRestored.current = false;
+      return;
+    }
+    if (loading) return;
+    if (!scrollRestored.current) {
+      restoreContentScroll("collection-species");
+      scrollRestored.current = true;
+    }
+  }, [loading, cardOpen]);
 
   const indexed = useMemo(() => entries.map(indexSpecies), [entries]);
   const fuse = useMemo(() => (indexed.length ? buildSpeciesFuse(indexed) : null), [indexed]);
@@ -54,7 +69,10 @@ export default function CollectionSpeciesPage() {
   ];
 
   return (
-    <div className="stack page-collection-species">
+    <div
+      className={`stack page-collection-species${cardOpen ? " is-covered" : ""}`}
+      {...(cardOpen ? { inert: true } : {})}
+    >
       <header className="page-head me-sub-head">
         <Link className="text-link" to="/collection">
           ← {t("collection.volumeBack")}
@@ -129,11 +147,8 @@ export default function CollectionSpeciesPage() {
                 <Link
                   key={entry.id}
                   className="species-index-row"
-                  to={
-                    entry.coverObservationId
-                      ? `/observations/${entry.coverObservationId}`
-                      : "/collection/species"
-                  }
+                  to={`/collection/species/${entry.id}`}
+                  onClick={() => saveContentScroll("collection-species")}
                 >
                   {entry.coverDisplayUrl ? (
                     <img className="species-index-thumb" src={entry.coverDisplayUrl} alt="" />

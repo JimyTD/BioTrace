@@ -5,7 +5,8 @@ export type PhotoLiftDir = "open" | "close";
 
 export type PhotoLiftOrigin =
   | { kind: "album"; tripId: string }
-  | { kind: "volume"; volumeId: string };
+  | { kind: "volume"; volumeId: string }
+  | { kind: "species"; entryId: string };
 
 export type PhotoLiftHandoff = {
   observationId: string;
@@ -62,9 +63,9 @@ export function clearPhotoLiftHandoff() {
 }
 
 export function photoLiftReturnPath(origin: PhotoLiftOrigin) {
-  return origin.kind === "volume"
-    ? `/collection/volumes/${origin.volumeId}`
-    : `/trips/${origin.tripId}`;
+  if (origin.kind === "volume") return `/collection/volumes/${origin.volumeId}`;
+  if (origin.kind === "species") return `/collection/species/${origin.entryId}`;
+  return `/trips/${origin.tripId}`;
 }
 
 export function liftBackgroundState(location: Location) {
