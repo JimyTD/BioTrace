@@ -1,11 +1,9 @@
-import { useEffect, useLayoutEffect, useRef, useState } from "react";
+import { useEffect, useState } from "react";
 import { Link, useLocation, useNavigate, useParams } from "react-router-dom";
 import { formatRank, hasMessage, t, type MessageKey } from "@biotrace/messages";
 import { acceptedScientificIfDifferent, api, type Observation, type Rarity, type SettleVolumesResult } from "../api";
 import { SettlePackStage } from "../components/SettlePackStage";
-import { measureBox } from "../motion";
-import { containBoxIn, playSealLift } from "../photoLift";
-import { clearPhotoLiftHandoff, peekLiftBackground, peekPhotoLiftHandoff } from "../photoLiftHandoff";
+import { peekLiftBackground } from "../photoLiftHandoff";
 import { volumeCeremonyBgUrl, volumeSealCompleteUrl } from "../themes";
 
 function rarityLabel(r: Rarity | null) {
@@ -66,12 +64,6 @@ export default function ObservationSettlePage() {
   const [phase, setPhase] = useState<"sealed" | "revealing" | "open" | "claimed">("sealed");
   const [claiming, setClaiming] = useState(false);
   const [ceremony, setCeremony] = useState<{ kind: CeremonyKind; line: string } | null>(null);
-  const [liftOpen] = useState(() => {
-    const found = peekPhotoLiftHandoff();
-    return found && found.dir === "open" && found.observationId === id ? found : null;
-  });
-  const pageRef = useRef<HTMLDivElement | null>(null);
-  const liftPlayed = useRef(false);
 
   useEffect(() => {
     api
@@ -99,31 +91,6 @@ export default function ObservationSettlePage() {
       })
       .catch((e) => setError(e instanceof Error ? e.message : t("settle.failed")));
   }, [id, navigate, background]);
-
-  useLayoutEffect(() => {
-    if (!liftOpen || !obs || liftPlayed.current) return;
-    const stage = pageRef.current?.querySelector(".settle-stage");
-    if (!(stage instanceof HTMLElement)) return;
-    // 相册仍挂在下层，可以取到那只封缄格；深链或地图点进来没有它，就不演。
-    const cell = document.querySelector<HTMLElement>(
-      `.film-tile[data-obs-id="${liftOpen.observationId}"] .film-tile-media`,
-    );
-    liftPlayed.current = true;
-    clearPhotoLiftHandoff();
-    if (!cell) return;
-    const from = measureBox(cell);
-    let cancelled = false;
-    void playSealLift({
-      node: cell,
-      from,
-      to: () => containBoxIn(from, measureBox(stage)),
-      duration: 420,
-      cancelled: () => cancelled,
-    });
-    return () => {
-      cancelled = true;
-    };
-  }, [liftOpen, obs]);
 
   function onOpen() {
     setPhase("revealing");
@@ -174,7 +141,7 @@ export default function ObservationSettlePage() {
   const stagePhase = phase === "claimed" ? "open" : phase;
 
   return (
-    <div className="stack settle-page" ref={pageRef}>
+    <div className="stack settle-page">
       <header className="page-head">
         <h1 className="page-title">{t("settle.title")}</h1>
         <p className="lede">{t("settle.lede")}</p>

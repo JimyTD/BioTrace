@@ -59,6 +59,14 @@ function obsHref(obs: Observation) {
   return `/observations/${obs.id}`;
 }
 
+/**
+ * 只有相片才被拿起。待开包的格子是封着的一只，点它是去揭封，
+ * 不能让照片（哪怕是模糊的那张）先飞一趟——会提前泄底。
+ */
+function liftable(obs: Observation) {
+  return obs.status !== "pending_settle";
+}
+
 function albumMetaLine(trip: Trip): string {
   const parts = [tripMetaLine(trip)];
   if ((trip.memberCount ?? 1) > 1) {
@@ -286,7 +294,7 @@ export default function TripAlbumPage({ userId }: { userId: string }) {
   function openPhoto(obs: Observation, windowEl: HTMLElement | null) {
     saveAlbumScroll(id);
     saveContentScroll("trips");
-    if (windowEl) {
+    if (windowEl && liftable(obs)) {
       setPhotoLiftHandoff({
         observationId: obs.id,
         photoUrl: obs.displayUrl,
@@ -553,10 +561,10 @@ export default function TripAlbumPage({ userId }: { userId: string }) {
             <button
               type="button"
               className="film-tile-link"
-              aria-label={t("album.liftPhoto")}
+              aria-label={liftable(obs) ? t("album.liftPhoto") : t("settle.open")}
               onPointerDown={(e) => {
                 const windowEl = e.currentTarget.querySelector(".film-tile-window");
-                if (windowEl instanceof HTMLElement) {
+                if (windowEl instanceof HTMLElement && liftable(obs)) {
                   setPhotoLiftHandoff({
                     observationId: obs.id,
                     photoUrl: obs.displayUrl,
