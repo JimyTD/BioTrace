@@ -13,6 +13,7 @@
     "geocode:smoke": "tsx scripts/smoke-geocode.mjs",
     "volumes:smoke": "tsx scripts/smoke-volumes.mjs",
     "volumes:resolve-smoke": "tsx scripts/smoke-volumes-resolve.mjs",
+    "taxonkey:smoke": "tsx scripts/smoke-taxon-key.mjs",
     "identify:guard-smoke": "tsx scripts/smoke-identify-guard.mjs"
   },
   "dependencies": {

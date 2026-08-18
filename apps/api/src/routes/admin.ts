@@ -568,6 +568,7 @@ adminRoutes.post("/observations/:id/reidentify", async (c) => {
       locationPrecise: null,
       alertIntroduced: false,
       taxonKey: null,
+      acceptedTaxonomyJson: null,
       identifyProvider: null,
       settledAt: null,
       updatedAt: now,
@@ -627,6 +628,9 @@ adminRoutes.post("/observations/:id/recompute-settle", async (c) => {
       rarity: derived.rarity,
       settleTier: derived.settleTier,
       taxonKey: derived.taxonKey,
+      acceptedTaxonomyJson: derived.acceptedTaxonomy
+        ? JSON.stringify(derived.acceptedTaxonomy)
+        : null,
       updatedAt: now,
     })
     .where(eq(observations.id, row.id));

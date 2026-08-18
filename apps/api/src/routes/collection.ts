@@ -8,7 +8,7 @@ import { sanitizeUserCollection } from "../services/collection.js";
 import { rebuildCollectionTaxonForUser } from "../services/shared-progress.js";
 import { listTripsForUser } from "../services/trip-share.js";
 import { observationDisplayUrl, serializeCollectionEntry } from "../serialize.js";
-import { parseTaxonomy } from "../settle/taxon.js";
+import { parseCollectionTaxonomy } from "../settle/taxon.js";
 
 export const collectionRoutes = new Hono<{ Variables: Variables }>();
 
@@ -44,7 +44,7 @@ collectionRoutes.get("/", async (c) => {
         });
         if (obs) {
           coverUrl = observationDisplayUrl(obs.displayPath);
-          taxonomy = parseTaxonomy(obs.taxonomyJson);
+          taxonomy = parseCollectionTaxonomy(obs);
         }
       }
       return serializeCollectionEntry(entry, coverUrl, {
@@ -85,7 +85,7 @@ collectionRoutes.get("/:id", async (c) => {
     });
     if (cover) {
       coverUrl = observationDisplayUrl(cover.displayPath);
-      taxonomy = parseTaxonomy(cover.taxonomyJson);
+      taxonomy = parseCollectionTaxonomy(cover);
     }
   }
 

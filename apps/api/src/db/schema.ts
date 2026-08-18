@@ -98,6 +98,11 @@ export const observations = sqliteTable(
     locationPrecise: integer("location_precise", { mode: "boolean" }),
     alertIntroduced: integer("alert_introduced", { mode: "boolean" }),
     taxonKey: text("taxon_key"),
+    /**
+     * GBIF 骨架拉丁叠识图中文；图鉴/收集树用。观察展示仍走 taxonomyJson。
+     * 旧行可空。
+     */
+    acceptedTaxonomyJson: text("accepted_taxonomy_json"),
     /** Identify provider id: gemini | zhipu */
     identifyProvider: text("identify_provider"),
     settledAt: integer("settled_at", { mode: "timestamp_ms" }),

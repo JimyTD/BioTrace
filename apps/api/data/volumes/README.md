@@ -23,7 +23,7 @@
 
 ## 匹配前 GBIF 锚定
 
-开包推进套册前，会把 AI taxonomy **临时**锚定到 GBIF Backbone（不改写观察落库字段）：
+开包推进套册前，会把 AI taxonomy **临时**锚定到 GBIF Backbone（不改写观察的 taxonomy 字段；结算写入的 `taxonKey` 是另一条路径，见 [`SPEC.md`](../../../../docs/SPEC.md) §3.3）：
 
 1. 按可靠阶元从细到粗尝试：`species → genus → family → order`
 2. 走 `/species/match`（只传 name+rank；**不**传 AI 高阶分类，避免错科否决模糊命中）；接受 `EXACT` / `FUZZY` / `HIGHERRANK`，`confidence ≥ 80`

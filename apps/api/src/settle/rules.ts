@@ -1,8 +1,8 @@
-import { TAXONOMY_RANKS } from "../identify/types.js";
+import { TAXONOMY_RANKS, type Taxonomy } from "../identify/types.js";
 import { resolveIntroducedAlert } from "../introduced/index.js";
 import { resolveRarity } from "../rarity/index.js";
 import { resolveCountry, type CountrySource } from "./country.js";
-import { buildTaxonKey, parseTaxonomy } from "./taxon.js";
+import { buildTaxonKey, parseTaxonomy, resolveTaxonKey } from "./taxon.js";
 
 export type SettleTier = "full" | "weak" | "none";
 
@@ -17,6 +17,8 @@ export type SettleComputation = {
   locationPrecise: boolean;
   alertIntroduced: boolean;
   taxonKey: string | null;
+  /** GBIF 骨架拉丁 + 识图中文；观察页不展示这份。 */
+  acceptedTaxonomy: Taxonomy | null;
 };
 
 function normalizeRank(rank: string | null | undefined): string {
@@ -48,11 +50,23 @@ export async function computeSettle(input: {
   const locationPrecise = Boolean(countryCode);
   const settleTier = settleTierFromRank(input.finestReliableRank);
   const taxonomy = parseTaxonomy(input.taxonomyJson);
-  const taxonKey = buildTaxonKey({
-    scientificName: input.scientificName,
-    taxonomy,
-    finestReliableRank: input.finestReliableRank,
-  });
+  const resolvedKey =
+    settleTier === "none"
+      ? {
+          taxonKey: buildTaxonKey({
+            scientificName: input.scientificName,
+            taxonomy,
+            finestReliableRank: input.finestReliableRank,
+          }),
+          acceptedTaxonomy: null as Taxonomy | null,
+        }
+      : await resolveTaxonKey({
+          scientificName: input.scientificName,
+          taxonomy,
+          finestReliableRank: input.finestReliableRank,
+        });
+  const taxonKey = resolvedKey.taxonKey;
+  const acceptedTaxonomy = resolvedKey.acceptedTaxonomy;
 
   if (settleTier === "none") {
     return {
@@ -64,6 +78,7 @@ export async function computeSettle(input: {
       locationPrecise,
       alertIntroduced: false,
       taxonKey,
+      acceptedTaxonomy: null,
     };
   }
 
@@ -107,5 +122,6 @@ export async function computeSettle(input: {
     locationPrecise,
     alertIntroduced: intro.alert,
     taxonKey,
+    acceptedTaxonomy,
   };
 }

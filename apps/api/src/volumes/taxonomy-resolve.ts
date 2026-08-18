@@ -77,6 +77,67 @@ export function isAcceptedGbifMatch(m: GbifMatchResult): boolean {
   return m.matchType === "EXACT" || m.matchType === "FUZZY" || m.matchType === "HIGHERRANK";
 }
 
+const GBIF_RANK_INDEX: Record<string, number> = {
+  kingdom: 0,
+  phylum: 1,
+  class: 2,
+  order: 3,
+  family: 4,
+  genus: 5,
+  species: 6,
+  subspecies: 7,
+};
+
+function gbifRankIndex(raw: string | null | undefined): number | null {
+  const key = (raw ?? "").trim().toLowerCase().replace(/[\s_-]+/g, "");
+  if (!key) return null;
+  return GBIF_RANK_INDEX[key] ?? null;
+}
+
+/** Match rank is the key rank or finer (subspecies covers species). Coarser HIGHERRANK is rejected. */
+export function gbifRankCoversKey(matchRank: string | null | undefined, keyRank: TaxonomyRank): boolean {
+  const m = gbifRankIndex(matchRank);
+  const k = gbifRankIndex(keyRank);
+  if (m == null || k == null) return false;
+  return m >= k;
+}
+
+/**
+ * Accepted backbone name at the settle key rank.
+ * Species: binomial from `species` (follows synonym → accepted), not synonym canonicalName.
+ */
+export function canonicalForTaxonKey(match: GbifMatchResult, keyRank: TaxonomyRank): string | null {
+  if (keyRank === "species") {
+    const raw =
+      match.species?.trim() ||
+      (gbifRankCoversKey(match.rank, "species") ? match.canonicalName : null);
+    if (!raw) return null;
+    const parts = normalizeScientificQuery(raw).split(/\s+/).filter(Boolean);
+    if (parts.length < 2) return null;
+    return `${parts[0]} ${parts[1]}`;
+  }
+
+  const fromField =
+    keyRank === "genus"
+      ? match.genus
+      : keyRank === "family"
+        ? match.family
+        : keyRank === "order"
+          ? match.order
+          : keyRank === "class"
+            ? match.class
+            : keyRank === "phylum"
+              ? match.phylum
+              : keyRank === "kingdom"
+                ? match.kingdom
+                : null;
+  const raw =
+    fromField?.trim() ||
+    (gbifRankIndex(match.rank) === gbifRankIndex(keyRank) ? match.canonicalName : null);
+  if (!raw) return null;
+  return normalizeScientificQuery(raw);
+}
+
 /** Overlay GBIF backbone ranks onto a copy; keep original zh labels. */
 export function mergeGbifIntoTaxonomy(base: Taxonomy, match: GbifMatchResult): Taxonomy {
   const out = emptyTaxonomy();
@@ -93,7 +154,10 @@ export function mergeGbifIntoTaxonomy(base: Taxonomy, match: GbifMatchResult): T
     order: match.order,
     family: match.family,
     genus: match.genus,
-    species: match.species ?? match.canonicalName,
+    // 种级才填 species；属级 HIGHERRANK 的 canonicalName 不能落到种上（否则收集树会把属卡当种）。
+    species:
+      match.species?.trim() ||
+      (gbifRankCoversKey(match.rank, "species") ? match.canonicalName : null),
   };
   for (const rank of TAXONOMY_RANKS) {
     const la = overlay[rank]?.trim();

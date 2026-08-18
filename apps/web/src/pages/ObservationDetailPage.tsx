@@ -1,7 +1,7 @@
 import { useEffect, useLayoutEffect, useRef, useState } from "react";
 import { Link, useLocation, useNavigate, useParams } from "react-router-dom";
 import { formatRank, t, type MessageKey } from "@biotrace/messages";
-import { api, type Observation, type Taxonomy } from "../api";
+import { acceptedScientificIfDifferent, api, type Observation, type Taxonomy } from "../api";
 import ConfirmDialog from "../components/ConfirmDialog";
 import ReidentifyDialog from "../components/ReidentifyDialog";
 import {
@@ -260,6 +260,7 @@ export default function ObservationDetailPage() {
   const failHint = obs?.status === "failed" ? identifyErrorHint(obs.error) : null;
   const hasCoords = obs ? hasValidCoords(obs.lat, obs.lng) : false;
   const identifyName = obs ? identifyProviderName(obs.identifyProvider) : null;
+  const acceptedSci = obs && !notCollectible ? acceptedScientificIfDifferent(obs) : null;
 
   return (
     <div className="stack detail-page" ref={pageRef}>
@@ -280,6 +281,9 @@ export default function ObservationDetailPage() {
         <h1 className="page-title">{title}</h1>
         {!notCollectible && obs.scientificName ? (
           <p className="lede detail-scientific">{obs.scientificName}</p>
+        ) : null}
+        {acceptedSci ? (
+          <p className="muted">{t("detail.acceptedScientificName", { name: acceptedSci })}</p>
         ) : null}
         <div className="detail-marks">
           {!notCollectible && obs.rarity ? (

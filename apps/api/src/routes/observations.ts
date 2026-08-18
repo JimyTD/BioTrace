@@ -121,6 +121,9 @@ observationRoutes.patch("/:id/location", async (c) => {
       rarity: derived.rarity,
       settleTier: derived.settleTier,
       taxonKey: derived.taxonKey,
+      acceptedTaxonomyJson: derived.acceptedTaxonomy
+        ? JSON.stringify(derived.acceptedTaxonomy)
+        : null,
     };
   } else {
     const country = await resolveCountry(lat, lng);
@@ -261,6 +264,7 @@ observationRoutes.post("/:id/reidentify", async (c) => {
       locationPrecise: null,
       alertIntroduced: false,
       taxonKey: null,
+      acceptedTaxonomyJson: null,
       identifyProvider: null,
       settledAt: null,
       updatedAt: now,

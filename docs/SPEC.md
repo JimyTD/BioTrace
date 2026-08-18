@@ -69,7 +69,7 @@ docs/        筹划 + 本实现规格
 
 - Prompt 要求模型声明 `subject_kind` / `subject_living` / `eligibility`；代码：[`eligibility.ts`](../apps/api/src/identify/eligibility.ts)。
 - **可收集**：`living_organism` 且活体（含饲养/动物园）。
-- **不可收集**：人、玩具/模型、影像/印刷形象、无生物、不明；写 `failed` + 分型码，**清空**俗名/学名/taxonomy/稀有度/`taxonKey`，不开包、不进图鉴。
+- **不可收集**：人、玩具/模型、影像/印刷形象、无生物、不明；写 `failed` + 分型码，**清空**俗名/学名/taxonomy/稀有度/`taxonKey`/`accepted_taxonomy_json`，不开包、不进图鉴。
 - 用户主文案（术语表）：**「东西是真的，但没用。」**（`error.identifyNotCollectible`）+ 副句换活体照片；徽章「不可收集」。
 - 过粗（真生物但粗于科）仍用 `identify_too_coarse`。
 - 详情可点进：不合格不渲染分类链，不因脏字段报错。
@@ -223,6 +223,12 @@ docs/        筹划 + 本实现规格
 识图成功且合格性通过
   → computeSettle（settle/rules.ts）
       → 国家码 / settleTier / taxonKey / 引入警示
+      → taxonKey：GBIF `/species/match` 收到 Backbone accepted canonical（种级二项名）；
+        关、失败或 HIGHERRANK 粗于可靠阶元时回退 Gemini 拉丁名。不把 AI 上级分类当 match context。
+        属级与种级键分开。旧观察不回填，后台「重算开包结算」可单条对齐。
+        种卡 / 已收录 / 收集树叶子学名与 taxonKey 同一套；收集树分类链优先 `accepted_taxonomy_json`
+        （GBIF 拉丁叠识图中文）。观察页学名仍为识图原文，不同则标「现用」。观察 `scientificName` /
+        `taxonomyJson` 不改写。
       → resolveRarity（rarity/index.ts）
           → resolveEncounterRarity（rarity/encounter.ts）
               → 有效国家 = countryCode || CN（无国家按中国常见度）
@@ -240,10 +246,13 @@ docs/        筹划 + 本实现规格
 | [`encounter.ts`](../apps/api/src/rarity/encounter.ts) | 调 GLM、缓存、回退 |
 | [`formula.ts`](../apps/api/src/rarity/formula.ts) | 硬闸、频次映射与 ±1 |
 | [`settle/rules.ts`](../apps/api/src/settle/rules.ts) | 结算编排 |
+| [`settle/taxon.ts`](../apps/api/src/settle/taxon.ts) | `taxonKey` + `accepted_taxonomy_json`：Gemini 名 + GBIF accepted canonical |
 | [`jobs/identify.ts`](../apps/api/src/jobs/identify.ts) | 识图后触发 settle |
 | [`rarity-score-config.json`](../apps/api/data/rarity-score-config.json) | 基础档与修正参数 |
 | [`rarity-thresholds.json`](../apps/api/data/rarity-thresholds.json) | 覆盖 `config.ts` 内置阈值（缺文件则用内置值） |
 | [`rarity-seed.json`](../apps/api/data/rarity-seed.json) | **仅模型失败时的兜底**：12 条 `国家|taxon → 档位`，命中记 `source:"seed"` |
+
+冒烟（需网络）：`pnpm --filter @biotrace/api taxonkey:smoke`（错拼/同物异名合并、属与种分开）。
 
 `rarity-seed.json` 是一份物种名单，但**只在 GLM 调用失败后才查**，不参与主路径评分——「禁止物种名单」那条约束针对的是判定键与主路径，不是这个兜底表。别往里加种来「调档」，要调就改 rubric 或 `rarity-score-config.json`。
 
@@ -282,7 +291,7 @@ docs/        筹划 + 本实现规格
 |------|------|------|
 | `ZHIPU_API_KEY` | — | encounter 文本 + 识图回退 |
 | `ZHIPU_TEXT_MODEL` | `glm-4-flash-250414` | 稀有度频次判定模型（另一免费可选 `glm-4.7-flash`）。旧默认 `glm-4-flash` 守不住「只输出 JSON」，会回 Python 代码 |
-| `GBIF_ENABLED` | `1` | 遗留；结算主路径不读 |
+| `GBIF_ENABLED` | `1` | 套册临时锚定 taxonomy + 结算 `taxonKey` 学名锚定。**不**把 occurrence 计数接入稀有度 |
 
 ### 3.5 引入/关注种警示（与稀有度分通道）
 

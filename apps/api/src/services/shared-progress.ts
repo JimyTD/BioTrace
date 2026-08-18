@@ -8,6 +8,7 @@ import {
   type Observation,
 } from "../db/schema.js";
 import { rarityCollectibleRank } from "../rarity/config.js";
+import { collectionScientificName } from "../settle/taxon.js";
 import {
   evaluateVolumesForUser,
   type VolumeEvalResult,
@@ -43,7 +44,7 @@ export async function upsertCollectionForUser(userId: string, obs: Observation) 
       userId,
       taxonKey: obs.taxonKey,
       commonName: obs.commonName,
-      scientificName: obs.scientificName,
+      scientificName: collectionScientificName(obs),
       rarity: obs.rarity,
       coverObservationId: obs.id,
       firstCollectedAt: now,
@@ -67,7 +68,7 @@ export async function upsertCollectionForUser(userId: string, obs: Observation) 
     .update(collectionEntries)
     .set({
       commonName: obs.commonName ?? existing.commonName,
-      scientificName: obs.scientificName ?? existing.scientificName,
+      scientificName: collectionScientificName(obs) ?? existing.scientificName,
       rarity: nextRarity,
       coverObservationId: rarityCollectibleRank(obs.rarity) >= rarityCollectibleRank(existing.rarity)
         ? obs.id
@@ -188,7 +189,7 @@ export async function rebuildCollectionTaxonForUser(userId: string, taxonKey: st
       userId,
       taxonKey,
       commonName: best.commonName,
-      scientificName: best.scientificName,
+      scientificName: collectionScientificName(best),
       rarity: best.rarity ?? "R",
       coverObservationId: cover.id,
       firstCollectedAt: now,
@@ -201,7 +202,7 @@ export async function rebuildCollectionTaxonForUser(userId: string, taxonKey: st
     .update(collectionEntries)
     .set({
       commonName: best.commonName ?? existing.commonName,
-      scientificName: best.scientificName ?? existing.scientificName,
+      scientificName: collectionScientificName(best) ?? existing.scientificName,
       rarity: best.rarity ?? existing.rarity,
       coverObservationId: cover.id,
       updatedAt: now,

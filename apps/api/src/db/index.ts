@@ -128,6 +128,7 @@ export async function migrate() {
   await ensureColumn("observations", "location_precise", "location_precise INTEGER");
   await ensureColumn("observations", "alert_introduced", "alert_introduced INTEGER");
   await ensureColumn("observations", "taxon_key", "taxon_key TEXT");
+  await ensureColumn("observations", "accepted_taxonomy_json", "accepted_taxonomy_json TEXT");
   await ensureColumn("observations", "identify_provider", "identify_provider TEXT");
   await ensureColumn("observations", "settled_at", "settled_at INTEGER");
   await ensureColumn("observations", "content_hash", "content_hash TEXT");

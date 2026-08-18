@@ -358,6 +358,7 @@ export const zh = {
   "detail.reidentifyFailed": "重新识别失败",
   "detail.loadFailed": "加载失败",
   "detail.unnamed": "未命名观察",
+  "detail.acceptedScientificName": "现用 {name}",
   "detail.notCollectibleTitle": "不可收集",
   "detail.location": "位置",
   "detail.capturedAt": "拍摄时间",

@@ -1,7 +1,7 @@
 import { useEffect, useLayoutEffect, useRef, useState } from "react";
 import { Link, useLocation, useNavigate, useParams } from "react-router-dom";
 import { formatRank, hasMessage, t, type MessageKey } from "@biotrace/messages";
-import { api, type Observation, type Rarity, type SettleVolumesResult } from "../api";
+import { acceptedScientificIfDifferent, api, type Observation, type Rarity, type SettleVolumesResult } from "../api";
 import { SettlePackStage } from "../components/SettlePackStage";
 import { measureBox, nextPaint } from "../motion";
 import { containedImageBox, playPhotoLift, waitImage } from "../photoLift";
@@ -174,6 +174,7 @@ export default function ObservationSettlePage() {
   if (!obs) return <p className="muted">{t("app.loading")}</p>;
 
   const title = obs.commonName || obs.scientificName || t("detail.unnamed");
+  const acceptedSci = acceptedScientificIfDifferent(obs);
   const sealed = phase === "sealed";
   const stagePhase = phase === "claimed" ? "open" : phase;
 
@@ -210,6 +211,9 @@ export default function ObservationSettlePage() {
                   ) : null}
                   <strong className="settle-name">{title}</strong>
                   {obs.scientificName ? <span className="muted">{obs.scientificName}</span> : null}
+                  {acceptedSci ? (
+                    <span className="muted">{t("detail.acceptedScientificName", { name: acceptedSci })}</span>
+                  ) : null}
                   {(() => {
                     const by = identifyByLine(obs.identifyProvider);
                     return by ? <span className="muted identify-by">{by}</span> : null;

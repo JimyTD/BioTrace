@@ -88,6 +88,15 @@ export type Observation = {
   pendingReveal?: boolean;
 };
 
+/** 观察页识图学名与图鉴标准名（taxonKey）不同时，返回标准名。 */
+export function acceptedScientificIfDifferent(obs: Pick<Observation, "scientificName" | "taxonKey">) {
+  const accepted = obs.taxonKey?.trim();
+  const raw = obs.scientificName?.trim();
+  if (!accepted || !raw) return null;
+  if (accepted.toLowerCase() === raw.toLowerCase()) return null;
+  return accepted;
+}
+
 export type CollectionSighting = {
   observationId: string;
   displayUrl: string;

@@ -71,6 +71,7 @@ export function enqueueIdentify(opts: {
             locationPrecise: false,
             alertIntroduced: false,
             taxonKey: null,
+            acceptedTaxonomyJson: null,
             identifyProvider: provider,
             settledAt: null,
             updatedAt: new Date(),
@@ -114,6 +115,9 @@ export function enqueueIdentify(opts: {
             locationPrecise: settle.locationPrecise,
             alertIntroduced: false,
             taxonKey: settle.taxonKey,
+            acceptedTaxonomyJson: settle.acceptedTaxonomy
+              ? JSON.stringify(settle.acceptedTaxonomy)
+              : null,
             identifyProvider: provider,
             settledAt: null,
             updatedAt: new Date(),
@@ -142,6 +146,9 @@ export function enqueueIdentify(opts: {
           locationPrecise: settle.locationPrecise,
           alertIntroduced: settle.alertIntroduced,
           taxonKey: settle.taxonKey,
+          acceptedTaxonomyJson: settle.acceptedTaxonomy
+            ? JSON.stringify(settle.acceptedTaxonomy)
+            : null,
           identifyProvider: provider,
           settledAt: null,
           updatedAt: new Date(),

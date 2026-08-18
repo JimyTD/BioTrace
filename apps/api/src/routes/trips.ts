@@ -460,6 +460,7 @@ tripRoutes.post("/:id/observations", async (c) => {
     locationPrecise: null,
     alertIntroduced: false,
     taxonKey: null,
+    acceptedTaxonomyJson: null,
     identifyProvider: null,
     settledAt: null,
     createdAt: now,

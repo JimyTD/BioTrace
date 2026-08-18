@@ -2,6 +2,7 @@ import { and, desc, eq, or } from "drizzle-orm";
 import { db } from "../db/index.js";
 import { collectionEntries, observations, type Observation } from "../db/schema.js";
 import { rarityCollectibleRank } from "../rarity/config.js";
+import { collectionScientificName } from "../settle/taxon.js";
 
 export async function upsertCollectionFromObservation(obs: Observation) {
   const { upsertCollectionForUser } = await import("./shared-progress.js");
@@ -66,7 +67,7 @@ async function refreshCollectionEntry(
     .set({
       coverObservationId: replacement.id,
       commonName: replacement.commonName,
-      scientificName: replacement.scientificName,
+      scientificName: collectionScientificName(replacement),
       rarity: bestRarity,
       updatedAt: new Date(),
     })
