@@ -111,6 +111,8 @@ export default function TripAlbumPage({ userId }: { userId: string }) {
   const pageRef = useRef<HTMLDivElement | null>(null);
   const returnPlayed = useRef(false);
   const scrollRestoredFor = useRef<string | null>(null);
+  const leftAlbum = useRef(false);
+  const refreshAfterLift = useRef(false);
 
   const analyzingIds = useMemo(
     () => observations.filter((o) => o.status === "analyzing").map((o) => o.id),
@@ -175,6 +177,23 @@ export default function TripAlbumPage({ userId }: { userId: string }) {
         setLoaded(true);
       });
   }, [id]);
+
+  // 相册在覆盖层下不会卸载，开包或详情页改过状态（待开包 → 已收录、删除等）后，
+  // 回到相册必须重取，否则格子还停在旧状态。
+  // 但照片正飞回格子时不能换数据，否则又是那个闪一下——挂账到落地后补。
+  useEffect(() => {
+    if (!onAlbum) {
+      leftAlbum.current = true;
+      return;
+    }
+    if (!leftAlbum.current) return;
+    leftAlbum.current = false;
+    if (returnPlayed.current) {
+      refreshAfterLift.current = true;
+      return;
+    }
+    void refresh().catch(() => undefined);
+  }, [onAlbum, id]);
 
   useEffect(() => {
     if (!loaded) return;
@@ -285,6 +304,10 @@ export default function TripAlbumPage({ userId }: { userId: string }) {
       onLanded: () => {
         if (!cancelled) flushSync(() => setLiftSourceId(null));
       },
+    }).then(() => {
+      if (cancelled || !refreshAfterLift.current) return;
+      refreshAfterLift.current = false;
+      void refresh().catch(() => undefined);
     });
     return () => {
       cancelled = true;
