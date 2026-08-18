@@ -40,6 +40,66 @@ function resolveTo(to: MotionBox | (() => MotionBox)): MotionBox {
   return snapBox(typeof to === "function" ? to() : to);
 }
 
+/** source 的长宽比居中放进 dest（contain），克隆件才不会被拉变形。 */
+export function containBoxIn(source: MotionBox, dest: MotionBox): MotionBox {
+  if (source.width <= 0 || source.height <= 0) return snapBox(dest);
+  const scale = Math.min(dest.width / source.width, dest.height / source.height);
+  const width = source.width * scale;
+  const height = source.height * scale;
+  return snapBox({
+    left: dest.left + (dest.width - width) / 2,
+    top: dest.top + (dest.height - height) / 2,
+    width,
+    height,
+  });
+}
+
+/**
+ * 待开包进场：飞的是相册里那只封缄格本身（模糊照片 + 腰封），落到信封上再化掉。
+ * 不造裸照片飞片——清晰的一帧会提前泄底，也不该穿进封着的信封。
+ */
+export async function playSealLift(opts: {
+  node: HTMLElement;
+  from: MotionBox;
+  to: MotionBox | (() => MotionBox);
+  duration: number;
+  fadeMs?: number;
+  cancelled: () => boolean;
+}) {
+  const { node, from, to, duration, fadeMs = 160, cancelled } = opts;
+  if (prefersReducedMotion()) return;
+  const flyer = document.createElement("div");
+  flyer.className = "photo-lift-flyer is-seal";
+  flyer.setAttribute("aria-hidden", "true");
+  const clone = node.cloneNode(true) as HTMLElement;
+  clone.removeAttribute("id");
+  flyer.append(clone);
+  document.body.append(flyer);
+
+  const start = snapBox(from);
+  applyBox(flyer, start);
+  await tween(
+    duration,
+    (t) => {
+      applyBox(flyer, mix(start, resolveTo(to), easeOutCubic(t)));
+    },
+    cancelled,
+  );
+  if (cancelled()) {
+    flyer.remove();
+    return;
+  }
+  applyBox(flyer, resolveTo(to));
+  await tween(
+    fadeMs,
+    (t) => {
+      flyer.style.opacity = String(1 - t);
+    },
+    cancelled,
+  );
+  flyer.remove();
+}
+
 export async function playPhotoLift(opts: {
   photoUrl: string;
   from: MotionBox;

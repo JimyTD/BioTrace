@@ -3,8 +3,8 @@ import { Link, useLocation, useNavigate, useParams } from "react-router-dom";
 import { formatRank, hasMessage, t, type MessageKey } from "@biotrace/messages";
 import { acceptedScientificIfDifferent, api, type Observation, type Rarity, type SettleVolumesResult } from "../api";
 import { SettlePackStage } from "../components/SettlePackStage";
-import { measureBox, nextPaint } from "../motion";
-import { containedImageBox, playPhotoLift, waitImage } from "../photoLift";
+import { measureBox } from "../motion";
+import { containBoxIn, playSealLift } from "../photoLift";
 import { clearPhotoLiftHandoff, peekLiftBackground, peekPhotoLiftHandoff } from "../photoLiftHandoff";
 import { volumeCeremonyBgUrl, volumeSealCompleteUrl } from "../themes";
 
@@ -102,29 +102,24 @@ export default function ObservationSettlePage() {
 
   useLayoutEffect(() => {
     if (!liftOpen || !obs || liftPlayed.current) return;
-    const page = pageRef.current;
-    const target = page?.querySelector(".settle-photo-window");
-    const photo = target?.querySelector("img");
-    if (!page || !(target instanceof HTMLElement)) return;
+    const stage = pageRef.current?.querySelector(".settle-stage");
+    if (!(stage instanceof HTMLElement)) return;
+    // 相册仍挂在下层，可以取到那只封缄格；深链或地图点进来没有它，就不演。
+    const cell = document.querySelector<HTMLElement>(
+      `.film-tile[data-obs-id="${liftOpen.observationId}"] .film-tile-media`,
+    );
     liftPlayed.current = true;
     clearPhotoLiftHandoff();
+    if (!cell) return;
+    const from = measureBox(cell);
     let cancelled = false;
-    void (async () => {
-      if (photo instanceof HTMLImageElement) await waitImage(photo);
-      if (cancelled) return;
-      await nextPaint();
-      if (cancelled) return;
-      await playPhotoLift({
-        photoUrl: liftOpen.photoUrl,
-        from: liftOpen.box,
-        to: () =>
-          photo instanceof HTMLImageElement ? containedImageBox(photo) : measureBox(target),
-        page,
-        hide: photo instanceof HTMLElement ? photo : null,
-        duration: 480,
-        cancelled: () => cancelled,
-      });
-    })();
+    void playSealLift({
+      node: cell,
+      from,
+      to: () => containBoxIn(from, measureBox(stage)),
+      duration: 420,
+      cancelled: () => cancelled,
+    });
     return () => {
       cancelled = true;
     };
