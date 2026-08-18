@@ -19,5 +19,23 @@
   <body>
     <div id="root"></div>
     <script type="module" src="/src/main.tsx"></script>
+    <script>
+      // 每次部署都会换掉带哈希的产物名并删掉旧文件。WebView 若攥着缓存里的旧
+      // index.html，它请求的 JS/CSS 已不存在，会被 SPA 兜底成 HTML，页面就一直
+      // 停在空背景。等不到挂载就带时间戳重取一次，绕开那条缓存记录。
+      setTimeout(function () {
+        var root = document.getElementById("root");
+        if (root && root.childElementCount > 0) return;
+        try {
+          if (sessionStorage.getItem("bt-boot-retry")) return;
+          sessionStorage.setItem("bt-boot-retry", "1");
+        } catch (err) {
+          return;
+        }
+        var url = new URL(location.href);
+        url.searchParams.set("fresh", String(Date.now()));
+        location.replace(url.toString());
+      }, 10000);
+    </script>
   </body>
 </html>

@@ -41,6 +41,20 @@ server {
         proxy_read_timeout 300s;
     }
 
+    # 带哈希的产物可以长期缓存，但**缺失时必须 404**：
+    # 部署用 rsync --delete 清掉旧哈希文件，若被下面的 SPA 兜底成 HTML，
+    # 客户端拿 HTML 当 JS/CSS 解析，页面只剩空背景且不会报错。
+    location /assets/ {
+        try_files $uri =404;
+        add_header Cache-Control "public, max-age=31536000, immutable";
+    }
+
+    # index.html 绝不缓存：它记着当前哈希，过期副本会指向已删除的产物。
+    # Android WebView 没有 Cache-Control 时会按启发式缓存数小时，必须显式关掉。
+    location = /index.html {
+        add_header Cache-Control "no-store";
+    }
+
     location / {
         try_files $uri $uri/ /index.html;
     }

@@ -215,6 +215,15 @@ server {
         proxy_set_header X-Forwarded-Proto $scheme;
         proxy_read_timeout 300s;
     }
+    # 带哈希的产物长缓存，但缺失时必须 404：部署用 rsync --delete 清掉旧哈希文件，
+    # 若被下面的 SPA 兜底成 HTML，客户端把 HTML 当 JS/CSS 解析，页面只剩空背景。
+    location /assets/ {
+        try_files $uri =404;
+        add_header Cache-Control "public, max-age=31536000, immutable";
+    }
+    # index.html 不缓存：过期副本指向已被删除的产物。Android WebView 在没有
+    # Cache-Control 时按启发式缓存数小时，必须显式关掉，否则部署后一直白屏。
+    location = /index.html { add_header Cache-Control "no-store"; }
     location / { try_files $uri $uri/ /index.html; }
 }
 NGINX
@@ -438,8 +447,11 @@ sudo chown -R www-data:www-data /var/www/biotrace
 # 4) 验证（详见 §10验收清单）
 curl -s http://127.0.0.1:8787/api/health
 sudo docker compose exec -T api sh -c 'echo $HTTPS_PROXY; getent hosts host.docker.internal'  # 代理链路仍在
+curl -sI http://127.0.0.1/ | grep -i cache-control                                   # 必须 no-store
+curl -s -o /dev/null -w '%{http_code}\n' http://127.0.0.1/assets/nope-not-here.js     # 必须 404，不能 200
 ```
 
+> - 前端产物换名后旧文件立即被 `--delete` 清掉，所以 §4.6 那两条缓存规则是硬要求：`index.html` 必须 `no-store`、`/assets/` 缺失必须 404。缺了它们，Android WebView 会攥着缓存里的旧 `index.html` 去请求已删除的 JS/CSS，被 SPA 兜底成 HTML 后当脚本解析，**App 打开只显示背景且不报任何错**——已踩过一次。
 > - 用 `pull --ff-only`（而非 `reset --hard`）：只快进，若有分叉会**报错而非默默覆盖**，逼你先查清楚，符合铁律 §7.0-3。
 > - 数据库 schema 变更在 API 启动时自动迁移，正常无需手动干预；重大变更前先备份（§8）。
 > - `deploy/.env.production` 已 gitignore，pull 不会覆盖，密钥安全。
