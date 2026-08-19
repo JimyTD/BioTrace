@@ -3,6 +3,7 @@ import { Link, useLocation, useNavigate, useParams } from "react-router-dom";
 import { formatRank, hasMessage, t, type MessageKey } from "@biotrace/messages";
 import { acceptedScientificIfDifferent, api, type Observation, type Rarity, type SettleVolumesResult } from "../api";
 import { SettlePackStage } from "../components/SettlePackStage";
+import { peekObservation, rememberObservation } from "../pageCache";
 import { peekLiftBackground } from "../photoLiftHandoff";
 import { volumeCeremonyBgUrl, volumeSealCompleteUrl } from "../themes";
 
@@ -59,7 +60,10 @@ export default function ObservationSettlePage() {
   const navigate = useNavigate();
   const location = useLocation();
   const background = peekLiftBackground(location);
-  const [obs, setObs] = useState<Observation | null>(null);
+  const [obs, setObs] = useState<Observation | null>(() => {
+    const cached = peekObservation(id);
+    return cached?.status === "pending_settle" ? cached : null;
+  });
   const [error, setError] = useState<string | null>(null);
   const [phase, setPhase] = useState<"sealed" | "revealing" | "open" | "claimed">("sealed");
   const [claiming, setClaiming] = useState(false);
@@ -88,6 +92,7 @@ export default function ObservationSettlePage() {
           return;
         }
         setObs(observation);
+        rememberObservation(observation);
       })
       .catch((e) => setError(e instanceof Error ? e.message : t("settle.failed")));
   }, [id, navigate, background]);

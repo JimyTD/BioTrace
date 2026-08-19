@@ -10,9 +10,8 @@ import {
   isNotCollectibleError,
 } from "../identifyErrors";
 import { hasValidCoords } from "../geo";
-import { nextPaint } from "../motion";
 import { peekObservation, rememberObservation } from "../pageCache";
-import { containedImageBox, playPhotoLift, waitImage } from "../photoLift";
+import { containedImageBox, playPhotoLift } from "../photoLift";
 import {
   clearPhotoLiftHandoff,
   peekLiftBackground,
@@ -139,22 +138,19 @@ export default function ObservationDetailPage() {
     if (!page || !hero) return;
     liftPlayed.current = true;
     clearPhotoLiftHandoff();
+    const overlay = page.closest(".page-lift-overlay");
+    const fadeEl = overlay instanceof HTMLElement ? overlay : page;
     let cancelled = false;
-    void (async () => {
-      await waitImage(hero);
-      if (cancelled) return;
-      await nextPaint();
-      if (cancelled) return;
-      await playPhotoLift({
-        photoUrl: liftOpen.photoUrl,
-        from: liftOpen.box,
-        to: () => containedImageBox(hero),
-        page,
-        hide: hero,
-        duration: 480,
-        cancelled: () => cancelled,
-      });
-    })();
+    void playPhotoLift({
+      photoUrl: liftOpen.photoUrl,
+      from: liftOpen.box,
+      to: () => containedImageBox(hero),
+      page: fadeEl,
+      hide: hero,
+      duration: 480,
+      pageFade: "in",
+      cancelled: () => cancelled,
+    });
     return () => {
       cancelled = true;
     };

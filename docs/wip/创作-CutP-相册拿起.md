@@ -10,4 +10,6 @@
 
 回到相册要重取一次——开包页和观察页都可能改过状态（待开包 → 已收录、删除），而相册挂在覆盖层下面从不卸载，不重取格子就一直停在旧状态。但**重取必须等飞片落地**：飞行中换数据会让格子闪一下，也就是 `cffa57e` 修过的那个闪。代码里用 `refreshAfterLift` 挂账，落地回调里再补那一次。两侧都别单独改。
 
+进观察页：覆盖层纸底是不透明的，**第一帧必须把覆盖层 opacity 置 0、飞片钉在格子上**，再等大图、再淡入。先 `waitImage` 再开演，中间会闪出整页二级页。淡的是覆盖层（含纸底），不是只淡 `.detail-page`。
+
 独立演示：[`apps/web/public/trips/lift-photo-preview.html`](../../apps/web/public/trips/lift-photo-preview.html)

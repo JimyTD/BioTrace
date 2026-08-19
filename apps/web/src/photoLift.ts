@@ -60,14 +60,26 @@ export async function playPhotoLift(opts: {
     onLanded?.();
     return;
   }
+  // 这几步必须同步发生在 layout 里、第一帧绘制前：覆盖层纸底是不透明的，
+  // 若先等大图再开演，中间会闪出整页二级页。
+  if (pageFade === "in") page.style.opacity = "0";
   if (hide) hide.style.visibility = "hidden";
   const flyer = makeFlyer(photoUrl);
   const start = snapBox(from);
   applyBox(flyer, start);
+  if (pageFade === "in" && hide instanceof HTMLImageElement) await waitImage(hide);
+  if (pageFade === "in") await nextPaint();
+  if (cancelled()) {
+    flyer.remove();
+    return;
+  }
   await tween(
     duration,
     (t) => {
-      applyBox(flyer, mix(start, resolveTo(to), easeOutCubic(t)));
+      const e = easeOutCubic(t);
+      applyBox(flyer, mix(start, resolveTo(to), e));
+      if (pageFade === "in") page.style.opacity = String(e);
+      if (pageFade === "out") page.style.opacity = String(1 - e);
     },
     cancelled,
   );
@@ -86,6 +98,7 @@ export async function playPhotoLift(opts: {
   flyer.remove();
   if (hide) hide.style.visibility = "";
   if (pageFade === "out") page.style.opacity = "0";
+  else if (pageFade === "in") page.style.opacity = "1";
 }
 
 export function waitImage(el: HTMLImageElement) {
