@@ -20,6 +20,12 @@ export type RarityCacheItem = {
   rarity: string;
   source: string;
   fetchedAt: string | null;
+  /** 量表总分；名录闸命中的行为 99。 */
+  score: number | null;
+  /** 生效模型名；跨批降级时是逗号分隔的多个。 */
+  model: string | null;
+  samples: number | null;
+  listLevel: string | null;
   version: string | null;
   countryCode: string | null;
   taxonKey: string | null;
@@ -27,6 +33,10 @@ export type RarityCacheItem = {
 };
 
 export type RarityCacheEntry = RarityCacheItem & {
+  /** 12 题合并后的三态答案 */
+  items: Record<string, boolean | null> | null;
+  adjustments: string[];
+  reasons: Record<string, string>;
   observations: Array<{
     id: string;
     status: string;
@@ -44,11 +54,22 @@ export type RarityCacheRescore = {
   previousRarity: string | null;
   rarity: string;
   source: string;
-  frequency: number | null;
+  score: number | null;
+  model: string | null;
+  samples: number;
+  listLevel: string | null;
   adjustments: string[];
   fetchedAt: string | null;
   observationsUpdated: number;
   collectionsUpdated: number;
+};
+
+export type RarityModelHealth = {
+  model: string;
+  status: string;
+  coolUntil: number | null;
+  lastOkAt: number | null;
+  lastError: string | null;
 };
 
 export const adminApi = {
@@ -109,5 +130,16 @@ export const adminApi = {
       method: "POST",
       body: JSON.stringify({ key }),
     }),
+  recomputeRarityCache: (limit?: number) =>
+    req<{
+      ok: boolean;
+      processed: number;
+      remaining: number;
+      failed: string[];
+    }>("/rarity-cache/recompute", {
+      method: "POST",
+      body: JSON.stringify(limit == null ? {} : { limit }),
+    }),
+  rarityModels: () => req<{ models: RarityModelHealth[] }>("/rarity-models"),
   audit: () => req<{ items: unknown[] }>("/audit"),
 };

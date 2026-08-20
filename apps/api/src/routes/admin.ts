@@ -53,8 +53,10 @@ import {
   deleteRarityCacheKey,
   getRarityCacheEntry,
   listRarityCache,
+  recomputeRarityBatch,
   rescoreRarityCache,
 } from "../admin/rarity-cache.js";
+import { textChainSnapshot } from "../llm/text-chain.js";
 
 applyRuntimeSecrets();
 
@@ -813,7 +815,7 @@ adminRoutes.post("/rarity-cache/rescore", async (c) => {
   if ("error" in result && result.error === "bad_key") {
     return c.json({ error: t("admin.rarityCache.badKey"), code: "bad_key" }, 400);
   }
-  if ("error" in result && result.error === "encounter_failed") {
+  if ("error" in result && result.error === "scale_failed") {
     await writeAudit({
       admin,
       action: "rarity_cache.rescore",
@@ -825,7 +827,7 @@ adminRoutes.post("/rarity-cache/rescore", async (c) => {
     return c.json(
       {
         error: t("admin.rarityCache.rescoreFailed"),
-        code: "encounter_failed",
+        code: "scale_failed",
         previousRarity: result.previousRarity,
         source: result.source,
       },
@@ -873,4 +875,31 @@ adminRoutes.post("/rarity-cache/clear", async (c) => {
     summary: body.all ? "all" : `prefix=${body.prefix}`,
   });
   return c.json({ ok: true, removed });
+});
+
+/**
+ * 迁移：把老算法留下的档位按量表重打。只处理没有量表缓存的物种，可反复点到 remaining=0。
+ * 每个物种 3 次模型调用起，所以默认一次只做 10 个。
+ */
+adminRoutes.post("/rarity-cache/recompute", async (c) => {
+  const admin = c.get("admin");
+  const body = z
+    .object({ limit: z.number().int().min(1).max(50).optional() })
+    .parse((await c.req.json().catch(() => ({}))) as unknown);
+
+  const result = await recomputeRarityBatch({ limit: body.limit ?? 10 });
+  await writeAudit({
+    admin,
+    action: "rarity_cache.recompute",
+    summary: `done=${result.processed} left=${result.remaining}${
+      result.failed.length ? ` failed=${result.failed.length}` : ""
+    }`,
+    ok: result.failed.length === 0,
+  });
+  return c.json({ ok: true, ...result });
+});
+
+/** 模型链诊断：每档当前的冷却与最后一次错误，用来判断是哪一档在出货。 */
+adminRoutes.get("/rarity-models", async (c) => {
+  return c.json({ models: textChainSnapshot() });
 });

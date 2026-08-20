@@ -1,25 +1,32 @@
 /**
- * Encounter-class rarity calibration (no images, no weighted sum).
+ * 标定：0 题仅供参考（不清楚仍答 12 题）+ 原子是/否/跳过，本地合成档位。
+ * 保护级与灭绝只查表。题面与权重从 src/rarity/scale-rubric.ts 引，与生产同一份。
+ * 生产不问 0 题（12 题全 null 得 0 分正好落 SR，已覆盖「不认识」）。
  *
- *   pnpm exec tsx scripts/rarity-calibrate.ts --model=glm-4.7-flash --thinking=off --delay-ms=3000
+ *   node node_modules/tsx/dist/cli.mjs scripts/rarity-calibrate.ts --model=hy3 --thinking=off --samples=1 --delay-ms=1200 --ids=1,22,27,28,29,30,34,37
+ *
+ * --assume-known 跳过 0 题（锚点物种模型全都答认识，省一次调用）。
  */
 import { readFileSync, writeFileSync, mkdirSync } from "node:fs";
 import { dirname, join } from "node:path";
 import { fileURLToPath } from "node:url";
 import { ProxyAgent, fetch as undiciFetch, type RequestInit } from "undici";
 import { env } from "../src/env.js";
-import { ENCOUNTER_RUBRIC } from "../src/rarity/encounter-rubric.js";
+import { lookupCnStatus } from "../src/rarity/cn-status.js";
+import { collectibleRankFromTier } from "../src/rarity/scale-rubric.js";
 import {
-  collectibleRankFromTier,
-  parseBoolFlag,
-  parseExtinctFlag,
-  parseFrequency,
-  parseHardToPhotograph,
-  parseIconicAppeal,
-  parseProtectionLevel,
-  parseSwarm,
-  resolveFromEncounter,
-} from "../src/rarity/formula.js";
+  KNOW_RUBRIC,
+  SCALE_BATCHES,
+  SCALE_ITEM_KEYS,
+  UNKNOWN_PLACEHOLDER_TIER,
+  emptyItems,
+  majorityBool,
+  mergeTri,
+  parseKnows,
+  parseScaleItems,
+  scoreFromScale,
+  type ScaleItems,
+} from "../src/rarity/scale-rubric.js";
 
 type TaxonRow = {
   id: number;
@@ -35,20 +42,39 @@ const root = dirname(fileURLToPath(import.meta.url));
 const taxaPath = join(root, "rarity-calibrate-taxa.json");
 const outDir = join(root, "out");
 
-const RUBRIC = ENCOUNTER_RUBRIC;
-
 function parseArgs() {
   const limitArg = process.argv.find((a) => a.startsWith("--limit="));
+  const idsArg = process.argv.find((a) => a.startsWith("--ids="));
   const delayArg = process.argv.find((a) => a.startsWith("--delay-ms="));
   const modelArg = process.argv.find((a) => a.startsWith("--model="));
   const thinkingArg = process.argv.find((a) => a.startsWith("--thinking="));
   const samplesArg = process.argv.find((a) => a.startsWith("--samples="));
+  const providerArg = process.argv.find((a) => a.startsWith("--provider="));
+  const assumeKnown = process.argv.includes("--assume-known");
+  const model = modelArg?.split("=")[1]?.trim() || process.env.ZHIPU_TEXT_MODEL?.trim() || "glm-4-flash-250414";
+  const providerRaw = providerArg?.split("=")[1]?.trim().toLowerCase();
+  const provider =
+    providerRaw === "tokenhub" || providerRaw === "zhipu"
+      ? providerRaw
+      : /^(hy3|hy-|hunyuan)/i.test(model)
+        ? "tokenhub"
+        : "zhipu";
+  const ids = idsArg
+    ? idsArg
+        .split("=")[1]
+        ?.split(",")
+        .map((s) => Number(s.trim()))
+        .filter((n) => Number.isFinite(n))
+    : undefined;
   return {
     limit: limitArg ? Number(limitArg.split("=")[1]) : undefined,
+    ids,
     delayMs: delayArg ? Number(delayArg.split("=")[1]) : 500,
-    model: modelArg?.split("=")[1]?.trim() || process.env.ZHIPU_TEXT_MODEL?.trim() || "glm-4-flash-250414",
+    model,
+    provider: provider as "zhipu" | "tokenhub",
     thinking: /^(1|on|true|enabled)$/i.test(thinkingArg?.split("=")[1]?.trim() ?? ""),
     samples: samplesArg ? Math.max(1, Number(samplesArg.split("=")[1])) : 3,
+    assumeKnown,
   };
 }
 
@@ -98,29 +124,33 @@ function extractJson(text: string): Record<string, unknown> {
   return JSON.parse(raw.slice(start, end + 1)) as Record<string, unknown>;
 }
 
-function zhipuFetchInit(): RequestInit {
+function chatFetchInit(): RequestInit {
   const init: RequestInit = {};
   if (env.httpsProxy) init.dispatcher = new ProxyAgent(env.httpsProxy);
   return init;
 }
 
-async function callZhipu(prompt: string, opts: { model: string; thinking: boolean }): Promise<string> {
-  if (!env.zhipuApiKey) throw new Error("ZHIPU_API_KEY missing");
-  const url = `${env.zhipuBaseUrl.replace(/\/$/, "")}/chat/completions`;
+async function callChat(
+  prompt: string,
+  opts: { provider: "zhipu" | "tokenhub"; model: string; thinking: boolean },
+): Promise<string> {
+  const key = opts.provider === "tokenhub" ? env.tokenhubApiKey : env.zhipuApiKey;
+  const base = opts.provider === "tokenhub" ? env.tokenhubBaseUrl : env.zhipuBaseUrl;
+  if (!key) throw new Error(`${opts.provider === "tokenhub" ? "TOKENHUB_API_KEY" : "ZHIPU_API_KEY"} missing`);
+  const url = `${base.replace(/\/$/, "")}/chat/completions`;
+  const sendThinking =
+    opts.provider === "tokenhub" || /glm-(4\.[5-9]|[5-9])/i.test(opts.model);
   const res = await undiciFetch(url, {
-    ...zhipuFetchInit(),
+    ...chatFetchInit(),
     method: "POST",
     headers: {
-      Authorization: `Bearer ${env.zhipuApiKey}`,
+      Authorization: `Bearer ${key}`,
       "Content-Type": "application/json",
     },
     body: JSON.stringify({
       model: opts.model,
       temperature: 0,
-      // Only hybrid-thinking models (glm-4.5+) accept this field.
-      ...(/glm-(4\.[5-9]|[5-9])/i.test(opts.model)
-        ? { thinking: { type: opts.thinking ? "enabled" : "disabled" } }
-        : {}),
+      ...(sendThinking ? { thinking: { type: opts.thinking ? "enabled" : "disabled" } } : {}),
       messages: [
         { role: "system", content: "只输出合法 JSON 对象。" },
         { role: "user", content: prompt },
@@ -128,82 +158,135 @@ async function callZhipu(prompt: string, opts: { model: string; thinking: boolea
     }),
   });
   const body = await res.text();
-  if (!res.ok) throw new Error(`Zhipu HTTP ${res.status}: ${body.slice(0, 300)}`);
+  if (!res.ok) throw new Error(`${opts.provider} HTTP ${res.status}: ${body.slice(0, 300)}`);
   const data = JSON.parse(body) as { choices?: Array<{ message?: { content?: string } }> };
   const content = data.choices?.[0]?.message?.content;
   if (!content?.trim()) throw new Error("empty content");
   return content;
 }
 
-async function scoreOnce(row: TaxonRow, opts: { model: string; thinking: boolean }) {
-  const prompt = `${RUBRIC}
-
-对象：
+function taxonBlock(row: TaxonRow): string {
+  return `对象：
 - label: ${row.label}
 - taxon: ${row.taxon}
 - rank: ${row.rank}
 - country: CN
-- context: wild field encounter`;
+- context: ordinary encounter`;
+}
 
-  const parsed = extractJson(await callZhipu(prompt, opts));
-  const frequency = parseFrequency(parsed.encounter_frequency);
-  if (frequency == null) {
-    throw new Error(`bad encounter_frequency: ${String(parsed.encounter_frequency)}`);
+async function scoreOnce(
+  row: TaxonRow,
+  opts: {
+    provider: "zhipu" | "tokenhub";
+    model: string;
+    thinking: boolean;
+    delayMs: number;
+    assumeKnown: boolean;
+  },
+) {
+  // Anchor taxa are answered "known" by every model tried; the call is pure budget burn.
+  let known = true;
+  let knowReason = "assume-known";
+  if (!opts.assumeKnown) {
+    const knowParsed = extractJson(await callChat(`${KNOW_RUBRIC}\n\n${taxonBlock(row)}`, opts));
+    known = parseKnows(knowParsed);
+    knowReason = String(knowParsed.reason ?? "");
+  }
+
+  const items: Partial<ScaleItems> = {};
+  const batchReasons: Record<string, string> = {};
+  for (const batch of SCALE_BATCHES) {
+    await sleep(opts.delayMs);
+    const parsed = extractJson(await callChat(`${batch.rubric}\n\n${taxonBlock(row)}`, opts));
+    Object.assign(items, parseScaleItems(parsed, batch.keys));
+    batchReasons[batch.id] = String(parsed.reason ?? "");
   }
   return {
-    frequency,
-    extinct: parseExtinctFlag(parsed.extinct_or_unobtainable, parsed.extinct_year),
-    extinctYear: parsed.extinct_year ?? null,
-    pestOrWeed: parseBoolFlag(parsed.pest_or_weed),
-    iconicAppeal: parseIconicAppeal(parsed.iconic_appeal),
-    swarmOrHabituated: parseSwarm(parsed.swarm_or_habituated),
-    protectionLevel: parseProtectionLevel(parsed.protection_level),
-    hardToPhotograph: parseHardToPhotograph(parsed.hard_to_photograph),
-    reason: String(parsed.reason ?? ""),
+    known,
+    items: items as ScaleItems,
+    knowReason,
+    batchReasons,
   };
 }
 
-function median(values: number[]): number {
-  const s = [...values].sort((a, b) => a - b);
-  const mid = Math.floor(s.length / 2);
-  return s.length % 2 ? s[mid]! : Math.round((s[mid - 1]! + s[mid]!) / 2);
+function mergeItems(draws: ScaleItems[]): ScaleItems {
+  const merged = emptyItems();
+  for (const key of SCALE_ITEM_KEYS) {
+    merged[key] = mergeTri(draws.map((d) => d[key]));
+  }
+  return merged;
 }
 
-function majority(values: boolean[]): boolean {
-  return values.filter(Boolean).length * 2 > values.length;
+function compactItems(items: ScaleItems | null): string {
+  if (!items) return SCALE_ITEM_KEYS.map(() => "-").join("");
+  return SCALE_ITEM_KEYS.map((k) => (items[k] === true ? "T" : items[k] === false ? "F" : "?")).join("");
 }
 
+function triCsv(v: unknown): string {
+  if (v === true) return "1";
+  if (v === false) return "0";
+  return "";
+}
 
-/** Sample the model N times and take the median — the axes are noisy per call. */
+function listOpts(listed: ReturnType<typeof lookupCnStatus>) {
+  return {
+    sanyou: listed.sanyou,
+    extinct: listed.extinct,
+    class_i: listed.class_i,
+    class_ii: listed.class_ii,
+  };
+}
+
 async function scoreRow(
   row: TaxonRow,
-  opts: { model: string; thinking: boolean; samples: number; delayMs: number },
+  opts: {
+    provider: "zhipu" | "tokenhub";
+    model: string;
+    thinking: boolean;
+    samples: number;
+    delayMs: number;
+    assumeKnown: boolean;
+  },
 ) {
+  const listed = lookupCnStatus(row.taxon, row.label);
+  if (listed.extinct) {
+    const scored = scoreFromScale(emptyItems(), listOpts(listed));
+    return {
+      known: true,
+      knowSamples: [] as boolean[],
+      items: null as ScaleItems | null,
+      itemSamples: [] as Array<ScaleItems | null>,
+      score: scored.score,
+      rarity: scored.rarity,
+      adjustments: scored.adjustments,
+      knowReason: "list:extinct",
+      batchReasons: {},
+      listLevel: listed.level,
+    };
+  }
+
   const draws: Awaited<ReturnType<typeof scoreOnce>>[] = [];
   for (let i = 0; i < opts.samples; i++) {
     if (i > 0) await sleep(opts.delayMs);
     draws.push(await withRetry(() => scoreOnce(row, opts), `#${row.id}.${i + 1}`));
   }
-  const freqs = draws.map((d) => d.frequency);
-  const merged = {
-    frequency: median(freqs),
-    extinct: majority(draws.map((d) => d.extinct)),
-    pestOrWeed: majority(draws.map((d) => d.pestOrWeed)),
-    iconicAppeal: median(draws.map((d) => d.iconicAppeal)),
-    swarmOrHabituated: median(draws.map((d) => d.swarmOrHabituated)),
-    hardToPhotograph: median(draws.map((d) => d.hardToPhotograph)),
-    protectionLevel: draws[0]!.protectionLevel,
-  };
-  // Quote the draw that actually produced the median, not whichever came back first.
-  const representative = draws.find((d) => d.frequency === merged.frequency) ?? draws[0]!;
+  const knowSamples = draws.map((d) => d.known);
+  const known = majorityBool(knowSamples);
+  const knowReason = draws.find((d) => d.known === known)?.knowReason ?? draws[0]!.knowReason;
+  const itemDraws = draws.filter((d): d is typeof d & { items: ScaleItems } => d.items != null);
+  const items = itemDraws.length ? mergeItems(itemDraws.map((d) => d.items)) : emptyItems();
+  const scored = scoreFromScale(items, listOpts(listed));
   return {
-    ...merged,
-    reason: representative.reason,
-    extinctYear: representative.extinctYear,
-    freqSamples: freqs,
-    /** Spread across draws: >=2 means the model has no firm view on this taxon. */
-    freqSpread: Math.max(...freqs) - Math.min(...freqs),
-    ...resolveFromEncounter(merged),
+    known,
+    knowSamples,
+    items,
+    itemSamples: draws.map((d) => d.items),
+    score: scored.score,
+    rarity: scored.rarity,
+    adjustments: scored.adjustments,
+    knowReason,
+    batchReasons: itemDraws[0]?.batchReasons ?? {},
+    listLevel: listed.level,
   };
 }
 
@@ -271,58 +354,59 @@ function fmtMetrics(label: string, m: ReturnType<typeof metrics>) {
 async function main() {
   const args = parseArgs();
   const taxa = JSON.parse(readFileSync(taxaPath, "utf8")) as TaxonRow[];
-  const list = args.limit ? taxa.slice(0, args.limit) : taxa;
+  const list = args.ids?.length
+    ? taxa.filter((row) => args.ids!.includes(row.id))
+    : args.limit
+      ? taxa.slice(0, args.limit)
+      : taxa;
   console.log(
-    `Provider: zhipu | model=${args.model} | thinking=${args.thinking ? "on" : "off"} | samples=${args.samples} | mode=frequency+offset | items=${list.length}`,
+    `Provider: ${args.provider} | model=${args.model} | thinking=${args.thinking ? "on" : "off"} | samples=${args.samples} | mode=${args.assumeKnown ? "assume-known" : "know"}+${SCALE_ITEM_KEYS.length}tri | items=${list.length}`,
   );
+  console.log(`keys: ${SCALE_ITEM_KEYS.join(" ")}`);
 
   const rows: Array<Record<string, unknown>> = [];
   const userPairs: Array<{ model: string; ref: string }> = [];
   const agentPairs: Array<{ model: string; ref: string }> = [];
-  const spreads: number[] = [];
 
   for (const row of list) {
     process.stdout.write(`#${row.id} ${row.label} ... `);
     try {
       const scored = await scoreRow(row, {
+        provider: args.provider,
         model: args.model,
         thinking: args.thinking,
         samples: args.samples,
         delayMs: args.delayMs,
+        assumeKnown: args.assumeKnown,
       });
       await sleep(args.delayMs);
       const userTier = String(row.user ?? "").trim();
       const agentTier = String(row.agent ?? "").trim();
       const distUser = userTier ? tierDelta(scored.rarity, userTier) : null;
       const distAgent = agentTier ? tierDelta(scored.rarity, agentTier) : null;
-      if (userTier) userPairs.push({ model: scored.rarity, ref: userTier });
-      if (agentTier) agentPairs.push({ model: scored.rarity, ref: agentTier });
-      spreads.push(scored.freqSpread);
+      if (scored.known && userTier) userPairs.push({ model: scored.rarity, ref: userTier });
+      if (scored.known && agentTier) agentPairs.push({ model: scored.rarity, ref: agentTier });
       rows.push({
         id: row.id,
         label: row.label,
         taxon: row.taxon,
         user: userTier || "",
         agent: agentTier || "",
+        known: scored.known,
+        know_samples: scored.knowSamples,
         model: scored.rarity,
-        base_tier: scored.baseTier,
-        encounter_frequency: scored.frequency,
-        freq_samples: scored.freqSamples,
-        freq_spread: scored.freqSpread,
-        extinct_or_unobtainable: scored.extinct,
-        extinct_year: scored.extinctYear,
-        pest_or_weed: scored.pestOrWeed,
+        score: scored.score,
         adjustments: scored.adjustments,
-        iconic_appeal: scored.iconicAppeal,
-        swarm_or_habituated: scored.swarmOrHabituated,
-        protection_level: scored.protectionLevel,
-        hard_to_photograph: scored.hardToPhotograph,
-        offset_score: scored.offsetScore,
-        offset_delta: scored.offsetDelta,
+        items: scored.items,
+        item_compact: compactItems(scored.items),
+        item_samples: scored.itemSamples,
         dist_user: distUser,
         dist_agent: distAgent,
-        reason: scored.reason,
+        know_reason: scored.knowReason,
+        batch_reasons: scored.batchReasons,
+        list_level: scored.listLevel ?? "",
         notes: row.notes ?? "",
+        ...Object.fromEntries(SCALE_ITEM_KEYS.map((k) => [k, scored.items?.[k] ?? ""])),
       });
       const sign = (d: number) => (d > 0 ? `+${d}` : String(d));
       const ref =
@@ -331,9 +415,13 @@ async function main() {
           : distAgent != null
             ? `agent ${agentTier} ${sign(distAgent)}`
             : "no ref";
+      const knowTag = scored.known ? "known" : "UNKNOWN";
+      const sTag = scored.score == null ? "-" : String(scored.score);
+      const listTag = scored.listLevel ? ` list=${scored.listLevel}` : "";
       console.log(
-        `${scored.rarity} (${ref}) freq=${scored.frequency}[${scored.freqSamples.join("/")}] S=${scored.offsetScore.toFixed(2)} d=${scored.offsetDelta}` +
-          (scored.adjustments.length ? ` [${scored.adjustments.join(",")}]` : ""),
+        `${knowTag} ${scored.rarity} S=${sTag} (${ref}) ${compactItems(scored.items)}` +
+          (scored.adjustments.length ? ` [${scored.adjustments.join(",")}]` : "") +
+          listTag,
       );
     } catch (err) {
       const msg = err instanceof Error ? err.message : String(err);
@@ -344,8 +432,23 @@ async function main() {
 
   const userMetrics = metrics(userPairs);
   const agentMetrics = metrics(agentPairs);
-  const avgSpread = spreads.length ? spreads.reduce((a, b) => a + b, 0) / spreads.length : 0;
-  const shaky = rows.filter((r) => typeof r.freq_spread === "number" && (r.freq_spread as number) >= 2);
+  const unknownRows = rows.filter((r) => r.known === false && !r.error);
+  const knownRows = rows.filter((r) => r.known === true);
+  const trueRates = Object.fromEntries(
+    SCALE_ITEM_KEYS.map((k) => {
+      const vals = knownRows.map((r) => r[k]).filter((v) => typeof v === "boolean");
+      const yes = vals.filter(Boolean).length;
+      return [k, vals.length ? Number((yes / vals.length).toFixed(2)) : null];
+    }),
+  );
+  const skipRates = Object.fromEntries(
+    SCALE_ITEM_KEYS.map((k) => {
+      const vals = knownRows.map((r) => r[k]);
+      const n = vals.length;
+      const skip = vals.filter((v) => v == null || v === "").length;
+      return [k, n ? Number((skip / n).toFixed(2)) : null];
+    }),
+  );
 
   mkdirSync(outDir, { recursive: true });
   const stamp = new Date().toISOString().replace(/[:.]/g, "-");
@@ -356,17 +459,22 @@ async function main() {
     JSON.stringify(
       {
         generatedAt: new Date().toISOString(),
-        scheme: "encounter_frequency_offset",
-        provider: "zhipu",
+        scheme: "know_scale14_tri",
+        provider: args.provider,
         model: args.model,
         thinking: args.thinking,
         samples: args.samples,
+        assumeKnown: args.assumeKnown,
+        itemKeys: SCALE_ITEM_KEYS,
         summary: {
           n: rows.length,
+          known: knownRows.length,
+          unknown: unknownRows.length,
+          unknownLabels: unknownRows.map((r) => r.label),
           vsUser: userMetrics,
           vsAgent: agentMetrics,
-          avgFreqSpread: Number(avgSpread.toFixed(2)),
-          shakyIds: shaky.map((r) => r.id),
+          trueRates,
+          skipRates,
         },
         rows,
       },
@@ -377,27 +485,21 @@ async function main() {
   );
 
   const csv = [
-    "id,label,user,agent,model,freq,spread,extinct,pest,iconic,swarm,hard,offset_score,offset_delta,dist_user,dist_agent,protection_level,reason",
+    ["id", "label", "user", "agent", "known", "model", "score", "item_compact", ...SCALE_ITEM_KEYS, "dist_user", "dist_agent", "know_reason"].join(","),
     ...rows.map((r) =>
       [
         r.id,
         JSON.stringify(r.label ?? ""),
         r.user ?? "",
         r.agent ?? "",
+        r.known ?? "",
         r.model ?? "",
-        r.encounter_frequency ?? "",
-        r.freq_spread ?? "",
-        r.extinct_or_unobtainable ? 1 : 0,
-        r.pest_or_weed ? 1 : 0,
-        r.iconic_appeal ?? "",
-        r.swarm_or_habituated ?? "",
-        r.hard_to_photograph ?? "",
-        r.offset_score ?? "",
-        r.offset_delta ?? "",
+        r.score ?? "",
+        r.item_compact ?? "",
+        ...SCALE_ITEM_KEYS.map((k) => triCsv(r[k])),
         r.dist_user ?? "",
         r.dist_agent ?? "",
-        r.protection_level ?? "",
-        JSON.stringify(r.reason ?? r.error ?? ""),
+        JSON.stringify(r.know_reason ?? r.error ?? ""),
       ].join(","),
     ),
   ].join("\n");
@@ -405,10 +507,12 @@ async function main() {
   writeFileSync(outCsv, csv, "utf8");
 
   console.log("\n=== summary ===");
-  console.log(fmtMetrics("vs user ", userMetrics));
-  console.log(fmtMetrics("vs agent", agentMetrics));
-  console.log(`采样分歧：平均 ${avgSpread.toFixed(2)} 级，需复核 ${shaky.length} 项` +
-    (shaky.length ? `（${shaky.map((r) => r.label).join("、")}）` : ""));
+  console.log(`认识 ${knownRows.length}/${rows.length} | 不清楚 ${unknownRows.length}` +
+    (unknownRows.length ? `（${unknownRows.map((r) => r.label).join("、")}）` : ""));
+  console.log(fmtMetrics("vs user（仅认识） ", userMetrics));
+  console.log(fmtMetrics("vs agent（仅认识）", agentMetrics));
+  console.log(`trueRates: ${SCALE_ITEM_KEYS.map((k) => `${k}=${trueRates[k] ?? "-"}`).join(" ")}`);
+  console.log(`skipRates: ${SCALE_ITEM_KEYS.map((k) => `${k}=${skipRates[k] ?? "-"}`).join(" ")}`);
   console.log(`json: ${outJson}`);
   console.log(`csv:  ${outCsv}`);
 }

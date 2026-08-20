@@ -1,41 +1,40 @@
 import { env } from "../env.js";
-import { resolveEncounterRarity } from "./encounter.js";
+import { resolveScaleRarity, type ScaleRaritySource } from "./scale.js";
 
 export type RarityResolution = {
   rarity: string;
-  source: "cache" | "encounter" | "seed" | "default" | "gbif";
-  occurrenceCount: number | null;
-  gbifUsageKey: number | null;
-  /** 0–5 traveler encounter frequency behind the tier, when scored this call. */
-  frequency?: number | null;
+  source: ScaleRaritySource | "default";
+  /** 量表总分；缓存命中或链路不可用时可能为 null。 */
+  score?: number | null;
   adjustments?: string[];
+  /** 实际出货的模型名，供事后按模型复核。 */
+  model?: string | null;
 };
 
 /**
- * Production rarity resolver — encounter frequency + gates (not GBIF counts).
+ * 生产稀有度入口：名录查表 + 12 题原子量表本地加权切档（见 scale.ts）。
  */
 export async function resolveRarity(input: {
   taxonKey: string;
   countryCode: string | null;
   finestReliableRank?: string | null;
-  /** Extra GBIF name candidates (kept for API compat; unused by encounter path). */
+  /** 额外的 GBIF 名候选（保留调用兼容，量表路径不用）。 */
   matchNames?: string[];
   label?: string | null;
   scientificName?: string | null;
 }): Promise<RarityResolution> {
-  // Guardrail / local tests: skip GLM encounter scoring when vision is mocked.
+  // 护栏 / 本地测试：识图被 mock 时不真调模型。
   if (env.identifyMock) {
     return {
       rarity: "R",
       source: "default",
-      occurrenceCount: null,
-      gbifUsageKey: null,
-      frequency: 1,
+      score: null,
       adjustments: ["identify_mock"],
+      model: null,
     };
   }
 
-  const resolved = await resolveEncounterRarity({
+  const resolved = await resolveScaleRarity({
     taxonKey: input.taxonKey,
     countryCode: input.countryCode,
     finestReliableRank: input.finestReliableRank,
@@ -45,29 +44,34 @@ export async function resolveRarity(input: {
   return {
     rarity: resolved.rarity,
     source: resolved.source,
-    occurrenceCount: resolved.occurrenceCount,
-    gbifUsageKey: resolved.gbifUsageKey,
-    frequency: resolved.frequency,
+    score: resolved.score,
     adjustments: resolved.adjustments,
+    model: resolved.model,
   };
 }
 
-export { rarityConfig, rankBandFromFinest, rarityCollectibleRank } from "./config.js";
-export { gradeFromCount } from "./grade.js";
 export {
-  resolveFromEncounter,
-  parseFrequency,
-  parseBoolFlag,
-  parseExtinctFlag,
-  parseProtectionLevel,
+  RARITY_TIERS,
   collectibleRankFromTier,
-  type EncounterInput,
-} from "./formula.js";
+  rarityFromScore,
+  scoreFromScale,
+  SCALE_BANDS,
+  SCALE_WEIGHTS,
+  SCALE_ITEM_KEYS,
+  type ScaleItems,
+  type ScaleItemKey,
+} from "./scale-rubric.js";
 export {
-  resolveEncounterRarity,
-  scoreEncounter,
-  ENCOUNTER_CACHE_VER,
-  parseEncounterCacheKey,
-  encounterCacheKey,
-} from "./encounter.js";
-export { ENCOUNTER_RUBRIC } from "./encounter-rubric.js";
+  resolveScaleRarity,
+  scaleCacheKey,
+  parseScaleCacheKey,
+  effectiveCountry,
+  SCALE_CACHE_VER,
+  type ScaleRarityResolution,
+} from "./scale.js";
+export {
+  lookupCnStatus,
+  lookupCnProtected,
+  type CnStatus,
+  type CnProtectLevel,
+} from "./cn-status.js";

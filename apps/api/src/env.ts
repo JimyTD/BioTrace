@@ -36,6 +36,18 @@ function parseCorsOrigins(): string[] {
     .filter(Boolean);
 }
 
+const RARITY_MODEL_CHAIN_DEFAULT = ["glm-5.3", "glm-5.2", "kimi-k3", "glm-5.1"];
+
+function parseModelChain(): string[] {
+  const raw = process.env.RARITY_TEXT_MODELS?.trim();
+  if (!raw) return RARITY_MODEL_CHAIN_DEFAULT;
+  const list = raw
+    .split(",")
+    .map((s) => s.trim())
+    .filter(Boolean);
+  return list.length ? list : RARITY_MODEL_CHAIN_DEFAULT;
+}
+
 function parseCookieSecure(): boolean {
   const v = (process.env.COOKIE_SECURE ?? "").trim().toLowerCase();
   if (v === "0" || v === "false") return false;
@@ -63,6 +75,23 @@ export const env = {
   /** Text model for encounter-class rarity (not vision). */
   zhipuTextModel: process.env.ZHIPU_TEXT_MODEL?.trim() || "glm-4-flash-250414",
   zhipuBaseUrl: process.env.ZHIPU_BASE_URL?.trim() || "https://open.bigmodel.cn/api/paas/v4",
+  /** TokenHub 在线推理（稀有度量表 + 标定脚本）。Coding Plan / Token Plan 的套餐 Key 不能用于脚本。 */
+  tokenhubApiKey: process.env.TOKENHUB_API_KEY?.trim() || "",
+  tokenhubBaseUrl: process.env.TOKENHUB_BASE_URL?.trim() || "https://tokenhub.tencentmaas.com/v1",
+  /**
+   * 稀有度量表的模型优先级链（TokenHub 单 key，只换模型名）。
+   * 按序试，某档配额耗尽/鉴权失败就打冷却降到下一档；生效模型名会写进缓存供事后复核。
+   */
+  rarityTextModels: parseModelChain(),
+  /** 每物种采样次数。一次采样 = 3 批调用。 */
+  raritySamples: Number(process.env.RARITY_SAMPLES ?? 1),
+  /** 得分离档位界不超过这个距离就补采样到 rarityEdgeSamples，别让一道噪声题决定档位。 */
+  rarityEdgeMargin: Number(process.env.RARITY_EDGE_MARGIN ?? 0.2),
+  rarityEdgeSamples: Number(process.env.RARITY_EDGE_SAMPLES ?? 3),
+  /** 量表题只要判断不要推理链；开 thinking 在免费档极易撞限流。 */
+  rarityThinking: (process.env.RARITY_THINKING ?? "").trim() === "1",
+  /** 同一物种相邻两批之间的间隔，避开免费档约 1 req/s 的限制。 */
+  rarityCallDelayMs: Number(process.env.RARITY_CALL_DELAY_MS ?? 1200),
   displayMaxEdge: Number(process.env.DISPLAY_MAX_EDGE ?? 1600),
   /** 单张上传原图上限（字节）；相册默认传原图，防止极端文件打爆磁盘。 */
   uploadMaxBytes: Number(process.env.UPLOAD_MAX_BYTES ?? 25 * 1024 * 1024),

@@ -1,7 +1,7 @@
 import { and, desc, eq, or } from "drizzle-orm";
 import { db } from "../db/index.js";
 import { collectionEntries, observations, type Observation } from "../db/schema.js";
-import { rarityCollectibleRank } from "../rarity/config.js";
+import { collectibleRankFromTier } from "../rarity/scale-rubric.js";
 import { collectionScientificName } from "../settle/taxon.js";
 
 export async function upsertCollectionFromObservation(obs: Observation) {
@@ -57,7 +57,7 @@ async function refreshCollectionEntry(
   let bestRarity = replacement.rarity ?? "R";
   for (const o of settled) {
     if (excludeObservationId && o.id === excludeObservationId) continue;
-    if (rarityCollectibleRank(o.rarity ?? "R") > rarityCollectibleRank(bestRarity)) {
+    if (collectibleRankFromTier(o.rarity ?? "R") > collectibleRankFromTier(bestRarity)) {
       bestRarity = o.rarity ?? bestRarity;
     }
   }

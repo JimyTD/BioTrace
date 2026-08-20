@@ -7,7 +7,7 @@ import {
   tripMembers,
   type Observation,
 } from "../db/schema.js";
-import { rarityCollectibleRank } from "../rarity/config.js";
+import { collectibleRankFromTier } from "../rarity/scale-rubric.js";
 import { collectionScientificName } from "../settle/taxon.js";
 import {
   evaluateVolumesForUser,
@@ -54,7 +54,7 @@ export async function upsertCollectionForUser(userId: string, obs: Observation) 
   }
 
   const nextRarity =
-    rarityCollectibleRank(obs.rarity) > rarityCollectibleRank(existing.rarity)
+    collectibleRankFromTier(obs.rarity) > collectibleRankFromTier(existing.rarity)
       ? obs.rarity
       : existing.rarity;
 
@@ -70,7 +70,7 @@ export async function upsertCollectionForUser(userId: string, obs: Observation) 
       commonName: obs.commonName ?? existing.commonName,
       scientificName: collectionScientificName(obs) ?? existing.scientificName,
       rarity: nextRarity,
-      coverObservationId: rarityCollectibleRank(obs.rarity) >= rarityCollectibleRank(existing.rarity)
+      coverObservationId: collectibleRankFromTier(obs.rarity) >= collectibleRankFromTier(existing.rarity)
         ? obs.id
         : coverObservationId,
       updatedAt: now,
@@ -172,13 +172,13 @@ export async function rebuildCollectionTaxonForUser(userId: string, taxonKey: st
 
   let best = sources[0]!;
   for (const o of sources) {
-    if (rarityCollectibleRank(o.rarity ?? "R") > rarityCollectibleRank(best.rarity ?? "R")) {
+    if (collectibleRankFromTier(o.rarity ?? "R") > collectibleRankFromTier(best.rarity ?? "R")) {
       best = o;
     }
   }
   // Prefer own cover for privacy
   const ownBest = own.sort(
-    (a, b) => rarityCollectibleRank(b.rarity ?? "R") - rarityCollectibleRank(a.rarity ?? "R"),
+    (a, b) => collectibleRankFromTier(b.rarity ?? "R") - collectibleRankFromTier(a.rarity ?? "R"),
   )[0];
   const cover = ownBest ?? best;
 

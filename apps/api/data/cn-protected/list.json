@@ -1,0 +1,6949 @@
+{
+  "legal": {
+    "title": "国家重点保护野生动物名录",
+    "instrument": "国家林业和草原局 农业农村部公告2021年第3号",
+    "effective": "2021-02-01",
+    "announcedTotals": {
+      "speciesAndTaxa": "980种和8类",
+      "classI": "234种和1类",
+      "classII": "746种和7类"
+    }
+  },
+  "officialPdf": {
+    "url": "https://www.gov.cn/zhengce/2021-02/05/5727412/files/7bf5c0b21f554df497f370068f027ddb.pdf",
+    "also": "https://www.forestry.gov.cn/html/main/main_5461/20210205122418860831352/file/20210205151950336764982.pdf",
+    "file": "govcn.pdf",
+    "sha256": "3b51fd601f31b8c4e6cb522170af0bad1149d48a8ef1a954263f1386ecd18e59",
+    "bytes": 936159,
+    "note": "中国政府网与林草局同一扫描件（哈希一致）。Ricoh 复印件，无内嵌文字。"
+  },
+  "machineReadable": {
+    "url": "http://ahwca.org.cn/News/detial.aspx?category_id=120&id=220",
+    "file": "ahwca-2021.html",
+    "publisher": "安徽省野生动植物保护协会（转载2021年名录表格）",
+    "note": "官方 PDF 无法抽字，结构化行从此转载页解析，不是模型记忆生成。"
+  },
+  "parsed": {
+    "n": 988,
+    "class_i": 235,
+    "class_ii": 753
+  },
+  "entries": [
+    {
+      "zh": "蜂猴",
+      "scientificName": "Nycticebus bengalensis",
+      "level": "class_i",
+      "kind": "species",
+      "notes": ""
+    },
+    {
+      "zh": "倭蜂猴",
+      "scientificName": "Nycticebus pygmaeus",
+      "level": "class_i",
+      "kind": "species",
+      "notes": ""
+    },
+    {
+      "zh": "短尾猴",
+      "scientificName": "Macaca arctoides",
+      "level": "class_ii",
+      "kind": "species",
+      "notes": ""
+    },
+    {
+      "zh": "熊猴",
+      "scientificName": "Macaca assamensis",
+      "level": "class_ii",
+      "kind": "species",
+      "notes": ""
+    },
+    {
+      "zh": "台湾猴",
+      "scientificName": "Macaca cyclopis",
+      "level": "class_i",
+      "kind": "species",
+      "notes": ""
+    },
+    {
+      "zh": "北豚尾猴",
+      "scientificName": "Macaca leonina",
+      "level": "class_i",
+      "kind": "species",
+      "notes": "原名 “ 豚尾猴 ”"
+    },
+    {
+      "zh": "白颊猕猴",
+      "scientificName": "Macaca leucogenys",
+      "level": "class_ii",
+      "kind": "species",
+      "notes": ""
+    },
+    {
+      "zh": "猕猴",
+      "scientificName": "Macaca mulatta",
+      "level": "class_ii",
+      "kind": "species",
+      "notes": ""
+    },
+    {
+      "zh": "藏南猕猴",
+      "scientificName": "Macaca munzala",
+      "level": "class_ii",
+      "kind": "species",
+      "notes": ""
+    },
+    {
+      "zh": "藏酋猴",
+      "scientificName": "Macaca thibetana",
+      "level": "class_ii",
+      "kind": "species",
+      "notes": ""
+    },
+    {
+      "zh": "喜山长尾叶猴",
+      "scientificName": "Semnopithecus schistaceus",
+      "level": "class_i",
+      "kind": "species",
+      "notes": ""
+    },
+    {
+      "zh": "印支灰叶猴",
+      "scientificName": "Trachypithecus crepusculus",
+      "level": "class_i",
+      "kind": "species",
+      "notes": ""
+    },
+    {
+      "zh": "黑叶猴",
+      "scientificName": "Trachypithecus francoisi",
+      "level": "class_i",
+      "kind": "species",
+      "notes": ""
+    },
+    {
+      "zh": "菲氏叶猴",
+      "scientificName": "Trachypithecus phayrei",
+      "level": "class_i",
+      "kind": "species",
+      "notes": ""
+    },
+    {
+      "zh": "戴帽叶猴",
+      "scientificName": "Trachypithecus pileatus",
+      "level": "class_i",
+      "kind": "species",
+      "notes": ""
+    },
+    {
+      "zh": "白头叶猴",
+      "scientificName": "Trachypithecus leucocephalus",
+      "level": "class_i",
+      "kind": "species",
+      "notes": ""
+    },
+    {
+      "zh": "肖氏乌叶猴",
+      "scientificName": "Trachypithecus shortridgei",
+      "level": "class_i",
+      "kind": "species",
+      "notes": ""
+    },
+    {
+      "zh": "滇金丝猴",
+      "scientificName": "Rhinopithecus bieti",
+      "level": "class_i",
+      "kind": "species",
+      "notes": ""
+    },
+    {
+      "zh": "黔金丝猴",
+      "scientificName": "Rhinopithecus brelichi",
+      "level": "class_i",
+      "kind": "species",
+      "notes": ""
+    },
+    {
+      "zh": "川金丝猴",
+      "scientificName": "Rhinopithecus roxellana",
+      "level": "class_i",
+      "kind": "species",
+      "notes": ""
+    },
+    {
+      "zh": "怒江金丝猴",
+      "scientificName": "Rhinopithecus strykeri",
+      "level": "class_i",
+      "kind": "species",
+      "notes": ""
+    },
+    {
+      "zh": "西白眉长臂猿",
+      "scientificName": "Hoolock hoolock",
+      "level": "class_i",
+      "kind": "species",
+      "notes": ""
+    },
+    {
+      "zh": "东白眉长臂猿",
+      "scientificName": "Hoolock leuconedys",
+      "level": "class_i",
+      "kind": "species",
+      "notes": ""
+    },
+    {
+      "zh": "高黎贡白眉长臂猿",
+      "scientificName": "Hoolock tianxing",
+      "level": "class_i",
+      "kind": "species",
+      "notes": ""
+    },
+    {
+      "zh": "白掌长臂猿",
+      "scientificName": "Hylobates lar",
+      "level": "class_i",
+      "kind": "species",
+      "notes": ""
+    },
+    {
+      "zh": "西黑冠长臂猿",
+      "scientificName": "Nomascus concolor",
+      "level": "class_i",
+      "kind": "species",
+      "notes": ""
+    },
+    {
+      "zh": "东黑冠长臂猿",
+      "scientificName": "Nomascus nasutus",
+      "level": "class_i",
+      "kind": "species",
+      "notes": ""
+    },
+    {
+      "zh": "海南长臂猿",
+      "scientificName": "Nomascus hainanus",
+      "level": "class_i",
+      "kind": "species",
+      "notes": ""
+    },
+    {
+      "zh": "北白颊长臂猿",
+      "scientificName": "Nomascus leucogenys",
+      "level": "class_i",
+      "kind": "species",
+      "notes": ""
+    },
+    {
+      "zh": "印度穿山甲",
+      "scientificName": "Manis crassicaudata",
+      "level": "class_i",
+      "kind": "species",
+      "notes": ""
+    },
+    {
+      "zh": "马来穿山甲",
+      "scientificName": "Manis javanica",
+      "level": "class_i",
+      "kind": "species",
+      "notes": ""
+    },
+    {
+      "zh": "穿山甲",
+      "scientificName": "Manis pentadactyla",
+      "level": "class_i",
+      "kind": "species",
+      "notes": ""
+    },
+    {
+      "zh": "狼",
+      "scientificName": "Canis lupus",
+      "level": "class_ii",
+      "kind": "species",
+      "notes": ""
+    },
+    {
+      "zh": "亚洲胡狼",
+      "scientificName": "Canis aureus",
+      "level": "class_ii",
+      "kind": "species",
+      "notes": ""
+    },
+    {
+      "zh": "豺",
+      "scientificName": "Cuon alpinus",
+      "level": "class_i",
+      "kind": "species",
+      "notes": ""
+    },
+    {
+      "zh": "貉",
+      "scientificName": "Nyctereutes procyonoides",
+      "level": "class_ii",
+      "kind": "species",
+      "notes": "仅限野外种群"
+    },
+    {
+      "zh": "沙狐",
+      "scientificName": "Vulpes corsac",
+      "level": "class_ii",
+      "kind": "species",
+      "notes": ""
+    },
+    {
+      "zh": "藏狐",
+      "scientificName": "Vulpes ferrilata",
+      "level": "class_ii",
+      "kind": "species",
+      "notes": ""
+    },
+    {
+      "zh": "赤狐",
+      "scientificName": "Vulpes vulpes",
+      "level": "class_ii",
+      "kind": "species",
+      "notes": ""
+    },
+    {
+      "zh": "懒熊",
+      "scientificName": "Melursus ursinus",
+      "level": "class_ii",
+      "kind": "species",
+      "notes": ""
+    },
+    {
+      "zh": "马来熊",
+      "scientificName": "Helarctos malayanus",
+      "level": "class_i",
+      "kind": "species",
+      "notes": ""
+    },
+    {
+      "zh": "棕熊",
+      "scientificName": "Ursus arctos",
+      "level": "class_ii",
+      "kind": "species",
+      "notes": ""
+    },
+    {
+      "zh": "黑熊",
+      "scientificName": "Ursus thibetanus",
+      "level": "class_ii",
+      "kind": "species",
+      "notes": ""
+    },
+    {
+      "zh": "大熊猫",
+      "scientificName": "Ailuropoda melanoleuca",
+      "level": "class_i",
+      "kind": "species",
+      "notes": ""
+    },
+    {
+      "zh": "小熊猫",
+      "scientificName": "Ailurus fulgens",
+      "level": "class_ii",
+      "kind": "species",
+      "notes": ""
+    },
+    {
+      "zh": "黄喉貂",
+      "scientificName": "Martes flavigula",
+      "level": "class_ii",
+      "kind": "species",
+      "notes": ""
+    },
+    {
+      "zh": "石貂",
+      "scientificName": "Martes foina",
+      "level": "class_ii",
+      "kind": "species",
+      "notes": ""
+    },
+    {
+      "zh": "紫貂",
+      "scientificName": "Martes zibellina",
+      "level": "class_i",
+      "kind": "species",
+      "notes": ""
+    },
+    {
+      "zh": "貂熊",
+      "scientificName": "Gulo gulo",
+      "level": "class_i",
+      "kind": "species",
+      "notes": ""
+    },
+    {
+      "zh": "小爪水獭",
+      "scientificName": "Aonyx cinerea",
+      "level": "class_ii",
+      "kind": "species",
+      "notes": ""
+    },
+    {
+      "zh": "水獭",
+      "scientificName": "Lutra lutra",
+      "level": "class_ii",
+      "kind": "species",
+      "notes": ""
+    },
+    {
+      "zh": "江獭",
+      "scientificName": "Lutrogale perspicillata",
+      "level": "class_ii",
+      "kind": "species",
+      "notes": ""
+    },
+    {
+      "zh": "大斑灵猫",
+      "scientificName": "Viverra megaspila",
+      "level": "class_i",
+      "kind": "species",
+      "notes": ""
+    },
+    {
+      "zh": "大灵猫",
+      "scientificName": "Viverra zibetha",
+      "level": "class_i",
+      "kind": "species",
+      "notes": ""
+    },
+    {
+      "zh": "小灵猫",
+      "scientificName": "Viverricula indica",
+      "level": "class_i",
+      "kind": "species",
+      "notes": ""
+    },
+    {
+      "zh": "椰子猫",
+      "scientificName": "Paradoxurus hermaphroditus",
+      "level": "class_ii",
+      "kind": "species",
+      "notes": ""
+    },
+    {
+      "zh": "熊狸",
+      "scientificName": "Arctictis binturong",
+      "level": "class_i",
+      "kind": "species",
+      "notes": ""
+    },
+    {
+      "zh": "小齿狸",
+      "scientificName": "Arctogalidia trivirgata",
+      "level": "class_i",
+      "kind": "species",
+      "notes": ""
+    },
+    {
+      "zh": "缟灵猫",
+      "scientificName": "Chrotogale owstoni",
+      "level": "class_i",
+      "kind": "species",
+      "notes": ""
+    },
+    {
+      "zh": "斑林狸",
+      "scientificName": "Prionodon pardicolor",
+      "level": "class_ii",
+      "kind": "species",
+      "notes": ""
+    },
+    {
+      "zh": "荒漠猫",
+      "scientificName": "Felis bieti",
+      "level": "class_i",
+      "kind": "species",
+      "notes": ""
+    },
+    {
+      "zh": "丛林猫",
+      "scientificName": "Felis chaus",
+      "level": "class_i",
+      "kind": "species",
+      "notes": ""
+    },
+    {
+      "zh": "野猫",
+      "scientificName": "Felis silvestris",
+      "level": "class_ii",
+      "kind": "species",
+      "notes": "原名“草原斑猫”"
+    },
+    {
+      "zh": "渔猫",
+      "scientificName": "Felis viverrinus",
+      "level": "class_ii",
+      "kind": "species",
+      "notes": ""
+    },
+    {
+      "zh": "兔狲",
+      "scientificName": "Otocolobus manul",
+      "level": "class_ii",
+      "kind": "species",
+      "notes": ""
+    },
+    {
+      "zh": "猞猁",
+      "scientificName": "Lynx lynx",
+      "level": "class_ii",
+      "kind": "species",
+      "notes": ""
+    },
+    {
+      "zh": "云猫",
+      "scientificName": "Pardofelis marmorata",
+      "level": "class_ii",
+      "kind": "species",
+      "notes": ""
+    },
+    {
+      "zh": "金猫",
+      "scientificName": "Pardofelis temminckii",
+      "level": "class_i",
+      "kind": "species",
+      "notes": ""
+    },
+    {
+      "zh": "豹猫",
+      "scientificName": "Prionailurus bengalensis",
+      "level": "class_ii",
+      "kind": "species",
+      "notes": ""
+    },
+    {
+      "zh": "云豹",
+      "scientificName": "Neofelis nebulosa",
+      "level": "class_i",
+      "kind": "species",
+      "notes": ""
+    },
+    {
+      "zh": "豹",
+      "scientificName": "Panthera pardus",
+      "level": "class_i",
+      "kind": "species",
+      "notes": ""
+    },
+    {
+      "zh": "虎",
+      "scientificName": "Panthera tigris",
+      "level": "class_i",
+      "kind": "species",
+      "notes": ""
+    },
+    {
+      "zh": "雪豹",
+      "scientificName": "Panthera uncia",
+      "level": "class_i",
+      "kind": "species",
+      "notes": ""
+    },
+    {
+      "zh": "北海狗",
+      "scientificName": "Callorhinus ursinus",
+      "level": "class_ii",
+      "kind": "species",
+      "notes": ""
+    },
+    {
+      "zh": "北海狮",
+      "scientificName": "Eumetopias jubatus",
+      "level": "class_ii",
+      "kind": "species",
+      "notes": ""
+    },
+    {
+      "zh": "西太平洋斑海豹",
+      "scientificName": "Phoca largha",
+      "level": "class_i",
+      "kind": "species",
+      "notes": "原名 “ 斑海豹 ”"
+    },
+    {
+      "zh": "髯海豹",
+      "scientificName": "Erignathus barbatus",
+      "level": "class_ii",
+      "kind": "species",
+      "notes": ""
+    },
+    {
+      "zh": "环海豹",
+      "scientificName": "Pusa hispida",
+      "level": "class_ii",
+      "kind": "species",
+      "notes": ""
+    },
+    {
+      "zh": "亚洲象",
+      "scientificName": "Elephas maximus",
+      "level": "class_i",
+      "kind": "species",
+      "notes": ""
+    },
+    {
+      "zh": "普氏野马",
+      "scientificName": "Equus ferus",
+      "level": "class_i",
+      "kind": "species",
+      "notes": "原名“野马 ”"
+    },
+    {
+      "zh": "蒙古野驴",
+      "scientificName": "Equus hemionus",
+      "level": "class_i",
+      "kind": "species",
+      "notes": ""
+    },
+    {
+      "zh": "藏野驴",
+      "scientificName": "Equus kiang",
+      "level": "class_i",
+      "kind": "species",
+      "notes": "原名“西藏野驴”"
+    },
+    {
+      "zh": "野骆驼",
+      "scientificName": "Camelus ferus",
+      "level": "class_i",
+      "kind": "species",
+      "notes": ""
+    },
+    {
+      "zh": "威氏鼷鹿",
+      "scientificName": "Tragulus williamsoni",
+      "level": "class_i",
+      "kind": "species",
+      "notes": "原名“鼷鹿”"
+    },
+    {
+      "zh": "安徽麝",
+      "scientificName": "Moschus anhuiensis",
+      "level": "class_i",
+      "kind": "species",
+      "notes": ""
+    },
+    {
+      "zh": "林麝",
+      "scientificName": "Moschus berezovskii",
+      "level": "class_i",
+      "kind": "species",
+      "notes": ""
+    },
+    {
+      "zh": "马麝",
+      "scientificName": "Moschus chrysogaster",
+      "level": "class_i",
+      "kind": "species",
+      "notes": ""
+    },
+    {
+      "zh": "黑麝",
+      "scientificName": "Moschus fuscus",
+      "level": "class_i",
+      "kind": "species",
+      "notes": ""
+    },
+    {
+      "zh": "喜马拉雅麝",
+      "scientificName": "Moschus leucogaster",
+      "level": "class_i",
+      "kind": "species",
+      "notes": ""
+    },
+    {
+      "zh": "原麝",
+      "scientificName": "Moschus moschiferus",
+      "level": "class_i",
+      "kind": "species",
+      "notes": ""
+    },
+    {
+      "zh": "獐",
+      "scientificName": "Hydropotes inermis",
+      "level": "class_ii",
+      "kind": "species",
+      "notes": "原名“河麂”"
+    },
+    {
+      "zh": "黑麂",
+      "scientificName": "Muntiacus crinifrons",
+      "level": "class_i",
+      "kind": "species",
+      "notes": ""
+    },
+    {
+      "zh": "贡山麂",
+      "scientificName": "Muntiacus gongshanensis",
+      "level": "class_ii",
+      "kind": "species",
+      "notes": ""
+    },
+    {
+      "zh": "海南麂",
+      "scientificName": "Muntiacus nigripes",
+      "level": "class_ii",
+      "kind": "species",
+      "notes": ""
+    },
+    {
+      "zh": "豚鹿",
+      "scientificName": "Axis porcinus",
+      "level": "class_i",
+      "kind": "species",
+      "notes": ""
+    },
+    {
+      "zh": "水鹿",
+      "scientificName": "Cervus equinus",
+      "level": "class_ii",
+      "kind": "species",
+      "notes": ""
+    },
+    {
+      "zh": "梅花鹿",
+      "scientificName": "Cervus nippon",
+      "level": "class_i",
+      "kind": "species",
+      "notes": "仅限野外种群"
+    },
+    {
+      "zh": "马鹿",
+      "scientificName": "Cervus canadensis",
+      "level": "class_ii",
+      "kind": "species",
+      "notes": "仅限野外种群"
+    },
+    {
+      "zh": "西藏马鹿（包括白臀鹿）",
+      "scientificName": "Cervus wallichii",
+      "level": "class_i",
+      "kind": "species",
+      "notes": "Cervus wallichii （ C. w. macneilli ）"
+    },
+    {
+      "zh": "塔里木马鹿",
+      "scientificName": "Cervus yarkandensis",
+      "level": "class_i",
+      "kind": "species",
+      "notes": "仅限野外种群"
+    },
+    {
+      "zh": "坡鹿",
+      "scientificName": "Panolia siamensis",
+      "level": "class_i",
+      "kind": "species",
+      "notes": ""
+    },
+    {
+      "zh": "白唇鹿",
+      "scientificName": "Przewalskium albirostris",
+      "level": "class_i",
+      "kind": "species",
+      "notes": ""
+    },
+    {
+      "zh": "麋鹿",
+      "scientificName": "Elaphurus davidianus",
+      "level": "class_i",
+      "kind": "species",
+      "notes": ""
+    },
+    {
+      "zh": "毛冠鹿",
+      "scientificName": "Elaphodus cephalophus",
+      "level": "class_ii",
+      "kind": "species",
+      "notes": ""
+    },
+    {
+      "zh": "驼鹿",
+      "scientificName": "Alces alces",
+      "level": "class_i",
+      "kind": "species",
+      "notes": ""
+    },
+    {
+      "zh": "野牛",
+      "scientificName": "Bos gaurus",
+      "level": "class_i",
+      "kind": "species",
+      "notes": ""
+    },
+    {
+      "zh": "爪哇野牛",
+      "scientificName": "Bos javanicus",
+      "level": "class_i",
+      "kind": "species",
+      "notes": ""
+    },
+    {
+      "zh": "野牦牛",
+      "scientificName": "Bos mutus",
+      "level": "class_i",
+      "kind": "species",
+      "notes": ""
+    },
+    {
+      "zh": "蒙原羚",
+      "scientificName": "Procapra gutturosa",
+      "level": "class_i",
+      "kind": "species",
+      "notes": "原名“黄羊”"
+    },
+    {
+      "zh": "藏原羚",
+      "scientificName": "Procapra picticaudata",
+      "level": "class_ii",
+      "kind": "species",
+      "notes": ""
+    },
+    {
+      "zh": "普氏原羚",
+      "scientificName": "Procapra przewalskii",
+      "level": "class_i",
+      "kind": "species",
+      "notes": ""
+    },
+    {
+      "zh": "鹅喉羚",
+      "scientificName": "Gazella subgutturosa",
+      "level": "class_ii",
+      "kind": "species",
+      "notes": ""
+    },
+    {
+      "zh": "藏羚",
+      "scientificName": "Pantholops hodgsonii",
+      "level": "class_i",
+      "kind": "species",
+      "notes": ""
+    },
+    {
+      "zh": "高鼻羚羊",
+      "scientificName": "Saiga tatarica",
+      "level": "class_i",
+      "kind": "species",
+      "notes": ""
+    },
+    {
+      "zh": "秦岭羚牛",
+      "scientificName": "Budorcas bedfordi",
+      "level": "class_i",
+      "kind": "species",
+      "notes": ""
+    },
+    {
+      "zh": "四川羚牛",
+      "scientificName": "Budorcas tibetanus",
+      "level": "class_i",
+      "kind": "species",
+      "notes": ""
+    },
+    {
+      "zh": "不丹羚牛",
+      "scientificName": "Budorcas whitei",
+      "level": "class_i",
+      "kind": "species",
+      "notes": ""
+    },
+    {
+      "zh": "贡山羚牛",
+      "scientificName": "Budorcas taxicolor",
+      "level": "class_i",
+      "kind": "species",
+      "notes": "原名“扭角羚”"
+    },
+    {
+      "zh": "赤斑羚",
+      "scientificName": "Naemorhedus baileyi",
+      "level": "class_i",
+      "kind": "species",
+      "notes": ""
+    },
+    {
+      "zh": "长尾斑羚",
+      "scientificName": "Naemorhedus caudatus",
+      "level": "class_ii",
+      "kind": "species",
+      "notes": ""
+    },
+    {
+      "zh": "缅甸斑羚",
+      "scientificName": "Naemorhedus evansi",
+      "level": "class_ii",
+      "kind": "species",
+      "notes": ""
+    },
+    {
+      "zh": "喜马拉雅斑羚",
+      "scientificName": "Naemorhedus goral",
+      "level": "class_i",
+      "kind": "species",
+      "notes": "原名“斑羚”"
+    },
+    {
+      "zh": "中华斑羚",
+      "scientificName": "Naemorhedus griseus",
+      "level": "class_ii",
+      "kind": "species",
+      "notes": ""
+    },
+    {
+      "zh": "塔尔羊",
+      "scientificName": "Hemitragus jemlahicus",
+      "level": "class_i",
+      "kind": "species",
+      "notes": ""
+    },
+    {
+      "zh": "北山羊",
+      "scientificName": "Capra sibirica",
+      "level": "class_ii",
+      "kind": "species",
+      "notes": ""
+    },
+    {
+      "zh": "岩羊",
+      "scientificName": "Pseudois nayaur",
+      "level": "class_ii",
+      "kind": "species",
+      "notes": ""
+    },
+    {
+      "zh": "阿尔泰盘羊",
+      "scientificName": "Ovis ammon",
+      "level": "class_ii",
+      "kind": "species",
+      "notes": "原名“盘羊”"
+    },
+    {
+      "zh": "哈萨克盘羊",
+      "scientificName": "Ovis collium",
+      "level": "class_ii",
+      "kind": "species",
+      "notes": ""
+    },
+    {
+      "zh": "戈壁盘羊",
+      "scientificName": "Ovis darwini",
+      "level": "class_ii",
+      "kind": "species",
+      "notes": ""
+    },
+    {
+      "zh": "西藏盘羊",
+      "scientificName": "Ovis hodgsoni",
+      "level": "class_i",
+      "kind": "species",
+      "notes": ""
+    },
+    {
+      "zh": "天山盘羊",
+      "scientificName": "Ovis karelini",
+      "level": "class_ii",
+      "kind": "species",
+      "notes": ""
+    },
+    {
+      "zh": "帕米尔盘羊",
+      "scientificName": "Ovis polii",
+      "level": "class_ii",
+      "kind": "species",
+      "notes": ""
+    },
+    {
+      "zh": "中华鬣羚",
+      "scientificName": "Capricornis milneedwardsii",
+      "level": "class_ii",
+      "kind": "species",
+      "notes": "原名“鬣羚”"
+    },
+    {
+      "zh": "红鬣羚",
+      "scientificName": "Capricornis rubidus",
+      "level": "class_ii",
+      "kind": "species",
+      "notes": ""
+    },
+    {
+      "zh": "台湾鬣羚",
+      "scientificName": "Capricornis swinhoei",
+      "level": "class_i",
+      "kind": "species",
+      "notes": ""
+    },
+    {
+      "zh": "喜马拉雅鬣羚",
+      "scientificName": "Capricornis thar",
+      "level": "class_i",
+      "kind": "species",
+      "notes": ""
+    },
+    {
+      "zh": "河狸",
+      "scientificName": "Castor fiber",
+      "level": "class_i",
+      "kind": "species",
+      "notes": ""
+    },
+    {
+      "zh": "巨松鼠",
+      "scientificName": "Ratufa bicolor",
+      "level": "class_ii",
+      "kind": "species",
+      "notes": ""
+    },
+    {
+      "zh": "贺兰山鼠兔",
+      "scientificName": "Ochotona argentata",
+      "level": "class_ii",
+      "kind": "species",
+      "notes": ""
+    },
+    {
+      "zh": "伊犁鼠兔",
+      "scientificName": "Ochotona iliensis",
+      "level": "class_ii",
+      "kind": "species",
+      "notes": ""
+    },
+    {
+      "zh": "粗毛兔",
+      "scientificName": "Caprolagus hispidus",
+      "level": "class_ii",
+      "kind": "species",
+      "notes": ""
+    },
+    {
+      "zh": "海南兔",
+      "scientificName": "Lepus hainanus",
+      "level": "class_ii",
+      "kind": "species",
+      "notes": ""
+    },
+    {
+      "zh": "雪兔",
+      "scientificName": "Lepus timidus",
+      "level": "class_ii",
+      "kind": "species",
+      "notes": ""
+    },
+    {
+      "zh": "塔里木兔",
+      "scientificName": "Lepus yarkandensis",
+      "level": "class_ii",
+      "kind": "species",
+      "notes": ""
+    },
+    {
+      "zh": "儒艮",
+      "scientificName": "Dugong dugon",
+      "level": "class_i",
+      "kind": "species",
+      "notes": ""
+    },
+    {
+      "zh": "北太平洋露脊鲸",
+      "scientificName": "Eubalaena japonica",
+      "level": "class_i",
+      "kind": "species",
+      "notes": ""
+    },
+    {
+      "zh": "灰鲸",
+      "scientificName": "Eschrichtius robustus",
+      "level": "class_i",
+      "kind": "species",
+      "notes": ""
+    },
+    {
+      "zh": "蓝鲸",
+      "scientificName": "Balaenoptera musculus",
+      "level": "class_i",
+      "kind": "species",
+      "notes": ""
+    },
+    {
+      "zh": "小须鲸",
+      "scientificName": "Balaenoptera acutorostrata",
+      "level": "class_i",
+      "kind": "species",
+      "notes": ""
+    },
+    {
+      "zh": "塞鲸",
+      "scientificName": "Balaenoptera borealis",
+      "level": "class_i",
+      "kind": "species",
+      "notes": ""
+    },
+    {
+      "zh": "布氏鲸",
+      "scientificName": "Balaenoptera edeni",
+      "level": "class_i",
+      "kind": "species",
+      "notes": ""
+    },
+    {
+      "zh": "大村鲸",
+      "scientificName": "Balaenoptera omurai",
+      "level": "class_i",
+      "kind": "species",
+      "notes": ""
+    },
+    {
+      "zh": "长须鲸",
+      "scientificName": "Balaenoptera physalus",
+      "level": "class_i",
+      "kind": "species",
+      "notes": ""
+    },
+    {
+      "zh": "大翅鲸",
+      "scientificName": "Megaptera novaeangliae",
+      "level": "class_i",
+      "kind": "species",
+      "notes": ""
+    },
+    {
+      "zh": "白鱀豚",
+      "scientificName": "Lipotes vexillifer",
+      "level": "class_i",
+      "kind": "species",
+      "notes": ""
+    },
+    {
+      "zh": "恒河豚",
+      "scientificName": "Platanista gangetica",
+      "level": "class_i",
+      "kind": "species",
+      "notes": ""
+    },
+    {
+      "zh": "中华白海豚",
+      "scientificName": "Sousa chinensis",
+      "level": "class_i",
+      "kind": "species",
+      "notes": ""
+    },
+    {
+      "zh": "糙齿海豚",
+      "scientificName": "Steno bredanensis",
+      "level": "class_ii",
+      "kind": "species",
+      "notes": ""
+    },
+    {
+      "zh": "热带点斑原海豚",
+      "scientificName": "Stenella attenuata",
+      "level": "class_ii",
+      "kind": "species",
+      "notes": ""
+    },
+    {
+      "zh": "条纹原海豚",
+      "scientificName": "Stenella coeruleoalba",
+      "level": "class_ii",
+      "kind": "species",
+      "notes": ""
+    },
+    {
+      "zh": "飞旋原海豚",
+      "scientificName": "Stenella longirostris",
+      "level": "class_ii",
+      "kind": "species",
+      "notes": ""
+    },
+    {
+      "zh": "长喙真海豚",
+      "scientificName": "Delphinus capensis",
+      "level": "class_ii",
+      "kind": "species",
+      "notes": ""
+    },
+    {
+      "zh": "真海豚",
+      "scientificName": "Delphinus delphis",
+      "level": "class_ii",
+      "kind": "species",
+      "notes": ""
+    },
+    {
+      "zh": "印太瓶鼻海豚",
+      "scientificName": "Tursiops aduncus",
+      "level": "class_ii",
+      "kind": "species",
+      "notes": ""
+    },
+    {
+      "zh": "瓶鼻海豚",
+      "scientificName": "Tursiops truncatus",
+      "level": "class_ii",
+      "kind": "species",
+      "notes": ""
+    },
+    {
+      "zh": "弗氏海豚",
+      "scientificName": "Lagenodelphis hosei",
+      "level": "class_ii",
+      "kind": "species",
+      "notes": ""
+    },
+    {
+      "zh": "里氏海豚",
+      "scientificName": "Grampus griseus",
+      "level": "class_ii",
+      "kind": "species",
+      "notes": ""
+    },
+    {
+      "zh": "太平洋斑纹海豚",
+      "scientificName": "Lagenorhynchus obliquidens",
+      "level": "class_ii",
+      "kind": "species",
+      "notes": ""
+    },
+    {
+      "zh": "瓜头鲸",
+      "scientificName": "Peponocephala electra",
+      "level": "class_ii",
+      "kind": "species",
+      "notes": ""
+    },
+    {
+      "zh": "虎鲸",
+      "scientificName": "Orcinus orca",
+      "level": "class_ii",
+      "kind": "species",
+      "notes": ""
+    },
+    {
+      "zh": "伪虎鲸",
+      "scientificName": "Pseudorca crassidens",
+      "level": "class_ii",
+      "kind": "species",
+      "notes": ""
+    },
+    {
+      "zh": "小虎鲸",
+      "scientificName": "Feresa attenuata",
+      "level": "class_ii",
+      "kind": "species",
+      "notes": ""
+    },
+    {
+      "zh": "短肢领航鲸",
+      "scientificName": "Globicephala macrorhynchus",
+      "level": "class_ii",
+      "kind": "species",
+      "notes": ""
+    },
+    {
+      "zh": "长江江豚",
+      "scientificName": "Neophocaena asiaeorientalis",
+      "level": "class_i",
+      "kind": "species",
+      "notes": ""
+    },
+    {
+      "zh": "东亚江豚",
+      "scientificName": "Neophocaena sunameri",
+      "level": "class_ii",
+      "kind": "species",
+      "notes": ""
+    },
+    {
+      "zh": "印太江豚",
+      "scientificName": "Neophocaena phocaenoid",
+      "level": "class_ii",
+      "kind": "species",
+      "notes": ""
+    },
+    {
+      "zh": "抹香鲸",
+      "scientificName": "Physeter macrocephalus",
+      "level": "class_i",
+      "kind": "species",
+      "notes": ""
+    },
+    {
+      "zh": "小抹香鲸",
+      "scientificName": "Kogia breviceps",
+      "level": "class_ii",
+      "kind": "species",
+      "notes": ""
+    },
+    {
+      "zh": "侏抹香鲸",
+      "scientificName": "Kogia sima",
+      "level": "class_ii",
+      "kind": "species",
+      "notes": ""
+    },
+    {
+      "zh": "鹅喙鲸",
+      "scientificName": "Ziphius cavirostris",
+      "level": "class_ii",
+      "kind": "species",
+      "notes": ""
+    },
+    {
+      "zh": "柏氏中喙鲸",
+      "scientificName": "Mesoplodon densirostris",
+      "level": "class_ii",
+      "kind": "species",
+      "notes": ""
+    },
+    {
+      "zh": "银杏齿中喙鲸",
+      "scientificName": "Mesoplodon ginkgodens",
+      "level": "class_ii",
+      "kind": "species",
+      "notes": ""
+    },
+    {
+      "zh": "小中喙鲸",
+      "scientificName": "Mesoplodon peruvianus",
+      "level": "class_ii",
+      "kind": "species",
+      "notes": ""
+    },
+    {
+      "zh": "贝氏喙鲸",
+      "scientificName": "Berardius bairdii",
+      "level": "class_ii",
+      "kind": "species",
+      "notes": ""
+    },
+    {
+      "zh": "朗氏喙鲸",
+      "scientificName": "Indopacetus pacificus",
+      "level": "class_ii",
+      "kind": "species",
+      "notes": ""
+    },
+    {
+      "zh": "环颈山鹧鸪",
+      "scientificName": "Arborophila torqueola",
+      "level": "class_ii",
+      "kind": "species",
+      "notes": ""
+    },
+    {
+      "zh": "四川山鹧鸪",
+      "scientificName": "Arborophila rufipectus",
+      "level": "class_i",
+      "kind": "species",
+      "notes": ""
+    },
+    {
+      "zh": "红喉山鹧鸪",
+      "scientificName": "Arborophila rufogularis",
+      "level": "class_ii",
+      "kind": "species",
+      "notes": ""
+    },
+    {
+      "zh": "白眉山鹧鸪",
+      "scientificName": "Arborophila gingica",
+      "level": "class_ii",
+      "kind": "species",
+      "notes": ""
+    },
+    {
+      "zh": "白颊山鹧鸪",
+      "scientificName": "Arborophila atrogularis",
+      "level": "class_ii",
+      "kind": "species",
+      "notes": ""
+    },
+    {
+      "zh": "褐胸山鹧鸪",
+      "scientificName": "Arborophila brunneopectus",
+      "level": "class_ii",
+      "kind": "species",
+      "notes": ""
+    },
+    {
+      "zh": "红胸山鹧鸪",
+      "scientificName": "Arborophila mandellii",
+      "level": "class_ii",
+      "kind": "species",
+      "notes": ""
+    },
+    {
+      "zh": "台湾山鹧鸪",
+      "scientificName": "Arborophila crudigularis",
+      "level": "class_ii",
+      "kind": "species",
+      "notes": ""
+    },
+    {
+      "zh": "海南山鹧鸪",
+      "scientificName": "Arborophila ardens",
+      "level": "class_i",
+      "kind": "species",
+      "notes": ""
+    },
+    {
+      "zh": "绿脚树鹧鸪",
+      "scientificName": "Tropicoperdix chloropus",
+      "level": "class_ii",
+      "kind": "species",
+      "notes": ""
+    },
+    {
+      "zh": "花尾榛鸡",
+      "scientificName": "Tetrastes bonasia",
+      "level": "class_ii",
+      "kind": "species",
+      "notes": ""
+    },
+    {
+      "zh": "斑尾榛鸡",
+      "scientificName": "Tetrastes sewerzowi",
+      "level": "class_i",
+      "kind": "species",
+      "notes": ""
+    },
+    {
+      "zh": "镰翅鸡",
+      "scientificName": "Falcipennis falcipennis",
+      "level": "class_ii",
+      "kind": "species",
+      "notes": ""
+    },
+    {
+      "zh": "松鸡",
+      "scientificName": "Tetrao urogallus",
+      "level": "class_ii",
+      "kind": "species",
+      "notes": ""
+    },
+    {
+      "zh": "黑嘴松鸡",
+      "scientificName": "Tetrao urogalloides",
+      "level": "class_i",
+      "kind": "species",
+      "notes": "原名“细嘴松鸡”"
+    },
+    {
+      "zh": "黑琴鸡",
+      "scientificName": "Lyrurus tetrix",
+      "level": "class_i",
+      "kind": "species",
+      "notes": ""
+    },
+    {
+      "zh": "岩雷鸟",
+      "scientificName": "Lagopus muta",
+      "level": "class_ii",
+      "kind": "species",
+      "notes": ""
+    },
+    {
+      "zh": "柳雷鸟",
+      "scientificName": "Lagopus lagopus",
+      "level": "class_ii",
+      "kind": "species",
+      "notes": ""
+    },
+    {
+      "zh": "红喉雉鹑",
+      "scientificName": "Tetraophasis obscurus",
+      "level": "class_i",
+      "kind": "species",
+      "notes": "原名“雉鹑”"
+    },
+    {
+      "zh": "黄喉雉鹑",
+      "scientificName": "Tetraophasis szechenyii",
+      "level": "class_i",
+      "kind": "species",
+      "notes": ""
+    },
+    {
+      "zh": "暗腹雪鸡",
+      "scientificName": "Tetraogallus himalayensis",
+      "level": "class_ii",
+      "kind": "species",
+      "notes": ""
+    },
+    {
+      "zh": "藏雪鸡",
+      "scientificName": "Tetraogallus tibetanus",
+      "level": "class_ii",
+      "kind": "species",
+      "notes": ""
+    },
+    {
+      "zh": "阿尔泰雪鸡",
+      "scientificName": "Tetraogallus altaicus",
+      "level": "class_ii",
+      "kind": "species",
+      "notes": ""
+    },
+    {
+      "zh": "大石鸡",
+      "scientificName": "Alectoris magna",
+      "level": "class_ii",
+      "kind": "species",
+      "notes": ""
+    },
+    {
+      "zh": "血雉",
+      "scientificName": "Ithaginis cruentus",
+      "level": "class_ii",
+      "kind": "species",
+      "notes": ""
+    },
+    {
+      "zh": "黑头角雉",
+      "scientificName": "Tragopan melanocephalus",
+      "level": "class_i",
+      "kind": "species",
+      "notes": ""
+    },
+    {
+      "zh": "红胸角雉",
+      "scientificName": "Tragopan satyra",
+      "level": "class_i",
+      "kind": "species",
+      "notes": ""
+    },
+    {
+      "zh": "灰腹角雉",
+      "scientificName": "Tragopan blythii",
+      "level": "class_i",
+      "kind": "species",
+      "notes": ""
+    },
+    {
+      "zh": "红腹角雉",
+      "scientificName": "Tragopan temminckii",
+      "level": "class_ii",
+      "kind": "species",
+      "notes": ""
+    },
+    {
+      "zh": "黄腹角雉",
+      "scientificName": "Tragopan caboti",
+      "level": "class_i",
+      "kind": "species",
+      "notes": ""
+    },
+    {
+      "zh": "勺鸡",
+      "scientificName": "Pucrasia macrolopha",
+      "level": "class_ii",
+      "kind": "species",
+      "notes": ""
+    },
+    {
+      "zh": "棕尾虹雉",
+      "scientificName": "Lophophorus impejanus",
+      "level": "class_i",
+      "kind": "species",
+      "notes": ""
+    },
+    {
+      "zh": "白尾梢虹雉",
+      "scientificName": "Lophophorus sclateri",
+      "level": "class_i",
+      "kind": "species",
+      "notes": ""
+    },
+    {
+      "zh": "绿尾虹雉",
+      "scientificName": "Lophophorus lhuysii",
+      "level": "class_i",
+      "kind": "species",
+      "notes": ""
+    },
+    {
+      "zh": "红原鸡",
+      "scientificName": "Gallus gallus",
+      "level": "class_ii",
+      "kind": "species",
+      "notes": "原名“原鸡”"
+    },
+    {
+      "zh": "黑鹇",
+      "scientificName": "Lophura leucomelanos",
+      "level": "class_ii",
+      "kind": "species",
+      "notes": ""
+    },
+    {
+      "zh": "白鹇",
+      "scientificName": "Lophura nycthemera",
+      "level": "class_ii",
+      "kind": "species",
+      "notes": ""
+    },
+    {
+      "zh": "蓝腹鹇",
+      "scientificName": "Lophura swinhoii",
+      "level": "class_i",
+      "kind": "species",
+      "notes": "原名“蓝鹇”"
+    },
+    {
+      "zh": "白马鸡",
+      "scientificName": "Crossoptilon crossoptilon",
+      "level": "class_ii",
+      "kind": "species",
+      "notes": "原名“藏马鸡”"
+    },
+    {
+      "zh": "藏马鸡",
+      "scientificName": "Crossoptilon harmani",
+      "level": "class_ii",
+      "kind": "species",
+      "notes": ""
+    },
+    {
+      "zh": "褐马鸡",
+      "scientificName": "Crossoptilon mantchuricum",
+      "level": "class_i",
+      "kind": "species",
+      "notes": ""
+    },
+    {
+      "zh": "蓝马鸡",
+      "scientificName": "Crossoptilon auritum",
+      "level": "class_ii",
+      "kind": "species",
+      "notes": ""
+    },
+    {
+      "zh": "白颈长尾雉",
+      "scientificName": "Syrmaticus ellioti",
+      "level": "class_i",
+      "kind": "species",
+      "notes": ""
+    },
+    {
+      "zh": "黑颈长尾雉",
+      "scientificName": "Syrmaticus humiae",
+      "level": "class_i",
+      "kind": "species",
+      "notes": ""
+    },
+    {
+      "zh": "黑长尾雉",
+      "scientificName": "Syrmaticus mikado",
+      "level": "class_i",
+      "kind": "species",
+      "notes": ""
+    },
+    {
+      "zh": "白冠长尾雉",
+      "scientificName": "Syrmaticus reevesii",
+      "level": "class_i",
+      "kind": "species",
+      "notes": ""
+    },
+    {
+      "zh": "红腹锦鸡",
+      "scientificName": "Chrysolophus pictus",
+      "level": "class_ii",
+      "kind": "species",
+      "notes": ""
+    },
+    {
+      "zh": "白腹锦鸡",
+      "scientificName": "Chrysolophus amherstiae",
+      "level": "class_ii",
+      "kind": "species",
+      "notes": ""
+    },
+    {
+      "zh": "灰孔雀雉",
+      "scientificName": "Polyplectron bicalcaratum",
+      "level": "class_i",
+      "kind": "species",
+      "notes": "原名“孔雀雉”"
+    },
+    {
+      "zh": "海南孔雀雉",
+      "scientificName": "Polyplectron katsumatae",
+      "level": "class_i",
+      "kind": "species",
+      "notes": ""
+    },
+    {
+      "zh": "绿孔雀",
+      "scientificName": "Pavo muticus",
+      "level": "class_i",
+      "kind": "species",
+      "notes": ""
+    },
+    {
+      "zh": "栗树鸭",
+      "scientificName": "Dendrocygna javanica",
+      "level": "class_ii",
+      "kind": "species",
+      "notes": ""
+    },
+    {
+      "zh": "鸿雁",
+      "scientificName": "Anser cygnoid",
+      "level": "class_ii",
+      "kind": "species",
+      "notes": ""
+    },
+    {
+      "zh": "白额雁",
+      "scientificName": "Anser albifrons",
+      "level": "class_ii",
+      "kind": "species",
+      "notes": ""
+    },
+    {
+      "zh": "小白额雁",
+      "scientificName": "Anser erythropus",
+      "level": "class_ii",
+      "kind": "species",
+      "notes": ""
+    },
+    {
+      "zh": "红胸黑雁",
+      "scientificName": "Branta ruficollis",
+      "level": "class_ii",
+      "kind": "species",
+      "notes": ""
+    },
+    {
+      "zh": "疣鼻天鹅",
+      "scientificName": "Cygnus olor",
+      "level": "class_ii",
+      "kind": "species",
+      "notes": ""
+    },
+    {
+      "zh": "小天鹅",
+      "scientificName": "Cygnus columbianus",
+      "level": "class_ii",
+      "kind": "species",
+      "notes": ""
+    },
+    {
+      "zh": "大天鹅",
+      "scientificName": "Cygnus cygnus",
+      "level": "class_ii",
+      "kind": "species",
+      "notes": ""
+    },
+    {
+      "zh": "鸳鸯",
+      "scientificName": "Aix galericulata",
+      "level": "class_ii",
+      "kind": "species",
+      "notes": ""
+    },
+    {
+      "zh": "棉凫",
+      "scientificName": "Nettapus coromandelianus",
+      "level": "class_ii",
+      "kind": "species",
+      "notes": ""
+    },
+    {
+      "zh": "花脸鸭",
+      "scientificName": "Sibirionetta formosa",
+      "level": "class_ii",
+      "kind": "species",
+      "notes": ""
+    },
+    {
+      "zh": "云石斑鸭",
+      "scientificName": "Marmaronetta angustirostris",
+      "level": "class_ii",
+      "kind": "species",
+      "notes": ""
+    },
+    {
+      "zh": "青头潜鸭",
+      "scientificName": "Aythya baeri",
+      "level": "class_i",
+      "kind": "species",
+      "notes": ""
+    },
+    {
+      "zh": "斑头秋沙鸭",
+      "scientificName": "Mergellus albellus",
+      "level": "class_ii",
+      "kind": "species",
+      "notes": ""
+    },
+    {
+      "zh": "中华秋沙鸭",
+      "scientificName": "Mergus squamatus",
+      "level": "class_i",
+      "kind": "species",
+      "notes": ""
+    },
+    {
+      "zh": "白头硬尾鸭",
+      "scientificName": "Oxyura leucocephala",
+      "level": "class_i",
+      "kind": "species",
+      "notes": ""
+    },
+    {
+      "zh": "白翅栖鸭",
+      "scientificName": "Cairina scutulata",
+      "level": "class_ii",
+      "kind": "species",
+      "notes": ""
+    },
+    {
+      "zh": "赤颈䴙䴘",
+      "scientificName": "Podiceps grisegena",
+      "level": "class_ii",
+      "kind": "species",
+      "notes": ""
+    },
+    {
+      "zh": "角䴙䴘",
+      "scientificName": "Podiceps auritus",
+      "level": "class_ii",
+      "kind": "species",
+      "notes": ""
+    },
+    {
+      "zh": "黑颈䴙䴘",
+      "scientificName": "Podiceps nigricollis",
+      "level": "class_ii",
+      "kind": "species",
+      "notes": ""
+    },
+    {
+      "zh": "中亚鸽",
+      "scientificName": "Columba eversmanni",
+      "level": "class_ii",
+      "kind": "species",
+      "notes": ""
+    },
+    {
+      "zh": "斑尾林鸽",
+      "scientificName": "Columba palumbus",
+      "level": "class_ii",
+      "kind": "species",
+      "notes": ""
+    },
+    {
+      "zh": "紫林鸽",
+      "scientificName": "Columba punicea",
+      "level": "class_ii",
+      "kind": "species",
+      "notes": ""
+    },
+    {
+      "zh": "斑尾鹃鸠",
+      "scientificName": "Macropygia unchall",
+      "level": "class_ii",
+      "kind": "species",
+      "notes": ""
+    },
+    {
+      "zh": "菲律宾鹃鸠",
+      "scientificName": "Macropygia tenuirostris",
+      "level": "class_ii",
+      "kind": "species",
+      "notes": ""
+    },
+    {
+      "zh": "小鹃鸠",
+      "scientificName": "Macropygia ruficeps",
+      "level": "class_i",
+      "kind": "species",
+      "notes": "原名“棕头鹃鸠”"
+    },
+    {
+      "zh": "橙胸绿鸠",
+      "scientificName": "Treron bicinctus",
+      "level": "class_ii",
+      "kind": "species",
+      "notes": ""
+    },
+    {
+      "zh": "灰头绿鸠",
+      "scientificName": "Treron pompadora",
+      "level": "class_ii",
+      "kind": "species",
+      "notes": ""
+    },
+    {
+      "zh": "厚嘴绿鸠",
+      "scientificName": "Treron curvirostra",
+      "level": "class_ii",
+      "kind": "species",
+      "notes": ""
+    },
+    {
+      "zh": "黄脚绿鸠",
+      "scientificName": "Treron phoenicopterus",
+      "level": "class_ii",
+      "kind": "species",
+      "notes": ""
+    },
+    {
+      "zh": "针尾绿鸠",
+      "scientificName": "Treron apicauda",
+      "level": "class_ii",
+      "kind": "species",
+      "notes": ""
+    },
+    {
+      "zh": "楔尾绿鸠",
+      "scientificName": "Treron sphenurus",
+      "level": "class_ii",
+      "kind": "species",
+      "notes": ""
+    },
+    {
+      "zh": "红翅绿鸠",
+      "scientificName": "Treron sieboldii",
+      "level": "class_ii",
+      "kind": "species",
+      "notes": ""
+    },
+    {
+      "zh": "红顶绿鸠",
+      "scientificName": "Treron formosae",
+      "level": "class_ii",
+      "kind": "species",
+      "notes": ""
+    },
+    {
+      "zh": "黑颏果鸠",
+      "scientificName": "Ptilinopus leclancheri",
+      "level": "class_ii",
+      "kind": "species",
+      "notes": ""
+    },
+    {
+      "zh": "绿皇鸠",
+      "scientificName": "Ducula aenea",
+      "level": "class_ii",
+      "kind": "species",
+      "notes": ""
+    },
+    {
+      "zh": "山皇鸠",
+      "scientificName": "Ducula badia",
+      "level": "class_ii",
+      "kind": "species",
+      "notes": ""
+    },
+    {
+      "zh": "黑腹沙鸡",
+      "scientificName": "Pterocles orientalis",
+      "level": "class_ii",
+      "kind": "species",
+      "notes": ""
+    },
+    {
+      "zh": "黑顶蛙口夜鹰",
+      "scientificName": "Batrachostomus hodgsoni",
+      "level": "class_ii",
+      "kind": "species",
+      "notes": ""
+    },
+    {
+      "zh": "凤头雨燕",
+      "scientificName": "Hemiprocne coronata",
+      "level": "class_ii",
+      "kind": "species",
+      "notes": ""
+    },
+    {
+      "zh": "爪哇金丝燕",
+      "scientificName": "Aerodramus fuciphagus",
+      "level": "class_ii",
+      "kind": "species",
+      "notes": ""
+    },
+    {
+      "zh": "灰喉针尾雨燕",
+      "scientificName": "Hirundapus cochinchinensis",
+      "level": "class_ii",
+      "kind": "species",
+      "notes": ""
+    },
+    {
+      "zh": "褐翅鸦鹃",
+      "scientificName": "Centropus sinensis",
+      "level": "class_ii",
+      "kind": "species",
+      "notes": ""
+    },
+    {
+      "zh": "小鸦鹃",
+      "scientificName": "Centropus bengalensis",
+      "level": "class_ii",
+      "kind": "species",
+      "notes": ""
+    },
+    {
+      "zh": "大鸨",
+      "scientificName": "Otis tarda",
+      "level": "class_i",
+      "kind": "species",
+      "notes": ""
+    },
+    {
+      "zh": "波斑鸨",
+      "scientificName": "Chlamydotis macqueenii",
+      "level": "class_i",
+      "kind": "species",
+      "notes": ""
+    },
+    {
+      "zh": "小鸨",
+      "scientificName": "Tetrax tetrax",
+      "level": "class_i",
+      "kind": "species",
+      "notes": ""
+    },
+    {
+      "zh": "花田鸡",
+      "scientificName": "Coturnicops exquisitus",
+      "level": "class_ii",
+      "kind": "species",
+      "notes": ""
+    },
+    {
+      "zh": "长脚秧鸡",
+      "scientificName": "Crex crex",
+      "level": "class_ii",
+      "kind": "species",
+      "notes": ""
+    },
+    {
+      "zh": "棕背田鸡",
+      "scientificName": "Zapornia bicolor",
+      "level": "class_ii",
+      "kind": "species",
+      "notes": ""
+    },
+    {
+      "zh": "姬田鸡",
+      "scientificName": "Zapornia parva",
+      "level": "class_ii",
+      "kind": "species",
+      "notes": ""
+    },
+    {
+      "zh": "斑胁田鸡",
+      "scientificName": "Zapornia paykullii",
+      "level": "class_ii",
+      "kind": "species",
+      "notes": ""
+    },
+    {
+      "zh": "紫水鸡",
+      "scientificName": "Porphyrio porphyrio",
+      "level": "class_ii",
+      "kind": "species",
+      "notes": ""
+    },
+    {
+      "zh": "白鹤",
+      "scientificName": "Grus leucogeranus",
+      "level": "class_i",
+      "kind": "species",
+      "notes": ""
+    },
+    {
+      "zh": "沙丘鹤",
+      "scientificName": "Grus canadensis",
+      "level": "class_ii",
+      "kind": "species",
+      "notes": ""
+    },
+    {
+      "zh": "白枕鹤",
+      "scientificName": "Grus vipio",
+      "level": "class_i",
+      "kind": "species",
+      "notes": ""
+    },
+    {
+      "zh": "赤颈鹤",
+      "scientificName": "Grus antigone",
+      "level": "class_i",
+      "kind": "species",
+      "notes": ""
+    },
+    {
+      "zh": "蓑羽鹤",
+      "scientificName": "Grus virgo",
+      "level": "class_ii",
+      "kind": "species",
+      "notes": ""
+    },
+    {
+      "zh": "丹顶鹤",
+      "scientificName": "Grus japonensis",
+      "level": "class_i",
+      "kind": "species",
+      "notes": ""
+    },
+    {
+      "zh": "灰鹤",
+      "scientificName": "Grus grus",
+      "level": "class_ii",
+      "kind": "species",
+      "notes": ""
+    },
+    {
+      "zh": "白头鹤",
+      "scientificName": "Grus monacha",
+      "level": "class_i",
+      "kind": "species",
+      "notes": ""
+    },
+    {
+      "zh": "黑颈鹤",
+      "scientificName": "Grus nigricollis",
+      "level": "class_i",
+      "kind": "species",
+      "notes": ""
+    },
+    {
+      "zh": "大石鸻",
+      "scientificName": "Esacus recurvirostris",
+      "level": "class_ii",
+      "kind": "species",
+      "notes": ""
+    },
+    {
+      "zh": "鹮嘴鹬",
+      "scientificName": "Ibidorhyncha struthersii",
+      "level": "class_ii",
+      "kind": "species",
+      "notes": ""
+    },
+    {
+      "zh": "黄颊麦鸡",
+      "scientificName": "Vanellus gregarius",
+      "level": "class_ii",
+      "kind": "species",
+      "notes": ""
+    },
+    {
+      "zh": "水雉",
+      "scientificName": "Hydrophasianus chirurgus",
+      "level": "class_ii",
+      "kind": "species",
+      "notes": ""
+    },
+    {
+      "zh": "铜翅水雉",
+      "scientificName": "Metopidius indicus",
+      "level": "class_ii",
+      "kind": "species",
+      "notes": ""
+    },
+    {
+      "zh": "林沙锥",
+      "scientificName": "Gallinago nemoricola",
+      "level": "class_ii",
+      "kind": "species",
+      "notes": ""
+    },
+    {
+      "zh": "半蹼鹬",
+      "scientificName": "Limnodromus semipalmatus",
+      "level": "class_ii",
+      "kind": "species",
+      "notes": ""
+    },
+    {
+      "zh": "小杓鹬",
+      "scientificName": "Numenius minutus",
+      "level": "class_ii",
+      "kind": "species",
+      "notes": ""
+    },
+    {
+      "zh": "白腰杓鹬",
+      "scientificName": "Numenius arquata",
+      "level": "class_ii",
+      "kind": "species",
+      "notes": ""
+    },
+    {
+      "zh": "大杓鹬",
+      "scientificName": "Numenius madagascariensis",
+      "level": "class_ii",
+      "kind": "species",
+      "notes": ""
+    },
+    {
+      "zh": "小青脚鹬",
+      "scientificName": "Tringa guttifer",
+      "level": "class_i",
+      "kind": "species",
+      "notes": ""
+    },
+    {
+      "zh": "翻石鹬",
+      "scientificName": "Arenaria interpres",
+      "level": "class_ii",
+      "kind": "species",
+      "notes": ""
+    },
+    {
+      "zh": "大滨鹬",
+      "scientificName": "Calidris tenuirostris",
+      "level": "class_ii",
+      "kind": "species",
+      "notes": ""
+    },
+    {
+      "zh": "勺嘴鹬",
+      "scientificName": "Calidris pygmeus",
+      "level": "class_i",
+      "kind": "species",
+      "notes": ""
+    },
+    {
+      "zh": "阔嘴鹬",
+      "scientificName": "Calidris falcinellus",
+      "level": "class_ii",
+      "kind": "species",
+      "notes": ""
+    },
+    {
+      "zh": "灰燕鸻",
+      "scientificName": "Glareola lactea",
+      "level": "class_ii",
+      "kind": "species",
+      "notes": ""
+    },
+    {
+      "zh": "黑嘴鸥",
+      "scientificName": "Saundersilarus saundersi",
+      "level": "class_i",
+      "kind": "species",
+      "notes": ""
+    },
+    {
+      "zh": "小鸥",
+      "scientificName": "Hydrocoloeus minutus",
+      "level": "class_ii",
+      "kind": "species",
+      "notes": ""
+    },
+    {
+      "zh": "遗鸥",
+      "scientificName": "Ichthyaetus relictus",
+      "level": "class_i",
+      "kind": "species",
+      "notes": ""
+    },
+    {
+      "zh": "大凤头燕鸥",
+      "scientificName": "Thalasseus bergii",
+      "level": "class_ii",
+      "kind": "species",
+      "notes": ""
+    },
+    {
+      "zh": "中华凤头燕鸥",
+      "scientificName": "Thalasseus bernsteini",
+      "level": "class_i",
+      "kind": "species",
+      "notes": "原名“黑嘴端凤头燕鸥”"
+    },
+    {
+      "zh": "河燕鸥",
+      "scientificName": "Sterna aurantia",
+      "level": "class_i",
+      "kind": "species",
+      "notes": "原名“黄嘴河燕鸥”"
+    },
+    {
+      "zh": "黑腹燕鸥",
+      "scientificName": "Sterna acuticauda",
+      "level": "class_ii",
+      "kind": "species",
+      "notes": ""
+    },
+    {
+      "zh": "黑浮鸥",
+      "scientificName": "Chlidonias niger",
+      "level": "class_ii",
+      "kind": "species",
+      "notes": ""
+    },
+    {
+      "zh": "冠海雀",
+      "scientificName": "Synthliboramphus wumizusume",
+      "level": "class_ii",
+      "kind": "species",
+      "notes": ""
+    },
+    {
+      "zh": "黑脚信天翁",
+      "scientificName": "Phoebastria nigripes",
+      "level": "class_i",
+      "kind": "species",
+      "notes": ""
+    },
+    {
+      "zh": "短尾信天翁",
+      "scientificName": "Phoebastria albatrus",
+      "level": "class_i",
+      "kind": "species",
+      "notes": ""
+    },
+    {
+      "zh": "彩鹳",
+      "scientificName": "Mycteria leucocephala",
+      "level": "class_i",
+      "kind": "species",
+      "notes": ""
+    },
+    {
+      "zh": "黑鹳",
+      "scientificName": "Ciconia nigra",
+      "level": "class_i",
+      "kind": "species",
+      "notes": ""
+    },
+    {
+      "zh": "白鹳",
+      "scientificName": "Ciconia ciconia",
+      "level": "class_i",
+      "kind": "species",
+      "notes": ""
+    },
+    {
+      "zh": "东方白鹳",
+      "scientificName": "Ciconia boyciana",
+      "level": "class_i",
+      "kind": "species",
+      "notes": ""
+    },
+    {
+      "zh": "秃鹳",
+      "scientificName": "Leptoptilos javanicus",
+      "level": "class_ii",
+      "kind": "species",
+      "notes": ""
+    },
+    {
+      "zh": "白腹军舰鸟",
+      "scientificName": "Fregata andrewsi",
+      "level": "class_i",
+      "kind": "species",
+      "notes": ""
+    },
+    {
+      "zh": "黑腹军舰鸟",
+      "scientificName": "Fregata minor",
+      "level": "class_ii",
+      "kind": "species",
+      "notes": ""
+    },
+    {
+      "zh": "白斑军舰鸟",
+      "scientificName": "Fregata ariel",
+      "level": "class_ii",
+      "kind": "species",
+      "notes": ""
+    },
+    {
+      "zh": "蓝脸鲣鸟",
+      "scientificName": "Sula dactylatra",
+      "level": "class_ii",
+      "kind": "species",
+      "notes": ""
+    },
+    {
+      "zh": "红脚鲣鸟",
+      "scientificName": "Sula sula",
+      "level": "class_ii",
+      "kind": "species",
+      "notes": ""
+    },
+    {
+      "zh": "褐鲣鸟",
+      "scientificName": "Sula leucogaster",
+      "level": "class_ii",
+      "kind": "species",
+      "notes": ""
+    },
+    {
+      "zh": "黑颈鸬鹚",
+      "scientificName": "Microcarbo niger",
+      "level": "class_ii",
+      "kind": "species",
+      "notes": ""
+    },
+    {
+      "zh": "海鸬鹚",
+      "scientificName": "Phalacrocorax pelagicus",
+      "level": "class_ii",
+      "kind": "species",
+      "notes": ""
+    },
+    {
+      "zh": "黑头白鹮",
+      "scientificName": "Threskiornis melanocephalus",
+      "level": "class_i",
+      "kind": "species",
+      "notes": "原名“白鹮”"
+    },
+    {
+      "zh": "白肩黑鹮",
+      "scientificName": "Pseudibis davisoni",
+      "level": "class_i",
+      "kind": "species",
+      "notes": "原名“黑鹮”"
+    },
+    {
+      "zh": "朱鹮",
+      "scientificName": "Nipponia nippon",
+      "level": "class_i",
+      "kind": "species",
+      "notes": ""
+    },
+    {
+      "zh": "彩鹮",
+      "scientificName": "Plegadis falcinellus",
+      "level": "class_i",
+      "kind": "species",
+      "notes": ""
+    },
+    {
+      "zh": "白琵鹭",
+      "scientificName": "Platalea leucorodia",
+      "level": "class_ii",
+      "kind": "species",
+      "notes": ""
+    },
+    {
+      "zh": "黑脸琵鹭",
+      "scientificName": "Platalea minor",
+      "level": "class_i",
+      "kind": "species",
+      "notes": ""
+    },
+    {
+      "zh": "小苇鳽",
+      "scientificName": "Ixobrychus minutus",
+      "level": "class_ii",
+      "kind": "species",
+      "notes": ""
+    },
+    {
+      "zh": "海南鳽",
+      "scientificName": "Gorsachius magnificus",
+      "level": "class_i",
+      "kind": "species",
+      "notes": "原名“海南虎斑鳽”"
+    },
+    {
+      "zh": "栗头鳽",
+      "scientificName": "Gorsachius goisagi",
+      "level": "class_ii",
+      "kind": "species",
+      "notes": ""
+    },
+    {
+      "zh": "黑冠鳽",
+      "scientificName": "Gorsachius melanolophus",
+      "level": "class_ii",
+      "kind": "species",
+      "notes": ""
+    },
+    {
+      "zh": "白腹鹭",
+      "scientificName": "Ardea insignis",
+      "level": "class_i",
+      "kind": "species",
+      "notes": ""
+    },
+    {
+      "zh": "岩鹭",
+      "scientificName": "Egretta sacra",
+      "level": "class_ii",
+      "kind": "species",
+      "notes": ""
+    },
+    {
+      "zh": "黄嘴白鹭",
+      "scientificName": "Egretta eulophotes",
+      "level": "class_i",
+      "kind": "species",
+      "notes": ""
+    },
+    {
+      "zh": "白鹈鹕",
+      "scientificName": "Pelecanus onocrotalus",
+      "level": "class_i",
+      "kind": "species",
+      "notes": ""
+    },
+    {
+      "zh": "斑嘴鹈鹕",
+      "scientificName": "Pelecanus philippensis",
+      "level": "class_i",
+      "kind": "species",
+      "notes": ""
+    },
+    {
+      "zh": "卷羽鹈鹕",
+      "scientificName": "Pelecanus crispus",
+      "level": "class_i",
+      "kind": "species",
+      "notes": ""
+    },
+    {
+      "zh": "鹗",
+      "scientificName": "Pandion haliaetus",
+      "level": "class_ii",
+      "kind": "species",
+      "notes": ""
+    },
+    {
+      "zh": "黑翅鸢",
+      "scientificName": "Elanus caeruleus",
+      "level": "class_ii",
+      "kind": "species",
+      "notes": ""
+    },
+    {
+      "zh": "胡兀鹫",
+      "scientificName": "Gypaetus barbatus",
+      "level": "class_i",
+      "kind": "species",
+      "notes": ""
+    },
+    {
+      "zh": "白兀鹫",
+      "scientificName": "Neophron percnopterus",
+      "level": "class_ii",
+      "kind": "species",
+      "notes": ""
+    },
+    {
+      "zh": "鹃头蜂鹰",
+      "scientificName": "Pernis apivorus",
+      "level": "class_ii",
+      "kind": "species",
+      "notes": ""
+    },
+    {
+      "zh": "凤头蜂鹰",
+      "scientificName": "Pernis ptilorhynchus",
+      "level": "class_ii",
+      "kind": "species",
+      "notes": ""
+    },
+    {
+      "zh": "褐冠鹃隼",
+      "scientificName": "Aviceda jerdoni",
+      "level": "class_ii",
+      "kind": "species",
+      "notes": ""
+    },
+    {
+      "zh": "黑冠鹃隼",
+      "scientificName": "Aviceda leuphotes",
+      "level": "class_ii",
+      "kind": "species",
+      "notes": ""
+    },
+    {
+      "zh": "兀鹫",
+      "scientificName": "Gyps fulvus",
+      "level": "class_ii",
+      "kind": "species",
+      "notes": ""
+    },
+    {
+      "zh": "长嘴兀鹫",
+      "scientificName": "Gyps indicus",
+      "level": "class_ii",
+      "kind": "species",
+      "notes": ""
+    },
+    {
+      "zh": "白背兀鹫",
+      "scientificName": "Gyps bengalensis",
+      "level": "class_i",
+      "kind": "species",
+      "notes": "原名“拟兀鹫”"
+    },
+    {
+      "zh": "高山兀鹫",
+      "scientificName": "Gyps himalayensis",
+      "level": "class_ii",
+      "kind": "species",
+      "notes": ""
+    },
+    {
+      "zh": "黑兀鹫",
+      "scientificName": "Sarcogyps calvus",
+      "level": "class_i",
+      "kind": "species",
+      "notes": ""
+    },
+    {
+      "zh": "秃鹫",
+      "scientificName": "Aegypius monachus",
+      "level": "class_i",
+      "kind": "species",
+      "notes": ""
+    },
+    {
+      "zh": "蛇雕",
+      "scientificName": "Spilornis cheela",
+      "level": "class_ii",
+      "kind": "species",
+      "notes": ""
+    },
+    {
+      "zh": "短趾雕",
+      "scientificName": "Circaetus gallicus",
+      "level": "class_ii",
+      "kind": "species",
+      "notes": ""
+    },
+    {
+      "zh": "凤头鹰雕",
+      "scientificName": "Nisaetus cirrhatus",
+      "level": "class_ii",
+      "kind": "species",
+      "notes": ""
+    },
+    {
+      "zh": "鹰雕",
+      "scientificName": "Nisaetus nipalensis",
+      "level": "class_ii",
+      "kind": "species",
+      "notes": ""
+    },
+    {
+      "zh": "棕腹隼雕",
+      "scientificName": "Lophotriorchis kienerii",
+      "level": "class_ii",
+      "kind": "species",
+      "notes": ""
+    },
+    {
+      "zh": "林雕",
+      "scientificName": "Ictinaetus malaiensis",
+      "level": "class_ii",
+      "kind": "species",
+      "notes": ""
+    },
+    {
+      "zh": "乌雕",
+      "scientificName": "Clanga clanga",
+      "level": "class_i",
+      "kind": "species",
+      "notes": ""
+    },
+    {
+      "zh": "靴隼雕",
+      "scientificName": "Hieraaetus pennatus",
+      "level": "class_ii",
+      "kind": "species",
+      "notes": ""
+    },
+    {
+      "zh": "草原雕",
+      "scientificName": "Aquila nipalensis",
+      "level": "class_i",
+      "kind": "species",
+      "notes": ""
+    },
+    {
+      "zh": "白肩雕",
+      "scientificName": "Aquila heliaca",
+      "level": "class_i",
+      "kind": "species",
+      "notes": ""
+    },
+    {
+      "zh": "金雕",
+      "scientificName": "Aquila chrysaetos",
+      "level": "class_i",
+      "kind": "species",
+      "notes": ""
+    },
+    {
+      "zh": "白腹隼雕",
+      "scientificName": "Aquila fasciata",
+      "level": "class_ii",
+      "kind": "species",
+      "notes": ""
+    },
+    {
+      "zh": "凤头鹰",
+      "scientificName": "Accipiter trivirgatus",
+      "level": "class_ii",
+      "kind": "species",
+      "notes": ""
+    },
+    {
+      "zh": "褐耳鹰",
+      "scientificName": "Accipiter badius",
+      "level": "class_ii",
+      "kind": "species",
+      "notes": ""
+    },
+    {
+      "zh": "赤腹鹰",
+      "scientificName": "Accipiter soloensis",
+      "level": "class_ii",
+      "kind": "species",
+      "notes": ""
+    },
+    {
+      "zh": "日本松雀鹰",
+      "scientificName": "Accipiter gularis",
+      "level": "class_ii",
+      "kind": "species",
+      "notes": ""
+    },
+    {
+      "zh": "松雀鹰",
+      "scientificName": "Accipiter virgatus",
+      "level": "class_ii",
+      "kind": "species",
+      "notes": ""
+    },
+    {
+      "zh": "雀鹰",
+      "scientificName": "Accipiter nisus",
+      "level": "class_ii",
+      "kind": "species",
+      "notes": ""
+    },
+    {
+      "zh": "苍鹰",
+      "scientificName": "Accipiter gentilis",
+      "level": "class_ii",
+      "kind": "species",
+      "notes": ""
+    },
+    {
+      "zh": "白头鹞",
+      "scientificName": "Circus aeruginosus",
+      "level": "class_ii",
+      "kind": "species",
+      "notes": ""
+    },
+    {
+      "zh": "白腹鹞",
+      "scientificName": "Circus spilonotus",
+      "level": "class_ii",
+      "kind": "species",
+      "notes": ""
+    },
+    {
+      "zh": "白尾鹞",
+      "scientificName": "Circus cyaneus",
+      "level": "class_ii",
+      "kind": "species",
+      "notes": ""
+    },
+    {
+      "zh": "草原鹞",
+      "scientificName": "Circus macrourus",
+      "level": "class_ii",
+      "kind": "species",
+      "notes": ""
+    },
+    {
+      "zh": "鹊鹞",
+      "scientificName": "Circus melanoleucos",
+      "level": "class_ii",
+      "kind": "species",
+      "notes": ""
+    },
+    {
+      "zh": "乌灰鹞",
+      "scientificName": "Circus pygargus",
+      "level": "class_ii",
+      "kind": "species",
+      "notes": ""
+    },
+    {
+      "zh": "黑鸢",
+      "scientificName": "Milvus migrans",
+      "level": "class_ii",
+      "kind": "species",
+      "notes": ""
+    },
+    {
+      "zh": "栗鸢",
+      "scientificName": "Haliastur indus",
+      "level": "class_ii",
+      "kind": "species",
+      "notes": ""
+    },
+    {
+      "zh": "白腹海雕",
+      "scientificName": "Haliaeetus leucogaster",
+      "level": "class_i",
+      "kind": "species",
+      "notes": ""
+    },
+    {
+      "zh": "玉带海雕",
+      "scientificName": "Haliaeetus leucoryphus",
+      "level": "class_i",
+      "kind": "species",
+      "notes": ""
+    },
+    {
+      "zh": "白尾海雕",
+      "scientificName": "Haliaeetus albicilla",
+      "level": "class_i",
+      "kind": "species",
+      "notes": ""
+    },
+    {
+      "zh": "虎头海雕",
+      "scientificName": "Haliaeetus pelagicus",
+      "level": "class_i",
+      "kind": "species",
+      "notes": ""
+    },
+    {
+      "zh": "渔雕",
+      "scientificName": "Ichthyophaga humilis",
+      "level": "class_ii",
+      "kind": "species",
+      "notes": ""
+    },
+    {
+      "zh": "白眼鹰",
+      "scientificName": "Butastur teesa",
+      "level": "class_ii",
+      "kind": "species",
+      "notes": ""
+    },
+    {
+      "zh": "棕翅鹰",
+      "scientificName": "Butastur liventer",
+      "level": "class_ii",
+      "kind": "species",
+      "notes": ""
+    },
+    {
+      "zh": "灰脸鹰",
+      "scientificName": "Butastur indicus",
+      "level": "class_ii",
+      "kind": "species",
+      "notes": ""
+    },
+    {
+      "zh": "毛脚",
+      "scientificName": "Buteo lagopus",
+      "level": "class_ii",
+      "kind": "species",
+      "notes": ""
+    },
+    {
+      "zh": "大",
+      "scientificName": "Buteo hemilasius",
+      "level": "class_ii",
+      "kind": "species",
+      "notes": ""
+    },
+    {
+      "zh": "普通",
+      "scientificName": "Buteo japonicus",
+      "level": "class_ii",
+      "kind": "species",
+      "notes": ""
+    },
+    {
+      "zh": "喜山",
+      "scientificName": "Buteo refectus",
+      "level": "class_ii",
+      "kind": "species",
+      "notes": ""
+    },
+    {
+      "zh": "欧亚",
+      "scientificName": "Buteo buteo",
+      "level": "class_ii",
+      "kind": "species",
+      "notes": ""
+    },
+    {
+      "zh": "棕尾",
+      "scientificName": "Buteo rufinus",
+      "level": "class_ii",
+      "kind": "species",
+      "notes": ""
+    },
+    {
+      "zh": "黄嘴角鸮",
+      "scientificName": "Otus spilocephalus",
+      "level": "class_ii",
+      "kind": "species",
+      "notes": ""
+    },
+    {
+      "zh": "领角鸮",
+      "scientificName": "Otus lettia",
+      "level": "class_ii",
+      "kind": "species",
+      "notes": ""
+    },
+    {
+      "zh": "北领角鸮",
+      "scientificName": "Otus semitorques",
+      "level": "class_ii",
+      "kind": "species",
+      "notes": ""
+    },
+    {
+      "zh": "纵纹角鸮",
+      "scientificName": "Otus brucei",
+      "level": "class_ii",
+      "kind": "species",
+      "notes": ""
+    },
+    {
+      "zh": "西红角鸮",
+      "scientificName": "Otus scops",
+      "level": "class_ii",
+      "kind": "species",
+      "notes": ""
+    },
+    {
+      "zh": "红角鸮",
+      "scientificName": "Otus sunia",
+      "level": "class_ii",
+      "kind": "species",
+      "notes": ""
+    },
+    {
+      "zh": "优雅角鸮",
+      "scientificName": "Otus elegans",
+      "level": "class_ii",
+      "kind": "species",
+      "notes": ""
+    },
+    {
+      "zh": "雪鸮",
+      "scientificName": "Bubo scandiacus",
+      "level": "class_ii",
+      "kind": "species",
+      "notes": ""
+    },
+    {
+      "zh": "雕鸮",
+      "scientificName": "Bubo bubo",
+      "level": "class_ii",
+      "kind": "species",
+      "notes": ""
+    },
+    {
+      "zh": "林雕鸮",
+      "scientificName": "Bubo nipalensis",
+      "level": "class_ii",
+      "kind": "species",
+      "notes": ""
+    },
+    {
+      "zh": "毛腿雕鸮",
+      "scientificName": "Bubo blakistoni",
+      "level": "class_i",
+      "kind": "species",
+      "notes": ""
+    },
+    {
+      "zh": "褐渔鸮",
+      "scientificName": "Ketupa zeylonensis",
+      "level": "class_ii",
+      "kind": "species",
+      "notes": ""
+    },
+    {
+      "zh": "黄腿渔鸮",
+      "scientificName": "Ketupa flavipes",
+      "level": "class_ii",
+      "kind": "species",
+      "notes": ""
+    },
+    {
+      "zh": "褐林鸮",
+      "scientificName": "Strix leptogrammica",
+      "level": "class_ii",
+      "kind": "species",
+      "notes": ""
+    },
+    {
+      "zh": "灰林鸮",
+      "scientificName": "Strix aluco",
+      "level": "class_ii",
+      "kind": "species",
+      "notes": ""
+    },
+    {
+      "zh": "长尾林鸮",
+      "scientificName": "Strix uralensis",
+      "level": "class_ii",
+      "kind": "species",
+      "notes": ""
+    },
+    {
+      "zh": "四川林鸮",
+      "scientificName": "Strix davidi",
+      "level": "class_i",
+      "kind": "species",
+      "notes": ""
+    },
+    {
+      "zh": "乌林鸮",
+      "scientificName": "Strix nebulosa",
+      "level": "class_ii",
+      "kind": "species",
+      "notes": ""
+    },
+    {
+      "zh": "猛鸮",
+      "scientificName": "Surnia ulula",
+      "level": "class_ii",
+      "kind": "species",
+      "notes": ""
+    },
+    {
+      "zh": "花头鸺鹠",
+      "scientificName": "Glaucidium passerinum",
+      "level": "class_ii",
+      "kind": "species",
+      "notes": ""
+    },
+    {
+      "zh": "领鸺鹠",
+      "scientificName": "Glaucidium brodiei",
+      "level": "class_ii",
+      "kind": "species",
+      "notes": ""
+    },
+    {
+      "zh": "斑头鸺鹠",
+      "scientificName": "Glaucidium cuculoides",
+      "level": "class_ii",
+      "kind": "species",
+      "notes": ""
+    },
+    {
+      "zh": "纵纹腹小鸮",
+      "scientificName": "Athene noctua",
+      "level": "class_ii",
+      "kind": "species",
+      "notes": ""
+    },
+    {
+      "zh": "横斑腹小鸮",
+      "scientificName": "Athene brama",
+      "level": "class_ii",
+      "kind": "species",
+      "notes": ""
+    },
+    {
+      "zh": "鬼鸮",
+      "scientificName": "Aegolius funereus",
+      "level": "class_ii",
+      "kind": "species",
+      "notes": ""
+    },
+    {
+      "zh": "鹰鸮",
+      "scientificName": "Ninox scutulata",
+      "level": "class_ii",
+      "kind": "species",
+      "notes": ""
+    },
+    {
+      "zh": "日本鹰鸮",
+      "scientificName": "Ninox japonica",
+      "level": "class_ii",
+      "kind": "species",
+      "notes": ""
+    },
+    {
+      "zh": "长耳鸮",
+      "scientificName": "Asio otus",
+      "level": "class_ii",
+      "kind": "species",
+      "notes": ""
+    },
+    {
+      "zh": "短耳鸮",
+      "scientificName": "Asio flammeus",
+      "level": "class_ii",
+      "kind": "species",
+      "notes": ""
+    },
+    {
+      "zh": "仓鸮",
+      "scientificName": "Tyto alba",
+      "level": "class_ii",
+      "kind": "species",
+      "notes": ""
+    },
+    {
+      "zh": "草鸮",
+      "scientificName": "Tyto longimembris",
+      "level": "class_ii",
+      "kind": "species",
+      "notes": ""
+    },
+    {
+      "zh": "栗鸮",
+      "scientificName": "Phodilus badius",
+      "level": "class_ii",
+      "kind": "species",
+      "notes": ""
+    },
+    {
+      "zh": "橙胸咬鹃",
+      "scientificName": "Harpactes oreskios",
+      "level": "class_ii",
+      "kind": "species",
+      "notes": ""
+    },
+    {
+      "zh": "红头咬鹃",
+      "scientificName": "Harpactes erythrocephalus",
+      "level": "class_ii",
+      "kind": "species",
+      "notes": ""
+    },
+    {
+      "zh": "红腹咬鹃",
+      "scientificName": "Harpactes wardi",
+      "level": "class_ii",
+      "kind": "species",
+      "notes": ""
+    },
+    {
+      "zh": "白喉犀鸟",
+      "scientificName": "Anorrhinus austeni",
+      "level": "class_i",
+      "kind": "species",
+      "notes": ""
+    },
+    {
+      "zh": "冠斑犀鸟",
+      "scientificName": "Anthracoceros albirostris",
+      "level": "class_i",
+      "kind": "species",
+      "notes": ""
+    },
+    {
+      "zh": "双角犀鸟",
+      "scientificName": "Buceros bicornis",
+      "level": "class_i",
+      "kind": "species",
+      "notes": ""
+    },
+    {
+      "zh": "棕颈犀鸟",
+      "scientificName": "Aceros nipalensis",
+      "level": "class_i",
+      "kind": "species",
+      "notes": ""
+    },
+    {
+      "zh": "花冠皱盔犀鸟",
+      "scientificName": "Rhyticeros undulatus",
+      "level": "class_i",
+      "kind": "species",
+      "notes": ""
+    },
+    {
+      "zh": "赤须蜂虎",
+      "scientificName": "Nyctyornis amictus",
+      "level": "class_ii",
+      "kind": "species",
+      "notes": ""
+    },
+    {
+      "zh": "蓝须蜂虎",
+      "scientificName": "Nyctyornis athertoni",
+      "level": "class_ii",
+      "kind": "species",
+      "notes": ""
+    },
+    {
+      "zh": "绿喉蜂虎",
+      "scientificName": "Merops orientalis",
+      "level": "class_ii",
+      "kind": "species",
+      "notes": ""
+    },
+    {
+      "zh": "蓝颊蜂虎",
+      "scientificName": "Merops persicus",
+      "level": "class_ii",
+      "kind": "species",
+      "notes": ""
+    },
+    {
+      "zh": "栗喉蜂虎",
+      "scientificName": "Merops philippinus",
+      "level": "class_ii",
+      "kind": "species",
+      "notes": ""
+    },
+    {
+      "zh": "彩虹蜂虎",
+      "scientificName": "Merops ornatus",
+      "level": "class_ii",
+      "kind": "species",
+      "notes": ""
+    },
+    {
+      "zh": "蓝喉蜂虎",
+      "scientificName": "Merops viridis",
+      "level": "class_ii",
+      "kind": "species",
+      "notes": ""
+    },
+    {
+      "zh": "栗头蜂虎",
+      "scientificName": "Merops leschenaultia",
+      "level": "class_ii",
+      "kind": "species",
+      "notes": "原名“黑胸蜂虎”"
+    },
+    {
+      "zh": "鹳嘴翡翠",
+      "scientificName": "Pelargopsis capensis",
+      "level": "class_ii",
+      "kind": "species",
+      "notes": "原名“鹳嘴翠鸟”"
+    },
+    {
+      "zh": "白胸翡翠",
+      "scientificName": "Halcyon smyrnensis",
+      "level": "class_ii",
+      "kind": "species",
+      "notes": ""
+    },
+    {
+      "zh": "蓝耳翠鸟",
+      "scientificName": "Alcedo meninting",
+      "level": "class_ii",
+      "kind": "species",
+      "notes": ""
+    },
+    {
+      "zh": "斑头大翠鸟",
+      "scientificName": "Alcedo hercules",
+      "level": "class_ii",
+      "kind": "species",
+      "notes": ""
+    },
+    {
+      "zh": "白翅啄木鸟",
+      "scientificName": "Dendrocopos leucopterus",
+      "level": "class_ii",
+      "kind": "species",
+      "notes": ""
+    },
+    {
+      "zh": "三趾啄木鸟",
+      "scientificName": "Picoides tridactylus",
+      "level": "class_ii",
+      "kind": "species",
+      "notes": ""
+    },
+    {
+      "zh": "白腹黑啄木鸟",
+      "scientificName": "Dryocopus javensis",
+      "level": "class_ii",
+      "kind": "species",
+      "notes": ""
+    },
+    {
+      "zh": "黑啄木鸟",
+      "scientificName": "Dryocopus martius",
+      "level": "class_ii",
+      "kind": "species",
+      "notes": ""
+    },
+    {
+      "zh": "大黄冠啄木鸟",
+      "scientificName": "Chrysophlegma flavinucha",
+      "level": "class_ii",
+      "kind": "species",
+      "notes": ""
+    },
+    {
+      "zh": "黄冠啄木鸟",
+      "scientificName": "Picus chlorolophus",
+      "level": "class_ii",
+      "kind": "species",
+      "notes": ""
+    },
+    {
+      "zh": "红颈绿啄木鸟",
+      "scientificName": "Picus rabieri",
+      "level": "class_ii",
+      "kind": "species",
+      "notes": ""
+    },
+    {
+      "zh": "大灰啄木鸟",
+      "scientificName": "Mulleripicus pulverulentus",
+      "level": "class_ii",
+      "kind": "species",
+      "notes": ""
+    },
+    {
+      "zh": "红腿小隼",
+      "scientificName": "Microhierax caerulescens",
+      "level": "class_ii",
+      "kind": "species",
+      "notes": ""
+    },
+    {
+      "zh": "白腿小隼",
+      "scientificName": "Microhierax melanoleucus",
+      "level": "class_ii",
+      "kind": "species",
+      "notes": ""
+    },
+    {
+      "zh": "黄爪隼",
+      "scientificName": "Falco naumanni",
+      "level": "class_ii",
+      "kind": "species",
+      "notes": ""
+    },
+    {
+      "zh": "红隼",
+      "scientificName": "Falco tinnunculus",
+      "level": "class_ii",
+      "kind": "species",
+      "notes": ""
+    },
+    {
+      "zh": "西红脚隼",
+      "scientificName": "Falco vespertinus",
+      "level": "class_ii",
+      "kind": "species",
+      "notes": ""
+    },
+    {
+      "zh": "红脚隼",
+      "scientificName": "Falco amurensis",
+      "level": "class_ii",
+      "kind": "species",
+      "notes": ""
+    },
+    {
+      "zh": "灰背隼",
+      "scientificName": "Falco columbarius",
+      "level": "class_ii",
+      "kind": "species",
+      "notes": ""
+    },
+    {
+      "zh": "燕隼",
+      "scientificName": "Falco subbuteo",
+      "level": "class_ii",
+      "kind": "species",
+      "notes": ""
+    },
+    {
+      "zh": "猛隼",
+      "scientificName": "Falco severus",
+      "level": "class_ii",
+      "kind": "species",
+      "notes": ""
+    },
+    {
+      "zh": "猎隼",
+      "scientificName": "Falco cherrug",
+      "level": "class_i",
+      "kind": "species",
+      "notes": ""
+    },
+    {
+      "zh": "矛隼",
+      "scientificName": "Falco rusticolus",
+      "level": "class_i",
+      "kind": "species",
+      "notes": ""
+    },
+    {
+      "zh": "游隼",
+      "scientificName": "Falco peregrinus",
+      "level": "class_ii",
+      "kind": "species",
+      "notes": ""
+    },
+    {
+      "zh": "短尾鹦鹉",
+      "scientificName": "Loriculus vernalis",
+      "level": "class_ii",
+      "kind": "species",
+      "notes": ""
+    },
+    {
+      "zh": "蓝腰鹦鹉",
+      "scientificName": "Psittinus cyanurus",
+      "level": "class_ii",
+      "kind": "species",
+      "notes": ""
+    },
+    {
+      "zh": "亚历山大鹦鹉",
+      "scientificName": "Psittacula eupatria",
+      "level": "class_ii",
+      "kind": "species",
+      "notes": ""
+    },
+    {
+      "zh": "红领绿鹦鹉",
+      "scientificName": "Psittacula krameri",
+      "level": "class_ii",
+      "kind": "species",
+      "notes": ""
+    },
+    {
+      "zh": "青头鹦鹉",
+      "scientificName": "Psittacula himalayana",
+      "level": "class_ii",
+      "kind": "species",
+      "notes": ""
+    },
+    {
+      "zh": "灰头鹦鹉",
+      "scientificName": "Psittacula finschii",
+      "level": "class_ii",
+      "kind": "species",
+      "notes": ""
+    },
+    {
+      "zh": "花头鹦鹉",
+      "scientificName": "Psittacula roseata",
+      "level": "class_ii",
+      "kind": "species",
+      "notes": ""
+    },
+    {
+      "zh": "大紫胸鹦鹉",
+      "scientificName": "Psittacula derbiana",
+      "level": "class_ii",
+      "kind": "species",
+      "notes": ""
+    },
+    {
+      "zh": "绯胸鹦鹉",
+      "scientificName": "Psittacula alexandri",
+      "level": "class_ii",
+      "kind": "species",
+      "notes": ""
+    },
+    {
+      "zh": "双辫八色鸫",
+      "scientificName": "Pitta phayrei",
+      "level": "class_ii",
+      "kind": "species",
+      "notes": ""
+    },
+    {
+      "zh": "蓝枕八色鸫",
+      "scientificName": "Pitta nipalensis",
+      "level": "class_ii",
+      "kind": "species",
+      "notes": ""
+    },
+    {
+      "zh": "蓝背八色鸫",
+      "scientificName": "Pitta soror",
+      "level": "class_ii",
+      "kind": "species",
+      "notes": ""
+    },
+    {
+      "zh": "栗头八色鸫",
+      "scientificName": "Pitta oatesi",
+      "level": "class_ii",
+      "kind": "species",
+      "notes": ""
+    },
+    {
+      "zh": "蓝八色鸫",
+      "scientificName": "Pitta cyanea",
+      "level": "class_ii",
+      "kind": "species",
+      "notes": ""
+    },
+    {
+      "zh": "绿胸八色鸫",
+      "scientificName": "Pitta sordida",
+      "level": "class_ii",
+      "kind": "species",
+      "notes": ""
+    },
+    {
+      "zh": "仙八色鸫",
+      "scientificName": "Pitta nympha",
+      "level": "class_ii",
+      "kind": "species",
+      "notes": ""
+    },
+    {
+      "zh": "蓝翅八色鸫",
+      "scientificName": "Pitta moluccensis",
+      "level": "class_ii",
+      "kind": "species",
+      "notes": ""
+    },
+    {
+      "zh": "长尾阔嘴鸟",
+      "scientificName": "Psarisomus dalhousiae",
+      "level": "class_ii",
+      "kind": "species",
+      "notes": ""
+    },
+    {
+      "zh": "银胸丝冠鸟",
+      "scientificName": "Serilophus lunatus",
+      "level": "class_ii",
+      "kind": "species",
+      "notes": ""
+    },
+    {
+      "zh": "鹊鹂",
+      "scientificName": "Oriolus mellianus",
+      "level": "class_ii",
+      "kind": "species",
+      "notes": ""
+    },
+    {
+      "zh": "小盘尾",
+      "scientificName": "Dicrurus remifer",
+      "level": "class_ii",
+      "kind": "species",
+      "notes": ""
+    },
+    {
+      "zh": "大盘尾",
+      "scientificName": "Dicrurus paradiseus",
+      "level": "class_ii",
+      "kind": "species",
+      "notes": ""
+    },
+    {
+      "zh": "黑头噪鸦",
+      "scientificName": "Perisoreus internigrans",
+      "level": "class_i",
+      "kind": "species",
+      "notes": ""
+    },
+    {
+      "zh": "蓝绿鹊",
+      "scientificName": "Cissa chinensis",
+      "level": "class_ii",
+      "kind": "species",
+      "notes": ""
+    },
+    {
+      "zh": "黄胸绿鹊",
+      "scientificName": "Cissa hypoleuca",
+      "level": "class_ii",
+      "kind": "species",
+      "notes": ""
+    },
+    {
+      "zh": "黑尾地鸦",
+      "scientificName": "Podoces hendersoni",
+      "level": "class_ii",
+      "kind": "species",
+      "notes": ""
+    },
+    {
+      "zh": "白尾地鸦",
+      "scientificName": "Podoces biddulphi",
+      "level": "class_ii",
+      "kind": "species",
+      "notes": ""
+    },
+    {
+      "zh": "白眉山雀",
+      "scientificName": "Poecile superciliosus",
+      "level": "class_ii",
+      "kind": "species",
+      "notes": ""
+    },
+    {
+      "zh": "红腹山雀",
+      "scientificName": "Poecile davidi",
+      "level": "class_ii",
+      "kind": "species",
+      "notes": ""
+    },
+    {
+      "zh": "歌百灵",
+      "scientificName": "Mirafra javanica",
+      "level": "class_ii",
+      "kind": "species",
+      "notes": ""
+    },
+    {
+      "zh": "蒙古百灵",
+      "scientificName": "Melanocorypha mongolica",
+      "level": "class_ii",
+      "kind": "species",
+      "notes": ""
+    },
+    {
+      "zh": "云雀",
+      "scientificName": "Alauda arvensis",
+      "level": "class_ii",
+      "kind": "species",
+      "notes": ""
+    },
+    {
+      "zh": "细纹苇莺",
+      "scientificName": "Acrocephalus sorghophilus",
+      "level": "class_ii",
+      "kind": "species",
+      "notes": ""
+    },
+    {
+      "zh": "台湾鹎",
+      "scientificName": "Pycnonotus taivanus",
+      "level": "class_ii",
+      "kind": "species",
+      "notes": ""
+    },
+    {
+      "zh": "金胸雀鹛",
+      "scientificName": "Lioparus chrysotis",
+      "level": "class_ii",
+      "kind": "species",
+      "notes": ""
+    },
+    {
+      "zh": "宝兴鹛雀",
+      "scientificName": "Moupinia poecilotis",
+      "level": "class_ii",
+      "kind": "species",
+      "notes": ""
+    },
+    {
+      "zh": "中华雀鹛",
+      "scientificName": "Fulvetta striaticollis",
+      "level": "class_ii",
+      "kind": "species",
+      "notes": ""
+    },
+    {
+      "zh": "三趾鸦雀",
+      "scientificName": "Cholornis paradoxus",
+      "level": "class_ii",
+      "kind": "species",
+      "notes": ""
+    },
+    {
+      "zh": "白眶鸦雀",
+      "scientificName": "Sinosuthora conspicillata",
+      "level": "class_ii",
+      "kind": "species",
+      "notes": ""
+    },
+    {
+      "zh": "暗色鸦雀",
+      "scientificName": "Sinosuthora zappeyi",
+      "level": "class_ii",
+      "kind": "species",
+      "notes": ""
+    },
+    {
+      "zh": "灰冠鸦雀",
+      "scientificName": "Sinosuthora przewalskii",
+      "level": "class_i",
+      "kind": "species",
+      "notes": ""
+    },
+    {
+      "zh": "短尾鸦雀",
+      "scientificName": "Neosuthora davidiana",
+      "level": "class_ii",
+      "kind": "species",
+      "notes": ""
+    },
+    {
+      "zh": "震旦鸦雀",
+      "scientificName": "Paradoxornis heudei",
+      "level": "class_ii",
+      "kind": "species",
+      "notes": ""
+    },
+    {
+      "zh": "红胁绣眼鸟",
+      "scientificName": "Zosterops erythropleurus",
+      "level": "class_ii",
+      "kind": "species",
+      "notes": ""
+    },
+    {
+      "zh": "淡喉鹩鹛",
+      "scientificName": "Spelaeornis kinneari",
+      "level": "class_ii",
+      "kind": "species",
+      "notes": ""
+    },
+    {
+      "zh": "弄岗穗鹛",
+      "scientificName": "Stachyris nonggangensis",
+      "level": "class_ii",
+      "kind": "species",
+      "notes": ""
+    },
+    {
+      "zh": "金额雀鹛",
+      "scientificName": "Schoeniparus variegaticeps",
+      "level": "class_i",
+      "kind": "species",
+      "notes": ""
+    },
+    {
+      "zh": "大草鹛",
+      "scientificName": "Babax waddelli",
+      "level": "class_ii",
+      "kind": "species",
+      "notes": ""
+    },
+    {
+      "zh": "棕草鹛",
+      "scientificName": "Babax koslowi",
+      "level": "class_ii",
+      "kind": "species",
+      "notes": ""
+    },
+    {
+      "zh": "画眉",
+      "scientificName": "Garrulax canorus",
+      "level": "class_ii",
+      "kind": "species",
+      "notes": ""
+    },
+    {
+      "zh": "海南画眉",
+      "scientificName": "Garrulax owstoni",
+      "level": "class_ii",
+      "kind": "species",
+      "notes": ""
+    },
+    {
+      "zh": "台湾画眉",
+      "scientificName": "Garrulax taewanus",
+      "level": "class_ii",
+      "kind": "species",
+      "notes": ""
+    },
+    {
+      "zh": "褐胸噪鹛",
+      "scientificName": "Garrulax maesi",
+      "level": "class_ii",
+      "kind": "species",
+      "notes": ""
+    },
+    {
+      "zh": "黑额山噪鹛",
+      "scientificName": "Garrulax sukatschewi",
+      "level": "class_i",
+      "kind": "species",
+      "notes": ""
+    },
+    {
+      "zh": "斑背噪鹛",
+      "scientificName": "Garrulax lunulatus",
+      "level": "class_ii",
+      "kind": "species",
+      "notes": ""
+    },
+    {
+      "zh": "白点噪鹛",
+      "scientificName": "Garrulax bieti",
+      "level": "class_i",
+      "kind": "species",
+      "notes": ""
+    },
+    {
+      "zh": "大噪鹛",
+      "scientificName": "Garrulax maximus",
+      "level": "class_ii",
+      "kind": "species",
+      "notes": ""
+    },
+    {
+      "zh": "眼纹噪鹛",
+      "scientificName": "Garrulax ocellatus",
+      "level": "class_ii",
+      "kind": "species",
+      "notes": ""
+    },
+    {
+      "zh": "黑喉噪鹛",
+      "scientificName": "Garrulax chinensis",
+      "level": "class_ii",
+      "kind": "species",
+      "notes": ""
+    },
+    {
+      "zh": "蓝冠噪鹛",
+      "scientificName": "Garrulax courtoisi",
+      "level": "class_i",
+      "kind": "species",
+      "notes": ""
+    },
+    {
+      "zh": "棕噪鹛",
+      "scientificName": "Garrulax berthemyi",
+      "level": "class_ii",
+      "kind": "species",
+      "notes": ""
+    },
+    {
+      "zh": "橙翅噪鹛",
+      "scientificName": "Trochalopteron elliotii",
+      "level": "class_ii",
+      "kind": "species",
+      "notes": ""
+    },
+    {
+      "zh": "红翅噪鹛",
+      "scientificName": "Trochalopteron formosum",
+      "level": "class_ii",
+      "kind": "species",
+      "notes": ""
+    },
+    {
+      "zh": "红尾噪鹛",
+      "scientificName": "Trochalopteron milnei",
+      "level": "class_ii",
+      "kind": "species",
+      "notes": ""
+    },
+    {
+      "zh": "黑冠薮鹛",
+      "scientificName": "Liocichla bugunorum",
+      "level": "class_i",
+      "kind": "species",
+      "notes": ""
+    },
+    {
+      "zh": "灰胸薮鹛",
+      "scientificName": "Liocichla omeiensis",
+      "level": "class_i",
+      "kind": "species",
+      "notes": ""
+    },
+    {
+      "zh": "银耳相思鸟",
+      "scientificName": "Leiothrix argentauris",
+      "level": "class_ii",
+      "kind": "species",
+      "notes": ""
+    },
+    {
+      "zh": "红嘴相思鸟",
+      "scientificName": "Leiothrix lutea",
+      "level": "class_ii",
+      "kind": "species",
+      "notes": ""
+    },
+    {
+      "zh": "四川旋木雀",
+      "scientificName": "Certhia tianquanensis",
+      "level": "class_ii",
+      "kind": "species",
+      "notes": ""
+    },
+    {
+      "zh": "滇䴓",
+      "scientificName": "Sitta yunnanensis",
+      "level": "class_ii",
+      "kind": "species",
+      "notes": ""
+    },
+    {
+      "zh": "巨䴓",
+      "scientificName": "Sitta magna",
+      "level": "class_ii",
+      "kind": "species",
+      "notes": ""
+    },
+    {
+      "zh": "丽䴓",
+      "scientificName": "Sitta formosa",
+      "level": "class_ii",
+      "kind": "species",
+      "notes": ""
+    },
+    {
+      "zh": "鹩哥",
+      "scientificName": "Gracula religiosa",
+      "level": "class_ii",
+      "kind": "species",
+      "notes": ""
+    },
+    {
+      "zh": "褐头鸫",
+      "scientificName": "Turdus feae",
+      "level": "class_ii",
+      "kind": "species",
+      "notes": ""
+    },
+    {
+      "zh": "紫宽嘴鸫",
+      "scientificName": "Cochoa purpurea",
+      "level": "class_ii",
+      "kind": "species",
+      "notes": ""
+    },
+    {
+      "zh": "绿宽嘴鸫",
+      "scientificName": "Cochoa viridis",
+      "level": "class_ii",
+      "kind": "species",
+      "notes": ""
+    },
+    {
+      "zh": "棕头歌鸲",
+      "scientificName": "Larvivora ruficeps",
+      "level": "class_i",
+      "kind": "species",
+      "notes": ""
+    },
+    {
+      "zh": "红喉歌鸲",
+      "scientificName": "Calliope calliope",
+      "level": "class_ii",
+      "kind": "species",
+      "notes": ""
+    },
+    {
+      "zh": "黑喉歌鸲",
+      "scientificName": "Calliope obscura",
+      "level": "class_ii",
+      "kind": "species",
+      "notes": ""
+    },
+    {
+      "zh": "金胸歌鸲",
+      "scientificName": "Calliope pectardens",
+      "level": "class_ii",
+      "kind": "species",
+      "notes": ""
+    },
+    {
+      "zh": "蓝喉歌鸲",
+      "scientificName": "Luscinia svecica",
+      "level": "class_ii",
+      "kind": "species",
+      "notes": ""
+    },
+    {
+      "zh": "新疆歌鸲",
+      "scientificName": "Luscinia megarhynchos",
+      "level": "class_ii",
+      "kind": "species",
+      "notes": ""
+    },
+    {
+      "zh": "棕腹林鸲",
+      "scientificName": "Tarsiger hyperythrus",
+      "level": "class_ii",
+      "kind": "species",
+      "notes": ""
+    },
+    {
+      "zh": "贺兰山红尾鸲",
+      "scientificName": "Phoenicurus alaschanicus",
+      "level": "class_ii",
+      "kind": "species",
+      "notes": ""
+    },
+    {
+      "zh": "白喉石鵖",
+      "scientificName": "Saxicola insignis",
+      "level": "class_ii",
+      "kind": "species",
+      "notes": ""
+    },
+    {
+      "zh": "白喉林鹟",
+      "scientificName": "Cyornis brunneatus",
+      "level": "class_ii",
+      "kind": "species",
+      "notes": ""
+    },
+    {
+      "zh": "棕腹大仙鹟",
+      "scientificName": "Niltava davidi",
+      "level": "class_ii",
+      "kind": "species",
+      "notes": ""
+    },
+    {
+      "zh": "大仙鹟",
+      "scientificName": "Niltava grandis",
+      "level": "class_ii",
+      "kind": "species",
+      "notes": ""
+    },
+    {
+      "zh": "贺兰山岩鹨",
+      "scientificName": "Prunella koslowi",
+      "level": "class_ii",
+      "kind": "species",
+      "notes": ""
+    },
+    {
+      "zh": "朱鹀",
+      "scientificName": "Urocynchramus pylzowi",
+      "level": "class_ii",
+      "kind": "species",
+      "notes": ""
+    },
+    {
+      "zh": "褐头朱雀",
+      "scientificName": "Carpodacus sillemi",
+      "level": "class_ii",
+      "kind": "species",
+      "notes": ""
+    },
+    {
+      "zh": "藏雀",
+      "scientificName": "Carpodacus roborowskii",
+      "level": "class_ii",
+      "kind": "species",
+      "notes": ""
+    },
+    {
+      "zh": "北朱雀",
+      "scientificName": "Carpodacus roseus",
+      "level": "class_ii",
+      "kind": "species",
+      "notes": ""
+    },
+    {
+      "zh": "红交嘴雀",
+      "scientificName": "Loxia curvirostra",
+      "level": "class_ii",
+      "kind": "species",
+      "notes": ""
+    },
+    {
+      "zh": "蓝鹀",
+      "scientificName": "Emberiza siemsseni",
+      "level": "class_ii",
+      "kind": "species",
+      "notes": ""
+    },
+    {
+      "zh": "栗斑腹鹀",
+      "scientificName": "Emberiza jankowskii",
+      "level": "class_i",
+      "kind": "species",
+      "notes": ""
+    },
+    {
+      "zh": "黄胸鹀",
+      "scientificName": "Emberiza aureola",
+      "level": "class_i",
+      "kind": "species",
+      "notes": ""
+    },
+    {
+      "zh": "藏鹀",
+      "scientificName": "Emberiza koslowi",
+      "level": "class_ii",
+      "kind": "species",
+      "notes": ""
+    },
+    {
+      "zh": "平胸龟",
+      "scientificName": "Platysternon megacephalum",
+      "level": "class_ii",
+      "kind": "species",
+      "notes": "仅限野外种群"
+    },
+    {
+      "zh": "缅甸陆龟",
+      "scientificName": "Indotestudo elongata",
+      "level": "class_i",
+      "kind": "species",
+      "notes": ""
+    },
+    {
+      "zh": "凹甲陆龟",
+      "scientificName": "Manouria impressa",
+      "level": "class_i",
+      "kind": "species",
+      "notes": ""
+    },
+    {
+      "zh": "四爪陆龟",
+      "scientificName": "Testudo horsfieldii",
+      "level": "class_i",
+      "kind": "species",
+      "notes": ""
+    },
+    {
+      "zh": "欧氏摄龟",
+      "scientificName": "Cyclemys oldhami",
+      "level": "class_ii",
+      "kind": "species",
+      "notes": ""
+    },
+    {
+      "zh": "黑颈乌龟",
+      "scientificName": "Mauremys nigricans",
+      "level": "class_ii",
+      "kind": "species",
+      "notes": "仅限野外种群"
+    },
+    {
+      "zh": "乌龟",
+      "scientificName": "Mauremys reevesii",
+      "level": "class_ii",
+      "kind": "species",
+      "notes": "仅限野外种群"
+    },
+    {
+      "zh": "花龟",
+      "scientificName": "Mauremys sinensis",
+      "level": "class_ii",
+      "kind": "species",
+      "notes": "仅限野外种群"
+    },
+    {
+      "zh": "黄喉拟水龟",
+      "scientificName": "Mauremys mutica",
+      "level": "class_ii",
+      "kind": "species",
+      "notes": "仅限野外种群"
+    },
+    {
+      "zh": "闭壳龟属所有种",
+      "scientificName": "Cuora spp.",
+      "level": "class_ii",
+      "kind": "taxon",
+      "notes": "仅限野外种群"
+    },
+    {
+      "zh": "地龟",
+      "scientificName": "Geoemyda spengleri",
+      "level": "class_ii",
+      "kind": "species",
+      "notes": ""
+    },
+    {
+      "zh": "眼斑水龟",
+      "scientificName": "Sacalia bealei",
+      "level": "class_ii",
+      "kind": "species",
+      "notes": "仅限野外种群"
+    },
+    {
+      "zh": "四眼斑水龟",
+      "scientificName": "Sacalia quadriocellata",
+      "level": "class_ii",
+      "kind": "species",
+      "notes": "仅限野外种群"
+    },
+    {
+      "zh": "蠵龟",
+      "scientificName": "Caretta caretta",
+      "level": "class_i",
+      "kind": "species",
+      "notes": ""
+    },
+    {
+      "zh": "绿海龟",
+      "scientificName": "Chelonia mydas",
+      "level": "class_i",
+      "kind": "species",
+      "notes": ""
+    },
+    {
+      "zh": "玳瑁",
+      "scientificName": "Eretmochelys imbricata",
+      "level": "class_i",
+      "kind": "species",
+      "notes": ""
+    },
+    {
+      "zh": "太平洋丽龟",
+      "scientificName": "Lepidochelys olivacea",
+      "level": "class_i",
+      "kind": "species",
+      "notes": ""
+    },
+    {
+      "zh": "棱皮龟",
+      "scientificName": "Dermochelys coriacea",
+      "level": "class_i",
+      "kind": "species",
+      "notes": ""
+    },
+    {
+      "zh": "鼋",
+      "scientificName": "Pelochelys cantorii",
+      "level": "class_i",
+      "kind": "species",
+      "notes": ""
+    },
+    {
+      "zh": "山瑞鳖",
+      "scientificName": "Palea steindachneri",
+      "level": "class_ii",
+      "kind": "species",
+      "notes": "仅限野外种群"
+    },
+    {
+      "zh": "斑鳖",
+      "scientificName": "Rafetus swinhoei",
+      "level": "class_i",
+      "kind": "species",
+      "notes": ""
+    },
+    {
+      "zh": "大壁虎",
+      "scientificName": "Gekko gecko",
+      "level": "class_ii",
+      "kind": "species",
+      "notes": ""
+    },
+    {
+      "zh": "黑疣大壁虎",
+      "scientificName": "Gekko reevesii",
+      "level": "class_ii",
+      "kind": "species",
+      "notes": ""
+    },
+    {
+      "zh": "伊犁沙虎",
+      "scientificName": "Teratoscincus scincus",
+      "level": "class_ii",
+      "kind": "species",
+      "notes": ""
+    },
+    {
+      "zh": "吐鲁番沙虎",
+      "scientificName": "Teratoscincus roborowskii",
+      "level": "class_ii",
+      "kind": "species",
+      "notes": ""
+    },
+    {
+      "zh": "英德睑虎",
+      "scientificName": "Goniurosaurus yingdeensis",
+      "level": "class_ii",
+      "kind": "species",
+      "notes": ""
+    },
+    {
+      "zh": "越南睑虎",
+      "scientificName": "Goniurosaurus araneus",
+      "level": "class_ii",
+      "kind": "species",
+      "notes": ""
+    },
+    {
+      "zh": "霸王岭睑虎",
+      "scientificName": "Goniurosaurus bawanglingensis",
+      "level": "class_ii",
+      "kind": "species",
+      "notes": ""
+    },
+    {
+      "zh": "海南睑虎",
+      "scientificName": "Goniurosaurus hainanensis",
+      "level": "class_ii",
+      "kind": "species",
+      "notes": ""
+    },
+    {
+      "zh": "嘉道理睑虎",
+      "scientificName": "Goniurosaurus kadoorieorum",
+      "level": "class_ii",
+      "kind": "species",
+      "notes": ""
+    },
+    {
+      "zh": "广西睑虎",
+      "scientificName": "Goniurosaurus kwangsiensis",
+      "level": "class_ii",
+      "kind": "species",
+      "notes": ""
+    },
+    {
+      "zh": "荔波睑虎",
+      "scientificName": "Goniurosaurus liboensis",
+      "level": "class_ii",
+      "kind": "species",
+      "notes": ""
+    },
+    {
+      "zh": "凭祥睑虎",
+      "scientificName": "Goniurosaurus luii",
+      "level": "class_ii",
+      "kind": "species",
+      "notes": ""
+    },
+    {
+      "zh": "蒲氏睑虎",
+      "scientificName": "Goniurosaurus zhelongi",
+      "level": "class_ii",
+      "kind": "species",
+      "notes": ""
+    },
+    {
+      "zh": "周氏睑虎",
+      "scientificName": "Goniurosaurus zhoui",
+      "level": "class_ii",
+      "kind": "species",
+      "notes": ""
+    },
+    {
+      "zh": "巴塘龙蜥",
+      "scientificName": "Diploderma batangense",
+      "level": "class_ii",
+      "kind": "species",
+      "notes": ""
+    },
+    {
+      "zh": "短尾龙蜥",
+      "scientificName": "Diploderma brevicandum",
+      "level": "class_ii",
+      "kind": "species",
+      "notes": ""
+    },
+    {
+      "zh": "侏龙蜥",
+      "scientificName": "Diploderma drukdaypo",
+      "level": "class_ii",
+      "kind": "species",
+      "notes": ""
+    },
+    {
+      "zh": "滑腹龙蜥",
+      "scientificName": "Diploderma laeviventre",
+      "level": "class_ii",
+      "kind": "species",
+      "notes": ""
+    },
+    {
+      "zh": "宜兰龙蜥",
+      "scientificName": "Diploderma luei",
+      "level": "class_ii",
+      "kind": "species",
+      "notes": ""
+    },
+    {
+      "zh": "溪头龙蜥",
+      "scientificName": "Diploderma makii",
+      "level": "class_ii",
+      "kind": "species",
+      "notes": ""
+    },
+    {
+      "zh": "帆背龙蜥",
+      "scientificName": "Diploderma vela",
+      "level": "class_ii",
+      "kind": "species",
+      "notes": ""
+    },
+    {
+      "zh": "蜡皮蜥",
+      "scientificName": "Leiolepis reevesii",
+      "level": "class_ii",
+      "kind": "species",
+      "notes": ""
+    },
+    {
+      "zh": "贵南沙蜥",
+      "scientificName": "Phrynocephalus guinanensis",
+      "level": "class_ii",
+      "kind": "species",
+      "notes": ""
+    },
+    {
+      "zh": "大耳沙蜥",
+      "scientificName": "Phrynocephalus mystaceus",
+      "level": "class_i",
+      "kind": "species",
+      "notes": ""
+    },
+    {
+      "zh": "长鬣蜥",
+      "scientificName": "Physignathus cocincinus",
+      "level": "class_ii",
+      "kind": "species",
+      "notes": ""
+    },
+    {
+      "zh": "细脆蛇蜥",
+      "scientificName": "Ophisaurus gracilis",
+      "level": "class_ii",
+      "kind": "species",
+      "notes": ""
+    },
+    {
+      "zh": "海南脆蛇蜥",
+      "scientificName": "Ophisaurus hainanensis",
+      "level": "class_ii",
+      "kind": "species",
+      "notes": ""
+    },
+    {
+      "zh": "脆蛇蜥",
+      "scientificName": "Ophisaurus harti",
+      "level": "class_ii",
+      "kind": "species",
+      "notes": ""
+    },
+    {
+      "zh": "鳄蜥",
+      "scientificName": "Shinisaurus crocodilurus",
+      "level": "class_i",
+      "kind": "species",
+      "notes": ""
+    },
+    {
+      "zh": "孟加拉巨蜥",
+      "scientificName": "Varanus bengalensis",
+      "level": "class_i",
+      "kind": "species",
+      "notes": ""
+    },
+    {
+      "zh": "圆鼻巨蜥",
+      "scientificName": "Varanus salvator",
+      "level": "class_i",
+      "kind": "species",
+      "notes": "原名“巨蜥”"
+    },
+    {
+      "zh": "桓仁滑蜥",
+      "scientificName": "Scincella huanrenensis",
+      "level": "class_ii",
+      "kind": "species",
+      "notes": ""
+    },
+    {
+      "zh": "香港双足蜥",
+      "scientificName": "Dibamus bogadeki",
+      "level": "class_ii",
+      "kind": "species",
+      "notes": ""
+    },
+    {
+      "zh": "香港盲蛇",
+      "scientificName": "Indotyphlops lazelli",
+      "level": "class_ii",
+      "kind": "species",
+      "notes": ""
+    },
+    {
+      "zh": "红尾筒蛇",
+      "scientificName": "Cylindrophis ruffus",
+      "level": "class_ii",
+      "kind": "species",
+      "notes": ""
+    },
+    {
+      "zh": "闪鳞蛇",
+      "scientificName": "Xenopeltis unicolor",
+      "level": "class_ii",
+      "kind": "species",
+      "notes": ""
+    },
+    {
+      "zh": "红沙蟒",
+      "scientificName": "Eryx miliaris",
+      "level": "class_ii",
+      "kind": "species",
+      "notes": ""
+    },
+    {
+      "zh": "东方沙蟒",
+      "scientificName": "Eryx tataricus",
+      "level": "class_ii",
+      "kind": "species",
+      "notes": ""
+    },
+    {
+      "zh": "蟒蛇",
+      "scientificName": "Python bivittatus",
+      "level": "class_ii",
+      "kind": "species",
+      "notes": "原名“蟒”"
+    },
+    {
+      "zh": "井冈山脊蛇",
+      "scientificName": "Achalinus jinggangensis",
+      "level": "class_ii",
+      "kind": "species",
+      "notes": ""
+    },
+    {
+      "zh": "三索蛇",
+      "scientificName": "Coelognathus radiatus",
+      "level": "class_ii",
+      "kind": "species",
+      "notes": ""
+    },
+    {
+      "zh": "团花锦蛇",
+      "scientificName": "Elaphe davidi",
+      "level": "class_ii",
+      "kind": "species",
+      "notes": ""
+    },
+    {
+      "zh": "横斑锦蛇",
+      "scientificName": "Euprepiophis perlaceus",
+      "level": "class_ii",
+      "kind": "species",
+      "notes": ""
+    },
+    {
+      "zh": "尖喙蛇",
+      "scientificName": "Rhynchophis boulengeri",
+      "level": "class_ii",
+      "kind": "species",
+      "notes": ""
+    },
+    {
+      "zh": "西藏温泉蛇",
+      "scientificName": "Thermophis baileyi",
+      "level": "class_i",
+      "kind": "species",
+      "notes": ""
+    },
+    {
+      "zh": "香格里拉温泉蛇",
+      "scientificName": "Thermophis shangrila",
+      "level": "class_i",
+      "kind": "species",
+      "notes": ""
+    },
+    {
+      "zh": "四川温泉蛇",
+      "scientificName": "Thermophis zhaoermii",
+      "level": "class_i",
+      "kind": "species",
+      "notes": ""
+    },
+    {
+      "zh": "黑网乌梢蛇",
+      "scientificName": "Zaocys carinatus",
+      "level": "class_ii",
+      "kind": "species",
+      "notes": ""
+    },
+    {
+      "zh": "瘰鳞蛇",
+      "scientificName": "Acrochordus granulatus",
+      "level": "class_ii",
+      "kind": "species",
+      "notes": ""
+    },
+    {
+      "zh": "眼镜王蛇",
+      "scientificName": "Ophiophagus hannah",
+      "level": "class_ii",
+      "kind": "species",
+      "notes": ""
+    },
+    {
+      "zh": "蓝灰扁尾海蛇",
+      "scientificName": "Laticauda colubrina",
+      "level": "class_ii",
+      "kind": "species",
+      "notes": ""
+    },
+    {
+      "zh": "扁尾海蛇",
+      "scientificName": "Laticauda laticaudata",
+      "level": "class_ii",
+      "kind": "species",
+      "notes": ""
+    },
+    {
+      "zh": "半环扁尾海蛇",
+      "scientificName": "Laticauda semifasciata",
+      "level": "class_ii",
+      "kind": "species",
+      "notes": ""
+    },
+    {
+      "zh": "龟头海蛇",
+      "scientificName": "Emydocephalus ijimae",
+      "level": "class_ii",
+      "kind": "species",
+      "notes": ""
+    },
+    {
+      "zh": "青环海蛇",
+      "scientificName": "Hydrophis cyanocinctus",
+      "level": "class_ii",
+      "kind": "species",
+      "notes": ""
+    },
+    {
+      "zh": "环纹海蛇",
+      "scientificName": "Hydrophis fasciatus",
+      "level": "class_ii",
+      "kind": "species",
+      "notes": ""
+    },
+    {
+      "zh": "黑头海蛇",
+      "scientificName": "Hydrophis melanocephalus",
+      "level": "class_ii",
+      "kind": "species",
+      "notes": ""
+    },
+    {
+      "zh": "淡灰海蛇",
+      "scientificName": "Hydrophis ornatus",
+      "level": "class_ii",
+      "kind": "species",
+      "notes": ""
+    },
+    {
+      "zh": "棘眦海蛇",
+      "scientificName": "Hydrophis peronii",
+      "level": "class_ii",
+      "kind": "species",
+      "notes": ""
+    },
+    {
+      "zh": "棘鳞海蛇",
+      "scientificName": "Hydrophis stokesii",
+      "level": "class_ii",
+      "kind": "species",
+      "notes": ""
+    },
+    {
+      "zh": "青灰海蛇",
+      "scientificName": "Hydrophis caerulescens",
+      "level": "class_ii",
+      "kind": "species",
+      "notes": ""
+    },
+    {
+      "zh": "平颏海蛇",
+      "scientificName": "Hydrophis curtus",
+      "level": "class_ii",
+      "kind": "species",
+      "notes": ""
+    },
+    {
+      "zh": "小头海蛇",
+      "scientificName": "Hydrophis gracilis",
+      "level": "class_ii",
+      "kind": "species",
+      "notes": ""
+    },
+    {
+      "zh": "长吻海蛇",
+      "scientificName": "Hydrophis platurus",
+      "level": "class_ii",
+      "kind": "species",
+      "notes": ""
+    },
+    {
+      "zh": "截吻海蛇",
+      "scientificName": "Hydrophis jerdonii",
+      "level": "class_ii",
+      "kind": "species",
+      "notes": ""
+    },
+    {
+      "zh": "海蝰",
+      "scientificName": "Hydrophis viperinus",
+      "level": "class_ii",
+      "kind": "species",
+      "notes": ""
+    },
+    {
+      "zh": "泰国圆斑蝰",
+      "scientificName": "Daboia siamensis",
+      "level": "class_ii",
+      "kind": "species",
+      "notes": ""
+    },
+    {
+      "zh": "蛇岛蝮",
+      "scientificName": "Gloydius shedaoensis",
+      "level": "class_ii",
+      "kind": "species",
+      "notes": ""
+    },
+    {
+      "zh": "角原矛头蝮",
+      "scientificName": "Protobothrops cornutus",
+      "level": "class_ii",
+      "kind": "species",
+      "notes": ""
+    },
+    {
+      "zh": "莽山烙铁头蛇",
+      "scientificName": "Protobothrops mangshanensis",
+      "level": "class_i",
+      "kind": "species",
+      "notes": ""
+    },
+    {
+      "zh": "极北蝰",
+      "scientificName": "Vipera berus",
+      "level": "class_ii",
+      "kind": "species",
+      "notes": ""
+    },
+    {
+      "zh": "东方蝰",
+      "scientificName": "Vipera renardi",
+      "level": "class_ii",
+      "kind": "species",
+      "notes": ""
+    },
+    {
+      "zh": "扬子鳄",
+      "scientificName": "Alligator sinensis",
+      "level": "class_i",
+      "kind": "species",
+      "notes": ""
+    },
+    {
+      "zh": "版纳鱼螈",
+      "scientificName": "Ichthyophis bannanicus",
+      "level": "class_ii",
+      "kind": "species",
+      "notes": ""
+    },
+    {
+      "zh": "安吉小鲵",
+      "scientificName": "Hynobius amjiensis",
+      "level": "class_i",
+      "kind": "species",
+      "notes": ""
+    },
+    {
+      "zh": "中国小鲵",
+      "scientificName": "Hynobius chinensis",
+      "level": "class_i",
+      "kind": "species",
+      "notes": ""
+    },
+    {
+      "zh": "挂榜山小鲵",
+      "scientificName": "Hynobius guabangshanensis",
+      "level": "class_i",
+      "kind": "species",
+      "notes": ""
+    },
+    {
+      "zh": "猫儿山小鲵",
+      "scientificName": "Hynobius maoershansis",
+      "level": "class_i",
+      "kind": "species",
+      "notes": ""
+    },
+    {
+      "zh": "普雄原鲵",
+      "scientificName": "Protohynobius puxiongensis",
+      "level": "class_i",
+      "kind": "species",
+      "notes": ""
+    },
+    {
+      "zh": "辽宁爪鲵",
+      "scientificName": "Onychodactylus zhaoermii",
+      "level": "class_i",
+      "kind": "species",
+      "notes": ""
+    },
+    {
+      "zh": "吉林爪鲵",
+      "scientificName": "Onychodactylus zhangyapingi",
+      "level": "class_ii",
+      "kind": "species",
+      "notes": ""
+    },
+    {
+      "zh": "新疆北鲵",
+      "scientificName": "Ranodon sibiricus",
+      "level": "class_ii",
+      "kind": "species",
+      "notes": ""
+    },
+    {
+      "zh": "极北鲵",
+      "scientificName": "Salamandrella keyserlingii",
+      "level": "class_ii",
+      "kind": "species",
+      "notes": ""
+    },
+    {
+      "zh": "巫山巴鲵",
+      "scientificName": "Liua shihi",
+      "level": "class_ii",
+      "kind": "species",
+      "notes": ""
+    },
+    {
+      "zh": "秦巴巴鲵",
+      "scientificName": "Liua tsinpaensis",
+      "level": "class_ii",
+      "kind": "species",
+      "notes": ""
+    },
+    {
+      "zh": "黄斑拟小鲵",
+      "scientificName": "Pseudohynobius flavomaculatus",
+      "level": "class_ii",
+      "kind": "species",
+      "notes": ""
+    },
+    {
+      "zh": "贵州拟小鲵",
+      "scientificName": "Pseudohynobius guizhouensis",
+      "level": "class_ii",
+      "kind": "species",
+      "notes": ""
+    },
+    {
+      "zh": "金佛拟小鲵",
+      "scientificName": "Pseudohynobius jinfo",
+      "level": "class_ii",
+      "kind": "species",
+      "notes": ""
+    },
+    {
+      "zh": "宽阔水拟小鲵",
+      "scientificName": "Pseudohynobius kuankuoshuiensis",
+      "level": "class_ii",
+      "kind": "species",
+      "notes": ""
+    },
+    {
+      "zh": "水城拟小鲵",
+      "scientificName": "Pseudohynobius shuichengensis",
+      "level": "class_ii",
+      "kind": "species",
+      "notes": ""
+    },
+    {
+      "zh": "弱唇褶山溪鲵",
+      "scientificName": "Batrachuperus cochranae",
+      "level": "class_ii",
+      "kind": "species",
+      "notes": ""
+    },
+    {
+      "zh": "无斑山溪鲵",
+      "scientificName": "Batrachuperus karlschmidti",
+      "level": "class_ii",
+      "kind": "species",
+      "notes": ""
+    },
+    {
+      "zh": "龙洞山溪鲵",
+      "scientificName": "Batrachuperus londongensis",
+      "level": "class_ii",
+      "kind": "species",
+      "notes": ""
+    },
+    {
+      "zh": "山溪鲵",
+      "scientificName": "Batrachuperus pinchonii",
+      "level": "class_ii",
+      "kind": "species",
+      "notes": ""
+    },
+    {
+      "zh": "西藏山溪鲵",
+      "scientificName": "Batrachuperus tibetanus",
+      "level": "class_ii",
+      "kind": "species",
+      "notes": ""
+    },
+    {
+      "zh": "盐源山溪鲵",
+      "scientificName": "Batrachuperus yenyuanensis",
+      "level": "class_ii",
+      "kind": "species",
+      "notes": ""
+    },
+    {
+      "zh": "阿里山小鲵",
+      "scientificName": "Hynobius arisanensis",
+      "level": "class_ii",
+      "kind": "species",
+      "notes": ""
+    },
+    {
+      "zh": "台湾小鲵",
+      "scientificName": "Hynobius formosanus",
+      "level": "class_ii",
+      "kind": "species",
+      "notes": ""
+    },
+    {
+      "zh": "观雾小鲵",
+      "scientificName": "Hynobius fuca",
+      "level": "class_ii",
+      "kind": "species",
+      "notes": ""
+    },
+    {
+      "zh": "南湖小鲵",
+      "scientificName": "Hynobius glacialis",
+      "level": "class_ii",
+      "kind": "species",
+      "notes": ""
+    },
+    {
+      "zh": "东北小鲵",
+      "scientificName": "Hynobius leechii",
+      "level": "class_ii",
+      "kind": "species",
+      "notes": ""
+    },
+    {
+      "zh": "楚南小鲵",
+      "scientificName": "Hynobius sonani",
+      "level": "class_ii",
+      "kind": "species",
+      "notes": ""
+    },
+    {
+      "zh": "义乌小鲵",
+      "scientificName": "Hynobius yiwuensis",
+      "level": "class_ii",
+      "kind": "species",
+      "notes": ""
+    },
+    {
+      "zh": "大鲵",
+      "scientificName": "Andrias davidianus",
+      "level": "class_ii",
+      "kind": "species",
+      "notes": "仅限野外种群"
+    },
+    {
+      "zh": "潮汕蝾螈",
+      "scientificName": "Cynops orphicus",
+      "level": "class_ii",
+      "kind": "species",
+      "notes": ""
+    },
+    {
+      "zh": "大凉螈",
+      "scientificName": "Liangshantriton taliangensis",
+      "level": "class_ii",
+      "kind": "species",
+      "notes": "原名“大凉疣螈”"
+    },
+    {
+      "zh": "贵州疣螈",
+      "scientificName": "Tylototriton kweichowensis",
+      "level": "class_ii",
+      "kind": "species",
+      "notes": ""
+    },
+    {
+      "zh": "川南疣螈",
+      "scientificName": "Tylototriton pseudoverrucosus",
+      "level": "class_ii",
+      "kind": "species",
+      "notes": ""
+    },
+    {
+      "zh": "丽色疣螈",
+      "scientificName": "Tylototriton pulcherrima",
+      "level": "class_ii",
+      "kind": "species",
+      "notes": ""
+    },
+    {
+      "zh": "红瘰疣螈",
+      "scientificName": "Tylototriton shanjing",
+      "level": "class_ii",
+      "kind": "species",
+      "notes": ""
+    },
+    {
+      "zh": "棕黑疣螈",
+      "scientificName": "Tylototriton verrucosus",
+      "level": "class_ii",
+      "kind": "species",
+      "notes": "原名“细瘰疣螈”"
+    },
+    {
+      "zh": "滇南疣螈",
+      "scientificName": "Tylototriton yangi",
+      "level": "class_ii",
+      "kind": "species",
+      "notes": ""
+    },
+    {
+      "zh": "安徽瑶螈",
+      "scientificName": "Yaotriton anhuiensis",
+      "level": "class_ii",
+      "kind": "species",
+      "notes": ""
+    },
+    {
+      "zh": "细痣瑶螈",
+      "scientificName": "Yaotriton asperrimus",
+      "level": "class_ii",
+      "kind": "species",
+      "notes": "原名“细痣疣螈”"
+    },
+    {
+      "zh": "宽脊瑶螈",
+      "scientificName": "Yaotriton broadoridgus",
+      "level": "class_ii",
+      "kind": "species",
+      "notes": ""
+    },
+    {
+      "zh": "大别瑶螈",
+      "scientificName": "Yaotriton dabienicus",
+      "level": "class_ii",
+      "kind": "species",
+      "notes": ""
+    },
+    {
+      "zh": "海南瑶螈",
+      "scientificName": "Yaotriton hainanensis",
+      "level": "class_ii",
+      "kind": "species",
+      "notes": ""
+    },
+    {
+      "zh": "浏阳瑶螈",
+      "scientificName": "Yaotriton liuyangensis",
+      "level": "class_ii",
+      "kind": "species",
+      "notes": ""
+    },
+    {
+      "zh": "莽山瑶螈",
+      "scientificName": "Yaotriton lizhenchangi",
+      "level": "class_ii",
+      "kind": "species",
+      "notes": ""
+    },
+    {
+      "zh": "文县瑶螈",
+      "scientificName": "Yaotriton wenxianensis",
+      "level": "class_ii",
+      "kind": "species",
+      "notes": ""
+    },
+    {
+      "zh": "蔡氏瑶螈",
+      "scientificName": "Yaotriton ziegleri",
+      "level": "class_ii",
+      "kind": "species",
+      "notes": ""
+    },
+    {
+      "zh": "镇海棘螈",
+      "scientificName": "Echinotriton chinhaiensis",
+      "level": "class_i",
+      "kind": "species",
+      "notes": "原名“镇海疣螈”"
+    },
+    {
+      "zh": "琉球棘螈",
+      "scientificName": "Echinotriton andersoni",
+      "level": "class_ii",
+      "kind": "species",
+      "notes": ""
+    },
+    {
+      "zh": "高山棘螈",
+      "scientificName": "Echinotriton maxiquadratus",
+      "level": "class_ii",
+      "kind": "species",
+      "notes": ""
+    },
+    {
+      "zh": "橙脊瘰螈",
+      "scientificName": "Paramesotriton aurantius",
+      "level": "class_ii",
+      "kind": "species",
+      "notes": ""
+    },
+    {
+      "zh": "尾斑瘰螈",
+      "scientificName": "Paramesotriton caudopunctatus",
+      "level": "class_ii",
+      "kind": "species",
+      "notes": ""
+    },
+    {
+      "zh": "中国瘰螈",
+      "scientificName": "Paramesotriton chinensis",
+      "level": "class_ii",
+      "kind": "species",
+      "notes": ""
+    },
+    {
+      "zh": "越南瘰螈",
+      "scientificName": "Paramesotriton deloustali",
+      "level": "class_ii",
+      "kind": "species",
+      "notes": ""
+    },
+    {
+      "zh": "富钟瘰螈",
+      "scientificName": "Paramesotriton fuzhongensis",
+      "level": "class_ii",
+      "kind": "species",
+      "notes": ""
+    },
+    {
+      "zh": "广西瘰螈",
+      "scientificName": "Paramesotriton guangxiensis",
+      "level": "class_ii",
+      "kind": "species",
+      "notes": ""
+    },
+    {
+      "zh": "香港瘰螈",
+      "scientificName": "Paramesotriton hongkongensis",
+      "level": "class_ii",
+      "kind": "species",
+      "notes": ""
+    },
+    {
+      "zh": "无斑瘰螈",
+      "scientificName": "Paramesotriton labiatus",
+      "level": "class_ii",
+      "kind": "species",
+      "notes": ""
+    },
+    {
+      "zh": "龙里瘰螈",
+      "scientificName": "Paramesotriton longliensis",
+      "level": "class_ii",
+      "kind": "species",
+      "notes": ""
+    },
+    {
+      "zh": "茂兰瘰螈",
+      "scientificName": "Paramesotriton maolanensis",
+      "level": "class_ii",
+      "kind": "species",
+      "notes": ""
+    },
+    {
+      "zh": "七溪岭瘰螈",
+      "scientificName": "Paramesotriton qixilingensis",
+      "level": "class_ii",
+      "kind": "species",
+      "notes": ""
+    },
+    {
+      "zh": "武陵瘰螈",
+      "scientificName": "Paramesotriton wulingensis",
+      "level": "class_ii",
+      "kind": "species",
+      "notes": ""
+    },
+    {
+      "zh": "云雾瘰螈",
+      "scientificName": "Paramesotriton yunwuensis",
+      "level": "class_ii",
+      "kind": "species",
+      "notes": ""
+    },
+    {
+      "zh": "织金瘰螈",
+      "scientificName": "Paramesotriton zhijinensis",
+      "level": "class_ii",
+      "kind": "species",
+      "notes": ""
+    },
+    {
+      "zh": "抱龙角蟾",
+      "scientificName": "Boulenophrys baolongensis",
+      "level": "class_ii",
+      "kind": "species",
+      "notes": ""
+    },
+    {
+      "zh": "凉北齿蟾",
+      "scientificName": "Oreolalax liangbeiensis",
+      "level": "class_ii",
+      "kind": "species",
+      "notes": ""
+    },
+    {
+      "zh": "金顶齿突蟾",
+      "scientificName": "Scutiger chintingensis",
+      "level": "class_ii",
+      "kind": "species",
+      "notes": ""
+    },
+    {
+      "zh": "九龙齿突蟾",
+      "scientificName": "Scutiger jiulongensis",
+      "level": "class_ii",
+      "kind": "species",
+      "notes": ""
+    },
+    {
+      "zh": "木里齿突蟾",
+      "scientificName": "Scutiger muliensis",
+      "level": "class_ii",
+      "kind": "species",
+      "notes": ""
+    },
+    {
+      "zh": "宁陕齿突蟾",
+      "scientificName": "Scutiger ningshanensis",
+      "level": "class_ii",
+      "kind": "species",
+      "notes": ""
+    },
+    {
+      "zh": "平武齿突蟾",
+      "scientificName": "Scutiger pingwuensis",
+      "level": "class_ii",
+      "kind": "species",
+      "notes": ""
+    },
+    {
+      "zh": "哀牢髭蟾",
+      "scientificName": "Vibrissaphora ailaonica",
+      "level": "class_ii",
+      "kind": "species",
+      "notes": ""
+    },
+    {
+      "zh": "峨眉髭蟾",
+      "scientificName": "Vibrissaphora boringii",
+      "level": "class_ii",
+      "kind": "species",
+      "notes": ""
+    },
+    {
+      "zh": "雷山髭蟾",
+      "scientificName": "Vibrissaphora leishanensis",
+      "level": "class_ii",
+      "kind": "species",
+      "notes": ""
+    },
+    {
+      "zh": "原髭蟾",
+      "scientificName": "Vibrissaphora promustache",
+      "level": "class_ii",
+      "kind": "species",
+      "notes": ""
+    },
+    {
+      "zh": "南澳岛角蟾",
+      "scientificName": "Xenophrys insularis",
+      "level": "class_ii",
+      "kind": "species",
+      "notes": ""
+    },
+    {
+      "zh": "水城角蟾",
+      "scientificName": "Xenophrys shuichengensis",
+      "level": "class_ii",
+      "kind": "species",
+      "notes": ""
+    },
+    {
+      "zh": "史氏蟾蜍",
+      "scientificName": "Bufo stejnegeri",
+      "level": "class_ii",
+      "kind": "species",
+      "notes": ""
+    },
+    {
+      "zh": "鳞皮小蟾",
+      "scientificName": "Parapelophryne scalpta",
+      "level": "class_ii",
+      "kind": "species",
+      "notes": ""
+    },
+    {
+      "zh": "乐东蟾蜍",
+      "scientificName": "Qiongbufo ledongensis",
+      "level": "class_ii",
+      "kind": "species",
+      "notes": ""
+    },
+    {
+      "zh": "无棘溪蟾",
+      "scientificName": "Torrentophryne aspinia",
+      "level": "class_ii",
+      "kind": "species",
+      "notes": ""
+    },
+    {
+      "zh": "虎纹蛙",
+      "scientificName": "Hoplobatrachus chinensis",
+      "level": "class_ii",
+      "kind": "species",
+      "notes": "仅限野外种群"
+    },
+    {
+      "zh": "脆皮大头蛙",
+      "scientificName": "Limnonectes fragilis",
+      "level": "class_ii",
+      "kind": "species",
+      "notes": ""
+    },
+    {
+      "zh": "叶氏肛刺蛙",
+      "scientificName": "Yerana yei",
+      "level": "class_ii",
+      "kind": "species",
+      "notes": ""
+    },
+    {
+      "zh": "海南湍蛙",
+      "scientificName": "Amolops hainanensis",
+      "level": "class_ii",
+      "kind": "species",
+      "notes": ""
+    },
+    {
+      "zh": "香港湍蛙",
+      "scientificName": "Amolops hongkongensis",
+      "level": "class_ii",
+      "kind": "species",
+      "notes": ""
+    },
+    {
+      "zh": "小腺蛙",
+      "scientificName": "Glandirana minima",
+      "level": "class_ii",
+      "kind": "species",
+      "notes": ""
+    },
+    {
+      "zh": "务川臭蛙",
+      "scientificName": "Odorrana wuchuanensis",
+      "level": "class_ii",
+      "kind": "species",
+      "notes": ""
+    },
+    {
+      "zh": "巫溪树蛙",
+      "scientificName": "Rhacophorus hongchibaensis",
+      "level": "class_ii",
+      "kind": "species",
+      "notes": ""
+    },
+    {
+      "zh": "老山树蛙",
+      "scientificName": "Rhacophorus laoshan",
+      "level": "class_ii",
+      "kind": "species",
+      "notes": ""
+    },
+    {
+      "zh": "罗默刘树蛙",
+      "scientificName": "Liuixalus romeri",
+      "level": "class_ii",
+      "kind": "species",
+      "notes": ""
+    },
+    {
+      "zh": "洪佛树蛙",
+      "scientificName": "Rhacophorus hungfuensis",
+      "level": "class_ii",
+      "kind": "species",
+      "notes": ""
+    },
+    {
+      "zh": "厦门文昌鱼",
+      "scientificName": "Branchiostoma belcheri",
+      "level": "class_ii",
+      "kind": "species",
+      "notes": "仅限野外种群。原名“文昌鱼”。"
+    },
+    {
+      "zh": "青岛文昌鱼",
+      "scientificName": "Branchiostoma tsingdauense",
+      "level": "class_ii",
+      "kind": "species",
+      "notes": "仅限野外种群"
+    },
+    {
+      "zh": "日本七鰓鰻",
+      "scientificName": "Lampetra japonica",
+      "level": "class_ii",
+      "kind": "species",
+      "notes": ""
+    },
+    {
+      "zh": "东北七鳃鳗",
+      "scientificName": "Lampetra morii",
+      "level": "class_ii",
+      "kind": "species",
+      "notes": ""
+    },
+    {
+      "zh": "雷氏七鰓鰻",
+      "scientificName": "Lampetra reissneri",
+      "level": "class_ii",
+      "kind": "species",
+      "notes": ""
+    },
+    {
+      "zh": "姥鲨",
+      "scientificName": "Cetorhinus maximus",
+      "level": "class_ii",
+      "kind": "species",
+      "notes": ""
+    },
+    {
+      "zh": "噬人鲨",
+      "scientificName": "Carcharodon carcharias",
+      "level": "class_ii",
+      "kind": "species",
+      "notes": ""
+    },
+    {
+      "zh": "鲸鲨",
+      "scientificName": "Rhincodon typus",
+      "level": "class_ii",
+      "kind": "species",
+      "notes": ""
+    },
+    {
+      "zh": "黄魟",
+      "scientificName": "Dasyatis bennettii",
+      "level": "class_ii",
+      "kind": "species",
+      "notes": "仅限陆封种群"
+    },
+    {
+      "zh": "中华鲟",
+      "scientificName": "Acipenser sinensis",
+      "level": "class_i",
+      "kind": "species",
+      "notes": ""
+    },
+    {
+      "zh": "长江鲟",
+      "scientificName": "Acipenser dabryanus",
+      "level": "class_i",
+      "kind": "species",
+      "notes": "原名“达氏鲟”"
+    },
+    {
+      "zh": "鳇",
+      "scientificName": "Huso dauricus",
+      "level": "class_i",
+      "kind": "species",
+      "notes": "仅限野外种群"
+    },
+    {
+      "zh": "西伯利亚鲟",
+      "scientificName": "Acipenser baerii",
+      "level": "class_ii",
+      "kind": "species",
+      "notes": "仅限野外种群"
+    },
+    {
+      "zh": "裸腹鲟",
+      "scientificName": "Acipenser nudiventris",
+      "level": "class_ii",
+      "kind": "species",
+      "notes": "仅限野外种群"
+    },
+    {
+      "zh": "小体鲟",
+      "scientificName": "Acipenser ruthenus",
+      "level": "class_ii",
+      "kind": "species",
+      "notes": "仅限野外种群"
+    },
+    {
+      "zh": "施氏鲟",
+      "scientificName": "Acipenser schrenckii",
+      "level": "class_ii",
+      "kind": "species",
+      "notes": "仅限野外种群"
+    },
+    {
+      "zh": "白鲟",
+      "scientificName": "Psephurus gladius",
+      "level": "class_i",
+      "kind": "species",
+      "notes": ""
+    },
+    {
+      "zh": "花鳗鲡",
+      "scientificName": "Anguilla marmorata",
+      "level": "class_ii",
+      "kind": "species",
+      "notes": ""
+    },
+    {
+      "zh": "鲥",
+      "scientificName": "Tenualosa reevesii",
+      "level": "class_i",
+      "kind": "species",
+      "notes": ""
+    },
+    {
+      "zh": "双孔鱼",
+      "scientificName": "Gyrinocheilus aymonieri",
+      "level": "class_ii",
+      "kind": "species",
+      "notes": "仅限野外种群"
+    },
+    {
+      "zh": "平鳍裸吻鱼",
+      "scientificName": "Psilorhynchus homaloptera",
+      "level": "class_ii",
+      "kind": "species",
+      "notes": ""
+    },
+    {
+      "zh": "胭脂鱼",
+      "scientificName": "Myxocyprinus asiaticus",
+      "level": "class_ii",
+      "kind": "species",
+      "notes": "仅限野外种群"
+    },
+    {
+      "zh": "唐鱼",
+      "scientificName": "Tanichthys albonubes",
+      "level": "class_ii",
+      "kind": "species",
+      "notes": "仅限野外种群"
+    },
+    {
+      "zh": "稀有鮈鲫",
+      "scientificName": "Gobiocypris rarus",
+      "level": "class_ii",
+      "kind": "species",
+      "notes": "仅限野外种群"
+    },
+    {
+      "zh": "鯮",
+      "scientificName": "Luciobrama macrocephalus",
+      "level": "class_ii",
+      "kind": "species",
+      "notes": ""
+    },
+    {
+      "zh": "多鳞白鱼",
+      "scientificName": "Anabarilius polylepis",
+      "level": "class_ii",
+      "kind": "species",
+      "notes": ""
+    },
+    {
+      "zh": "山白鱼",
+      "scientificName": "Anabarilius transmontanus",
+      "level": "class_ii",
+      "kind": "species",
+      "notes": ""
+    },
+    {
+      "zh": "北方铜鱼",
+      "scientificName": "Coreius septentrionalis",
+      "level": "class_i",
+      "kind": "species",
+      "notes": ""
+    },
+    {
+      "zh": "圆口铜鱼",
+      "scientificName": "Coreius guichenoti",
+      "level": "class_ii",
+      "kind": "species",
+      "notes": "仅限野外种群"
+    },
+    {
+      "zh": "大鼻吻鮈",
+      "scientificName": "Rhinogobio nasutus",
+      "level": "class_ii",
+      "kind": "species",
+      "notes": ""
+    },
+    {
+      "zh": "长鳍吻鮈",
+      "scientificName": "Rhinogobio ventralis",
+      "level": "class_ii",
+      "kind": "species",
+      "notes": ""
+    },
+    {
+      "zh": "平鳍鳅鮀",
+      "scientificName": "Gobiobotia homalopteroidea",
+      "level": "class_ii",
+      "kind": "species",
+      "notes": ""
+    },
+    {
+      "zh": "单纹似鱤",
+      "scientificName": "Luciocyprinus langsoni",
+      "level": "class_ii",
+      "kind": "species",
+      "notes": ""
+    },
+    {
+      "zh": "金线鲃属所有种",
+      "scientificName": "Sinocyclocheilus spp.",
+      "level": "class_ii",
+      "kind": "taxon",
+      "notes": ""
+    },
+    {
+      "zh": "四川白甲鱼",
+      "scientificName": "Onychostoma angustistomata",
+      "level": "class_ii",
+      "kind": "species",
+      "notes": ""
+    },
+    {
+      "zh": "多鳞白甲鱼",
+      "scientificName": "Onychostoma macrolepis",
+      "level": "class_ii",
+      "kind": "species",
+      "notes": "仅限野外种群"
+    },
+    {
+      "zh": "金沙鲈鲤",
+      "scientificName": "Percocypris pingi",
+      "level": "class_ii",
+      "kind": "species",
+      "notes": "仅限野外种群"
+    },
+    {
+      "zh": "花鲈鲤",
+      "scientificName": "Percocypris regani",
+      "level": "class_ii",
+      "kind": "species",
+      "notes": "仅限野外种群"
+    },
+    {
+      "zh": "后背鲈鲤",
+      "scientificName": "Percocypris retrodorslis",
+      "level": "class_ii",
+      "kind": "species",
+      "notes": "仅限野外种群"
+    },
+    {
+      "zh": "张氏鲈鲤",
+      "scientificName": "Percocypris tchangi",
+      "level": "class_ii",
+      "kind": "species",
+      "notes": "仅限野外种群"
+    },
+    {
+      "zh": "裸腹盲鲃",
+      "scientificName": "Typhlobarbus nudiventris",
+      "level": "class_ii",
+      "kind": "species",
+      "notes": ""
+    },
+    {
+      "zh": "角鱼",
+      "scientificName": "Akrokolioplax bicornis",
+      "level": "class_ii",
+      "kind": "species",
+      "notes": ""
+    },
+    {
+      "zh": "骨唇黄河鱼",
+      "scientificName": "Chuanchia labiosa",
+      "level": "class_ii",
+      "kind": "species",
+      "notes": ""
+    },
+    {
+      "zh": "极边扁咽齿鱼",
+      "scientificName": "Platypharodon extremus",
+      "level": "class_ii",
+      "kind": "species",
+      "notes": "仅限野外种群"
+    },
+    {
+      "zh": "细鳞裂腹鱼",
+      "scientificName": "Schizothorax chongi",
+      "level": "class_ii",
+      "kind": "species",
+      "notes": "仅限野外种群"
+    },
+    {
+      "zh": "巨须裂腹鱼",
+      "scientificName": "Schizothorax macropogon",
+      "level": "class_ii",
+      "kind": "species",
+      "notes": ""
+    },
+    {
+      "zh": "重口裂腹鱼",
+      "scientificName": "Schizothorax davidi",
+      "level": "class_ii",
+      "kind": "species",
+      "notes": "仅限野外种群"
+    },
+    {
+      "zh": "拉萨裂腹鱼",
+      "scientificName": "Schizothorax waltoni",
+      "level": "class_ii",
+      "kind": "species",
+      "notes": "仅限野外种群"
+    },
+    {
+      "zh": "塔里木裂腹鱼",
+      "scientificName": "Schizothorax biddulphi",
+      "level": "class_ii",
+      "kind": "species",
+      "notes": "仅限野外种群"
+    },
+    {
+      "zh": "大理裂腹鱼",
+      "scientificName": "Schizothorax taliensis",
+      "level": "class_ii",
+      "kind": "species",
+      "notes": "仅限野外种群"
+    },
+    {
+      "zh": "扁吻鱼",
+      "scientificName": "Aspiorhynchus laticeps",
+      "level": "class_i",
+      "kind": "species",
+      "notes": "原名“新疆大头鱼”"
+    },
+    {
+      "zh": "厚唇裸重唇鱼",
+      "scientificName": "Gymnodiptychus pachycheilus",
+      "level": "class_ii",
+      "kind": "species",
+      "notes": "仅限野外种群"
+    },
+    {
+      "zh": "斑重唇鱼",
+      "scientificName": "Diptychus maculatus",
+      "level": "class_ii",
+      "kind": "species",
+      "notes": ""
+    },
+    {
+      "zh": "尖裸鲤",
+      "scientificName": "Oxygymnocypris stewartii",
+      "level": "class_ii",
+      "kind": "species",
+      "notes": "仅限野外种群"
+    },
+    {
+      "zh": "大头鲤",
+      "scientificName": "Cyprinus pellegrini",
+      "level": "class_ii",
+      "kind": "species",
+      "notes": "仅限野外种群"
+    },
+    {
+      "zh": "小鲤",
+      "scientificName": "Cyprinus micristius",
+      "level": "class_ii",
+      "kind": "species",
+      "notes": ""
+    },
+    {
+      "zh": "抚仙鲤",
+      "scientificName": "Cyprinus fuxianensis",
+      "level": "class_ii",
+      "kind": "species",
+      "notes": ""
+    },
+    {
+      "zh": "岩原鲤",
+      "scientificName": "Procypris rabaudi",
+      "level": "class_ii",
+      "kind": "species",
+      "notes": "仅限野外种群"
+    },
+    {
+      "zh": "乌原鲤",
+      "scientificName": "Procypris merus",
+      "level": "class_ii",
+      "kind": "species",
+      "notes": ""
+    },
+    {
+      "zh": "大鳞鲢",
+      "scientificName": "Hypophthalmichthys harmandi",
+      "level": "class_ii",
+      "kind": "species",
+      "notes": ""
+    },
+    {
+      "zh": "红唇薄鳅",
+      "scientificName": "Leptobotia rubrilabris",
+      "level": "class_ii",
+      "kind": "species",
+      "notes": "仅限野外种群"
+    },
+    {
+      "zh": "黄线薄鳅",
+      "scientificName": "Leptobotia flavolineata",
+      "level": "class_ii",
+      "kind": "species",
+      "notes": ""
+    },
+    {
+      "zh": "长薄鳅",
+      "scientificName": "Leptobotia elongata",
+      "level": "class_ii",
+      "kind": "species",
+      "notes": "仅限野外种群"
+    },
+    {
+      "zh": "无眼岭鳅",
+      "scientificName": "Oreonectes anophthalmus",
+      "level": "class_ii",
+      "kind": "species",
+      "notes": ""
+    },
+    {
+      "zh": "拟鲇高原鳅",
+      "scientificName": "Triplophysa siluroides",
+      "level": "class_ii",
+      "kind": "species",
+      "notes": "仅限野外种群"
+    },
+    {
+      "zh": "湘西盲高原鳅",
+      "scientificName": "Triplophysa xiangxiensis",
+      "level": "class_ii",
+      "kind": "species",
+      "notes": ""
+    },
+    {
+      "zh": "小头高原鳅",
+      "scientificName": "Triphophysa minuta",
+      "level": "class_ii",
+      "kind": "species",
+      "notes": ""
+    },
+    {
+      "zh": "厚唇原吸鳅",
+      "scientificName": "Protomyzon pachychilus",
+      "level": "class_ii",
+      "kind": "species",
+      "notes": ""
+    },
+    {
+      "zh": "斑鳠",
+      "scientificName": "Hemibagrus guttatus",
+      "level": "class_ii",
+      "kind": "species",
+      "notes": "仅限野外种群"
+    },
+    {
+      "zh": "昆明鲇",
+      "scientificName": "Silurus mento",
+      "level": "class_ii",
+      "kind": "species",
+      "notes": ""
+    },
+    {
+      "zh": "长丝𩷶",
+      "scientificName": "Pangasius sanitwangsei",
+      "level": "class_i",
+      "kind": "species",
+      "notes": ""
+    },
+    {
+      "zh": "金氏䱀",
+      "scientificName": "Liobagrus kingi",
+      "level": "class_ii",
+      "kind": "species",
+      "notes": ""
+    },
+    {
+      "zh": "长丝黑鮡",
+      "scientificName": "Gagata dolichonema",
+      "level": "class_ii",
+      "kind": "species",
+      "notes": ""
+    },
+    {
+      "zh": "青石爬鮡",
+      "scientificName": "Euchiloglanis davidi",
+      "level": "class_ii",
+      "kind": "species",
+      "notes": ""
+    },
+    {
+      "zh": "黑斑原鮡",
+      "scientificName": "Glyptosternum maculatum",
+      "level": "class_ii",
+      "kind": "species",
+      "notes": ""
+    },
+    {
+      "zh": "魾",
+      "scientificName": "Bagarius bagarius",
+      "level": "class_ii",
+      "kind": "species",
+      "notes": ""
+    },
+    {
+      "zh": "红魾",
+      "scientificName": "Bagarius rutilus",
+      "level": "class_ii",
+      "kind": "species",
+      "notes": ""
+    },
+    {
+      "zh": "巨魾",
+      "scientificName": "Bagarius yarrelli",
+      "level": "class_ii",
+      "kind": "species",
+      "notes": ""
+    },
+    {
+      "zh": "细鳞鲑属所有种",
+      "scientificName": "Brachymystax spp.",
+      "level": "class_ii",
+      "kind": "taxon",
+      "notes": "仅限野外种群"
+    },
+    {
+      "zh": "川陕哲罗鲑",
+      "scientificName": "Hucho bleekeri",
+      "level": "class_i",
+      "kind": "species",
+      "notes": ""
+    },
+    {
+      "zh": "哲罗鲑",
+      "scientificName": "Hucho taimen",
+      "level": "class_ii",
+      "kind": "species",
+      "notes": "仅限野外种群"
+    },
+    {
+      "zh": "石川氏哲罗鲑",
+      "scientificName": "Hucho ishikawai",
+      "level": "class_ii",
+      "kind": "species",
+      "notes": ""
+    },
+    {
+      "zh": "花羔红点鲑",
+      "scientificName": "Salvelinus malma",
+      "level": "class_ii",
+      "kind": "species",
+      "notes": "仅限野外种群"
+    },
+    {
+      "zh": "马苏大马哈鱼",
+      "scientificName": "Oncorhynchus masou",
+      "level": "class_ii",
+      "kind": "species",
+      "notes": ""
+    },
+    {
+      "zh": "北鲑",
+      "scientificName": "Stenodus leucichthys",
+      "level": "class_ii",
+      "kind": "species",
+      "notes": ""
+    },
+    {
+      "zh": "北极茴鱼",
+      "scientificName": "Thymallus arcticus",
+      "level": "class_ii",
+      "kind": "species",
+      "notes": "仅限野外种群"
+    },
+    {
+      "zh": "下游黑龙江茴鱼",
+      "scientificName": "Thymallus tugarinae",
+      "level": "class_ii",
+      "kind": "species",
+      "notes": "仅限野外种群"
+    },
+    {
+      "zh": "鸭绿江茴鱼",
+      "scientificName": "Thymallus yaluensis",
+      "level": "class_ii",
+      "kind": "species",
+      "notes": "仅限野外种群"
+    },
+    {
+      "zh": "海马属所有种",
+      "scientificName": "Hippocampus spp.",
+      "level": "class_ii",
+      "kind": "taxon",
+      "notes": "仅限野外种群"
+    },
+    {
+      "zh": "黄唇鱼",
+      "scientificName": "Bahaba taipingensis",
+      "level": "class_i",
+      "kind": "species",
+      "notes": ""
+    },
+    {
+      "zh": "波纹唇鱼",
+      "scientificName": "Cheilinus undulatus",
+      "level": "class_ii",
+      "kind": "species",
+      "notes": "仅限野外种群"
+    },
+    {
+      "zh": "松江鲈",
+      "scientificName": "Trachidermus fasciatus",
+      "level": "class_ii",
+      "kind": "species",
+      "notes": "仅限野外种群。原名“松江鲈鱼”"
+    },
+    {
+      "zh": "多鳃孔舌形虫",
+      "scientificName": "Glossobalanus polybranchioporus",
+      "level": "class_i",
+      "kind": "species",
+      "notes": ""
+    },
+    {
+      "zh": "三崎柱头虫",
+      "scientificName": "Balanoglossus misakiensis",
+      "level": "class_ii",
+      "kind": "species",
+      "notes": ""
+    },
+    {
+      "zh": "短殖舌形虫",
+      "scientificName": "Glossobalanus mortenseni",
+      "level": "class_ii",
+      "kind": "species",
+      "notes": ""
+    },
+    {
+      "zh": "肉质柱头虫",
+      "scientificName": "Balanoglossus carnosus",
+      "level": "class_ii",
+      "kind": "species",
+      "notes": ""
+    },
+    {
+      "zh": "黄殖翼柱头虫",
+      "scientificName": "Ptychodera flava",
+      "level": "class_ii",
+      "kind": "species",
+      "notes": ""
+    },
+    {
+      "zh": "青岛橡头虫",
+      "scientificName": "Glandiceps qingdaoensis",
+      "level": "class_ii",
+      "kind": "species",
+      "notes": ""
+    },
+    {
+      "zh": "黄岛长吻虫",
+      "scientificName": "Saccoglossus hwangtauensis",
+      "level": "class_i",
+      "kind": "species",
+      "notes": ""
+    },
+    {
+      "zh": "伟铗",
+      "scientificName": "Atlasjapyx atlas",
+      "level": "class_ii",
+      "kind": "species",
+      "notes": ""
+    },
+    {
+      "zh": "丽叶䗛",
+      "scientificName": "Phyllium pulchrifolium",
+      "level": "class_ii",
+      "kind": "species",
+      "notes": ""
+    },
+    {
+      "zh": "中华叶䗛",
+      "scientificName": "Phyllium sinensis",
+      "level": "class_ii",
+      "kind": "species",
+      "notes": ""
+    },
+    {
+      "zh": "泛叶䗛",
+      "scientificName": "Phyllium celebicum",
+      "level": "class_ii",
+      "kind": "species",
+      "notes": ""
+    },
+    {
+      "zh": "翔叶䗛",
+      "scientificName": "Phyllium westwoodi",
+      "level": "class_ii",
+      "kind": "species",
+      "notes": ""
+    },
+    {
+      "zh": "东方叶䗛",
+      "scientificName": "Phyllium siccifolium",
+      "level": "class_ii",
+      "kind": "species",
+      "notes": ""
+    },
+    {
+      "zh": "独龙叶䗛",
+      "scientificName": "Phyllium drunganum",
+      "level": "class_ii",
+      "kind": "species",
+      "notes": ""
+    },
+    {
+      "zh": "同叶䗛",
+      "scientificName": "Phyllium parum",
+      "level": "class_ii",
+      "kind": "species",
+      "notes": ""
+    },
+    {
+      "zh": "滇叶䗛",
+      "scientificName": "Phyllium yunnanense",
+      "level": "class_ii",
+      "kind": "species",
+      "notes": ""
+    },
+    {
+      "zh": "藏叶䗛",
+      "scientificName": "Phyllium tibetense",
+      "level": "class_ii",
+      "kind": "species",
+      "notes": ""
+    },
+    {
+      "zh": "珍叶䗛",
+      "scientificName": "Phyllium rarum",
+      "level": "class_ii",
+      "kind": "species",
+      "notes": ""
+    },
+    {
+      "zh": "扭尾曦春蜓",
+      "scientificName": "Heliogomphus retroflexus",
+      "level": "class_ii",
+      "kind": "species",
+      "notes": "原名“尖板曦箭蜓”"
+    },
+    {
+      "zh": "棘角蛇纹春蜓",
+      "scientificName": "Ophiogomphus spinicornis",
+      "level": "class_ii",
+      "kind": "species",
+      "notes": "原名“宽纹北箭蜓”"
+    },
+    {
+      "zh": "中华缺翅虫",
+      "scientificName": "Zorotypus sinensis",
+      "level": "class_ii",
+      "kind": "species",
+      "notes": ""
+    },
+    {
+      "zh": "墨脱缺翅虫",
+      "scientificName": "Zorotypus medoensis",
+      "level": "class_ii",
+      "kind": "species",
+      "notes": ""
+    },
+    {
+      "zh": "中华蛩蠊",
+      "scientificName": "Galloisiana sinensis",
+      "level": "class_i",
+      "kind": "species",
+      "notes": ""
+    },
+    {
+      "zh": "陈氏西蛩蠊",
+      "scientificName": "Grylloblattella cheni",
+      "level": "class_i",
+      "kind": "species",
+      "notes": ""
+    },
+    {
+      "zh": "中华旌蛉",
+      "scientificName": "Nemopistha sinica",
+      "level": "class_ii",
+      "kind": "species",
+      "notes": ""
+    },
+    {
+      "zh": "拉步甲",
+      "scientificName": "Carabus lafossei",
+      "level": "class_ii",
+      "kind": "species",
+      "notes": ""
+    },
+    {
+      "zh": "细胸大步甲",
+      "scientificName": "Carabus osawai",
+      "level": "class_ii",
+      "kind": "species",
+      "notes": ""
+    },
+    {
+      "zh": "巫山大步甲",
+      "scientificName": "Carabus ishizukai",
+      "level": "class_ii",
+      "kind": "species",
+      "notes": ""
+    },
+    {
+      "zh": "库班大步甲",
+      "scientificName": "Carabus kubani",
+      "level": "class_ii",
+      "kind": "species",
+      "notes": ""
+    },
+    {
+      "zh": "桂北大步甲",
+      "scientificName": "Carabus guibeicus",
+      "level": "class_ii",
+      "kind": "species",
+      "notes": ""
+    },
+    {
+      "zh": "贞大步甲",
+      "scientificName": "Carabus penelope",
+      "level": "class_ii",
+      "kind": "species",
+      "notes": ""
+    },
+    {
+      "zh": "蓝鞘大步甲",
+      "scientificName": "Carabus cyaneogigas",
+      "level": "class_ii",
+      "kind": "species",
+      "notes": ""
+    },
+    {
+      "zh": "滇川大步甲",
+      "scientificName": "Carabus yunanensis",
+      "level": "class_ii",
+      "kind": "species",
+      "notes": ""
+    },
+    {
+      "zh": "硕步甲",
+      "scientificName": "Carabus davidi",
+      "level": "class_ii",
+      "kind": "species",
+      "notes": ""
+    },
+    {
+      "zh": "中华两栖甲",
+      "scientificName": "Amphizoa sinica",
+      "level": "class_ii",
+      "kind": "species",
+      "notes": ""
+    },
+    {
+      "zh": "中华长阎甲",
+      "scientificName": "Syntelia sinica",
+      "level": "class_ii",
+      "kind": "species",
+      "notes": ""
+    },
+    {
+      "zh": "大卫长阎甲",
+      "scientificName": "Syntelia davidis",
+      "level": "class_ii",
+      "kind": "species",
+      "notes": ""
+    },
+    {
+      "zh": "玛氏长阎甲",
+      "scientificName": "Syntelia mazuri",
+      "level": "class_ii",
+      "kind": "species",
+      "notes": ""
+    },
+    {
+      "zh": "戴氏棕臂金龟",
+      "scientificName": "Propomacrus davidi",
+      "level": "class_ii",
+      "kind": "species",
+      "notes": ""
+    },
+    {
+      "zh": "玛氏棕臂金龟",
+      "scientificName": "Propomacrus muramotoae",
+      "level": "class_ii",
+      "kind": "species",
+      "notes": ""
+    },
+    {
+      "zh": "越南臂金龟",
+      "scientificName": "Cheirotonus battareli",
+      "level": "class_ii",
+      "kind": "species",
+      "notes": ""
+    },
+    {
+      "zh": "福氏彩臂金龟",
+      "scientificName": "Cheirotonus fujiokai",
+      "level": "class_ii",
+      "kind": "species",
+      "notes": ""
+    },
+    {
+      "zh": "格彩臂金龟",
+      "scientificName": "Cheirotonus gestroi",
+      "level": "class_ii",
+      "kind": "species",
+      "notes": ""
+    },
+    {
+      "zh": "台湾长臂金龟",
+      "scientificName": "Cheirotonus formosanus",
+      "level": "class_ii",
+      "kind": "species",
+      "notes": ""
+    },
+    {
+      "zh": "阳彩臂金龟",
+      "scientificName": "Cheirotonus jansoni",
+      "level": "class_ii",
+      "kind": "species",
+      "notes": ""
+    },
+    {
+      "zh": "印度长臂金龟",
+      "scientificName": "Cheirotonus macleayii",
+      "level": "class_ii",
+      "kind": "species",
+      "notes": ""
+    },
+    {
+      "zh": "昭沼氏长臂金龟",
+      "scientificName": "Cheirotonus terunumai",
+      "level": "class_ii",
+      "kind": "species",
+      "notes": ""
+    },
+    {
+      "zh": "艾氏泽蜣螂",
+      "scientificName": "Scarabaeus erichsoni",
+      "level": "class_ii",
+      "kind": "species",
+      "notes": ""
+    },
+    {
+      "zh": "拜氏蜣螂",
+      "scientificName": "Scarabaeus babori",
+      "level": "class_ii",
+      "kind": "species",
+      "notes": ""
+    },
+    {
+      "zh": "悍马巨蜣螂",
+      "scientificName": "Heliocopris bucephalus",
+      "level": "class_ii",
+      "kind": "species",
+      "notes": ""
+    },
+    {
+      "zh": "上帝巨蜣螂",
+      "scientificName": "Heliocopris dominus",
+      "level": "class_ii",
+      "kind": "species",
+      "notes": ""
+    },
+    {
+      "zh": "迈达斯巨蜣螂",
+      "scientificName": "Heliocopris midas",
+      "level": "class_ii",
+      "kind": "species",
+      "notes": ""
+    },
+    {
+      "zh": "戴叉犀金龟",
+      "scientificName": "Trypoxylus davidis",
+      "level": "class_ii",
+      "kind": "species",
+      "notes": "原名“叉犀金龟”"
+    },
+    {
+      "zh": "粗尤犀金龟",
+      "scientificName": "Eupatorus hardwickii",
+      "level": "class_ii",
+      "kind": "species",
+      "notes": ""
+    },
+    {
+      "zh": "细角尤犀金龟",
+      "scientificName": "Eupatorus gracilicornis",
+      "level": "class_ii",
+      "kind": "species",
+      "notes": ""
+    },
+    {
+      "zh": "胫晓扁犀金龟",
+      "scientificName": "Eophileurus tetraspermexitus",
+      "level": "class_ii",
+      "kind": "species",
+      "notes": ""
+    },
+    {
+      "zh": "安达刀锹甲",
+      "scientificName": "Dorcus antaeus",
+      "level": "class_ii",
+      "kind": "species",
+      "notes": ""
+    },
+    {
+      "zh": "巨叉深山锹甲",
+      "scientificName": "Lucanus hermani",
+      "level": "class_ii",
+      "kind": "species",
+      "notes": ""
+    },
+    {
+      "zh": "喙凤蝶",
+      "scientificName": "Teinopalpus imperialism",
+      "level": "class_ii",
+      "kind": "species",
+      "notes": ""
+    },
+    {
+      "zh": "金斑喙凤蝶",
+      "scientificName": "Teinopalpus aureus",
+      "level": "class_i",
+      "kind": "species",
+      "notes": ""
+    },
+    {
+      "zh": "裳凤蝶",
+      "scientificName": "Troides helena",
+      "level": "class_ii",
+      "kind": "species",
+      "notes": ""
+    },
+    {
+      "zh": "金裳凤蝶",
+      "scientificName": "Troides aeacus",
+      "level": "class_ii",
+      "kind": "species",
+      "notes": ""
+    },
+    {
+      "zh": "荧光裳凤蝶",
+      "scientificName": "Troides magellanus",
+      "level": "class_ii",
+      "kind": "species",
+      "notes": ""
+    },
+    {
+      "zh": "鸟翼裳凤蝶",
+      "scientificName": "Troides amphrysus",
+      "level": "class_ii",
+      "kind": "species",
+      "notes": ""
+    },
+    {
+      "zh": "珂裳凤蝶",
+      "scientificName": "Troides criton",
+      "level": "class_ii",
+      "kind": "species",
+      "notes": ""
+    },
+    {
+      "zh": "楔纹裳凤蝶",
+      "scientificName": "Troides cuneifera",
+      "level": "class_ii",
+      "kind": "species",
+      "notes": ""
+    },
+    {
+      "zh": "小斑裳凤蝶",
+      "scientificName": "Troides haliphron",
+      "level": "class_ii",
+      "kind": "species",
+      "notes": ""
+    },
+    {
+      "zh": "多尾凤蝶",
+      "scientificName": "Bhutanitis lidderdalii",
+      "level": "class_ii",
+      "kind": "species",
+      "notes": ""
+    },
+    {
+      "zh": "不丹尾凤蝶",
+      "scientificName": "Bhutanitis ludlowi",
+      "level": "class_ii",
+      "kind": "species",
+      "notes": ""
+    },
+    {
+      "zh": "双尾褐凤蝶",
+      "scientificName": "Bhutanitis mansfieldi",
+      "level": "class_ii",
+      "kind": "species",
+      "notes": ""
+    },
+    {
+      "zh": "玄裳尾凤蝶",
+      "scientificName": "Bhutanitis nigrilima",
+      "level": "class_ii",
+      "kind": "species",
+      "notes": ""
+    },
+    {
+      "zh": "三尾褐凤蝶",
+      "scientificName": "Bhutanitis thaidina",
+      "level": "class_ii",
+      "kind": "species",
+      "notes": ""
+    },
+    {
+      "zh": "玉龙尾凤蝶",
+      "scientificName": "Bhutanitis yulongensisn",
+      "level": "class_ii",
+      "kind": "species",
+      "notes": ""
+    },
+    {
+      "zh": "丽斑尾凤蝶",
+      "scientificName": "Bhutanitis pulchristriata",
+      "level": "class_ii",
+      "kind": "species",
+      "notes": ""
+    },
+    {
+      "zh": "锤尾凤蝶",
+      "scientificName": "Losaria coon",
+      "level": "class_ii",
+      "kind": "species",
+      "notes": ""
+    },
+    {
+      "zh": "中华虎凤蝶",
+      "scientificName": "Luehdorfia chinensis",
+      "level": "class_ii",
+      "kind": "species",
+      "notes": ""
+    },
+    {
+      "zh": "最美紫蛱蝶",
+      "scientificName": "Sasakia pulcherrima",
+      "level": "class_ii",
+      "kind": "species",
+      "notes": ""
+    },
+    {
+      "zh": "黑紫蛱蝶",
+      "scientificName": "Sasakia funebris",
+      "level": "class_ii",
+      "kind": "species",
+      "notes": ""
+    },
+    {
+      "zh": "阿波罗绢蝶",
+      "scientificName": "Parnassius apollo",
+      "level": "class_ii",
+      "kind": "species",
+      "notes": ""
+    },
+    {
+      "zh": "君主娟蝶",
+      "scientificName": "Parnassius imperator",
+      "level": "class_ii",
+      "kind": "species",
+      "notes": ""
+    },
+    {
+      "zh": "大斑霾灰蝶",
+      "scientificName": "Maculinea arionides",
+      "level": "class_ii",
+      "kind": "species",
+      "notes": ""
+    },
+    {
+      "zh": "秀山霾灰蝶",
+      "scientificName": "Phengaris xiushani",
+      "level": "class_ii",
+      "kind": "species",
+      "notes": ""
+    },
+    {
+      "zh": "海南塞勒蛛",
+      "scientificName": "Cyriopagopus hainanus",
+      "level": "class_ii",
+      "kind": "species",
+      "notes": ""
+    },
+    {
+      "zh": "中国鲎",
+      "scientificName": "Tachypleus tridentatus",
+      "level": "class_ii",
+      "kind": "species",
+      "notes": ""
+    },
+    {
+      "zh": "圆尾蝎鲎",
+      "scientificName": "Carcinoscorpius rotundicauda",
+      "level": "class_ii",
+      "kind": "species",
+      "notes": ""
+    },
+    {
+      "zh": "锦绣龙虾",
+      "scientificName": "Panulirus ornatus",
+      "level": "class_ii",
+      "kind": "species",
+      "notes": "仅限野外种群"
+    },
+    {
+      "zh": "大珠母贝",
+      "scientificName": "Pinctada maxima",
+      "level": "class_ii",
+      "kind": "species",
+      "notes": "仅限野外种群"
+    },
+    {
+      "zh": "大砗磲",
+      "scientificName": "Tridacna gigas",
+      "level": "class_i",
+      "kind": "species",
+      "notes": "原名“库氏砗磲”"
+    },
+    {
+      "zh": "无鳞砗磲",
+      "scientificName": "Tridacna derasa",
+      "level": "class_ii",
+      "kind": "species",
+      "notes": "仅限野外种群"
+    },
+    {
+      "zh": "鳞砗磲",
+      "scientificName": "Tridacna squamosa",
+      "level": "class_ii",
+      "kind": "species",
+      "notes": "仅限野外种群"
+    },
+    {
+      "zh": "长砗磲",
+      "scientificName": "Tridacna maxima",
+      "level": "class_ii",
+      "kind": "species",
+      "notes": "仅限野外种群"
+    },
+    {
+      "zh": "番红砗磲",
+      "scientificName": "Tridacna crocea",
+      "level": "class_ii",
+      "kind": "species",
+      "notes": "仅限野外种群"
+    },
+    {
+      "zh": "砗蚝",
+      "scientificName": "Hippopus hippopus",
+      "level": "class_ii",
+      "kind": "species",
+      "notes": "仅限野外种群"
+    },
+    {
+      "zh": "珠母珍珠蚌",
+      "scientificName": "Margarritiana dahurica",
+      "level": "class_ii",
+      "kind": "species",
+      "notes": "仅限野外种群"
+    },
+    {
+      "zh": "佛耳丽蚌",
+      "scientificName": "Lamprotula mansuyi",
+      "level": "class_ii",
+      "kind": "species",
+      "notes": ""
+    },
+    {
+      "zh": "绢丝丽蚌",
+      "scientificName": "Lamprotula fibrosa",
+      "level": "class_ii",
+      "kind": "species",
+      "notes": ""
+    },
+    {
+      "zh": "背瘤丽蚌",
+      "scientificName": "Lamprotula leai",
+      "level": "class_ii",
+      "kind": "species",
+      "notes": ""
+    },
+    {
+      "zh": "多瘤丽蚌",
+      "scientificName": "Lamprotula polysticta",
+      "level": "class_ii",
+      "kind": "species",
+      "notes": ""
+    },
+    {
+      "zh": "刻裂丽蚌",
+      "scientificName": "Lamprotula scripta",
+      "level": "class_ii",
+      "kind": "species",
+      "notes": ""
+    },
+    {
+      "zh": "中国淡水蛏",
+      "scientificName": "Novaculina chinensis",
+      "level": "class_ii",
+      "kind": "species",
+      "notes": ""
+    },
+    {
+      "zh": "龙骨蛏蚌",
+      "scientificName": "Solenaia carinatus",
+      "level": "class_ii",
+      "kind": "species",
+      "notes": ""
+    },
+    {
+      "zh": "鹦鹉螺",
+      "scientificName": "Nautilus pompilius",
+      "level": "class_i",
+      "kind": "species",
+      "notes": ""
+    },
+    {
+      "zh": "螺蛳",
+      "scientificName": "Margarya melanioides",
+      "level": "class_ii",
+      "kind": "species",
+      "notes": ""
+    },
+    {
+      "zh": "夜光蝾螺",
+      "scientificName": "Turbo marmoratus",
+      "level": "class_ii",
+      "kind": "species",
+      "notes": ""
+    },
+    {
+      "zh": "虎斑宝贝",
+      "scientificName": "Cypraea tigris",
+      "level": "class_ii",
+      "kind": "species",
+      "notes": ""
+    },
+    {
+      "zh": "唐冠螺",
+      "scientificName": "Cassis cornuta",
+      "level": "class_ii",
+      "kind": "species",
+      "notes": "原名“冠螺”"
+    },
+    {
+      "zh": "法螺",
+      "scientificName": "Charonia tritonis",
+      "level": "class_ii",
+      "kind": "species",
+      "notes": ""
+    },
+    {
+      "zh": "角珊瑚目所有种",
+      "scientificName": "ANTIPATHARIA spp.",
+      "level": "class_ii",
+      "kind": "taxon",
+      "notes": ""
+    },
+    {
+      "zh": "石珊瑚目所有种",
+      "scientificName": "SCLERACTINIA spp.",
+      "level": "class_ii",
+      "kind": "taxon",
+      "notes": ""
+    },
+    {
+      "zh": "苍珊瑚科所有种",
+      "scientificName": "Helioporidae spp.",
+      "level": "class_ii",
+      "kind": "taxon",
+      "notes": ""
+    },
+    {
+      "zh": "笙珊瑚",
+      "scientificName": "Tubipora musica",
+      "level": "class_ii",
+      "kind": "species",
+      "notes": ""
+    },
+    {
+      "zh": "红珊瑚科所有种",
+      "scientificName": "Coralliidae spp.",
+      "level": "class_i",
+      "kind": "taxon",
+      "notes": ""
+    },
+    {
+      "zh": "粗糙竹节柳珊瑚",
+      "scientificName": "Isis hippuris",
+      "level": "class_ii",
+      "kind": "species",
+      "notes": ""
+    },
+    {
+      "zh": "细枝竹节柳珊瑚",
+      "scientificName": "Isis minorbrachyblasta",
+      "level": "class_ii",
+      "kind": "species",
+      "notes": ""
+    },
+    {
+      "zh": "网枝竹节柳珊瑚",
+      "scientificName": "Isis reticulata",
+      "level": "class_ii",
+      "kind": "species",
+      "notes": ""
+    },
+    {
+      "zh": "分叉多孔螅",
+      "scientificName": "Millepora dichotoma",
+      "level": "class_ii",
+      "kind": "species",
+      "notes": ""
+    },
+    {
+      "zh": "节块多孔螅",
+      "scientificName": "Millepora exaesa",
+      "level": "class_ii",
+      "kind": "species",
+      "notes": ""
+    },
+    {
+      "zh": "窝形多孔螅",
+      "scientificName": "Millepora foveolata",
+      "level": "class_ii",
+      "kind": "species",
+      "notes": ""
+    },
+    {
+      "zh": "错综多孔螅",
+      "scientificName": "Millepora intricata",
+      "level": "class_ii",
+      "kind": "species",
+      "notes": ""
+    },
+    {
+      "zh": "阔叶多孔螅",
+      "scientificName": "Millepora latifolia",
+      "level": "class_ii",
+      "kind": "species",
+      "notes": ""
+    },
+    {
+      "zh": "扁叶多孔螅",
+      "scientificName": "Millepora platyphylla",
+      "level": "class_ii",
+      "kind": "species",
+      "notes": ""
+    },
+    {
+      "zh": "娇嫩多孔螅",
+      "scientificName": "Millepora tenera",
+      "level": "class_ii",
+      "kind": "species",
+      "notes": ""
+    },
+    {
+      "zh": "无序双孔螅",
+      "scientificName": "Distichopora irregularis",
+      "level": "class_ii",
+      "kind": "species",
+      "notes": ""
+    },
+    {
+      "zh": "紫色双孔螅",
+      "scientificName": "Distichopora violacea",
+      "level": "class_ii",
+      "kind": "species",
+      "notes": ""
+    },
+    {
+      "zh": "佳丽刺柱螅",
+      "scientificName": "Errina dabneyi",
+      "level": "class_ii",
+      "kind": "species",
+      "notes": ""
+    },
+    {
+      "zh": "扇形柱星螅",
+      "scientificName": "Stylaster flabelliformis",
+      "level": "class_ii",
+      "kind": "species",
+      "notes": ""
+    },
+    {
+      "zh": "细巧柱星螅",
+      "scientificName": "Stylaster gracilis",
+      "level": "class_ii",
+      "kind": "species",
+      "notes": ""
+    },
+    {
+      "zh": "佳丽柱星螅",
+      "scientificName": "Stylaster pulcher",
+      "level": "class_ii",
+      "kind": "species",
+      "notes": ""
+    },
+    {
+      "zh": "艳红柱星螅",
+      "scientificName": "Stylaster sanguineus",
+      "level": "class_ii",
+      "kind": "species",
+      "notes": ""
+    },
+    {
+      "zh": "粗糙柱星螅",
+      "scientificName": "Stylaster scabiosus",
+      "level": "class_ii",
+      "kind": "species",
+      "notes": ""
+    }
+  ]
+}

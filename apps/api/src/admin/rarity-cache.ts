@@ -6,9 +6,11 @@ import {
   sharedCollectionCredits,
 } from "../db/schema.js";
 import {
-  parseEncounterCacheKey,
-  resolveEncounterRarity,
-} from "../rarity/encounter.js";
+  effectiveCountry,
+  parseScaleCacheKey,
+  resolveScaleRarity,
+  scaleCacheKey,
+} from "../rarity/scale.js";
 import { rebuildCollectionTaxonForUser } from "../services/shared-progress.js";
 
 function iso(d: Date | null | undefined) {
@@ -17,6 +19,15 @@ function iso(d: Date | null | undefined) {
 
 function sanitizeLike(q: string) {
   return q.replace(/[%_]/g, "");
+}
+
+function parseJson<T>(raw: string | null | undefined): T | null {
+  if (!raw) return null;
+  try {
+    return JSON.parse(raw) as T;
+  } catch {
+    return null;
+  }
 }
 
 function observationCountryClause(cacheCountry: string) {
@@ -94,7 +105,7 @@ export async function listRarityCache(opts: { q?: string; limit: number; offset:
     offset: opts.offset,
   });
 
-  const parsed = rows.map((row) => ({ row, parsed: parseEncounterCacheKey(row.cacheKey) }));
+  const parsed = rows.map((row) => ({ row, parsed: parseScaleCacheKey(row.cacheKey) }));
   const taxonKeys = [
     ...new Set(parsed.map((p) => p.parsed?.taxonKey).filter((k): k is string => Boolean(k))),
   ];
@@ -123,6 +134,10 @@ export async function listRarityCache(opts: { q?: string; limit: number; offset:
       rarity: row.rarity,
       source: row.source,
       fetchedAt: iso(row.fetchedAt),
+      score: row.score ?? null,
+      model: row.model ?? null,
+      samples: row.samples ?? null,
+      listLevel: row.listLevel ?? null,
       version: parts?.version ?? null,
       countryCode: parts?.countryCode ?? null,
       taxonKey: parts?.taxonKey ?? null,
@@ -137,7 +152,7 @@ export async function getRarityCacheEntry(cacheKey: string) {
     where: eq(rarityCache.cacheKey, cacheKey),
   });
   if (!row) return null;
-  const parts = parseEncounterCacheKey(row.cacheKey);
+  const parts = parseScaleCacheKey(row.cacheKey);
   const where = parts ? scoredObservationClause(parts.countryCode, parts.taxonKey) : undefined;
   const obsCount = where
     ? ((await db.select({ n: count() }).from(observations).where(where))[0]?.n ?? 0)
@@ -154,6 +169,13 @@ export async function getRarityCacheEntry(cacheKey: string) {
     rarity: row.rarity,
     source: row.source,
     fetchedAt: iso(row.fetchedAt),
+    score: row.score ?? null,
+    model: row.model ?? null,
+    samples: row.samples ?? null,
+    listLevel: row.listLevel ?? null,
+    items: parseJson<Record<string, boolean | null>>(row.itemsJson),
+    adjustments: parseJson<string[]>(row.adjustmentsJson) ?? [],
+    reasons: parseJson<Record<string, string>>(row.reasonsJson) ?? {},
     version: parts?.version ?? null,
     countryCode: parts?.countryCode ?? null,
     taxonKey: parts?.taxonKey ?? null,
@@ -176,7 +198,7 @@ export async function deleteRarityCacheKey(cacheKey: string) {
 }
 
 export async function rescoreRarityCache(cacheKey: string) {
-  const parts = parseEncounterCacheKey(cacheKey);
+  const parts = parseScaleCacheKey(cacheKey);
   if (!parts) return { error: "bad_key" as const };
 
   const sample = await db.query.observations.findFirst({
@@ -188,7 +210,7 @@ export async function rescoreRarityCache(cacheKey: string) {
     where: eq(rarityCache.cacheKey, cacheKey),
   });
 
-  const resolved = await resolveEncounterRarity({
+  const resolved = await resolveScaleRarity({
     taxonKey: parts.taxonKey,
     countryCode: parts.countryCode,
     label: sample?.commonName ?? sample?.scientificName ?? parts.taxonKey,
@@ -197,46 +219,15 @@ export async function rescoreRarityCache(cacheKey: string) {
     skipCache: true,
   });
 
-  if (resolved.source !== "encounter") {
+  if (resolved.source === "unavailable") {
     return {
-      error: "encounter_failed" as const,
+      error: "scale_failed" as const,
       previousRarity: previous?.rarity ?? null,
       source: resolved.source,
     };
   }
 
-  const now = new Date();
-  const toUpdate = await db.query.observations.findMany({
-    where: scoredObservationClause(parts.countryCode, parts.taxonKey),
-  });
-  if (toUpdate.length > 0) {
-    await db
-      .update(observations)
-      .set({ rarity: resolved.rarity, updatedAt: now })
-      .where(
-        inArray(
-          observations.id,
-          toUpdate.map((o) => o.id),
-        ),
-      );
-  }
-
-  const rebuildIds = new Set(toUpdate.map((o) => o.userId));
-  if (toUpdate.length > 0) {
-    const credits = await db.query.sharedCollectionCredits.findMany({
-      where: and(
-        eq(sharedCollectionCredits.taxonKey, parts.taxonKey),
-        inArray(
-          sharedCollectionCredits.observationId,
-          toUpdate.map((o) => o.id),
-        ),
-      ),
-    });
-    for (const c of credits) rebuildIds.add(c.userId);
-  }
-  for (const userId of rebuildIds) {
-    await rebuildCollectionTaxonForUser(userId, parts.taxonKey);
-  }
+  const applied = await applyRarity(parts.countryCode, parts.taxonKey, resolved.rarity);
 
   const updated = await db.query.rarityCache.findFirst({
     where: eq(rarityCache.cacheKey, cacheKey),
@@ -247,10 +238,148 @@ export async function rescoreRarityCache(cacheKey: string) {
     previousRarity: previous?.rarity ?? null,
     rarity: resolved.rarity,
     source: resolved.source,
-    frequency: resolved.frequency,
+    score: resolved.score,
+    model: resolved.model,
+    samples: resolved.samples,
+    listLevel: resolved.listLevel,
     adjustments: resolved.adjustments,
     fetchedAt: iso(updated?.fetchedAt),
-    observationsUpdated: toUpdate.length,
-    collectionsUpdated: rebuildIds.size,
+    observationsUpdated: applied.observationsUpdated,
+    collectionsUpdated: applied.collectionsUpdated,
+  };
+}
+
+/**
+ * 把新档位刷到该国该物种的已结算观测上，并重建受影响用户的图鉴聚合。
+ * 共享行程里别人替你点亮的那一格也要跟着变，所以要连 shared_collection_credits 一起收。
+ */
+async function applyRarity(countryCode: string, taxonKey: string, rarity: string) {
+  const now = new Date();
+  const toUpdate = await db.query.observations.findMany({
+    where: scoredObservationClause(countryCode, taxonKey),
+  });
+  if (toUpdate.length === 0) return { observationsUpdated: 0, collectionsUpdated: 0 };
+
+  const ids = toUpdate.map((o) => o.id);
+  await db
+    .update(observations)
+    .set({ rarity, updatedAt: now })
+    .where(inArray(observations.id, ids));
+
+  const rebuildIds = new Set(toUpdate.map((o) => o.userId));
+  const credits = await db.query.sharedCollectionCredits.findMany({
+    where: and(
+      eq(sharedCollectionCredits.taxonKey, taxonKey),
+      inArray(sharedCollectionCredits.observationId, ids),
+    ),
+  });
+  for (const c of credits) rebuildIds.add(c.userId);
+  for (const userId of rebuildIds) {
+    await rebuildCollectionTaxonForUser(userId, taxonKey);
+  }
+  return { observationsUpdated: ids.length, collectionsUpdated: rebuildIds.size };
+}
+
+type PendingTaxon = {
+  countryCode: string;
+  taxonKey: string;
+  cacheKey: string;
+  label: string | null;
+  scientificName: string | null;
+  finestReliableRank: string | null;
+};
+
+/** 已结算观测里出现过、但还没有量表缓存的「国家 + 物种」组合。 */
+async function pendingTaxa(): Promise<PendingTaxon[]> {
+  const rows = await db
+    .selectDistinct({
+      taxonKey: observations.taxonKey,
+      countryCode: observations.countryCode,
+      commonName: observations.commonName,
+      scientificName: observations.scientificName,
+      finestReliableRank: observations.finestReliableRank,
+    })
+    .from(observations)
+    .where(
+      and(
+        sql`${observations.taxonKey} is not null`,
+        inArray(observations.status, ["pending_settle", "settled"]),
+      ),
+    );
+
+  const existing = new Set(
+    (await db.select({ cacheKey: rarityCache.cacheKey }).from(rarityCache)).map((r) => r.cacheKey),
+  );
+
+  const seen = new Set<string>();
+  const out: PendingTaxon[] = [];
+  for (const r of rows) {
+    if (!r.taxonKey) continue;
+    const countryCode = effectiveCountry(r.countryCode);
+    const cacheKey = scaleCacheKey(countryCode, r.taxonKey);
+    if (existing.has(cacheKey) || seen.has(cacheKey)) continue;
+    seen.add(cacheKey);
+    out.push({
+      countryCode,
+      taxonKey: r.taxonKey,
+      cacheKey,
+      label: r.commonName ?? r.scientificName,
+      scientificName: r.scientificName,
+      finestReliableRank: r.finestReliableRank,
+    });
+  }
+  return out;
+}
+
+/**
+ * 迁移工具：把老算法留下的档位按量表重打一遍。
+ * 只处理还没有量表缓存的物种，天然幂等；每次最多 limit 个，剩余数回给后台接着点。
+ * 灭绝名录内的物种不调模型；其余每个 3 次调用起（贴界补到 9 次）。
+ */
+export async function recomputeRarityBatch(opts: { limit: number }) {
+  const pending = await pendingTaxa();
+  const batch = pending.slice(0, Math.max(1, opts.limit));
+
+  const changes: Array<{
+    taxonKey: string;
+    countryCode: string;
+    rarity: string;
+    score: number | null;
+    model: string | null;
+    samples: number;
+    observationsUpdated: number;
+  }> = [];
+  const failed: string[] = [];
+
+  for (const item of batch) {
+    const resolved = await resolveScaleRarity({
+      taxonKey: item.taxonKey,
+      countryCode: item.countryCode,
+      label: item.label,
+      scientificName: item.scientificName,
+      finestReliableRank: item.finestReliableRank,
+    });
+    if (resolved.source === "unavailable") {
+      failed.push(item.taxonKey);
+      // 全链不可用时停手：接着刷只会把整批都记成失败。
+      break;
+    }
+    const applied = await applyRarity(item.countryCode, item.taxonKey, resolved.rarity);
+    changes.push({
+      taxonKey: item.taxonKey,
+      countryCode: item.countryCode,
+      rarity: resolved.rarity,
+      score: resolved.score,
+      model: resolved.model,
+      samples: resolved.samples,
+      observationsUpdated: applied.observationsUpdated,
+    });
+  }
+
+  return {
+    processed: changes.length,
+    failed,
+    remaining: Math.max(0, pending.length - changes.length),
+    changes,
   };
 }

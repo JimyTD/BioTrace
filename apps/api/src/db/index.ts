@@ -89,10 +89,15 @@ export async function migrate() {
     CREATE TABLE IF NOT EXISTS rarity_cache (
       cache_key TEXT PRIMARY KEY NOT NULL,
       rarity TEXT NOT NULL,
-      occurrence_count INTEGER,
-      gbif_usage_key INTEGER,
       source TEXT NOT NULL,
-      fetched_at INTEGER NOT NULL
+      fetched_at INTEGER NOT NULL,
+      score REAL,
+      items_json TEXT,
+      adjustments_json TEXT,
+      model TEXT,
+      samples INTEGER,
+      list_level TEXT,
+      reasons_json TEXT
     );
     CREATE TABLE IF NOT EXISTS password_reset_tokens (
       id TEXT PRIMARY KEY NOT NULL,
@@ -134,6 +139,18 @@ export async function migrate() {
   await ensureColumn("observations", "content_hash", "content_hash TEXT");
   await ensureColumn("observations", "original_path", "original_path TEXT");
   await ensureColumn("observations", "location_label", "location_label TEXT");
+
+  // 稀有度量表的判据列：换模型后靠它们做离线复核，老库补齐。
+  await ensureColumn("rarity_cache", "score", "score REAL");
+  await ensureColumn("rarity_cache", "items_json", "items_json TEXT");
+  await ensureColumn("rarity_cache", "adjustments_json", "adjustments_json TEXT");
+  await ensureColumn("rarity_cache", "model", "model TEXT");
+  await ensureColumn("rarity_cache", "samples", "samples INTEGER");
+  await ensureColumn("rarity_cache", "list_level", "list_level TEXT");
+  await ensureColumn("rarity_cache", "reasons_json", "reasons_json TEXT");
+  await client.execute(
+    `CREATE INDEX IF NOT EXISTS idx_rarity_cache_model ON rarity_cache(model)`,
+  );
 
   await ensureColumn("trips", "meta_manual_enabled", "meta_manual_enabled INTEGER");
   await ensureColumn("trips", "manual_date_text", "manual_date_text TEXT");
@@ -204,16 +221,12 @@ export async function migrate() {
       AND ABS(lat) < 0.00001 AND ABS(lng) < 0.00001
   `);
 
-  // Drop cached match-miss defaults so improved GBIF resolver can retry.
-  await client.execute(`DELETE FROM rarity_cache WHERE source = 'default'`);
+  // 量表算法全面取代旧的「频次 + 偏移分」：非 scale 版本的缓存一律作废，
+  // 留着只会让新旧两套判据混在一张表里。observations 上的旧档位由后台批量重算刷新。
+  await client.execute(`DELETE FROM rarity_cache WHERE cache_key NOT LIKE 'scale%|%'`);
 
-  // One-shot cache invalidation when rarity grading rules bump.
   const ver = await client.execute(`PRAGMA user_version`);
   const userVersion = Number(ver.rows[0]?.user_version ?? 0);
-  if (userVersion < 3) {
-    await client.execute(`DELETE FROM rarity_cache WHERE source IN ('gbif', 'seed')`);
-    await client.execute(`PRAGMA user_version = 3`);
-  }
 
   // Password auth: wipe test-era magic-link users (no migration) and rebuild users table.
   if (userVersion < 4) {

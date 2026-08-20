@@ -1330,6 +1330,26 @@ function RarityCachePage() {
     }
   }
 
+  async function recompute() {
+    if (!confirm(t("admin.rarityCache.recomputeConfirm"))) return;
+    setBusyKey("+");
+    setErr("");
+    setMsg("");
+    try {
+      const r = await adminApi.recomputeRarityCache();
+      setMsg(
+        r.failed.length
+          ? t("admin.rarityCache.recomputeFailed", { done: r.processed })
+          : t("admin.rarityCache.recomputed", { done: r.processed, left: r.remaining }),
+      );
+      await load();
+    } catch (e) {
+      setErr(e instanceof Error ? e.message : String(e));
+    } finally {
+      setBusyKey(null);
+    }
+  }
+
   async function clearAll() {
     if (!confirm(t("admin.rarityCache.clearAllConfirm", { count: total }))) return;
     setBusyKey("*");
@@ -1366,11 +1386,15 @@ function RarityCachePage() {
           style={{ minWidth: "16rem" }}
         />
         <button type="submit">{t("admin.search")}</button>
+        <button type="button" onClick={() => void recompute()} disabled={busyKey !== null}>
+          {busyKey === "+" ? t("admin.rarityCache.recomputing") : t("admin.rarityCache.recompute")}
+        </button>
         <button type="button" onClick={() => void clearAll()} disabled={busyKey !== null || total === 0}>
           {t("admin.clearRarityCache")}
         </button>
         <span className="admin-muted">{t("admin.col.count")}: {total}</span>
       </form>
+      <p className="admin-muted">{t("admin.rarityCache.recomputeHint")}</p>
       {err ? <p className="admin-err">{err}</p> : null}
       {msg ? <p className="admin-ok">{msg}</p> : null}
       {items.length === 0 ? (
@@ -1382,6 +1406,9 @@ function RarityCachePage() {
               <th>{t("admin.rarityCache.taxon")}</th>
               <th>{t("admin.rarityCache.country")}</th>
               <th>{t("admin.obs.rarity")}</th>
+              <th>{t("admin.rarityCache.score")}</th>
+              <th>{t("admin.rarityCache.model")}</th>
+              <th>{t("admin.rarityCache.samples")}</th>
               <th>{t("admin.rarityCache.source")}</th>
               <th>{t("admin.rarityCache.fetchedAt")}</th>
               <th>{t("admin.rarityCache.obsCount")}</th>
@@ -1402,6 +1429,9 @@ function RarityCachePage() {
                     </td>
                     <td>{dash(row.countryCode)}</td>
                     <td>{rarityLabel(row.rarity)}</td>
+                    <td>{row.score == null ? "—" : Math.round(row.score * 100) / 100}</td>
+                    <td>{dash(row.model)}</td>
+                    <td>{row.samples ?? "—"}</td>
                     <td>{row.source}</td>
                     <td>{formatAdminTime(row.fetchedAt)}</td>
                     <td>{row.observationCount}</td>
@@ -1425,7 +1455,8 @@ function RarityCachePage() {
                   </tr>
                   {expanded === row.cacheKey && detail?.cacheKey === row.cacheKey ? (
                     <tr>
-                      <td colSpan={7}>
+                      <td colSpan={10}>
+                        <RarityScaleDetail detail={detail} />
                         {detail.observations.length === 0 ? (
                           <p className="admin-muted">{t("admin.none")}</p>
                         ) : (
@@ -1466,6 +1497,47 @@ function RarityCachePage() {
         </table>
       )}
     </>
+  );
+}
+
+/** 判据留痕：12 题答案 + 加减明细 + 模型理由。换模型后靠这些复核，不用翻库。 */
+function RarityScaleDetail({ detail }: { detail: RarityCacheEntry }) {
+  const triLabel = (v: boolean | null) =>
+    v === true
+      ? t("admin.rarityCache.itemYes")
+      : v === false
+        ? t("admin.rarityCache.itemNo")
+        : t("admin.rarityCache.itemSkip");
+  const items = detail.items ? Object.entries(detail.items) : [];
+  const reasons = Object.entries(detail.reasons ?? {});
+  if (items.length === 0 && detail.adjustments.length === 0 && reasons.length === 0) return null;
+  return (
+    <div style={{ marginBottom: 12 }}>
+      {detail.listLevel ? (
+        <p className="admin-muted">
+          {t("admin.rarityCache.listLevel")}: {detail.listLevel}
+        </p>
+      ) : null}
+      {detail.adjustments.length > 0 ? (
+        <p className="admin-muted">
+          {t("admin.rarityCache.adjustments")}: {detail.adjustments.join("  ")}
+        </p>
+      ) : null}
+      {items.length > 0 ? (
+        <p className="admin-muted" style={{ display: "flex", flexWrap: "wrap", gap: "4px 12px" }}>
+          {items.map(([key, value]) => (
+            <span key={key}>
+              {key}=<strong>{triLabel(value)}</strong>
+            </span>
+          ))}
+        </p>
+      ) : null}
+      {reasons.map(([batch, reason]) => (
+        <p key={batch} className="admin-muted">
+          {batch}: {reason}
+        </p>
+      ))}
+    </div>
   );
 }
 

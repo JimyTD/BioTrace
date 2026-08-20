@@ -151,14 +151,25 @@ export const collectionEntries = sqliteTable(
   (t) => [uniqueIndex("collection_user_taxon").on(t.userId, t.taxonKey)],
 );
 
-/** Encounter rarity keyed by encVer|country|taxon. Permanent until admin delete or version bump. */
+/**
+ * 稀有度缓存，键为 scaleVer|country|taxon，永久保存到后台删除或版本号升级。
+ * 除最终档位外还留判据（得分、12 题答案、生效模型、采样次数）——
+ * 换模型后要靠这些做离线复核，只存一个字母是查不出问题的。
+ */
 export const rarityCache = sqliteTable("rarity_cache", {
   cacheKey: text("cache_key").primaryKey(),
   rarity: text("rarity").notNull(),
-  occurrenceCount: integer("occurrence_count"),
-  gbifUsageKey: integer("gbif_usage_key"),
   source: text("source").notNull(),
   fetchedAt: integer("fetched_at", { mode: "timestamp_ms" }).notNull(),
+  score: real("score"),
+  /** 12 题合并后的三态答案 */
+  itemsJson: text("items_json"),
+  adjustmentsJson: text("adjustments_json"),
+  /** 实际出货的模型名；跨批降级时是逗号分隔的多个 */
+  model: text("model"),
+  samples: integer("samples"),
+  listLevel: text("list_level"),
+  reasonsJson: text("reasons_json"),
 });
 
 /** One-time password-reset OTP tokens (store hash only). */

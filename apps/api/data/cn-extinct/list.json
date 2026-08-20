@@ -1,0 +1,47 @@
+{
+  "legal": {
+    "title": "IUCN 轴：EX / EW / CR（中国相关、有出处）",
+    "note": "评分名录轴，不问模型。EX / EW / CR（含功能灭绝）命中即 XR。EN / VU 尚未收录。整张红名单含 LC，那些不是 XR。"
+  },
+  "entries": [
+    {
+      "zh": "白鲟",
+      "scientificName": "Psephurus gladius",
+      "status": "EX",
+      "kind": "species",
+      "aliases": [],
+      "source": {
+        "publisher": "IUCN Red List",
+        "year": 2022,
+        "url": "https://www.iucnredlist.org/species/18428/146104283",
+        "citation": "Qiwei, W. 2022. Psephurus gladius. The IUCN Red List of Threatened Species 2022: e.T18428A146104283."
+      }
+    },
+    {
+      "zh": "长江鲟",
+      "scientificName": "Acipenser dabryanus",
+      "status": "EW",
+      "kind": "species",
+      "aliases": ["Sinosturio dabryanus"],
+      "source": {
+        "publisher": "IUCN Red List",
+        "year": 2022,
+        "url": "https://www.iucnredlist.org/species/231/61462199",
+        "citation": "Qiwei, W. 2022. Acipenser dabryanus. The IUCN Red List of Threatened Species 2022: e.T231A61462199."
+      }
+    },
+    {
+      "zh": "白鱀豚",
+      "scientificName": "Lipotes vexillifer",
+      "status": "FE",
+      "kind": "species",
+      "aliases": ["白鳍豚"],
+      "source": {
+        "publisher": "IUCN Red List",
+        "year": 2017,
+        "url": "https://www.iucnredlist.org/species/12119/50362206",
+        "citation": "IUCN 仍为 CR (Possibly Extinct)。产品按功能灭绝收，走 XR，不跟 CR 活体走一级。"
+      }
+    }
+  ]
+}
