@@ -10,7 +10,7 @@ export async function readRarityCache(cacheKey: string) {
   );
 }
 
-/** 除档位外一并留下判据：得分、12 题答案、生效模型、采样次数，供换模型后离线复核。 */
+/** 除档位外一并留下判据：得分、12 题答案、生效模型、采样次数，供后台查证某一行。 */
 export async function writeRarityCache(input: {
   cacheKey: string;
   rarity: string;

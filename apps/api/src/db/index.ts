@@ -140,7 +140,7 @@ export async function migrate() {
   await ensureColumn("observations", "original_path", "original_path TEXT");
   await ensureColumn("observations", "location_label", "location_label TEXT");
 
-  // 稀有度量表的判据列：换模型后靠它们做离线复核，老库补齐。
+  // 稀有度量表的判据列：查得出某行是哪档模型按哪些答案判的，老库补齐。
   await ensureColumn("rarity_cache", "score", "score REAL");
   await ensureColumn("rarity_cache", "items_json", "items_json TEXT");
   await ensureColumn("rarity_cache", "adjustments_json", "adjustments_json TEXT");

@@ -7,7 +7,7 @@ export type RarityResolution = {
   /** 量表总分；缓存命中或链路不可用时可能为 null。 */
   score?: number | null;
   adjustments?: string[];
-  /** 实际出货的模型名，供事后按模型复核。 */
+  /** 实际出货的模型名，供事后查证某一行是哪档模型判的。 */
   model?: string | null;
 };
 

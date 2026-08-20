@@ -154,7 +154,7 @@ export const collectionEntries = sqliteTable(
 /**
  * 稀有度缓存，键为 scaleVer|country|taxon，永久保存到后台删除或版本号升级。
  * 除最终档位外还留判据（得分、12 题答案、生效模型、采样次数）——
- * 换模型后要靠这些做离线复核，只存一个字母是查不出问题的。
+ * 只存一个档位字母的话，某条不合意时查不出它是哪档模型、按哪些答案判出来的。
  */
 export const rarityCache = sqliteTable("rarity_cache", {
   cacheKey: text("cache_key").primaryKey(),

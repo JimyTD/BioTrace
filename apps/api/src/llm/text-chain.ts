@@ -1,7 +1,7 @@
 /**
  * 文本模型优先级链（TokenHub 单 key，只换模型名）。
  * 按 env.rarityTextModels 顺序试：限流/抖动就地退避重试，配额耗尽或鉴权失败则打冷却降到下一档。
- * 返回值带上实际生效的模型名——缓存要记它，事后才能按模型复核判分。
+ * 返回值带上实际生效的模型名——缓存要记它，事后才查得出某一行是哪档模型判的。
  */
 import { Agent, fetch as undiciFetch } from "undici";
 import { env } from "../env.js";

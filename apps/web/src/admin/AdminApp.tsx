@@ -1500,7 +1500,7 @@ function RarityCachePage() {
   );
 }
 
-/** 判据留痕：12 题答案 + 加减明细 + 模型理由。换模型后靠这些复核，不用翻库。 */
+/** 判据留痕：12 题答案 + 加减明细 + 模型理由。档位不合意时不用翻库就能看出哪一题答歪了。 */
 function RarityScaleDetail({ detail }: { detail: RarityCacheEntry }) {
   const triLabel = (v: boolean | null) =>
     v === true

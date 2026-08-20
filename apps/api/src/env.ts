@@ -78,7 +78,7 @@ export const env = {
   tokenhubBaseUrl: process.env.TOKENHUB_BASE_URL?.trim() || "https://tokenhub.tencentmaas.com/v1",
   /**
    * 稀有度量表的模型优先级链（TokenHub 单 key，只换模型名）。
-   * 按序试，某档配额耗尽/鉴权失败就打冷却降到下一档；生效模型名会写进缓存供事后复核。
+   * 按序试，某档配额耗尽/鉴权失败就打冷却降到下一档；生效模型名会写进缓存供事后查证。
    */
   rarityTextModels: parseModelChain(),
   /** 每物种采样次数。一次采样 = 3 批调用。 */
