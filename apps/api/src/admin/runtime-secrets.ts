@@ -47,6 +47,7 @@ export function applyRuntimeSecrets() {
   overlay = readDisk();
   env.geminiApiKey = effectiveString(slotById("geminiApiKey")!);
   env.zhipuApiKey = effectiveString(slotById("zhipuApiKey")!);
+  env.tokenhubApiKey = effectiveString(slotById("tokenhubApiKey")!);
   env.resendApiKey = effectiveString(slotById("resendApiKey")!);
   env.tiandituServerKey = effectiveString(slotById("tiandituServerKey")!);
   env.tiandituBrowserKey = effectiveString(slotById("tiandituBrowserKey")!);
@@ -54,7 +55,6 @@ export function applyRuntimeSecrets() {
   env.tiandituBrowserFallback2 = effectiveString(slotById("tiandituBrowserFallback2")!);
   env.geminiModel = effectiveString(slotById("geminiModel")!) || env.geminiModel;
   env.zhipuVlModel = effectiveString(slotById("zhipuVlModel")!) || env.zhipuVlModel;
-  env.zhipuTextModel = effectiveString(slotById("zhipuTextModel")!) || env.zhipuTextModel;
   env.identifyDailyLimit = effectiveNumber(slotById("identifyDailyLimit")!, env.identifyDailyLimit);
   env.identifyConcurrency = effectiveNumber(
     slotById("identifyConcurrency")!,
@@ -108,6 +108,7 @@ export function secretsPublicView() {
   const live: Record<string, string | number> = {
     geminiApiKey: env.geminiApiKey,
     zhipuApiKey: env.zhipuApiKey,
+    tokenhubApiKey: env.tokenhubApiKey,
     resendApiKey: env.resendApiKey,
     tiandituServerKey: env.tiandituServerKey,
     tiandituBrowserKey: env.tiandituBrowserKey,
@@ -115,7 +116,6 @@ export function secretsPublicView() {
     tiandituBrowserFallback2: env.tiandituBrowserFallback2,
     geminiModel: env.geminiModel,
     zhipuVlModel: env.zhipuVlModel,
-    zhipuTextModel: env.zhipuTextModel,
     identifyDailyLimit: env.identifyDailyLimit,
     identifyConcurrency: env.identifyConcurrency,
   };

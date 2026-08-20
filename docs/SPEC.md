@@ -325,7 +325,7 @@ Prompt 里的 `country` 已按观察点国家传，没有写死中国。
 
 | 变量 | 默认 | 含义 |
 |------|------|------|
-| `TOKENHUB_API_KEY` | — | 稀有度量表与标定共用；不能填 Coding Plan 的 `sk-sp-` Key |
+| `TOKENHUB_API_KEY` | — | 稀有度量表与标定共用；不能填 Coding Plan 的 `sk-sp-` Key。也可在管理后台「平台密钥 · 稀有度」填，后台值覆盖 env |
 | `RARITY_TEXT_MODELS` | `glm-5.3,glm-5.2,kimi-k3,glm-5.1` | 模型优先级链，按序降级 |
 | `RARITY_SAMPLES` | `1` | 每物种采样次数（1 次采样 = 3 次调用） |
 | `RARITY_EDGE_MARGIN` | `0.2` | 离档位界不超过这个距离就补采样 |

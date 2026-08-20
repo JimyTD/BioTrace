@@ -45,7 +45,7 @@ function load(): DecodedFeature[] | null {
 
 /**
  * 返回归一化后的 alpha-2；落在任何国家之外（海上等）返回 null。
- * null → 结算无国别：引入不警示；稀有度按 CN 回落（见 rarity/encounter effectiveCountry）。
+ * null → 结算无国别：引入不警示；稀有度按 CN 回落（见 rarity/scale effectiveCountry）。
  */
 export function offlineCountryFromLatLng(lat: number, lng: number): string | null {
   const all = load();

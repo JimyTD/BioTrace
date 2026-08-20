@@ -72,8 +72,6 @@ export const env = {
   geminiModel: process.env.GEMINI_MODEL?.trim() || "gemini-flash-latest",
   zhipuApiKey: process.env.ZHIPU_API_KEY?.trim() || "",
   zhipuVlModel: process.env.ZHIPU_VL_MODEL?.trim() || "glm-4v-flash",
-  /** Text model for encounter-class rarity (not vision). */
-  zhipuTextModel: process.env.ZHIPU_TEXT_MODEL?.trim() || "glm-4-flash-250414",
   zhipuBaseUrl: process.env.ZHIPU_BASE_URL?.trim() || "https://open.bigmodel.cn/api/paas/v4",
   /** TokenHub 在线推理（稀有度量表 + 标定脚本）。Coding Plan / Token Plan 的套餐 Key 不能用于脚本。 */
   tokenhubApiKey: process.env.TOKENHUB_API_KEY?.trim() || "",

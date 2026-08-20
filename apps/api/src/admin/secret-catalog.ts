@@ -12,7 +12,7 @@ export type SecretSlot = {
   envAliases?: string[];
   kind: SecretSlotKind;
   /** Group for UI */
-  group: "identify" | "mail" | "tianditu" | "quota" | "model";
+  group: "identify" | "rarity" | "mail" | "tianditu" | "quota" | "model";
   /** value type for settings */
   valueType?: "string" | "number";
 };
@@ -29,6 +29,12 @@ export const SECRET_SLOTS: readonly SecretSlot[] = [
     env: "ZHIPU_API_KEY",
     kind: "secret",
     group: "identify",
+  },
+  {
+    id: "tokenhubApiKey",
+    env: "TOKENHUB_API_KEY",
+    kind: "secret",
+    group: "rarity",
   },
   {
     id: "resendApiKey",
@@ -73,13 +79,6 @@ export const SECRET_SLOTS: readonly SecretSlot[] = [
   {
     id: "zhipuVlModel",
     env: "ZHIPU_VL_MODEL",
-    kind: "setting",
-    group: "model",
-    valueType: "string",
-  },
-  {
-    id: "zhipuTextModel",
-    env: "ZHIPU_TEXT_MODEL",
     kind: "setting",
     group: "model",
     valueType: "string",

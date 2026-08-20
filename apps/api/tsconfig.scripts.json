@@ -1,0 +1,10 @@
+{
+  // 主 tsconfig 只管 src/（进镜像的代码）。标定/冒烟脚本不进生产构建，但仍需类型检查：
+  // 它们 import src/ 里的模块，src 删文件时脚本会留下断掉的 import，编译不报、跑到才炸。
+  "extends": "./tsconfig.json",
+  "compilerOptions": {
+    "rootDir": ".",
+    "noEmit": true
+  },
+  "include": ["scripts/**/*.ts", "src/**/*.ts"]
+}
