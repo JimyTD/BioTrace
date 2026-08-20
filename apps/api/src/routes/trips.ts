@@ -462,6 +462,7 @@ tripRoutes.post("/:id/observations", async (c) => {
     taxonKey: null,
     acceptedTaxonomyJson: null,
     identifyProvider: null,
+    identifyModel: null,
     settledAt: null,
     createdAt: now,
     updatedAt: now,

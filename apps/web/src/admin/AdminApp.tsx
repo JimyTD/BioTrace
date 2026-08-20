@@ -169,13 +169,22 @@ function Dashboard() {
   };
   const identifyRoute = (data.identifyRoute ?? null) as {
     activeProvider?: string;
+    usingTokenhubFallback?: boolean;
     usingZhipuFallback?: boolean;
     reason?: string;
     gemini?: ProviderRow;
+    tokenhub?: ProviderRow;
     zhipu?: ProviderRow;
+    vlModels?: Array<{
+      model: string;
+      status: string;
+      coolUntil: number | null;
+      lastOkAt: number | null;
+      lastError: string | null;
+    }>;
   } | null;
   const providers = (identifyRoute
-    ? { gemini: identifyRoute.gemini, zhipu: identifyRoute.zhipu }
+    ? { gemini: identifyRoute.gemini, tokenhub: identifyRoute.tokenhub ?? identifyRoute.zhipu }
     : ((data.providers ?? {}) as Record<string, ProviderRow>)) as Record<string, ProviderRow>;
   const recentFailed = (data.recentFailed ?? []) as Array<{
     id: string;
@@ -282,7 +291,7 @@ function Dashboard() {
                   className={
                     identifyRoute.activeProvider === "none"
                       ? "value admin-route-none"
-                      : identifyRoute.usingZhipuFallback
+                      : identifyRoute.usingTokenhubFallback || identifyRoute.usingZhipuFallback
                         ? "value admin-route-fallback"
                         : "value admin-route-on"
                   }
@@ -292,14 +301,16 @@ function Dashboard() {
               </div>
             </div>
             <p>{identifyRouteReasonLabel(String(identifyRoute.reason ?? ""))}</p>
-            {identifyRoute.usingZhipuFallback && identifyRoute.gemini?.successAtExhaust != null ? (
+            {(identifyRoute.usingTokenhubFallback || identifyRoute.usingZhipuFallback) &&
+            identifyRoute.gemini?.successAtExhaust != null ? (
               <p>
                 {t("admin.identifyRoute.switched", {
                   count: Number(identifyRoute.gemini.successAtExhaust),
                 })}
               </p>
             ) : null}
-            {!identifyRoute.usingZhipuFallback && identifyRoute.gemini?.exhaustedAt ? (
+            {!(identifyRoute.usingTokenhubFallback || identifyRoute.usingZhipuFallback) &&
+            identifyRoute.gemini?.exhaustedAt ? (
               <p>
                 {t("admin.identifyRoute.exhaustedToday", {
                   count: Number(identifyRoute.gemini.successAtExhaust ?? 0),
@@ -320,7 +331,7 @@ function Dashboard() {
             </tr>
           </thead>
           <tbody>
-            {["gemini", "zhipu"].map((name) => {
+            {["gemini", "tokenhub"].map((name) => {
               const p = providers[name] ?? {};
               return (
                 <tr key={name}>
@@ -346,6 +357,39 @@ function Dashboard() {
             })}
           </tbody>
         </table>
+        {identifyRoute?.vlModels?.length ? (
+          <>
+            <p className="admin-muted" style={{ marginTop: "0.85rem" }}>
+              {t("admin.identifyRoute.vlChain")}
+            </p>
+            <table className="admin-table">
+              <thead>
+                <tr>
+                  <th>{t("admin.obs.identifyModel")}</th>
+                  <th>{t("admin.col.status")}</th>
+                  <th>{t("admin.provider.coolUntil")}</th>
+                  <th>{t("admin.provider.lastOk")}</th>
+                </tr>
+              </thead>
+              <tbody>
+                {identifyRoute.vlModels.map((row) => (
+                  <tr key={row.model}>
+                    <td>{row.model}</td>
+                    <td>{providerStatusLabel(String(row.status ?? "ok"))}</td>
+                    <td>
+                      {row.coolUntil
+                        ? formatAdminTime(row.coolUntil)
+                        : t("admin.provider.notCooling")}
+                    </td>
+                    <td>
+                      {row.lastOkAt ? formatAdminTime(row.lastOkAt) : t("admin.provider.neverOk")}
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </>
+        ) : null}
       </div>
 
       <h2>{t("admin.recentFailed")}</h2>
@@ -702,7 +746,10 @@ function ObservationDetailPage() {
             [t("admin.obs.confidence"), confidence],
             [t("admin.obs.rarity"), rarityLabel(o.rarity == null ? null : String(o.rarity))],
             [t("admin.obs.settleTier"), settleTierLabel(o.settleTier == null ? null : String(o.settleTier))],
-            [t("admin.obs.provider"), identifyProviderName(o.identifyProvider == null ? null : String(o.identifyProvider))],
+            [t("admin.obs.provider"), identifyProviderName(
+              o.identifyProvider == null ? null : String(o.identifyProvider),
+              o.identifyModel == null ? null : String(o.identifyModel),
+            )],
             [t("admin.error.code"), ex.title],
             [t("admin.obs.capturedAt"), formatAdminTime(o.capturedAt == null ? null : String(o.capturedAt))],
             [t("admin.obs.createdAt"), formatAdminTime(o.createdAt == null ? null : String(o.createdAt))],

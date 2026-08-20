@@ -38,10 +38,10 @@ app.get("/api/health", (c) =>
     ok: true,
     devAuth: env.devAuth,
     geminiConfigured: Boolean(env.geminiApiKey),
-    zhipuConfigured: Boolean(env.zhipuApiKey),
+    tokenhubConfigured: Boolean(env.tokenhubApiKey),
     providers: {
       gemini: providerSnapshot("gemini", Boolean(env.geminiApiKey)),
-      zhipu: providerSnapshot("zhipu", Boolean(env.zhipuApiKey)),
+      tokenhub: providerSnapshot("tokenhub", Boolean(env.tokenhubApiKey)),
     },
     identifyQueue: identifyQueueSize(),
   }),
@@ -77,5 +77,7 @@ serve({ fetch: app.fetch, port: env.port, hostname: env.host }, (info) => {
   console.log(
     `DEV_AUTH=${env.devAuth ? "on" : "off"} cookieSecure=${env.cookieSecure} cors=${env.corsOrigins.join(",")}`,
   );
-  console.log(`Gemini=${env.geminiApiKey ? "ok" : "missing"} Zhipu=${env.zhipuApiKey ? "ok" : "missing"}`);
+  console.log(
+    `Gemini=${env.geminiApiKey ? "ok" : "missing"} TokenHub=${env.tokenhubApiKey ? "ok" : "missing"}`,
+  );
 });

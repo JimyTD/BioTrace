@@ -92,6 +92,7 @@ export function serializeObservation(
     alertIntroduced: redact ? false : Boolean(obs.alertIntroduced),
     taxonKey: redact ? null : obs.taxonKey,
     identifyProvider: redact ? null : obs.identifyProvider ?? null,
+    identifyModel: redact ? null : obs.identifyModel ?? null,
     settledAt: obs.settledAt ? obs.settledAt.toISOString() : null,
     createdAt: obs.createdAt.toISOString(),
     updatedAt: obs.updatedAt.toISOString(),

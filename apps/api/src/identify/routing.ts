@@ -7,6 +7,7 @@ import {
   providerSnapshot,
   type ProviderId,
 } from "./health.js";
+import { vlChainReady, vlChainSnapshot } from "./vl-chain.js";
 
 export type IdentifyRouteReason =
   | "gemini_ok"
@@ -19,11 +20,12 @@ export type IdentifyRouteReason =
   | "both_unavailable";
 
 function configured(id: ProviderId): boolean {
-  return id === "gemini" ? Boolean(env.geminiApiKey) : Boolean(env.zhipuApiKey);
+  return id === "gemini" ? Boolean(env.geminiApiKey) : Boolean(env.tokenhubApiKey);
 }
 
 function providerReady(id: ProviderId): boolean {
   if (!configured(id)) return false;
+  if (id === "tokenhub") return vlChainReady();
   const h = getProviderHealth(id);
   const cool = coolRemainingMs(id);
   return h.status === "ok" || (cool > 0 && cool <= env.identifyGeminiWaitMaxMs);
@@ -61,26 +63,27 @@ function packProvider(id: ProviderId, stats: Awaited<ReturnType<typeof providerS
 export async function identifyRoutingSnapshot() {
   const stats = await providerStatsToday();
   const geminiReady = providerReady("gemini");
-  const zhipuReady = providerReady("zhipu");
-  const usingZhipuFallback = !geminiReady && zhipuReady;
+  const tokenhubReady = providerReady("tokenhub");
+  const usingTokenhubFallback = !geminiReady && tokenhubReady;
   const activeProvider: ProviderId | "none" = geminiReady
     ? "gemini"
-    : zhipuReady
-      ? "zhipu"
+    : tokenhubReady
+      ? "tokenhub"
       : "none";
   const reason: IdentifyRouteReason = geminiReady
     ? "gemini_ok"
-    : zhipuReady
+    : tokenhubReady
       ? geminiSkipReason()
       : "both_unavailable";
 
   return {
     day: utcDayKey(),
     activeProvider,
-    usingZhipuFallback,
+    usingTokenhubFallback,
     reason,
     geminiWaitMaxMs: env.identifyGeminiWaitMaxMs,
     gemini: packProvider("gemini", stats.gemini),
-    zhipu: packProvider("zhipu", stats.zhipu),
+    tokenhub: packProvider("tokenhub", stats.tokenhub),
+    vlModels: vlChainSnapshot(),
   };
 }

@@ -36,7 +36,7 @@ export function enqueueIdentify(opts: {
       });
       if (!obs) return;
 
-      const { result, provider } = await runIdentifyForUser(obs.userId, {
+      const { result, provider, model } = await runIdentifyForUser(obs.userId, {
         imagePath: opts.imagePath,
         mimeType: opts.mimeType,
         lat: opts.lat,
@@ -44,7 +44,9 @@ export function enqueueIdentify(opts: {
         capturedAt: opts.capturedAt,
         description: opts.description,
       });
-      console.log(`[identify] ok provider=${provider} obs=${opts.observationId}`);
+      console.log(
+        `[identify] ok provider=${provider}${model ? ` model=${model}` : ""} obs=${opts.observationId}`,
+      );
 
       const gate = evaluateEligibility(result);
       if (!gate.ok) {
@@ -73,6 +75,7 @@ export function enqueueIdentify(opts: {
             taxonKey: null,
             acceptedTaxonomyJson: null,
             identifyProvider: provider,
+            identifyModel: model,
             settledAt: null,
             updatedAt: new Date(),
           })
@@ -119,6 +122,7 @@ export function enqueueIdentify(opts: {
               ? JSON.stringify(settle.acceptedTaxonomy)
               : null,
             identifyProvider: provider,
+            identifyModel: model,
             settledAt: null,
             updatedAt: new Date(),
           })
@@ -150,6 +154,7 @@ export function enqueueIdentify(opts: {
             ? JSON.stringify(settle.acceptedTaxonomy)
             : null,
           identifyProvider: provider,
+          identifyModel: model,
           settledAt: null,
           updatedAt: new Date(),
         })

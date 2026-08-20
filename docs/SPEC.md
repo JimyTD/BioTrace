@@ -3,7 +3,7 @@
 > **本文件是功能真源**：已做 / 本期要做 / 明确后置。查「某能力做没做」以此为准。  
 > 部署与线上现状看 [`OPS.md`](./OPS.md)；专题手册在 [`features/`](./features/)；当初的取舍理由在 [`planning/`](./planning/)。  
 > 变更历史看 git log，本文不留手抄变更记录。  
-> 更新日期：2026-08-17
+> 更新日期：2026-08-20
 
 ## 0. 当前阶段
 
@@ -31,7 +31,7 @@
 ## 1. 仓库与栈（已落地）
 
 ```text
-apps/api     Hono + Drizzle + libsql(SQLite) + Gemini/GLM + sharp/exifr
+apps/api     Hono + Drizzle + libsql(SQLite) + Gemini/TokenHub + sharp/exifr
 apps/web     Vite + React + MapLibre
   src/themes/   皮肤主题（配色/字体/圆角；与流程页分离，见 §10）
   src/styles.css  结构与组件样式（只用语义 var(--*)）
@@ -39,7 +39,7 @@ apps/mobile  Capacitor Android 薄壳（WebView → 线上站点）
 packages/messages   统一 UI/术语文案（默认 zh）
 apps/api/data/      cn-protected / cn-sanyou / cn-extinct 名录 + introduced-index（GRIIS）/ introduced-seed（补丁）
 apps/api/src/rarity/  稀有度主路径（12 题原子量表 + 名录 → scoreFromScale）
-apps/api/src/identify/  识图编排（健康状态 / Gemini / 智谱回退）
+apps/api/src/identify/  识图编排（健康状态 / Gemini / TokenHub 视觉链回退）
 data/        本地 DB 与 uploads（gitignore）
 docs/        筹划 + 本实现规格
 ```
@@ -59,9 +59,10 @@ docs/        筹划 + 本实现规格
 ## 1.1 识图韧性
 
 - **串行队列**（默认 concurrency=1），避免免费层被并行打爆。
-- **Gemini 健康态**（进程内）：短限流 → 保持 `analyzing` 等待（≤90s）再试；瞬时 5xx/503 → 冷却约 20s 再试 **1 次**；日额耗尽/长冷却 → **切智谱 GLM**。
+- **Gemini 健康态**（进程内）：短限流 → 保持 `analyzing` 等待（≤90s）再试；瞬时 5xx/503 → 冷却约 20s 再试 **1 次**；日额耗尽/长冷却 → **切 TokenHub 视觉链**（同一把 `TOKENHUB_API_KEY`，只换模型名：`glm-5v-turbo` → `kimi-k2.6` → `hy-vision-2.0-instruct`）。编排：[`orchestrator.ts`](../apps/api/src/identify/orchestrator.ts)；链：[`vl-chain.ts`](../apps/api/src/identify/vl-chain.ts)。
+- 观察记下 `identify_provider`（`gemini` / `tokenhub`）和真正出货的 `identify_model`。
 - 两侧都不可用才 `failed`，文案温和（不提配额/账单）。
-- Me / `/api/health` 可看 Gemini、智谱配置与冷却状态。
+- `/api/health` 可看 Gemini、TokenHub 配置与冷却状态。平台识图**不再走智谱**。
 
 ## 1.2 识图合格性闸门
 
@@ -326,14 +327,14 @@ Prompt 里的 `country` 已按观察点国家传，没有写死中国。
 
 | 变量 | 默认 | 含义 |
 |------|------|------|
-| `TOKENHUB_API_KEY` | — | 稀有度量表与标定共用；不能填 Coding Plan 的 `sk-sp-` Key。也可在管理后台「平台密钥 · 稀有度」填，后台值覆盖 env |
+| `TOKENHUB_API_KEY` | — | 稀有度量表、识图回退与标定共用；不能填 Coding Plan 的 `sk-sp-` Key。也可在管理后台「平台密钥」填，后台值覆盖 env |
+| `IDENTIFY_VL_MODELS` | `glm-5v-turbo,kimi-k2.6,hy-vision-2.0-instruct` | 识图回退视觉链，按序降级 |
 | `RARITY_TEXT_MODELS` | `glm-5.3,glm-5.2,kimi-k3,glm-5.1` | 模型优先级链，按序降级 |
 | `RARITY_SAMPLES` | `1` | 每物种采样次数（1 次采样 = 3 次调用） |
 | `RARITY_EDGE_MARGIN` | `0.2` | 离档位界不超过这个距离就补采样 |
 | `RARITY_EDGE_SAMPLES` | `3` | 补到几次采样 |
 | `RARITY_THINKING` | `0` | 量表题只要判断不要推理链；开了在免费档极易撞限流 |
 | `RARITY_CALL_DELAY_MS` | `1200` | 同物种相邻两批的间隔，避开约 1 req/s |
-| `ZHIPU_API_KEY` | — | 识图回退（稀有度已不走智谱） |
 | `GBIF_ENABLED` | `1` | 套册临时锚定 taxonomy + 结算 `taxonKey` 学名锚定。**不**把 occurrence 计数接入稀有度 |
 
 ### 3.5 引入/关注种警示（与稀有度分通道）

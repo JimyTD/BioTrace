@@ -57,6 +57,7 @@ import {
   rescoreRarityCache,
 } from "../admin/rarity-cache.js";
 import { textChainSnapshot } from "../llm/text-chain.js";
+import { vlChainSnapshot } from "../identify/vl-chain.js";
 
 applyRuntimeSecrets();
 
@@ -108,6 +109,7 @@ function serializeObsAdmin(
     alertIntroduced: row.alertIntroduced,
     taxonKey: row.taxonKey,
     identifyProvider: row.identifyProvider,
+    identifyModel: row.identifyModel,
     settledAt: iso(row.settledAt),
     createdAt: iso(row.createdAt),
     updatedAt: iso(row.updatedAt),
@@ -208,7 +210,7 @@ adminRoutes.get("/dashboard", async (c) => {
     identifyRoute,
     providers: {
       gemini: identifyRoute.gemini,
-      zhipu: identifyRoute.zhipu,
+      tokenhub: identifyRoute.tokenhub,
     },
     flags: {
       devAuth: env.devAuth,
@@ -572,6 +574,7 @@ adminRoutes.post("/observations/:id/reidentify", async (c) => {
       taxonKey: null,
       acceptedTaxonomyJson: null,
       identifyProvider: null,
+      identifyModel: null,
       settledAt: null,
       updatedAt: now,
     })
@@ -902,4 +905,8 @@ adminRoutes.post("/rarity-cache/recompute", async (c) => {
 /** 模型链诊断：每档当前的冷却与最后一次错误，用来判断是哪一档在出货。 */
 adminRoutes.get("/rarity-models", async (c) => {
   return c.json({ models: textChainSnapshot() });
+});
+
+adminRoutes.get("/identify-models", async (c) => {
+  return c.json({ models: vlChainSnapshot() });
 });

@@ -3,7 +3,7 @@
 > **这是 BioTrace 上线与运维的唯一操作手册**，反映真实落地方案，随版本更新持续维护。
 > **本文件是运维真源。** 架构背景、设计约定与天地图接入坑见文末[附录 A](#附录-a架构背景与设计约定)；业务功能见 [`SPEC.md`](./SPEC.md)。
 >
-> 最后更新：2026-08-13 · 当前阶段：**第二阶段（IP + HTTP + Resend 真实邮箱登录）已上线**；`DEV_AUTH=0`、Resend 走自有验证域名 `jettechdog.icu` 发信；已接入**境外出网代理（广州→新加坡 Xray）**保障 Resend/Gemini 出境；运维通道改为 Cursor MCP `tencent-lighthouse`（见 §2.1）；Android APK 为按需制品（见 §7.2）
+> 最后更新：2026-08-20 · 当前阶段：**第二阶段（IP + HTTP + Resend 真实邮箱登录）已上线**；`DEV_AUTH=0`、Resend 走自有验证域名 `jettechdog.icu` 发信；已接入**境外出网代理（广州→新加坡 Xray）**保障 Resend/Gemini 出境；识图回退为 TokenHub 视觉链（见 §6）；运维通道改为 Cursor MCP `tencent-lighthouse`（见 §2.1）；Android APK 为按需制品（见 §7.2）
 >
 > 🔒 **更新前必读**：[§7.0 数据来源单一性铁律](#70-铁律数据来源单一性错一次后果严重务必遵守)——git 为唯一工程来源、隐私靠服务器本地 `.env`、禁止 `reset --hard`。
 
@@ -86,7 +86,7 @@ Browser ──直连──► 天地图瓦片（失败则备用浏览器端 key 
 
 出境流量（Resend 发信 / Gemini 识图）：
   容器 ──HTTPS_PROXY──► 宿主机 Xray :10809──Reality──► SG1(新加坡, 地址见 /root/proxy-setup.md) ──► 境外 API
-  识图：Gemini（走上面的代理）/ 智谱 GLM（国内直连兜底）── 当前均未配 Key
+  识图：Gemini（走上面的代理）/ TokenHub 视觉链（国内直连兜底）
 ```
 
 - API **只**监听 `127.0.0.1:8787`（compose 端口映射写死），公网不可直达，只经 Nginx。
@@ -149,9 +149,7 @@ GEMINI_API_KEY=
 GEMINI_MODEL=gemini-flash-latest
 HTTPS_PROXY=
 #↑ 大陆机需出境（Resend/Gemini）时填宿主机代理：http://host.docker.internal:10809，先按 §6.5 搭好Xray→SG1
-ZHIPU_API_KEY=
-ZHIPU_VL_MODEL=glm-4v-flash
-ZHIPU_BASE_URL=https://open.bigmodel.cn/api/paas/v4
+TOKENHUB_API_KEY=
 GBIF_ENABLED=1
 IDENTIFY_CONCURRENCY=1
 DISPLAY_MAX_EDGE=1600
@@ -266,14 +264,14 @@ curl -s http://127.0.0.1:8787/api/health   # devAuth 应为 false
 
 ---
 
-## 6. 接入识图 Key（Gemini / 智谱 GLM）
+## 6. 接入识图 Key（Gemini / TokenHub）
 
 编辑 `deploy/.env.production` 后 `docker compose up -d --force-recreate`。
 
-- **智谱 GLM（推荐先配，国内直连免代理）**：`ZHIPU_API_KEY=...`
+- **TokenHub（国内直连，稀有度 + 识图回退共用一把 Key）**：`TOKENHUB_API_KEY=...`。识图回退按 `IDENTIFY_VL_MODELS`（默认 `glm-5v-turbo` → `kimi-k2.6` → `hy-vision-2.0-instruct`）。
 - **Gemini（国内需境外代理）**：`GEMINI_API_KEY=...`。`HTTPS_PROXY` 已就位（§6.5），**只填 Key 重启即可**，Gemini 自动走新加坡出境，无需再动网络配置。
-- 两者都配时：Gemini 为主，限流/日额尽自动切 GLM。
-- 验证：`curl -s http://127.0.0.1:8787/api/health` 看 `geminiConfigured`/`zhipuConfigured`；实际识图时日志出现 `[identify] ok provider=gemini|zhipu`。
+- 两者都配时：Gemini 为主，限流/日额尽自动切 TokenHub 视觉链。
+- 验证：`curl -s http://127.0.0.1:8787/api/health` 看 `geminiConfigured`/`tokenhubConfigured`；实际识图时日志出现 `[identify] ok provider=gemini|tokenhub`。
 
 ---
 
@@ -405,7 +403,7 @@ curl -s -X POST http://127.0.0.1:8787/api/auth/login -H 'Content-Type: applicati
 2. **隐私信息彻底抽离 git，只存在于服务器本地**，git 里只放空模板：
    | 文件 | 状态 | 说明 |
    |---|---|---|
-   | `deploy/.env.production` | **仅服务器本地**（已 gitignore，从未入库） | 含`RESEND_API_KEY`/`GEMINI_API_KEY`/`ZHIPU_API_KEY`/`SESSION_SECRET`/`HTTPS_PROXY`等真实密钥 |
+   | `deploy/.env.production` | **仅服务器本地**（已 gitignore，从未入库） | 含`RESEND_API_KEY`/`GEMINI_API_KEY`/`TOKENHUB_API_KEY`/`SESSION_SECRET`/`HTTPS_PROXY`等真实密钥 |
    | `deploy/.env.production.example` | 入库 | 全占位符模板，供复现部署时复制 |
    | `*.pem` | gitignore | 证书/私钥 |
    - 因为 `.env.production` 未被 git 跟踪，`git pull` **根本不会碰它**，密钥不会被覆盖。**永远不要把真实密钥写进任何入库文件**（含文档、代码、注释）。
@@ -722,7 +720,7 @@ Browser ──HTTP(S)──► Nginx（宿主机）
                                            ├── biotrace.db
                                            └── uploads/
 API ──HTTPS_PROXY──► 新加坡代理 ──► Gemini / Resend
-API ──直连──► 智谱 GLM、天地图（国内服务，勿走代理）
+API ──直连──► TokenHub、天地图（国内服务，勿走代理）
 Browser ──直连──► 天地图瓦片（失败：备用浏览器端 key → 内置简图）
 ```
 
@@ -743,7 +741,7 @@ Browser ──直连──► 天地图瓦片（失败：备用浏览器端 key 
 
 ### A.4 需向所有者索取、且不得入库的秘密
 
-`SESSION_SECRET`（长随机）、`GEMINI_API_KEY`、`ZHIPU_API_KEY`、`RESEND_API_KEY` + 已验证 `MAIL_FROM`、`HTTPS_PROXY` 完整 URL、`TIANDITU_SERVER_KEY`（服务端）、`VITE_TIANDITU_KEY`（浏览器端主 key，构建时内联）、可选 `VITE_TIANDITU_KEY_FALLBACK` / `VITE_TIANDITU_KEY_FALLBACK_2`（浏览器端备用）。
+`SESSION_SECRET`（长随机）、`GEMINI_API_KEY`、`TOKENHUB_API_KEY`、`RESEND_API_KEY` + 已验证 `MAIL_FROM`、`HTTPS_PROXY` 完整 URL、`TIANDITU_SERVER_KEY`（服务端）、`VITE_TIANDITU_KEY`（浏览器端主 key，构建时内联）、可选 `VITE_TIANDITU_KEY_FALLBACK` / `VITE_TIANDITU_KEY_FALLBACK_2`（浏览器端备用）。
 
 ### A.5 天地图接入要点（踩过的坑）
 

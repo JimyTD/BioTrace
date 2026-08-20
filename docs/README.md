@@ -43,7 +43,7 @@
 | [`planning/00-讨论进程与决策.md`](./planning/00-讨论进程与决策.md) | 讨论顺序、项目定位、三项关键约束、各步结案状态 |
 | [`planning/01-竞品对照.md`](./planning/01-竞品对照.md) | iNaturalist / Biotracks / 生物记 / Seek 实测与淘汰理由（**为什么要自研**） |
 | [`planning/03-需求辨明.md`](./planning/03-需求辨明.md) | P0/P1/P2/Out 需求清单与「怎样算满意」 |
-| [`planning/04-识别选型.md`](./planning/04-识别选型.md) | 走云多模态 API 的理由；iNat 识图不可接入；**为什么不自托管 BioCLIP** |
+| [`planning/04-识别选型.md`](./planning/04-识别选型.md) | 走云多模态 API 的理由；iNat 识图不可接入；**为什么不自托管 BioCLIP**（生产回退见 SPEC §1.1，已改为 TokenHub 视觉链） |
 | [`planning/04f-世界地图选型.md`](./planning/04f-世界地图选型.md) | 地图引擎与底图选型（含天地图定稿）；手写 bbox 判国事故 |
 | [`planning/05-技术方案.md`](./planning/05-技术方案.md) | 产品原则 A–D（主路径以结算为高潮等）；细则以 `SPEC.md` 为准 |
 

@@ -29,7 +29,19 @@ export type OpenAICompatibleCreds = {
   model: string;
 };
 
-/** Vision identify via OpenAI-compatible chat completions (user BYOK + Zhipu). */
+export function contentToText(content: string | unknown): string {
+  if (typeof content === "string") return content;
+  if (Array.isArray(content)) {
+    return content
+      .map((p) =>
+        typeof p === "object" && p && "text" in p ? String((p as { text: string }).text) : "",
+      )
+      .join("\n");
+  }
+  return "";
+}
+
+/** Vision identify via OpenAI-compatible chat completions (user BYOK). */
 export async function identifyWithOpenAICompatible(
   input: IdentifyInput,
   creds: OpenAICompatibleCreds,
@@ -73,17 +85,7 @@ export async function identifyWithOpenAICompatible(
     throw new Error(`OpenAI-compatible returned non-JSON: ${textBody.slice(0, 200)}`);
   }
 
-  const content = data.choices?.[0]?.message?.content;
-  const text =
-    typeof content === "string"
-      ? content
-      : Array.isArray(content)
-        ? content
-            .map((p) =>
-              typeof p === "object" && p && "text" in p ? String((p as { text: string }).text) : "",
-            )
-            .join("\n")
-        : "";
+  const text = contentToText(data.choices?.[0]?.message?.content);
   if (!text.trim()) throw new Error("OpenAI-compatible returned empty content");
   return extractIdentifyJson(text);
 }

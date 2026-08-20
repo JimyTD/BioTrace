@@ -89,16 +89,23 @@ export function identifyRouteReasonLabel(reason: string): string {
 }
 
 export function identifyRouteActiveLabel(active: string): string {
-  if (active === "zhipu") return t("admin.identifyRoute.zhipu");
+  if (active === "tokenhub" || active === "zhipu") {
+    return t(active === "zhipu" ? "admin.identifyRoute.zhipu" : "admin.identifyRoute.tokenhub");
+  }
   if (active === "none") return t("admin.identifyRoute.none");
   return t("admin.identifyRoute.gemini");
 }
 
-export function identifyProviderName(id: string | null | undefined): string {
+export function identifyProviderName(id: string | null | undefined, model?: string | null): string {
   if (!id) return "—";
-  if (id === "zhipu") return t("admin.identifyRoute.zhipuName");
-  if (id === "gemini") return t("admin.identifyRoute.gemini");
-  return id;
+  let name = id;
+  if (id === "tokenhub") name = t("admin.identifyRoute.tokenhubName");
+  else if (id === "zhipu") name = t("admin.identifyRoute.zhipuName");
+  else if (id === "gemini") name = t("admin.identifyRoute.gemini");
+  else if (id === "user") name = t("identify.provider.user");
+  else if (id === "mock") name = t("identify.provider.mock");
+  const trimmed = model?.trim();
+  return trimmed ? `${name} · ${trimmed}` : name;
 }
 
 export function flagLabel(key: string): string {

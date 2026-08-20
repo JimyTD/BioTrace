@@ -29,10 +29,14 @@ export function apiError(code: string, status: number) {
 export function localizeThrownMessage(message: string): string {
   const key = known[message];
   if (key) return t(key);
-  if (message.includes("GEMINI_API_KEY") && message.includes("ZHIPU")) {
+  if (message.includes("GEMINI_API_KEY") && message.includes("TOKENHUB")) {
     return t("error.identifyUnavailable");
   }
-  if (message.includes("GEMINI_API_KEY") || message.includes("ZHIPU_API_KEY")) {
+  if (
+    message.includes("GEMINI_API_KEY") ||
+    message.includes("ZHIPU_API_KEY") ||
+    message.includes("TOKENHUB_API_KEY")
+  ) {
     return t("error.identifyUnavailable");
   }
   if (

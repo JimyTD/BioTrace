@@ -1,4 +1,4 @@
-export type ProviderId = "gemini" | "zhipu";
+export type ProviderId = "gemini" | "tokenhub";
 
 export type ProviderStatus =
   | "ok"
@@ -26,7 +26,7 @@ export type ProviderHealth = {
 
 const state: Record<ProviderId, ProviderHealth> = {
   gemini: { status: "ok", coolUntil: null, lastErrorAt: null, lastOkAt: null, lastError: null },
-  zhipu: { status: "ok", coolUntil: null, lastErrorAt: null, lastOkAt: null, lastError: null },
+  tokenhub: { status: "ok", coolUntil: null, lastErrorAt: null, lastOkAt: null, lastError: null },
 };
 
 export function getProviderHealth(id: ProviderId): ProviderHealth {

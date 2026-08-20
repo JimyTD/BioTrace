@@ -25,16 +25,10 @@ export const SECRET_SLOTS: readonly SecretSlot[] = [
     group: "identify",
   },
   {
-    id: "zhipuApiKey",
-    env: "ZHIPU_API_KEY",
-    kind: "secret",
-    group: "identify",
-  },
-  {
     id: "tokenhubApiKey",
     env: "TOKENHUB_API_KEY",
     kind: "secret",
-    group: "rarity",
+    group: "identify",
   },
   {
     id: "resendApiKey",
@@ -72,13 +66,6 @@ export const SECRET_SLOTS: readonly SecretSlot[] = [
   {
     id: "geminiModel",
     env: "GEMINI_MODEL",
-    kind: "setting",
-    group: "model",
-    valueType: "string",
-  },
-  {
-    id: "zhipuVlModel",
-    env: "ZHIPU_VL_MODEL",
     kind: "setting",
     group: "model",
     valueType: "string",

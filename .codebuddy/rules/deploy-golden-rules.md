@@ -17,7 +17,7 @@
 ## 2. 隐私信息彻底抽离 git（永不入库）
 
 - 真实密钥**只存在于服务器本地** `deploy/.env.production`（已 gitignore，历史从未入库）。
-  - 含：`RESEND_API_KEY` / `GEMINI_API_KEY` / `ZHIPU_API_KEY` / `SESSION_SECRET` / `HTTPS_PROXY` 等。
+  - 含：`RESEND_API_KEY` / `GEMINI_API_KEY` / `TOKENHUB_API_KEY` / `SESSION_SECRET` / `HTTPS_PROXY` 等。
 - git 里只放 `deploy/.env.production.example`（全占位符模板）。
 - **绝对禁止**把真实密钥写进任何入库文件——包括代码、文档、注释、commit message。
 - `*.pem` 等证书私钥同样 gitignore，永不入库。

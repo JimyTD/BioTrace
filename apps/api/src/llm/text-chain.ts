@@ -3,9 +3,10 @@
  * 按 env.rarityTextModels 顺序试：限流/抖动就地退避重试，配额耗尽或鉴权失败则打冷却降到下一档。
  * 返回值带上实际生效的模型名——缓存要记它，事后才查得出某一行是哪档模型判的。
  */
-import { Agent, fetch as undiciFetch } from "undici";
+import { fetch as undiciFetch } from "undici";
 import { env } from "../env.js";
-import { classifyProviderError, parseRetryDelayMs, type ErrorKind } from "../identify/health.js";
+import type { ErrorKind } from "../identify/health.js";
+import { classifyTokenhubError, tokenhubCoolMsFor, tokenhubDirectAgent } from "./tokenhub.js";
 
 export type TextChainResult = { content: string; model: string };
 
@@ -27,17 +28,6 @@ function healthOf(model: string): ModelHealth {
   return h;
 }
 
-/**
- * 必须显式直连：`identify/gemini.ts` 用 setGlobalDispatcher 装了出境代理，
- * 若沿用全局 dispatcher，对 TokenHub（国内服务）的请求会被绕去境外代理再回来。
- * 同 `settle/geo/tiandituGeocode.ts` 的处理。
- */
-let directAgent: Agent | null = null;
-function agent(): Agent {
-  if (!directAgent) directAgent = new Agent();
-  return directAgent;
-}
-
 function sleep(ms: number) {
   return new Promise((r) => setTimeout(r, ms));
 }
@@ -52,31 +42,6 @@ const MODEL_QUIRKS: Record<string, { temperature?: number; sendThinking?: boolea
   // 只接受 temperature 0.6，发 0 会 400。
   "kimi-k3": { temperature: 0.6, sendThinking: false },
 };
-
-/**
- * TokenHub 的网关错误码会撞上通用分类器：`401006`（endpoint is inactive）里带 "401"
- * 会被当成鉴权失败冷却半小时，而它实际上是瞬态，重试即通。
- */
-function classifyTokenhubError(message: string): ErrorKind {
-  if (/endpoint is inactive|HTTP 402/i.test(message)) return "transient";
-  return classifyProviderError(message);
-}
-
-/** 鉴权失败与彻底不认这个模型名都不该反复撞，冷却给长一点。 */
-function coolMsFor(kind: ErrorKind, message: string): number {
-  switch (kind) {
-    case "rate_limited":
-      return parseRetryDelayMs(message);
-    case "daily_exhausted":
-      return 6 * 60 * 60_000;
-    case "auth":
-      return 30 * 60_000;
-    case "transient":
-      return 20_000;
-    default:
-      return 10 * 60_000;
-  }
-}
 
 async function callOnce(model: string, prompt: string, system: string): Promise<string> {
   if (!env.tokenhubApiKey) throw new Error("TOKENHUB_API_KEY is not set");
@@ -94,7 +59,7 @@ async function callOnce(model: string, prompt: string, system: string): Promise<
     payload.thinking = { type: env.rarityThinking ? "enabled" : "disabled" };
   }
   const res = await undiciFetch(url, {
-    dispatcher: agent(),
+    dispatcher: tokenhubDirectAgent(),
     method: "POST",
     headers: {
       Authorization: `Bearer ${env.tokenhubApiKey}`,
@@ -144,7 +109,7 @@ export async function callTextChain(
         const retryable = kind === "rate_limited" || kind === "transient";
         if (!retryable || i === attempts) {
           health.set(model, {
-            coolUntil: now() + coolMsFor(kind, message),
+            coolUntil: now() + tokenhubCoolMsFor(kind, message),
             lastError: message.slice(0, 400),
             lastErrorKind: kind,
             lastOkAt: h.lastOkAt,
@@ -152,7 +117,9 @@ export async function callTextChain(
           console.warn(`[rarity] model ${model} ${kind}, 降级下一档: ${message.slice(0, 160)}`);
           break;
         }
-        await sleep(Math.min(30_000, kind === "rate_limited" ? parseRetryDelayMs(message) : 2_000 * i));
+        await sleep(
+          Math.min(30_000, kind === "rate_limited" ? tokenhubCoolMsFor(kind, message) : 2_000 * i),
+        );
       }
     }
   }

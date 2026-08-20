@@ -266,6 +266,7 @@ observationRoutes.post("/:id/reidentify", async (c) => {
       taxonKey: null,
       acceptedTaxonomyJson: null,
       identifyProvider: null,
+      identifyModel: null,
       settledAt: null,
       updatedAt: now,
     })

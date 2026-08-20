@@ -103,8 +103,10 @@ export const observations = sqliteTable(
      * 旧行可空。
      */
     acceptedTaxonomyJson: text("accepted_taxonomy_json"),
-    /** Identify provider id: gemini | zhipu */
+    /** Identify provider id: gemini | tokenhub | user | mock（旧行可能为 zhipu） */
     identifyProvider: text("identify_provider"),
+    /** 真正出货的模型名（TokenHub 视觉链档位；Gemini 为 GEMINI_MODEL） */
+    identifyModel: text("identify_model"),
     settledAt: integer("settled_at", { mode: "timestamp_ms" }),
     createdAt: integer("created_at", { mode: "timestamp_ms" }).notNull(),
     updatedAt: integer("updated_at", { mode: "timestamp_ms" }).notNull(),
@@ -232,7 +234,7 @@ export const adminAuditLog = sqliteTable("admin_audit_log", {
   createdAt: integer("created_at", { mode: "timestamp_ms" }).notNull(),
 });
 
-/** Platform Gemini / Zhipu identify calls per UTC day. */
+/** Platform Gemini / TokenHub identify calls per UTC day. */
 export const identifyProviderDaily = sqliteTable(
   "identify_provider_daily",
   {

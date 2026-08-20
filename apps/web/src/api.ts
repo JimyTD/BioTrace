@@ -82,6 +82,7 @@ export type Observation = {
   alertIntroduced: boolean;
   taxonKey: string | null;
   identifyProvider: string | null;
+  identifyModel?: string | null;
   settledAt: string | null;
   createdAt: string;
   updatedAt: string;
@@ -158,10 +159,12 @@ export type HealthResponse = {
   ok: boolean;
   devAuth?: boolean;
   geminiConfigured: boolean;
+  tokenhubConfigured?: boolean;
   zhipuConfigured?: boolean;
   providers?: {
     gemini: ProviderHealthSnap;
-    zhipu: ProviderHealthSnap;
+    tokenhub?: ProviderHealthSnap;
+    zhipu?: ProviderHealthSnap;
   };
   identifyQueue?: { pending: number; running: number };
 };

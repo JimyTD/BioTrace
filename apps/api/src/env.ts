@@ -37,15 +37,14 @@ function parseCorsOrigins(): string[] {
 }
 
 const RARITY_MODEL_CHAIN_DEFAULT = ["glm-5.3", "glm-5.2", "kimi-k3", "glm-5.1"];
+const IDENTIFY_VL_CHAIN_DEFAULT = ["glm-5v-turbo", "kimi-k2.6", "hy-vision-2.0-instruct"];
 
-function parseModelChain(): string[] {
-  const raw = process.env.RARITY_TEXT_MODELS?.trim();
-  if (!raw) return RARITY_MODEL_CHAIN_DEFAULT;
-  const list = raw
+function parseModelChain(raw: string | undefined, fallback: string[]): string[] {
+  const list = (raw ?? "")
     .split(",")
     .map((s) => s.trim())
     .filter(Boolean);
-  return list.length ? list : RARITY_MODEL_CHAIN_DEFAULT;
+  return list.length ? list : fallback;
 }
 
 function parseCookieSecure(): boolean {
@@ -73,14 +72,19 @@ export const env = {
   zhipuApiKey: process.env.ZHIPU_API_KEY?.trim() || "",
   zhipuVlModel: process.env.ZHIPU_VL_MODEL?.trim() || "glm-4v-flash",
   zhipuBaseUrl: process.env.ZHIPU_BASE_URL?.trim() || "https://open.bigmodel.cn/api/paas/v4",
-  /** TokenHub 在线推理（稀有度量表 + 标定脚本）。Coding Plan / Token Plan 的套餐 Key 不能用于脚本。 */
+  /** TokenHub 在线推理（稀有度量表 + 识图回退 + 标定脚本）。Coding Plan / Token Plan 的套餐 Key 不能用于脚本。 */
   tokenhubApiKey: process.env.TOKENHUB_API_KEY?.trim() || "",
   tokenhubBaseUrl: process.env.TOKENHUB_BASE_URL?.trim() || "https://tokenhub.tencentmaas.com/v1",
   /**
    * 稀有度量表的模型优先级链（TokenHub 单 key，只换模型名）。
    * 按序试，某档配额耗尽/鉴权失败就打冷却降到下一档；生效模型名会写进缓存供事后查证。
    */
-  rarityTextModels: parseModelChain(),
+  rarityTextModels: parseModelChain(process.env.RARITY_TEXT_MODELS, RARITY_MODEL_CHAIN_DEFAULT),
+  /**
+   * 识图回退视觉链（同一把 TokenHub Key，只换模型名）。
+   * Gemini 日额耗尽后按序试；免费额度用尽就降下一档，不开后付费。
+   */
+  identifyVlModels: parseModelChain(process.env.IDENTIFY_VL_MODELS, IDENTIFY_VL_CHAIN_DEFAULT),
   /** 每物种采样次数。一次采样 = 3 批调用。 */
   raritySamples: Number(process.env.RARITY_SAMPLES ?? 1),
   /** 得分离档位界不超过这个距离就补采样到 rarityEdgeSamples，别让一道噪声题决定档位。 */
@@ -116,7 +120,7 @@ export const env = {
   /** On-demand GBIF occurrence counts for rarity; disable for offline/dev. */
   gbifEnabled: (process.env.GBIF_ENABLED ?? "1") === "1",
   identifyConcurrency: Number(process.env.IDENTIFY_CONCURRENCY ?? 1),
-  /** Max time to wait on a short Gemini cool-down before switching to GLM. */
+  /** Max time to wait on a short Gemini cool-down before switching to TokenHub VL. */
   identifyGeminiWaitMaxMs: Number(process.env.IDENTIFY_GEMINI_WAIT_MAX_MS ?? 90_000),
   /** Wall-clock budget for one observation identify (wait + calls). */
   identifyJobDeadlineMs: Number(process.env.IDENTIFY_JOB_DEADLINE_MS ?? 900_000),

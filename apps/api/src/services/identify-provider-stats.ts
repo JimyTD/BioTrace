@@ -69,10 +69,10 @@ export async function providerStatsToday(): Promise<Record<ProviderId, ProviderD
   });
   const out: Record<ProviderId, ProviderDayStats> = {
     gemini: { ...empty },
-    zhipu: { ...empty },
+    tokenhub: { ...empty },
   };
   for (const row of rows) {
-    if (row.provider === "gemini" || row.provider === "zhipu") {
+    if (row.provider === "gemini" || row.provider === "tokenhub") {
       out[row.provider] = {
         success: row.success,
         fail: row.fail,

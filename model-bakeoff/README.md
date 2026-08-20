@@ -2,6 +2,8 @@
 
 同图、同 Prompt，对多家视觉 API 跑一遍，结果落在 `results/`。
 
+生产识图已不再用智谱 `glm-4v-flash`（现网是 Gemini → TokenHub 视觉链，见 [`docs/SPEC.md`](../docs/SPEC.md) §1.1）。本目录仍可对照测评任意视觉 API。
+
 **地点与日期默认从图片 EXIF 读取**（GPS → 坐标；DateTimeOriginal → 日期）。  
 有 GPS 时会再逆地理成可读地名（OpenStreetMap Nominatim，需外网）。  
 对照模式仍会跑一遍「去掉地点」以测纠偏效果。

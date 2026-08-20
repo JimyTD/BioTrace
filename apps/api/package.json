@@ -15,7 +15,8 @@
     "volumes:smoke": "tsx scripts/smoke-volumes.mjs",
     "volumes:resolve-smoke": "tsx scripts/smoke-volumes-resolve.mjs",
     "taxonkey:smoke": "tsx scripts/smoke-taxon-key.mjs",
-    "identify:guard-smoke": "tsx scripts/smoke-identify-guard.mjs"
+    "identify:guard-smoke": "tsx scripts/smoke-identify-guard.mjs",
+    "identify:vl-ping": "tsx scripts/smoke-identify-vl-ping.ts"
   },
   "dependencies": {
     "@biotrace/messages": "workspace:*",

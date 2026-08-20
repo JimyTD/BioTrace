@@ -9,6 +9,7 @@ import type { IdentifyInput, IdentifyResult } from "./types.js";
 export type IdentifyRunOutcome = {
   result: IdentifyResult;
   provider: string;
+  model: string | null;
 };
 
 /**
@@ -26,21 +27,21 @@ export async function runIdentifyForUser(
       throw new Error("identify_user_key_incomplete");
     }
     if (env.identifyMock) {
-      return { result: mockIdentifyResult(input), provider: "mock" };
+      return { result: mockIdentifyResult(input), provider: "mock", model: null };
     }
     const result = await identifyWithOpenAICompatible(input, own.creds);
-    return { result, provider: "user" };
+    return { result, provider: "user", model: own.creds.model };
   }
 
   if (env.identifyMock) {
     const allowed = await tryConsumePlatformIdentifyQuota(userId);
     if (!allowed) throw new Error("identify_daily_limit");
-    return { result: mockIdentifyResult(input), provider: "mock" };
+    return { result: mockIdentifyResult(input), provider: "mock", model: null };
   }
 
   const allowed = await tryConsumePlatformIdentifyQuota(userId);
   if (!allowed) throw new Error("identify_daily_limit");
 
   const outcome = await identifyWithFallback(input);
-  return { result: outcome.result, provider: outcome.provider };
+  return { result: outcome.result, provider: outcome.provider, model: outcome.model };
 }
