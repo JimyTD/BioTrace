@@ -68,7 +68,11 @@ export const env = {
   /** 侧载 APK 发布目录：仅保留最新 BioTrace.apk + latest.json。 */
   androidReleaseDir,
   geminiApiKey: process.env.GEMINI_API_KEY?.trim() || "",
-  geminiModel: process.env.GEMINI_MODEL?.trim() || "gemini-flash-latest",
+  /**
+   * 钉死 3.6：8/10–13 稳定期 `gemini-flash-latest` 实际指向它。
+   * 8/13 发布 3.7 后别名漂走，免费层大量 503。不要再用 `-latest`。
+   */
+  geminiModel: process.env.GEMINI_MODEL?.trim() || "gemini-3.6-flash",
   zhipuApiKey: process.env.ZHIPU_API_KEY?.trim() || "",
   zhipuVlModel: process.env.ZHIPU_VL_MODEL?.trim() || "glm-4v-flash",
   zhipuBaseUrl: process.env.ZHIPU_BASE_URL?.trim() || "https://open.bigmodel.cn/api/paas/v4",

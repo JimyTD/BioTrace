@@ -146,7 +146,7 @@ NODE_ENV=production
 RESEND_API_KEY=
 MAIL_FROM=BioTrace <onboarding@resend.dev>
 GEMINI_API_KEY=
-GEMINI_MODEL=gemini-flash-latest
+GEMINI_MODEL=gemini-3.6-flash
 HTTPS_PROXY=
 #↑ 大陆机需出境（Resend/Gemini）时填宿主机代理：http://host.docker.internal:10809，先按 §6.5 搭好Xray→SG1
 TOKENHUB_API_KEY=
@@ -269,7 +269,7 @@ curl -s http://127.0.0.1:8787/api/health   # devAuth 应为 false
 编辑 `deploy/.env.production` 后 `docker compose up -d --force-recreate`。
 
 - **TokenHub（国内直连，稀有度 + 识图回退共用一把 Key）**：`TOKENHUB_API_KEY=...`。识图回退按 `IDENTIFY_VL_MODELS`（默认 `glm-5v-turbo` → `kimi-k2.6` → `hy-vision-2.0-instruct`）。
-- **Gemini（国内需境外代理）**：`GEMINI_API_KEY=...`。`HTTPS_PROXY` 已就位（§6.5），**只填 Key 重启即可**，Gemini 自动走新加坡出境，无需再动网络配置。
+- **Gemini（国内需境外代理）**：`GEMINI_API_KEY=...`，模型钉死 `GEMINI_MODEL=gemini-3.6-flash`（8/10–13 稳定期 `gemini-flash-latest` 的实际指向；**不要用 `-latest`**，会漂到最新 Flash，免费层易 503）。`HTTPS_PROXY` 已就位（§6.5），只填 Key 重启即可，Gemini 自动走新加坡出境。
 - 两者都配时：Gemini 为主，限流/日额尽自动切 TokenHub 视觉链。
 - 验证：`curl -s http://127.0.0.1:8787/api/health` 看 `geminiConfigured`/`tokenhubConfigured`；实际识图时日志出现 `[identify] ok provider=gemini|tokenhub`。
 

@@ -2,6 +2,7 @@ import { useEffect, useLayoutEffect, useRef, useState } from "react";
 import { Link, useLocation, useNavigate, useParams } from "react-router-dom";
 import { formatRank, t, type MessageKey } from "@biotrace/messages";
 import { acceptedScientificIfDifferent, api, type Observation, type Taxonomy } from "../api";
+import { identifyDisplayName } from "../identifyLabel";
 import ConfirmDialog from "../components/ConfirmDialog";
 import ReidentifyDialog from "../components/ReidentifyDialog";
 import {
@@ -38,13 +39,6 @@ const RANK_ORDER = [
 
 function rankLabel(rank: (typeof RANK_ORDER)[number]) {
   return t(`rank.${rank}` as MessageKey);
-}
-
-function identifyProviderName(provider: string | null | undefined) {
-  if (!provider) return null;
-  const key = `identify.provider.${provider}` as MessageKey;
-  const name = t(key);
-  return name === key ? provider : name;
 }
 
 function locationText(obs: Observation) {
@@ -255,7 +249,7 @@ export default function ObservationDetailPage() {
     !!obs && (obs.status === "settled" || (obs.status === "failed" && !notCollectible));
   const failHint = obs?.status === "failed" ? identifyErrorHint(obs.error) : null;
   const hasCoords = obs ? hasValidCoords(obs.lat, obs.lng) : false;
-  const identifyName = obs ? identifyProviderName(obs.identifyProvider) : null;
+  const identifyName = obs ? identifyDisplayName(obs.identifyProvider, obs.identifyModel) : null;
   const acceptedSci = obs && !notCollectible ? acceptedScientificIfDifferent(obs) : null;
 
   return (

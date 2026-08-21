@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import { Link, useLocation, useNavigate, useParams } from "react-router-dom";
 import { formatRank, hasMessage, t, type MessageKey } from "@biotrace/messages";
 import { acceptedScientificIfDifferent, api, type Observation, type Rarity, type SettleVolumesResult } from "../api";
+import { identifyByLine } from "../identifyLabel";
 import { SettlePackStage } from "../components/SettlePackStage";
 import { peekObservation, rememberObservation } from "../pageCache";
 import { peekLiftBackground } from "../photoLiftHandoff";
@@ -10,13 +11,6 @@ import { volumeCeremonyBgUrl, volumeSealCompleteUrl } from "../themes";
 function rarityLabel(r: Rarity | null) {
   if (!r) return "—";
   return t(`rarity.${r}` as MessageKey);
-}
-
-function identifyByLine(provider: string | null | undefined) {
-  if (!provider) return null;
-  const key = `identify.provider.${provider}` as MessageKey;
-  const name = t(key);
-  return t("identify.by", { name: name === key ? provider : name });
 }
 
 function msgKey(key: string): string {
@@ -182,7 +176,7 @@ export default function ObservationSettlePage() {
                     <span className="muted">{t("detail.acceptedScientificName", { name: acceptedSci })}</span>
                   ) : null}
                   {(() => {
-                    const by = identifyByLine(obs.identifyProvider);
+                    const by = identifyByLine(obs.identifyProvider, obs.identifyModel);
                     return by ? <span className="muted identify-by">{by}</span> : null;
                   })()}
                   {obs.finestReliableRank ? (
