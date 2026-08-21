@@ -12,10 +12,12 @@ function themeLabel(id: ThemeId) {
 export default function MePage({
   user,
   onLogout,
+  onOpenHelp,
 }: {
   user: User;
   onLogout: () => void;
   onUserUpdated?: (user: User) => void;
+  onOpenHelp?: () => void;
 }) {
   const [identifyQuota, setIdentifyQuota] = useState<IdentifyQuota | null>(null);
   const displayName = user.displayName?.trim() || user.email;
@@ -76,6 +78,12 @@ export default function MePage({
             </span>
           </span>
         </Link>
+        <button className="me-row" type="button" onClick={onOpenHelp}>
+          <span>{t("me.help")}</span>
+          <span className="me-row-go" aria-hidden>
+            ›
+          </span>
+        </button>
         <Link className="me-row" to="/me/about">
           <span>{t("me.about")}</span>
           <span className="me-row-go" aria-hidden>

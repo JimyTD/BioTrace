@@ -1,0 +1,541 @@
+<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>首次引导 · 插页</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;600;700&display=swap" rel="stylesheet" />
+    <style>
+      :root {
+        --ink: #1f2a24;
+        --muted: #6b6258;
+        --line: rgba(42, 64, 51, 0.14);
+        --cta: #d3543c;
+        --cta-ink: #fffaf7;
+        --nav-bg: #f3efe7;
+        --nav-active-ink: #9a4030;
+        --plate: #efe6d6;
+        --card: #faf8f3;
+        --dot: #3a322c;
+        --dot-on: #d3543c;
+        --font: "Outfit", "PingFang SC", "Microsoft YaHei", sans-serif;
+        --paper:
+          radial-gradient(ellipse 120% 70% at 8% -18%, rgba(212, 168, 120, 0.34) 0%, transparent 56%),
+          radial-gradient(ellipse 80% 55% at 100% 108%, rgba(90, 70, 48, 0.07) 0%, transparent 52%),
+          linear-gradient(168deg, #f6f1e8 0%, #efe8dc 46%, #e9e1d4 100%);
+        --cover-shadow: 0 10px 26px rgba(42, 36, 28, 0.1);
+      }
+      * { box-sizing: border-box; }
+      body {
+        margin: 0;
+        padding: 16px 12px 48px;
+        font-family: var(--font);
+        color: var(--ink);
+        background: #cfc6b8;
+      }
+      h1.doc { margin: 0 0 8px; font-size: 1.15rem; }
+      .note {
+        margin: 0 0 16px;
+        color: #5a5248;
+        font-size: 0.92rem;
+        max-width: 62ch;
+        line-height: 1.55;
+      }
+      code { font-size: 0.86em; }
+      .phone {
+        position: relative;
+        width: min(100%, 360px);
+        height: 640px;
+        border-radius: 22px;
+        border: 1px solid rgba(42, 36, 28, 0.18);
+        box-shadow: 0 16px 40px rgba(42, 36, 28, 0.16);
+        overflow: hidden;
+        background: var(--paper);
+        display: grid;
+        grid-template-rows: auto 1fr auto;
+      }
+      .topbar {
+        padding: 12px 16px 10px;
+        background: var(--nav-bg);
+        border-bottom: 1px solid var(--line);
+        font-weight: 700;
+        letter-spacing: 0.04em;
+      }
+      .nav {
+        display: grid;
+        grid-template-columns: repeat(4, 1fr);
+        padding: 0 4px 8px;
+        background: var(--nav-bg);
+        border-top: 1px solid var(--line);
+      }
+      .nav span {
+        position: relative;
+        text-align: center;
+        font-size: 0.86rem;
+        color: var(--muted);
+        padding: 12px 6px 14px;
+      }
+      .nav span.on { color: var(--nav-active-ink); font-weight: 700; }
+      .nav span.on::after {
+        content: "";
+        position: absolute;
+        left: 22%; right: 22%; bottom: 6px;
+        height: 2px;
+        background: var(--nav-active-ink);
+      }
+      .main { position: relative; min-height: 0; }
+
+      .shelf {
+        padding: 16px;
+        display: grid;
+        gap: 12px;
+        align-content: start;
+      }
+      .shelf h2 { margin: 0; font-size: 1.45rem; font-weight: 700; }
+      .shelf p { margin: 0; color: var(--muted); }
+
+      .folio {
+        position: absolute;
+        inset: 0;
+        display: grid;
+        grid-template-rows: 1fr auto;
+        padding: 28px 32px 18px;
+        background: var(--paper);
+        cursor: pointer;
+      }
+      .folio.is-gone {
+        visibility: hidden;
+        pointer-events: none;
+      }
+      .mast {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        min-height: 0;
+      }
+      .colophon {
+        display: grid;
+        justify-items: center;
+        padding-top: 8px;
+      }
+      .lede {
+        margin: 0;
+        width: 100%;
+        text-align: center;
+        color: var(--muted);
+        font-size: 0.95rem;
+        line-height: 1.55;
+        text-wrap: pretty;
+        word-break: keep-all;
+      }
+      .folio.is-map {
+        padding: 0;
+        grid-template-rows: 1fr auto;
+      }
+      .folio.is-map .mast {
+        align-items: stretch;
+      }
+      .folio.is-map .colophon {
+        padding: 16px 32px 18px;
+        background: color-mix(in srgb, var(--paper) 88%, transparent);
+      }
+      .rule {
+        width: 40px;
+        height: 1px;
+        margin: 22px 0 18px;
+        background: color-mix(in srgb, var(--ink) 35%, transparent);
+      }
+      .links {
+        display: flex;
+        width: 100%;
+        align-items: center;
+        justify-content: space-between;
+      }
+      .text-link {
+        border: 0;
+        background: none;
+        padding: 0;
+        font: inherit;
+        color: var(--ink);
+        text-decoration: underline;
+        text-underline-offset: 3px;
+        cursor: pointer;
+      }
+      .text-link.quiet { color: var(--muted); }
+      .btn {
+        border: 0;
+        border-radius: 10px;
+        padding: 10px 16px;
+        font: inherit;
+        font-weight: 600;
+        background: var(--cta);
+        color: var(--cta-ink);
+        cursor: pointer;
+      }
+
+      /* 旅途：用户封面 + 封面框，不是套册图 */
+      .cover {
+        width: 86%;
+        aspect-ratio: 3 / 2;
+        border-radius: 12px;
+        overflow: hidden;
+        background: var(--plate);
+        box-shadow: var(--cover-shadow);
+        position: relative;
+        transform: rotate(-1.2deg);
+      }
+      .cover .window {
+        position: absolute;
+        top: 6%; left: 6%;
+        width: 88%; height: 88%;
+        overflow: hidden;
+      }
+      .cover .window img,
+      .cover .frame {
+        width: 100%; height: 100%;
+        display: block;
+      }
+      .cover .window img { object-fit: cover; }
+      .cover .frame {
+        position: absolute;
+        inset: 0;
+        object-fit: fill;
+        pointer-events: none;
+      }
+
+      /* 地图：铺满主区，底图用内置 Natural Earth 简图 */
+      .fold {
+        position: relative;
+        width: 100%;
+        height: 100%;
+        overflow: hidden;
+        background: #c5d6e8;
+      }
+      .fold .basemap {
+        position: absolute;
+        inset: 0;
+        width: 100%;
+        height: 100%;
+        display: block;
+      }
+      .fold .attrib {
+        position: absolute;
+        right: 6px;
+        bottom: 4px;
+        z-index: 2;
+        font-size: 0.62rem;
+        color: #3a3a3a;
+        background: rgba(255, 255, 255, 0.78);
+        padding: 2px 6px;
+      }
+      .dot {
+        position: absolute;
+        width: 14px;
+        height: 14px;
+        border-radius: 50%;
+        background: var(--dot);
+        border: 2px solid #fffdf9;
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+      }
+      .dot.on {
+        width: 18px;
+        height: 18px;
+        background: var(--dot-on);
+        box-shadow: 0 0 0 4px rgba(211, 84, 60, 0.3);
+      }
+
+      /* 图鉴：邮票，不是旅途封面 */
+      .stamp {
+        width: 58%;
+        aspect-ratio: 1;
+        position: relative;
+        transform: rotate(1.2deg);
+        filter: drop-shadow(0 10px 22px rgba(42, 36, 28, 0.14));
+      }
+      .stamp .photo {
+        position: absolute;
+        inset: 8%;
+        overflow: hidden;
+        background: var(--plate);
+      }
+      .stamp .photo img {
+        width: 100%; height: 100%;
+        object-fit: cover;
+        display: block;
+      }
+      .stamp .frame {
+        position: absolute;
+        inset: 0;
+        width: 100%; height: 100%;
+        object-fit: fill;
+        pointer-events: none;
+      }
+    </style>
+  </head>
+  <body>
+    <h1 class="doc">首次引导 · 插页</h1>
+    <p class="note">
+      四个页签里「我的」不介绍。三张纸分别是旅途、地图、图鉴。须用
+      <code>http://127.0.0.1:5173/onboard/preview.html</code>
+    </p>
+
+    <div class="phone">
+      <div class="topbar">BioTrace</div>
+      <div class="main">
+        <div class="shelf">
+          <h2>旅途</h2>
+          <p>每一次出门，都是一本新相册。</p>
+          <div class="cover" style="width:100%;transform:none;margin-top:6px">
+            <div class="window">
+              <img src="/trips/_sample-photo.jpg" alt="" />
+            </div>
+            <img class="frame" src="/trips/daylight/cover-frame.svg" alt="" />
+          </div>
+        </div>
+
+        <div class="folio" id="folio">
+          <div class="mast" id="mast"></div>
+          <div class="colophon">
+            <p class="lede" id="lede"></p>
+            <div class="rule" aria-hidden></div>
+            <div class="links">
+              <button class="text-link quiet" type="button" id="skip">跳过</button>
+              <button class="text-link" type="button" id="turn">继续</button>
+            </div>
+          </div>
+        </div>
+      </div>
+      <nav class="nav" id="nav">
+        <span data-tab="trips">旅途</span>
+        <span data-tab="map">地图</span>
+        <span data-tab="collection">图鉴</span>
+        <span data-tab="me">我的</span>
+      </nav>
+    </div>
+
+    <script>
+      const pages = [
+        {
+          tab: "trips",
+          lede: "把这一路上的遇见，收进一本相册。",
+          turn: "继续",
+          html:
+            '<div class="cover">' +
+            '<div class="window"><img src="/trips/_sample-photo.jpg" alt=""></div>' +
+            '<img class="frame" src="/trips/daylight/cover-frame.svg" alt="">' +
+            "</div>",
+        },
+        {
+          tab: "map",
+          lede: "地图记得你遇见过的地方。",
+          turn: "继续",
+          html:
+            '<div class="fold">' +
+            '<canvas class="basemap" aria-hidden="true"></canvas>' +
+            '<span class="attrib">Natural Earth</span>' +
+            '<i class="dot" data-lng="104.06" data-lat="30.67"></i>' +
+            '<i class="dot" data-lng="113.26" data-lat="23.13"></i>' +
+            '<i class="dot on" data-lng="121.47" data-lat="31.23"></i>' +
+            "</div>",
+        },
+        {
+          tab: "collection",
+          lede: "一张邮票，就是一次收下的遇见。",
+          turn: "新建旅途",
+          html:
+            '<div class="stamp">' +
+            '<div class="photo"><img src="/trips/_sample-photo.jpg" alt=""></div>' +
+            '<img class="frame" src="/volumes/daylight/stamp-frame.svg" alt="">' +
+            "</div>",
+        },
+      ];
+
+      const folio = document.getElementById("folio");
+      const mast = document.getElementById("mast");
+      const lede = document.getElementById("lede");
+      const turn = document.getElementById("turn");
+      const skip = document.getElementById("skip");
+      const nav = document.getElementById("nav");
+      let i = 0;
+      let busy = false;
+
+      let countriesP = null;
+      const MAP_CENTER = [20, 18];
+      const MAP_ZOOM = 1.15;
+      const FILL = {
+        1: "#e7dfd2",
+        2: "#e2d7c4",
+        3: "#ebe3d6",
+        4: "#ddd2c0",
+        5: "#e9e0d0",
+        6: "#e0d5c2",
+        7: "#efe6da",
+      };
+
+      function loadCountries() {
+        countriesP ??= fetch("/map/ne_50m_countries_chn_pov.geojson").then((r) => r.json());
+        return countriesP;
+      }
+
+      function mercX(lng) {
+        return (lng + 180) / 360;
+      }
+      function mercY(lat) {
+        const s = Math.sin((lat * Math.PI) / 180);
+        const y = 0.5 - Math.log((1 + s) / (1 - s)) / (4 * Math.PI);
+        return Math.min(1, Math.max(0, y));
+      }
+      function project(lng, lat, w, h) {
+        const scale = 256 * 2 ** MAP_ZOOM;
+        return [
+          w / 2 + (mercX(lng) - mercX(MAP_CENTER[0])) * scale,
+          h / 2 + (mercY(lat) - mercY(MAP_CENTER[1])) * scale,
+        ];
+      }
+
+      function drawRing(ctx, ring, w, h) {
+        if (!ring || ring.length < 3) return false;
+        ctx.beginPath();
+        let started = false;
+        let prev = null;
+        for (const pt of ring) {
+          const [x, y] = project(pt[0], pt[1], w, h);
+          if (prev && Math.abs(pt[0] - prev[0]) > 180) {
+            ctx.closePath();
+            ctx.beginPath();
+            started = false;
+          }
+          if (!started) ctx.moveTo(x, y);
+          else ctx.lineTo(x, y);
+          started = true;
+          prev = pt;
+        }
+        ctx.closePath();
+        return started;
+      }
+
+      function walkPolys(geom, visit) {
+        if (!geom) return;
+        if (geom.type === "Polygon") visit(geom.coordinates);
+        else if (geom.type === "MultiPolygon") {
+          for (const poly of geom.coordinates) visit(poly);
+        }
+      }
+
+      async function paintBasemap(fold) {
+        const canvas = fold.querySelector("canvas.basemap");
+        if (!canvas) return;
+        const data = await loadCountries();
+        if (!fold.isConnected) return;
+        const dpr = Math.min(2, window.devicePixelRatio || 1);
+        const w = fold.clientWidth;
+        const h = fold.clientHeight;
+        if (w < 8 || h < 8) return;
+        canvas.width = Math.round(w * dpr);
+        canvas.height = Math.round(h * dpr);
+        const ctx = canvas.getContext("2d");
+        ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+        ctx.fillStyle = "#c5d6e8";
+        ctx.fillRect(0, 0, w, h);
+        ctx.lineJoin = "round";
+        for (const feat of data.features) {
+          const color = FILL[feat.properties.c] || "#e8e0d4";
+          walkPolys(feat.geometry, (poly) => {
+            ctx.fillStyle = color;
+            if (drawRing(ctx, poly[0], w, h)) ctx.fill();
+            for (let i = 1; i < poly.length; i++) {
+              ctx.fillStyle = "#c5d6e8";
+              if (drawRing(ctx, poly[i], w, h)) ctx.fill();
+            }
+          });
+        }
+        ctx.strokeStyle = "rgba(143, 127, 104, 0.85)";
+        ctx.lineWidth = 0.5;
+        for (const feat of data.features) {
+          walkPolys(feat.geometry, (poly) => {
+            if (drawRing(ctx, poly[0], w, h)) ctx.stroke();
+          });
+        }
+        fold.querySelectorAll(".dot").forEach((el) => {
+          const lng = Number(el.dataset.lng);
+          const lat = Number(el.dataset.lat);
+          const [x, y] = project(lng, lat, w, h);
+          el.style.left = x + "px";
+          el.style.top = y + "px";
+          el.style.margin = 0;
+          el.style.transform = "translate(-50%, -50%)";
+        });
+      }
+
+      function paint() {
+        const p = pages[i];
+        mast.innerHTML = p.html;
+        lede.textContent = p.lede;
+        turn.textContent = p.turn;
+        turn.className = i === pages.length - 1 ? "btn" : "text-link";
+        folio.classList.toggle("is-map", p.tab === "map");
+        nav.querySelectorAll("span").forEach((el) => {
+          el.classList.toggle("on", el.dataset.tab === p.tab);
+        });
+        if (p.tab === "map") {
+          const fold = mast.querySelector(".fold");
+          requestAnimationFrame(() => {
+            void paintBasemap(fold);
+          });
+        }
+      }
+
+      async function fadeTo(next) {
+        if (busy) return;
+        busy = true;
+        const reduced = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+        if (!reduced) {
+          const a = folio.animate([{ opacity: 1 }, { opacity: 0 }], {
+            duration: 180,
+            easing: "ease-in",
+            fill: "forwards",
+          });
+          await a.finished.catch(() => {});
+          a.cancel();
+        }
+        next();
+        if (!folio.classList.contains("is-gone") && !reduced) {
+          const b = folio.animate([{ opacity: 0 }, { opacity: 1 }], {
+            duration: 280,
+            easing: "ease-out",
+          });
+          await b.finished.catch(() => {});
+        }
+        folio.style.opacity = "";
+        busy = false;
+      }
+
+      function closeFolio() {
+        folio.classList.add("is-gone");
+        folio.classList.remove("is-map");
+        nav.querySelectorAll("span").forEach((el) => {
+          el.classList.toggle("on", el.dataset.tab === "trips");
+        });
+      }
+
+      folio.addEventListener("click", (e) => {
+        if (e.target.closest("#skip")) return;
+        if (i >= pages.length - 1) {
+          void fadeTo(closeFolio);
+          return;
+        }
+        void fadeTo(() => {
+          i += 1;
+          paint();
+        });
+      });
+      skip.addEventListener("click", (e) => {
+        e.stopPropagation();
+        void fadeTo(closeFolio);
+      });
+      paint();
+    </script>
+  </body>
+</html>

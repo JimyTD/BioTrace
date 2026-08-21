@@ -48,6 +48,14 @@ export const zh = {
   "auth.resetMailText": "你的 BioTrace 密码重置码是：{code}\n\n15 分钟内有效。如非本人操作，请忽略本邮件。",
   "auth.resetMailHtml": "<p>你的 BioTrace 密码重置码是：</p><p style=\"font-size:1.5em;letter-spacing:0.2em\"><strong>{code}</strong></p><p>15 分钟内有效。如非本人操作，请忽略本邮件。</p>",
 
+  /* 登录后插页：一页一个功能页签（旅途 / 地图 / 图鉴）。「我的」不介绍。
+     收场按钮用 trips.createLabel。 */
+  "onboard.skip": "跳过",
+  "onboard.turn": "继续",
+  "onboard.tripLede": "把这一路上的遇见，收进一本相册。",
+  "onboard.mapLede": "地图记得你遇见过的地方。",
+  "onboard.collectionLede": "一张邮票，就是一次收下的遇见。",
+
   "trips.title": "旅途",
   "trips.lede": "每一次出门，都是一本新相册。",
   "trips.createLabel": "新建旅途",
@@ -286,6 +294,7 @@ export const zh = {
   "me.accountSecurity": "账号安全",
   "me.identifyAdvanced": "识图高级设置",
   "me.about": "关于",
+  "me.help": "帮助",
   "me.appearance": "外观",
   "me.appearanceLede": "这本相册现在用的纸色。",
   "me.appearanceOn": "使用中",

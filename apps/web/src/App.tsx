@@ -19,6 +19,8 @@ import CollectionSpeciesPage from "./pages/CollectionSpeciesPage";
 import CollectionTreePage from "./pages/CollectionTreePage";
 import CollectionVolumePage from "./pages/CollectionVolumePage";
 import LoginPage from "./pages/LoginPage";
+import OnboardInsert from "./components/OnboardInsert";
+import { hasOnboardSeen, markOnboardSeen } from "./onboardSeen";
 import MapPage from "./pages/MapPage";
 import MeAboutPage from "./pages/MeAboutPage";
 import MeAppearancePage from "./pages/MeAppearancePage";
@@ -72,9 +74,11 @@ function SpeciesListLayout() {
 function AppShell({
   user,
   setUser,
+  onOpenHelp,
 }: {
   user: User;
   setUser: (user: User | null) => void;
+  onOpenHelp: () => void;
 }) {
   const location = useLocation();
   const background = peekLiftBackground(location);
@@ -131,7 +135,10 @@ function AppShell({
             </Route>
             <Route path="/collection/tree" element={<CollectionTreePage />} />
             <Route path="/collection/tree/*" element={<CollectionTreePage />} />
-            <Route path="/me" element={<MePage user={user} onLogout={() => setUser(null)} />} />
+            <Route
+              path="/me"
+              element={<MePage user={user} onLogout={() => setUser(null)} onOpenHelp={onOpenHelp} />}
+            />
             <Route
               path="/me/profile"
               element={<MeProfilePage user={user} onUserUpdated={setUser} />}
@@ -173,6 +180,7 @@ export default function App() {
   const [user, setUser] = useState<User | null>(null);
   const [booting, setBooting] = useState(true);
   const [flyleaf, setFlyleaf] = useState(false);
+  const [onboardReplay, setOnboardReplay] = useState(false);
 
   useEffect(() => {
     api
@@ -196,6 +204,10 @@ export default function App() {
     );
   }
 
+  const showOnboard = Boolean(
+    user && !flyleaf && (onboardReplay || !hasOnboardSeen(user.id)),
+  );
+
   return (
     <>
       {user ? (
@@ -203,12 +215,25 @@ export default function App() {
           <ForceAppUpdateGate enabled />
           <AppShell
             user={user}
+            onOpenHelp={() => setOnboardReplay(true)}
             setUser={(next) => {
               setUser(next);
-              if (!next) setFlyleaf(true);
+              if (!next) {
+                setFlyleaf(true);
+                setOnboardReplay(false);
+              }
             }}
           />
         </>
+      ) : null}
+      {showOnboard && user ? (
+        <OnboardInsert
+          mode={onboardReplay ? "replay" : "first"}
+          onClose={() => {
+            markOnboardSeen(user.id);
+            setOnboardReplay(false);
+          }}
+        />
       ) : null}
       {flyleaf ? (
         <LoginPage

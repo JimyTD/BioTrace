@@ -2574,7 +2574,230 @@ button.species-card-cover {
   z-index: 18;
 }
 
+.page-lift-overlay.is-onboard {
+  padding: 0;
+  overflow: hidden;
+}
+
+.app-shell.is-onboard .nav {
+  pointer-events: none;
+}
+
+.app-shell.is-onboard .nav a.active {
+  color: var(--muted);
+  font-weight: 400;
+}
+
+.app-shell.is-onboard .nav a.active::after {
+  content: none;
+}
+
+.app-shell.is-onboard[data-onboard-tab="trips"] .nav a[href="/"],
+.app-shell.is-onboard[data-onboard-tab="map"] .nav a[href="/map"],
+.app-shell.is-onboard[data-onboard-tab="collection"] .nav a[href="/collection"] {
+  color: var(--nav-active-ink, var(--accent));
+  font-weight: 700;
+}
+
+.app-shell.is-onboard[data-onboard-tab="trips"] .nav a[href="/"]::after,
+.app-shell.is-onboard[data-onboard-tab="map"] .nav a[href="/map"]::after,
+.app-shell.is-onboard[data-onboard-tab="collection"] .nav a[href="/collection"]::after {
+  content: "";
+  position: absolute;
+  left: 22%;
+  right: 22%;
+  bottom: 6px;
+  height: 2px;
+  border-radius: 1px;
+  background: var(--nav-active-ink, var(--cta));
+}
+
+.onboard-folio {
+  height: 100%;
+  display: grid;
+  grid-template-rows: 1fr auto;
+  padding: 28px 32px 18px;
+  background-color: var(--bg0);
+  background-image: var(--bg-atmosphere);
+  background-repeat: no-repeat;
+  background-size: cover;
+  cursor: pointer;
+}
+
+.onboard-folio.is-map {
+  padding: 0;
+}
+
+.onboard-folio.is-map .onboard-mast {
+  align-items: stretch;
+}
+
+.onboard-folio.is-map .onboard-colophon {
+  padding: 16px 32px 18px;
+  background: color-mix(in srgb, var(--bg0) 88%, transparent);
+}
+
+.onboard-mast {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 0;
+}
+
+.onboard-colophon {
+  display: grid;
+  justify-items: center;
+  padding-top: 8px;
+}
+
+.onboard-lede {
+  margin: 0;
+  width: 100%;
+  text-align: center;
+  color: var(--muted);
+  font-size: 0.95rem;
+  line-height: 1.55;
+  text-wrap: pretty;
+  word-break: keep-all;
+}
+
+.onboard-rule {
+  width: 40px;
+  height: 1px;
+  margin: 22px 0 18px;
+  background: color-mix(in srgb, var(--ink) 35%, transparent);
+}
+
+.onboard-actions {
+  display: flex;
+  width: 100%;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.onboard-skip {
+  color: var(--muted);
+}
+
+.onboard-cover {
+  width: 86%;
+  aspect-ratio: 3 / 2;
+  border-radius: calc(var(--radius-md) + 1px);
+  overflow: hidden;
+  background: var(--trip-cover-plate);
+  box-shadow: var(--trip-cover-shadow);
+  position: relative;
+  transform: rotate(-1.2deg);
+}
+
+.onboard-cover-window {
+  position: absolute;
+  top: 6%;
+  left: 6%;
+  width: 88%;
+  height: 88%;
+  overflow: hidden;
+}
+
+.onboard-cover-window img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+
+.onboard-cover-frame {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: fill;
+  pointer-events: none;
+}
+
+.onboard-stamp {
+  width: 58%;
+  aspect-ratio: 1;
+  position: relative;
+  transform: rotate(1.2deg);
+  filter: drop-shadow(0 10px 16px color-mix(in srgb, var(--ink) 14%, transparent));
+}
+
+.onboard-stamp-photo {
+  position: absolute;
+  inset: 8%;
+  overflow: hidden;
+}
+
+.onboard-stamp-photo img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+
+.onboard-stamp-frame {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: fill;
+  pointer-events: none;
+}
+
+.onboard-map {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+  background: var(--bg1);
+}
+
+.onboard-basemap {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  display: block;
+}
+
+.onboard-map-attrib {
+  position: absolute;
+  right: 6px;
+  bottom: 4px;
+  z-index: 2;
+  font-size: 0.62rem;
+  color: var(--ink);
+  background: color-mix(in srgb, var(--card) 78%, transparent);
+  padding: 2px 6px;
+}
+
+.onboard-map-dot {
+  position: absolute;
+  z-index: 2;
+  width: 14px;
+  height: 14px;
+  border-radius: 50%;
+  background: var(--map-dot);
+  border: 2px solid var(--map-dot-border);
+  box-shadow: 0 2px 8px color-mix(in srgb, var(--ink) 20%, transparent);
+  transform: translate(-50%, -50%);
+  pointer-events: none;
+}
+
+.onboard-map-dot.is-on {
+  width: 18px;
+  height: 18px;
+  background: var(--map-dot-selected);
+  box-shadow: 0 0 0 4px var(--map-dot-ring);
+}
+
 @media (prefers-reduced-motion: reduce) {
+  .onboard-cover,
+  .onboard-stamp {
+    transform: none;
+  }
+
   .tree-head-row {
     transition: none;
   }
