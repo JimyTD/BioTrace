@@ -3,6 +3,7 @@ import { flushSync } from "react-dom";
 import { matchPath, useLocation, useNavigate, useParams } from "react-router-dom";
 import { hasMessage, t } from "@biotrace/messages";
 import { api, type VolumeListItem } from "../api";
+import { useBackClose } from "../androidBack";
 import { measureBox } from "../motion";
 import { playPhotoLift } from "../photoLift";
 import {
@@ -161,6 +162,8 @@ export default function CollectionVolumePage() {
       cancelled = true;
     };
   }, [onThisVolume, volume, id]);
+
+  useBackClose(() => goBackToShelf());
 
   function goBackToShelf() {
     const cover = coverRef.current;

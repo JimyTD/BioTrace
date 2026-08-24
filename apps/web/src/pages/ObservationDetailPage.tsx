@@ -3,6 +3,7 @@ import { Link, useLocation, useNavigate, useParams } from "react-router-dom";
 import { formatRank, t, type MessageKey } from "@biotrace/messages";
 import { acceptedScientificIfDifferent, api, type Observation, type Taxonomy } from "../api";
 import { identifyDisplayName } from "../identifyLabel";
+import { useBackClose } from "../androidBack";
 import ConfirmDialog from "../components/ConfirmDialog";
 import ReidentifyDialog from "../components/ReidentifyDialog";
 import {
@@ -149,6 +150,8 @@ export default function ObservationDetailPage() {
       cancelled = true;
     };
   }, [liftOpen]);
+
+  useBackClose(() => goBackToAlbum());
 
   function goBackToAlbum() {
     if (!obs) {

@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import { t } from "@biotrace/messages";
+import { useBackClose } from "../androidBack";
 import {
   downloadAndInstallApk,
   fetchAndroidUpdate,
@@ -39,6 +40,9 @@ export default function ForceAppUpdateGate({ enabled }: { enabled: boolean }) {
       cancelled = true;
     };
   }, [enabled]);
+
+  const blocking = Boolean(remote && localName);
+  useBackClose(() => undefined, blocking, 100);
 
   if (!remote || !localName) return null;
 

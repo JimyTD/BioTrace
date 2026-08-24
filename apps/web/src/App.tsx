@@ -1,4 +1,5 @@
 import { useEffect, useState } from "react";
+import { listenAndroidBack } from "./androidBack";
 import {
   matchPath,
   NavLink,
@@ -181,6 +182,8 @@ export default function App() {
   const [booting, setBooting] = useState(true);
   const [flyleaf, setFlyleaf] = useState(false);
   const [onboardReplay, setOnboardReplay] = useState(false);
+
+  useEffect(() => listenAndroidBack(), []);
 
   useEffect(() => {
     api

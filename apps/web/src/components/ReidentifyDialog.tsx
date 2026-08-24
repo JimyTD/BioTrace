@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import { t } from "@biotrace/messages";
+import { useBackClose } from "../androidBack";
 
 export default function ReidentifyDialog({
   open,
@@ -14,6 +15,9 @@ export default function ReidentifyDialog({
   onConfirm: (description: string) => void;
   onCancel: () => void;
 }) {
+  useBackClose(() => {
+    if (!busy) onCancel();
+  }, open, 50);
   const [text, setText] = useState("");
   const [localError, setLocalError] = useState<string | null>(null);
 

@@ -3,6 +3,7 @@ import { flushSync } from "react-dom";
 import { matchPath, useLocation, useNavigate, useParams } from "react-router-dom";
 import { hasMessage, t, type MessageKey } from "@biotrace/messages";
 import { api, type CollectionEntry, type CollectionSighting, type Rarity } from "../api";
+import { useBackClose } from "../androidBack";
 import { measureBox } from "../motion";
 import { playPhotoLift } from "../photoLift";
 import {
@@ -125,6 +126,7 @@ export default function CollectionSpeciesCardPage() {
   }
 
   const fromTree = treeReturnPath(location.state);
+  useBackClose(() => navigate(fromTree ?? "/collection/species"));
   const title = entry ? speciesEntryName(entry, t("detail.unnamed")) : t("collection.speciesTitle");
 
   return (

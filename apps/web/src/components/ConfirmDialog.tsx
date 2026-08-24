@@ -1,4 +1,5 @@
 import { t } from "@biotrace/messages";
+import { useBackClose } from "../androidBack";
 
 export default function ConfirmDialog({
   open,
@@ -19,6 +20,7 @@ export default function ConfirmDialog({
   onConfirm: () => void;
   onCancel: () => void;
 }) {
+  useBackClose(onCancel, open, 50);
   if (!open) return null;
 
   return (

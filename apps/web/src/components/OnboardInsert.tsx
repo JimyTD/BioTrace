@@ -1,8 +1,7 @@
 import { useEffect, useLayoutEffect, useRef, useState, type MouseEvent, type PointerEvent } from "react";
 import { useNavigate } from "react-router-dom";
-import { App } from "@capacitor/app";
-import { Capacitor, type PluginListenerHandle } from "@capacitor/core";
 import { t, type MessageKey } from "@biotrace/messages";
+import { useBackClose } from "../androidBack";
 import { paintOnboardBasemap, prefetchOnboardBasemap, projectOnboardLngLat } from "../onboardBasemap";
 import { prefersReducedMotion } from "../motion";
 import PageOverlay from "../PageOverlay";
@@ -84,22 +83,10 @@ export default function OnboardInsert({
       retreat(true);
     };
     window.addEventListener("popstate", onPop);
-    let handle: PluginListenerHandle | undefined;
-    let cancelled = false;
-    if (Capacitor.isNativePlatform()) {
-      void App.addListener("backButton", () => {
-        retreat();
-      }).then((h) => {
-        if (cancelled) void h.remove();
-        else handle = h;
-      });
-    }
-    return () => {
-      cancelled = true;
-      window.removeEventListener("popstate", onPop);
-      void handle?.remove();
-    };
+    return () => window.removeEventListener("popstate", onPop);
   }, []);
+
+  useBackClose(() => retreat(), true, 40);
 
   function paneWidth() {
     return trackRef.current?.parentElement?.clientWidth || 1;

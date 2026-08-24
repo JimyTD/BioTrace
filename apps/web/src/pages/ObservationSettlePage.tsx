@@ -3,6 +3,7 @@ import { Link, useLocation, useNavigate, useParams } from "react-router-dom";
 import { formatRank, hasMessage, t, type MessageKey } from "@biotrace/messages";
 import { acceptedScientificIfDifferent, api, type Observation, type Rarity, type SettleVolumesResult } from "../api";
 import { identifyByLine } from "../identifyLabel";
+import { useBackClose } from "../androidBack";
 import { SettlePackStage } from "../components/SettlePackStage";
 import { peekObservation, rememberObservation } from "../pageCache";
 import { peekLiftBackground } from "../photoLiftHandoff";
@@ -62,6 +63,10 @@ export default function ObservationSettlePage() {
   const [phase, setPhase] = useState<"sealed" | "revealing" | "open" | "claimed">("sealed");
   const [claiming, setClaiming] = useState(false);
   const [ceremony, setCeremony] = useState<{ kind: CeremonyKind; line: string } | null>(null);
+  useBackClose(() => {
+    if (obs) navigate(`/trips/${obs.tripId}`);
+    else navigate("/");
+  });
 
   useEffect(() => {
     api

@@ -12,6 +12,7 @@ import { flushSync } from "react-dom";
 import { Link, matchPath, useLocation, useNavigate, useParams } from "react-router-dom";
 import { formatRank, t } from "@biotrace/messages";
 import { ApiError, api, type Observation, type Trip } from "../api";
+import { useBackClose } from "../androidBack";
 import ConfirmDialog from "../components/ConfirmDialog";
 import { OpenBookCloseContext } from "../components/TripBookLayer";
 import {
@@ -85,6 +86,10 @@ export default function TripAlbumPage({ userId }: { userId: string }) {
   const real = useRealLocation();
   const onAlbum = Boolean(real && matchPath("/trips/:id", real.pathname)?.params.id === id);
   const closeBook = useContext(OpenBookCloseContext);
+  useBackClose(() => {
+    if (closeBook) closeBook();
+    else navigate("/");
+  });
   const [trip, setTrip] = useState<Trip | null>(() => peekAlbum(id)?.trip ?? null);
   const [observations, setObservations] = useState<Observation[]>(
     () => peekAlbum(id)?.observations ?? [],

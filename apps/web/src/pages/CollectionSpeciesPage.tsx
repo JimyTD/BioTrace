@@ -1,5 +1,6 @@
 import { useEffect, useLayoutEffect, useMemo, useRef, useState } from "react";
-import { Link, useMatch } from "react-router-dom";
+import { Link, useMatch, useNavigate } from "react-router-dom";
+import { useBackClose } from "../androidBack";
 import { hasMessage, t, type MessageKey } from "@biotrace/messages";
 import { api, type CollectionEntry, type Rarity } from "../api";
 import {
@@ -23,7 +24,9 @@ function entryName(entry: CollectionEntry) {
 }
 
 export default function CollectionSpeciesPage() {
+  const navigate = useNavigate();
   const cardOpen = Boolean(useMatch("/collection/species/:id"));
+  useBackClose(() => navigate("/collection"), !cardOpen);
   const [entries, setEntries] = useState<CollectionEntry[]>([]);
   const [query, setQuery] = useState("");
   const [rarityFilter, setRarityFilter] = useState<string | null>(null);

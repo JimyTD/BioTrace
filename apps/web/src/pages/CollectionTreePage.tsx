@@ -3,6 +3,7 @@ import { flushSync } from "react-dom";
 import { useLocation, useNavigate, useParams } from "react-router-dom";
 import { hasMessage, t, type MessageKey } from "@biotrace/messages";
 import { api, type CollectionEntry, type Rarity } from "../api";
+import { useBackClose } from "../androidBack";
 import { measureBox } from "../motion";
 import { playPhotoLift } from "../photoLift";
 import { peekCollection, rememberCollection } from "../pageCache";
@@ -178,6 +179,8 @@ export default function CollectionTreePage() {
     }
     navigate(treePathUrl(destPath));
   }
+
+  useBackClose(() => goBack());
 
   function goBack() {
     if (path.length === 0) {

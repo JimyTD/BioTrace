@@ -3,6 +3,7 @@ import { Link, useNavigate, useParams } from "react-router-dom";
 import maplibregl, { Map } from "maplibre-gl";
 import "maplibre-gl/dist/maplibre-gl.css";
 import { t } from "@biotrace/messages";
+import { useBackClose } from "../androidBack";
 import { api } from "../api";
 import { hasValidCoords } from "../geo";
 import {
@@ -18,6 +19,7 @@ import {
 export default function PinLocationPage() {
   const { id = "" } = useParams();
   const navigate = useNavigate();
+  useBackClose(() => navigate(`/observations/${id}`));
   const containerRef = useRef<HTMLDivElement | null>(null);
   const mapRef = useRef<Map | null>(null);
   const [error, setError] = useState<string | null>(null);

@@ -1,6 +1,7 @@
 import { useEffect, useRef, useState, type FormEvent } from "react";
 import { Link } from "react-router-dom";
 import { t } from "@biotrace/messages";
+import { useBackClose } from "../androidBack";
 import { api, type User } from "../api";
 import { easeOutCubic, nextPaint, prefersReducedMotion, tween } from "../motion";
 
@@ -26,6 +27,7 @@ export default function LoginPage({
   const [resetCodeSent, setResetCodeSent] = useState(false);
   const [turning, setTurning] = useState(false);
   const pageRef = useRef<HTMLDivElement | null>(null);
+  useBackClose(() => switchMode("login"), mode !== "login");
 
   useEffect(() => {
     api

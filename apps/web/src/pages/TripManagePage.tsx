@@ -1,12 +1,14 @@
 import { useEffect, useRef, useState, type FormEvent } from "react";
 import { Link, useNavigate, useParams } from "react-router-dom";
 import { t } from "@biotrace/messages";
+import { useBackClose } from "../androidBack";
 import { api, type Trip, type TripMember } from "../api";
 import { copyText } from "../copyText";
 
 export default function TripManagePage({ userId }: { userId: string }) {
   const { id = "" } = useParams();
   const navigate = useNavigate();
+  useBackClose(() => navigate(`/trips/${id}`));
   const inviteInputRef = useRef<HTMLInputElement | null>(null);
   const [trip, setTrip] = useState<Trip | null>(null);
   const [members, setMembers] = useState<TripMember[]>([]);
