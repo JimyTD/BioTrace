@@ -4,9 +4,10 @@ import { observations } from "../db/schema.js";
 import { localizeThrownMessage } from "../errors.js";
 import { evaluateEligibility } from "../identify/eligibility.js";
 import { runIdentifyForUser } from "../identify/run.js";
-import { emptyTaxonomy } from "../identify/types.js";
+import { emptyTaxonomy, type IdentifyResult } from "../identify/types.js";
 import { computeSettle } from "../settle/rules.js";
 import { enqueueIdentifyJob } from "./identify-queue.js";
+import { enqueueSettleJob } from "./settle-queue.js";
 
 const STORED_CODES = new Set([
   "identify_unavailable",
@@ -19,7 +20,7 @@ const STORED_CODES = new Set([
   "identify_not_living",
 ]);
 
-export function enqueueIdentify(opts: {
+type IdentifyOpts = {
   observationId: string;
   imagePath: string;
   mimeType: string;
@@ -27,8 +28,124 @@ export function enqueueIdentify(opts: {
   lng?: number | null;
   capturedAt?: Date | null;
   description?: string | null;
+};
+
+function storedError(raw: string): string {
+  if (!STORED_CODES.has(raw)) return localizeThrownMessage(raw);
+  return raw === "identify_quota" ? "identify_unavailable" : raw;
+}
+
+async function markFailed(observationId: string, err: unknown) {
+  const raw = err instanceof Error ? err.message : String(err);
+  if (raw === "identify_daily_limit") {
+    console.log(`[identify] daily limit obs=${observationId}`);
+  }
+  await db
+    .update(observations)
+    .set({
+      status: "failed",
+      error: storedError(raw),
+      updatedAt: new Date(),
+    })
+    .where(eq(observations.id, observationId));
+}
+
+async function persistSettle(opts: {
+  observationId: string;
+  result: IdentifyResult;
+  provider: string;
+  model: string | null;
+  lat?: number | null;
+  lng?: number | null;
 }) {
+  const t0 = Date.now();
+  const taxonomyJson = JSON.stringify(opts.result.taxonomy);
+  const fresh = await db.query.observations.findFirst({
+    where: eq(observations.id, opts.observationId),
+    columns: { lat: true, lng: true },
+  });
+  const settle = await computeSettle({
+    lat: fresh?.lat ?? opts.lat,
+    lng: fresh?.lng ?? opts.lng,
+    finestReliableRank: opts.result.finest_reliable_rank,
+    scientificName: opts.result.scientific_name,
+    commonName: opts.result.common_name_zh,
+    taxonomyJson,
+  });
+
+  if (settle.settleTier === "none") {
+    await db
+      .update(observations)
+      .set({
+        status: "failed",
+        commonName: opts.result.common_name_zh || null,
+        scientificName: opts.result.scientific_name || null,
+        finestReliableRank: opts.result.finest_reliable_rank || null,
+        confidence: opts.result.confidence_0_to_1,
+        taxonomyJson,
+        blurb: opts.result.blurb_zh || null,
+        notes: opts.result.notes || null,
+        error: "identify_too_coarse",
+        settleTier: "none",
+        rarity: null,
+        countryCode: settle.countryCode,
+        countrySource: settle.countrySource,
+        locationLabel: settle.locationLabel,
+        locationPrecise: settle.locationPrecise,
+        alertIntroduced: false,
+        taxonKey: settle.taxonKey,
+        acceptedTaxonomyJson: settle.acceptedTaxonomy
+          ? JSON.stringify(settle.acceptedTaxonomy)
+          : null,
+        identifyProvider: opts.provider,
+        identifyModel: opts.model,
+        settledAt: null,
+        updatedAt: new Date(),
+      })
+      .where(eq(observations.id, opts.observationId));
+    console.log(
+      `[settle] too_coarse obs=${opts.observationId} ${Date.now() - t0}ms`,
+    );
+    return;
+  }
+
+  await db
+    .update(observations)
+    .set({
+      status: "pending_settle",
+      commonName: opts.result.common_name_zh || null,
+      scientificName: opts.result.scientific_name || null,
+      finestReliableRank: opts.result.finest_reliable_rank || null,
+      confidence: opts.result.confidence_0_to_1,
+      taxonomyJson,
+      blurb: opts.result.blurb_zh || null,
+      notes: opts.result.notes || null,
+      error: null,
+      settleTier: settle.settleTier,
+      rarity: settle.rarity,
+      countryCode: settle.countryCode,
+      countrySource: settle.countrySource,
+      locationLabel: settle.locationLabel,
+      locationPrecise: settle.locationPrecise,
+      alertIntroduced: settle.alertIntroduced,
+      taxonKey: settle.taxonKey,
+      acceptedTaxonomyJson: settle.acceptedTaxonomy
+        ? JSON.stringify(settle.acceptedTaxonomy)
+        : null,
+      identifyProvider: opts.provider,
+      identifyModel: opts.model,
+      settledAt: null,
+      updatedAt: new Date(),
+    })
+    .where(eq(observations.id, opts.observationId));
+  console.log(
+    `[settle] ok obs=${opts.observationId} rarity=${settle.rarity} ${Date.now() - t0}ms`,
+  );
+}
+
+export function enqueueIdentify(opts: IdentifyOpts) {
   enqueueIdentifyJob(async () => {
+    const t0 = Date.now();
     try {
       const obs = await db.query.observations.findFirst({
         where: eq(observations.id, opts.observationId),
@@ -45,7 +162,7 @@ export function enqueueIdentify(opts: {
         description: opts.description,
       });
       console.log(
-        `[identify] ok provider=${provider}${model ? ` model=${model}` : ""} obs=${opts.observationId}`,
+        `[identify] ok provider=${provider}${model ? ` model=${model}` : ""} obs=${opts.observationId} ${Date.now() - t0}ms`,
       );
 
       const gate = evaluateEligibility(result);
@@ -83,101 +200,22 @@ export function enqueueIdentify(opts: {
         return;
       }
 
-      const taxonomyJson = JSON.stringify(result.taxonomy);
-      const fresh = await db.query.observations.findFirst({
-        where: eq(observations.id, opts.observationId),
-        columns: { lat: true, lng: true },
+      enqueueSettleJob(async () => {
+        try {
+          await persistSettle({
+            observationId: opts.observationId,
+            result,
+            provider,
+            model,
+            lat: opts.lat,
+            lng: opts.lng,
+          });
+        } catch (err) {
+          await markFailed(opts.observationId, err);
+        }
       });
-      const settle = await computeSettle({
-        lat: fresh?.lat ?? opts.lat,
-        lng: fresh?.lng ?? opts.lng,
-        finestReliableRank: result.finest_reliable_rank,
-        scientificName: result.scientific_name,
-        commonName: result.common_name_zh,
-        taxonomyJson,
-      });
-
-      if (settle.settleTier === "none") {
-        await db
-          .update(observations)
-          .set({
-            status: "failed",
-            commonName: result.common_name_zh || null,
-            scientificName: result.scientific_name || null,
-            finestReliableRank: result.finest_reliable_rank || null,
-            confidence: result.confidence_0_to_1,
-            taxonomyJson,
-            blurb: result.blurb_zh || null,
-            notes: result.notes || null,
-            error: "identify_too_coarse",
-            settleTier: "none",
-            rarity: null,
-            countryCode: settle.countryCode,
-            countrySource: settle.countrySource,
-            locationLabel: settle.locationLabel,
-            locationPrecise: settle.locationPrecise,
-            alertIntroduced: false,
-            taxonKey: settle.taxonKey,
-            acceptedTaxonomyJson: settle.acceptedTaxonomy
-              ? JSON.stringify(settle.acceptedTaxonomy)
-              : null,
-            identifyProvider: provider,
-            identifyModel: model,
-            settledAt: null,
-            updatedAt: new Date(),
-          })
-          .where(eq(observations.id, opts.observationId));
-        return;
-      }
-
-      await db
-        .update(observations)
-        .set({
-          status: "pending_settle",
-          commonName: result.common_name_zh || null,
-          scientificName: result.scientific_name || null,
-          finestReliableRank: result.finest_reliable_rank || null,
-          confidence: result.confidence_0_to_1,
-          taxonomyJson,
-          blurb: result.blurb_zh || null,
-          notes: result.notes || null,
-          error: null,
-          settleTier: settle.settleTier,
-          rarity: settle.rarity,
-          countryCode: settle.countryCode,
-          countrySource: settle.countrySource,
-          locationLabel: settle.locationLabel,
-          locationPrecise: settle.locationPrecise,
-          alertIntroduced: settle.alertIntroduced,
-          taxonKey: settle.taxonKey,
-          acceptedTaxonomyJson: settle.acceptedTaxonomy
-            ? JSON.stringify(settle.acceptedTaxonomy)
-            : null,
-          identifyProvider: provider,
-          identifyModel: model,
-          settledAt: null,
-          updatedAt: new Date(),
-        })
-        .where(eq(observations.id, opts.observationId));
     } catch (err) {
-      const raw = err instanceof Error ? err.message : String(err);
-      if (raw === "identify_daily_limit") {
-        console.log(`[identify] daily limit obs=${opts.observationId}`);
-      }
-      const stored =
-        STORED_CODES.has(raw)
-          ? raw === "identify_quota"
-            ? "identify_unavailable"
-            : raw
-          : localizeThrownMessage(raw);
-      await db
-        .update(observations)
-        .set({
-          status: "failed",
-          error: stored,
-          updatedAt: new Date(),
-        })
-        .where(eq(observations.id, opts.observationId));
+      await markFailed(opts.observationId, err);
     }
   });
 }

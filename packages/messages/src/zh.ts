@@ -471,6 +471,7 @@ export const zh = {
   "admin.usersTotal": "用户总数",
   "admin.usersToday": "今日注册",
   "admin.identifyQueue": "识图队列",
+  "admin.settleQueue": "稀有度队列",
   "admin.identifyUsageToday": "今日用户识图配额",
   "admin.identifyUsageTodayHint": "全站用户平台额度合计（不含自备密钥）",
   "admin.identifyRoute": "识图线路",

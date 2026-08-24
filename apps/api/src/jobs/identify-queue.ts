@@ -21,7 +21,7 @@ async function pump() {
   }
 }
 
-/** FIFO queue so free-tier providers are not burst-fired. */
+/** 只跑视觉识图。稀有度走 settle-queue，避免 TokenHub 量表堵住 Gemini。 */
 export function enqueueIdentifyJob(job: Job) {
   q.push(job);
   void pump();

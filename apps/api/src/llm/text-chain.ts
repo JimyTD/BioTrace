@@ -37,10 +37,10 @@ function sleep(ms: number) {
  * 按模型名精确匹配，没登记的走默认（temperature 0 + 关思考）。
  */
 const MODEL_QUIRKS: Record<string, { temperature?: number; sendThinking?: boolean }> = {
-  // 始终思考，带 thinking 字段一律 400（连它自己提示的 low/high/max 也不认），只能不发。
+  // 2026-08-24 TokenHub 实测：发 thinking 字段一律 400（提示用 low/high/max，但关不掉）。只能不发。
   "glm-5.3": { sendThinking: false },
-  // 只接受 temperature 0.6，发 0 会 400。
-  "kimi-k3": { temperature: 0.6, sendThinking: false },
+  // 只接受 temperature 0.6。必须发 thinking:disabled——不发则默认开思考（实测约 80s）。
+  "kimi-k3": { temperature: 0.6 },
 };
 
 async function callOnce(model: string, prompt: string, system: string): Promise<string> {

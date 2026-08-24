@@ -167,6 +167,7 @@ export type HealthResponse = {
     zhipu?: ProviderHealthSnap;
   };
   identifyQueue?: { pending: number; running: number };
+  settleQueue?: { pending: number; running: number };
 };
 
 export type IdentifyQuota = {

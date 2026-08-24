@@ -58,7 +58,8 @@ docs/        筹划 + 本实现规格
 
 ## 1.1 识图韧性
 
-- **串行队列**（默认 concurrency=1），避免免费层被并行打爆。
+- **识图队列**（默认 concurrency=1），只跑视觉识别，避免 Gemini 免费层被并行打爆。
+- **稀有度队列**（concurrency=1）与识图分开：TokenHub 量表不再占 Gemini 坑。观察仍保持 `analyzing`，写完 rarity 才变 `pending_settle`（开包一定有档）。
 - **Gemini 健康态**（进程内）：短限流 → 保持 `analyzing` 等待（≤90s）再试；瞬时 5xx/503 → 冷却约 20s 再试 **1 次**；日额耗尽/长冷却 → **切 TokenHub 视觉链**（同一把 `TOKENHUB_API_KEY`，只换模型名：`glm-5v-turbo` → `kimi-k2.6` → `hy-vision-2.0-instruct`）。编排：[`orchestrator.ts`](../apps/api/src/identify/orchestrator.ts)；链：[`vl-chain.ts`](../apps/api/src/identify/vl-chain.ts)。
 - 观察记下 `identify_provider`（`gemini` / `tokenhub`）和真正出货的 `identify_model`。
 - 两侧都不可用才 `failed`，文案温和（不提配额/账单）。
@@ -232,7 +233,8 @@ docs/        筹划 + 本实现规格
 ### 3.3 结算流程（正式主路径）
 
 ```text
-识图成功且合格性通过
+识图成功且合格性通过（识图队列释放）
+  → 入稀有度队列（与识图并发互不占用）
   → computeSettle（settle/rules.ts）
       → 国家码 / settleTier / taxonKey / 引入警示
       → taxonKey：GBIF `/species/match` 收到 Backbone accepted canonical（种级二项名）；
@@ -262,7 +264,7 @@ docs/        筹划 + 本实现规格
 | [`llm/text-chain.ts`](../apps/api/src/llm/text-chain.ts) | TokenHub 模型链降级、按模型的请求差异、直连绕开出境代理 |
 | [`settle/rules.ts`](../apps/api/src/settle/rules.ts) | 结算编排 |
 | [`settle/taxon.ts`](../apps/api/src/settle/taxon.ts) | `taxonKey` + `accepted_taxonomy_json`：Gemini 名 + GBIF accepted canonical |
-| [`jobs/identify.ts`](../apps/api/src/jobs/identify.ts) | 识图后触发 settle |
+| [`jobs/identify.ts`](../apps/api/src/jobs/identify.ts) | 识图队列出货后入稀有度队列 |
 
 冒烟（需网络）：`pnpm --filter @biotrace/api taxonkey:smoke`（错拼/同物异名合并、属与种分开）。
 
@@ -279,8 +281,9 @@ docs/        筹划 + 本实现规格
 
 | 模型 | 差异 |
 |------|------|
+| `glm-5.2` / `glm-5.1` | 发 `thinking: disabled` 可关思考（约 1s）；不发则默认开思考 |
+| `kimi-k3` | 只接受 `temperature: 0.6`；必须发 `thinking: disabled`，不发则默认开思考（实测约 80s） |
 | `glm-5.3` | 始终思考，带 `thinking` 字段一律 400（连它自己提示的 low/high/max 也不认），只能不发 |
-| `kimi-k3` | 只接受 `temperature: 0.6`，发 0 会 400 |
 | TokenHub 网关 | `401006`（endpoint is inactive）是瞬态，码里带 "401" 会被通用分类器误判成鉴权失败，已单独归为可重试 |
 
 **跨模型答案不完全一致是预期的,不必管**：实测同一只乌鸫，`glm-5.1` 答「众多=是、喜爱=是」得 SSR，
@@ -330,7 +333,7 @@ Prompt 里的 `country` 已按观察点国家传，没有写死中国。
 |------|------|------|
 | `TOKENHUB_API_KEY` | — | 稀有度量表、识图回退与标定共用；不能填 Coding Plan 的 `sk-sp-` Key。也可在管理后台「平台密钥」填，后台值覆盖 env |
 | `IDENTIFY_VL_MODELS` | `glm-5v-turbo,kimi-k2.6,hy-vision-2.0-instruct` | 识图回退视觉链，按序降级 |
-| `RARITY_TEXT_MODELS` | `glm-5.3,glm-5.2,kimi-k3,glm-5.1` | 模型优先级链，按序降级 |
+| `RARITY_TEXT_MODELS` | `glm-5.2,kimi-k3,glm-5.1,glm-5.3` | 模型优先级链，按序降级；能关思考的在前，`glm-5.3` 垫底 |
 | `RARITY_SAMPLES` | `1` | 每物种采样次数（1 次采样 = 3 次调用） |
 | `RARITY_EDGE_MARGIN` | `0.2` | 离档位界不超过这个距离就补采样 |
 | `RARITY_EDGE_SAMPLES` | `3` | 补到几次采样 |

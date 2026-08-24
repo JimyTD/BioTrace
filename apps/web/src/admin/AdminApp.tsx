@@ -157,6 +157,9 @@ function Dashboard() {
   const queuePending = typeof queue === "object" && queue ? Number(queue.pending ?? 0) : 0;
   const queueRunning =
     typeof queue === "object" && queue ? Number(queue.running ?? 0) : Number(queue ?? 0);
+  const settleQueue = data.settleQueue as { pending?: number; running?: number } | null;
+  const settlePending = settleQueue ? Number(settleQueue.pending ?? 0) : 0;
+  const settleRunning = settleQueue ? Number(settleQueue.running ?? 0) : 0;
   type ProviderRow = {
     configured?: boolean;
     status?: string;
@@ -215,6 +218,14 @@ function Dashboard() {
             {t("admin.queuePending", { pending: queuePending })}
             <br />
             {t("admin.queueRunning", { running: queueRunning })}
+          </div>
+        </div>
+        <div className="admin-card">
+          <div className="label">{t("admin.settleQueue")}</div>
+          <div className="value" style={{ fontSize: "1rem" }}>
+            {t("admin.queuePending", { pending: settlePending })}
+            <br />
+            {t("admin.queueRunning", { running: settleRunning })}
           </div>
         </div>
         <div className="admin-card">

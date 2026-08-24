@@ -10,6 +10,7 @@ import { migrate } from "./db/index.js";
 import { env } from "./env.js";
 import { providerSnapshot } from "./identify/health.js";
 import { identifyQueueSize } from "./jobs/identify-queue.js";
+import { settleQueueSize } from "./jobs/settle-queue.js";
 import { adminRoutes } from "./routes/admin.js";
 import { appRoutes } from "./routes/app.js";
 import { authRoutes } from "./routes/auth.js";
@@ -44,6 +45,7 @@ app.get("/api/health", (c) =>
       tokenhub: providerSnapshot("tokenhub", Boolean(env.tokenhubApiKey)),
     },
     identifyQueue: identifyQueueSize(),
+    settleQueue: settleQueueSize(),
   }),
 );
 

@@ -40,6 +40,7 @@ import { apiError } from "../errors.js";
 import { identifyRoutingSnapshot } from "../identify/routing.js";
 import { enqueueIdentify } from "../jobs/identify.js";
 import { identifyQueueSize } from "../jobs/identify-queue.js";
+import { settleQueueSize } from "../jobs/settle-queue.js";
 import { hashPassword, verifyPassword } from "../lib/password.js";
 import { adminUsers } from "../db/schema.js";
 import {
@@ -205,6 +206,7 @@ adminRoutes.get("/dashboard", async (c) => {
     users: { total: userCount[0]?.n ?? 0, today: todayUsers[0]?.n ?? 0 },
     observationsByStatus: byStatus,
     identifyQueue: identifyQueueSize(),
+    settleQueue: settleQueueSize(),
     identifyUsageToday: Number(usageSum[0]?.total ?? 0),
     identifyDailyLimit: env.identifyDailyLimit,
     identifyRoute,

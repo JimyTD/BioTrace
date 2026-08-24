@@ -36,7 +36,7 @@ function parseCorsOrigins(): string[] {
     .filter(Boolean);
 }
 
-const RARITY_MODEL_CHAIN_DEFAULT = ["glm-5.3", "glm-5.2", "kimi-k3", "glm-5.1"];
+const RARITY_MODEL_CHAIN_DEFAULT = ["glm-5.2", "kimi-k3", "glm-5.1", "glm-5.3"];
 const IDENTIFY_VL_CHAIN_DEFAULT = ["glm-5v-turbo", "kimi-k2.6", "hy-vision-2.0-instruct"];
 
 function parseModelChain(raw: string | undefined, fallback: string[]): string[] {
@@ -81,6 +81,7 @@ export const env = {
   tokenhubBaseUrl: process.env.TOKENHUB_BASE_URL?.trim() || "https://tokenhub.tencentmaas.com/v1",
   /**
    * 稀有度量表的模型优先级链（TokenHub 单 key，只换模型名）。
+   * 能关思考的在前（5.2 / kimi-k3 / 5.1），始终思考的 5.3 垫底。
    * 按序试，某档配额耗尽/鉴权失败就打冷却降到下一档；生效模型名会写进缓存供事后查证。
    */
   rarityTextModels: parseModelChain(process.env.RARITY_TEXT_MODELS, RARITY_MODEL_CHAIN_DEFAULT),
