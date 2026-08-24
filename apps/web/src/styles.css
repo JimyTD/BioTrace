@@ -2659,6 +2659,7 @@ button.species-card-cover {
   line-height: 1.55;
   text-wrap: pretty;
   word-break: keep-all;
+  cursor: pointer;
 }
 
 .onboard-rule {
@@ -2676,7 +2677,10 @@ button.species-card-cover {
 }
 
 .onboard-skip {
+  position: relative;
+  z-index: 2;
   color: var(--muted);
+  padding-right: 12px;
 }
 
 .onboard-cover {

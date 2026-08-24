@@ -1,7 +1,9 @@
 import { useEffect, useLayoutEffect, useRef, useState } from "react";
 import { useNavigate } from "react-router-dom";
+import { App } from "@capacitor/app";
+import { Capacitor, type PluginListenerHandle } from "@capacitor/core";
 import { t, type MessageKey } from "@biotrace/messages";
-import { paintOnboardBasemap, projectOnboardLngLat } from "../onboardBasemap";
+import { paintOnboardBasemap, prefetchOnboardBasemap, projectOnboardLngLat } from "../onboardBasemap";
 import { prefersReducedMotion } from "../motion";
 import PageOverlay from "../PageOverlay";
 import { tripCoverFrameUrl, volumeStampFrameUrl } from "../themes";
@@ -20,6 +22,16 @@ const MAP_DOTS = [
   { lng: 121.47, lat: 31.23, on: true },
 ];
 
+function sleep(ms: number) {
+  return new Promise<void>((resolve) => {
+    window.setTimeout(resolve, ms);
+  });
+}
+
+function waitAnim(anim: Animation, ms: number) {
+  return Promise.race([anim.finished.catch(() => undefined), sleep(ms)]);
+}
+
 export default function OnboardInsert({
   mode,
   onClose,
@@ -29,14 +41,22 @@ export default function OnboardInsert({
 }) {
   const navigate = useNavigate();
   const [page, setPage] = useState(0);
-  const [busy, setBusy] = useState(false);
   const folioRef = useRef<HTMLDivElement | null>(null);
+  const busyRef = useRef(false);
+  const closedRef = useRef(false);
+  const pageRef = useRef(0);
+  const modeRef = useRef(mode);
+  const onCloseRef = useRef(onClose);
+  pageRef.current = page;
+  modeRef.current = mode;
+  onCloseRef.current = onClose;
   const current = PAGES[page]!;
   const last = page === PAGES.length - 1;
 
   useEffect(() => {
     const shell = document.querySelector(".app-shell");
     shell?.classList.add("is-onboard");
+    prefetchOnboardBasemap();
     return () => {
       shell?.classList.remove("is-onboard");
       shell?.removeAttribute("data-onboard-tab");
@@ -47,41 +67,85 @@ export default function OnboardInsert({
     document.querySelector(".app-shell")?.setAttribute("data-onboard-tab", current.tab);
   }, [current.tab]);
 
-  function finish() {
-    onClose();
-    if (mode === "replay") navigate("/me", { replace: true });
-    else if (last) navigate("/", { replace: true });
+  useEffect(() => {
+    if (window.history.state?.biotraceOnboard !== true) {
+      window.history.pushState({ biotraceOnboard: true }, "");
+    }
+    const onPop = () => {
+      if (closedRef.current) return;
+      if (pageRef.current > 0) {
+        window.history.pushState({ biotraceOnboard: true }, "");
+        void fadeTo(() => setPage((n) => Math.max(0, n - 1)));
+        return;
+      }
+      finish(true);
+    };
+    window.addEventListener("popstate", onPop);
+    let handle: PluginListenerHandle | undefined;
+    let cancelled = false;
+    if (Capacitor.isNativePlatform()) {
+      void App.addListener("backButton", () => {
+        window.history.back();
+      }).then((h) => {
+        if (cancelled) void h.remove();
+        else handle = h;
+      });
+    }
+    return () => {
+      cancelled = true;
+      window.removeEventListener("popstate", onPop);
+      void handle?.remove();
+    };
+  }, []);
+
+  function finish(fromPop = false) {
+    if (closedRef.current) return;
+    closedRef.current = true;
+    if (!fromPop && window.history.state?.biotraceOnboard === true) {
+      if (modeRef.current === "replay" || pageRef.current === PAGES.length - 1) {
+        window.history.replaceState(null, "");
+      } else {
+        window.history.back();
+      }
+    }
+    onCloseRef.current();
+    if (modeRef.current === "replay") navigate("/me", { replace: true });
+    else if (pageRef.current === PAGES.length - 1) navigate("/", { replace: true });
   }
 
   async function fadeTo(next: () => void) {
-    if (busy) return;
-    setBusy(true);
+    if (busyRef.current || closedRef.current) return;
+    busyRef.current = true;
     const el = folioRef.current;
     const reduced = prefersReducedMotion();
-    if (el && !reduced) {
-      const a = el.animate([{ opacity: 1 }, { opacity: 0 }], {
-        duration: 180,
-        easing: "ease-in",
-        fill: "forwards",
-      });
-      await a.finished.catch(() => undefined);
-      a.cancel();
+    try {
+      if (el && !reduced) {
+        const a = el.animate([{ opacity: 1 }, { opacity: 0 }], {
+          duration: 180,
+          easing: "ease-in",
+          fill: "forwards",
+        });
+        await waitAnim(a, 220);
+        a.cancel();
+      }
+      if (closedRef.current) return;
+      next();
+      if (el && !reduced && !el.classList.contains("is-gone")) {
+        const b = el.animate([{ opacity: 0 }, { opacity: 1 }], {
+          duration: 280,
+          easing: "ease-out",
+        });
+        await waitAnim(b, 320);
+      }
+      if (el) el.style.opacity = "";
+    } finally {
+      busyRef.current = false;
     }
-    next();
-    if (el && !reduced && !el.classList.contains("is-gone")) {
-      const b = el.animate([{ opacity: 0 }, { opacity: 1 }], {
-        duration: 280,
-        easing: "ease-out",
-      });
-      await b.finished.catch(() => undefined);
-    }
-    if (el) el.style.opacity = "";
-    setBusy(false);
   }
 
   function advance() {
     if (last) {
-      void fadeTo(finish);
+      void fadeTo(() => finish());
       return;
     }
     void fadeTo(() => setPage((n) => n + 1));
@@ -94,26 +158,26 @@ export default function OnboardInsert({
       <div
         className={`onboard-folio${current.tab === "map" ? " is-map" : ""}`}
         ref={folioRef}
-        onClick={(e) => {
-          if ((e.target as HTMLElement).closest(".onboard-skip")) return;
-          advance();
-        }}
       >
-        <div className="onboard-mast">
+        <div className="onboard-mast" onClick={advance}>
           {current.tab === "trips" ? <OnboardCover /> : null}
           {current.tab === "map" ? <OnboardMap /> : null}
           {current.tab === "collection" ? <OnboardStamp /> : null}
         </div>
         <div className="onboard-colophon">
-          <p className="onboard-lede">{t(current.ledeKey)}</p>
-          <div className="onboard-rule" aria-hidden />
+          <p className="onboard-lede" onClick={advance}>
+            {t(current.ledeKey)}
+          </p>
+          <div className="onboard-rule" aria-hidden onClick={advance} />
           <div className="onboard-actions">
             <button
               className="text-link onboard-skip"
               type="button"
+              onPointerDown={(e) => e.stopPropagation()}
               onClick={(e) => {
                 e.stopPropagation();
-                void fadeTo(finish);
+                e.preventDefault();
+                finish();
               }}
             >
               {t("onboard.skip")}
@@ -121,6 +185,7 @@ export default function OnboardInsert({
             <button
               className={last && mode === "first" ? "btn" : "text-link"}
               type="button"
+              onClick={advance}
             >
               {turnLabel}
             </button>
