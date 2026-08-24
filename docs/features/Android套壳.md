@@ -8,7 +8,7 @@
 |----|------|
 | 形态 | **Capacitor** Android WebView，`server.url` 指向公网站点（非 TWA） |
 | 当前源 | `http://106.53.188.20`（见 [`apps/mobile/server-url.txt`](../../apps/mobile/server-url.txt)） |
-| 分发 | 侧载 debug/release APK；不上 Play |
+| 分发 | 侧载；公开页 `/download`（现网 `http://106.53.188.20/download`）；不上 Play |
 | 与后端 | 只读已部署站点；不改 API 契约 |
 | 服务器配合 | HTTP 阶段必须 `COOKIE_SECURE=0`；`APP_ORIGIN`/`CORS_ORIGIN` 与地址栏一致 |
 | 更新节奏 | **不必随 Web/API 每次提交重打 APK**（见下） |

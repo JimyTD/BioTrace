@@ -1907,6 +1907,26 @@ button.film-tile-link {
   border-top: 1px solid var(--line);
 }
 
+.download-readme {
+  display: grid;
+  gap: 10px;
+  width: min(100%, 22em);
+  margin: 28px auto 0;
+}
+
+.download-readme-title {
+  margin: 0;
+  font-size: 0.85rem;
+}
+
+.download-readme ol {
+  margin: 0;
+  padding-left: 1.2em;
+  color: var(--muted);
+  display: grid;
+  gap: 6px;
+}
+
 .taxonomy {
   margin: 0;
   padding-left: 18px;

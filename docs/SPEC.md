@@ -3,7 +3,7 @@
 > **本文件是功能真源**：已做 / 本期要做 / 明确后置。查「某能力做没做」以此为准。  
 > 部署与线上现状看 [`OPS.md`](./OPS.md)；专题手册在 [`features/`](./features/)；当初的取舍理由在 [`planning/`](./planning/)。  
 > 变更历史看 git log，本文不留手抄变更记录。  
-> 更新日期：2026-08-20
+> 更新日期：2026-08-24
 
 ## 0. 当前阶段
 
@@ -108,6 +108,7 @@ docs/        筹划 + 本实现规格
 - **真源**：服务器 `/opt/biotrace/data/android-release/`（`BioTrace.apk` + `latest.json`，只留最新）；`GET /api/app/android` / `.../apk`。
 - **行为**：「我的」检查更新；下载后唤起系统安装。minor/major 落后 → 进 App 强提示不可跳过；仅 patch 落后不挡用。
 - **运维**：发版后必须把包覆盖到上述目录，见 [`OPS.md`](./OPS.md) §7.2。
+- **好友分发**：公开页 `/download`（免登录），按钮指向 `/api/app/android/apk`。
 
 ## 1.7 识图护栏（已收口）
 

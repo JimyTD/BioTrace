@@ -4,6 +4,7 @@ import { BrowserRouter, useLocation } from "react-router-dom";
 import AdminApp from "./admin/AdminApp";
 import App from "./App";
 import { isNativeAndroidShell } from "./androidUpdate";
+import DownloadPage from "./pages/DownloadPage";
 import { initTheme } from "./themes";
 import "./themes/daylight.css";
 import "./themes/tide.css";
@@ -19,6 +20,9 @@ function Root() {
   const loc = useLocation();
   if (loc.pathname === "/admin" || loc.pathname.startsWith("/admin/")) {
     return <AdminApp />;
+  }
+  if (loc.pathname === "/download" || loc.pathname === "/download/") {
+    return <DownloadPage />;
   }
   return <App />;
 }

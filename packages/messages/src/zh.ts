@@ -47,6 +47,18 @@ export const zh = {
   "auth.resetMailSubject": "BioTrace 密码重置码",
   "auth.resetMailText": "你的 BioTrace 密码重置码是：{code}\n\n15 分钟内有效。如非本人操作，请忽略本邮件。",
   "auth.resetMailHtml": "<p>你的 BioTrace 密码重置码是：</p><p style=\"font-size:1.5em;letter-spacing:0.2em\"><strong>{code}</strong></p><p>15 分钟内有效。如非本人操作，请忽略本邮件。</p>",
+  "auth.downloadApp": "下载 App",
+
+  "download.title": "下载",
+  "download.cta": "下载",
+  "download.install": "安装",
+  "download.step1": "请用系统浏览器打开本页（微信内无法下载）。",
+  "download.step2": "点击「下载」。",
+  "download.step3": "若系统提示未知来源，允许后即可安装。",
+  "download.missing": "暂时没有可下载的安装包。",
+  "download.wechat": "请点击右上角，选择在浏览器中打开。",
+  "download.openWeb": "使用浏览器版本",
+  "download.ios": "目前只有安卓版，请用浏览器打开网页。",
 
   /* 登录后插页：一页一个功能页签（旅途 / 地图 / 图鉴）。「我的」不介绍。
      跳过＝中途离开；继续＝下一页；开始＝看完进旅途；返回＝帮助里看完回「我的」。 */

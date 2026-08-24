@@ -1,4 +1,5 @@
 import { useEffect, useRef, useState, type FormEvent } from "react";
+import { Link } from "react-router-dom";
 import { t } from "@biotrace/messages";
 import { api, type User } from "../api";
 import { easeOutCubic, nextPaint, prefersReducedMotion, tween } from "../motion";
@@ -249,6 +250,9 @@ export default function LoginPage({
                 >
                   {t("auth.forgotPassword")}
                 </button>
+                <Link className="text-link" to="/download">
+                  {t("auth.downloadApp")}
+                </Link>
               </div>
             ) : null}
 
