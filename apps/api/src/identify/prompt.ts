@@ -1,3 +1,5 @@
+import { countryFromLatLng } from "../settle/country.js";
+import { countryZhNameFromCode } from "../settle/geo/iso3166.js";
 import {
   emptyTaxonomy,
   normalizeEligibility,
@@ -8,16 +10,32 @@ import {
   type Taxonomy,
 } from "./types.js";
 
+/** 识图用的分布先验：离线国界，不打天地图。无坐标就不给国家，避免按某一国硬猜。 */
+export function identifyLocationLines(input: IdentifyInput): string {
+  const hasCoords = input.lat != null && input.lng != null;
+  const lat = hasCoords ? String(input.lat) : "";
+  const lon = hasCoords ? String(input.lng) : "";
+  if (!hasCoords) {
+    return `地点：无坐标，不要按某一国的常见种硬猜\n坐标：,`;
+  }
+  const code = countryFromLatLng(input.lat, input.lng);
+  const name = countryZhNameFromCode(code);
+  if (code && name && name !== code) {
+    return `地点：${name}（${code}；由坐标离线判定，供分布先验）\n坐标：${lat},${lon}`;
+  }
+  if (code) {
+    return `地点：国家 ${code}（由坐标离线判定，供分布先验）\n坐标：${lat},${lon}`;
+  }
+  return `地点：有坐标但无法判定国家（可能在海上），不要按某一国硬猜\n坐标：${lat},${lon}`;
+}
+
 export function buildIdentifyPrompt(input: IdentifyInput): string {
-  const lat = input.lat != null ? String(input.lat) : "";
-  const lon = input.lng != null ? String(input.lng) : "";
   const date = input.capturedAt ? input.capturedAt.toISOString().slice(0, 10) : "";
   const desc = input.description?.trim() || "";
 
   return `你是生物分类助手，服务于「旅行现场生命观察」App：只收集图中主体为**活的**生物（动物/植物/菌等，野生或饲养均可）的观察。
 
-地点：（由坐标推断即可，无地名）
-坐标：${lat},${lon}
+${identifyLocationLines(input)}
 拍摄日期：${date}
 用户描述（仅辅助，必须以图像视觉证据为主；若描述与图像冲突，以图像为准）：${desc}
 
@@ -55,7 +73,7 @@ export function buildIdentifyPrompt(input: IdentifyInput): string {
    - 书本/物体照片 → no_organism 或 depiction_or_media，不得硬凑生物分类
 4. 不确定是否活体时：subject_kind=unclear，eligibility=not_collectible。
 5. 合格但不确定种级时：finest_reliable_rank 最高只给到 genus 或 family，species 可为 null，不要编造异域种。
-6. 若提供了地点，优先考虑该地可能出现的类群（仅对合格活体）。`;
+6. 若提供了国家，优先考虑该国野外可能出现的类群（仅对合格活体）。图中形态与当地分布明显冲突时，宁可停在属/科，不要编造该国没有的种。无国家时不要按中国常见种硬猜。`;
 }
 
 export function extractIdentifyJson(text: string): IdentifyResult {

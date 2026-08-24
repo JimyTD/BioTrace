@@ -31,10 +31,11 @@ type VlQuirks = { temperature: number; sendThinking: boolean };
  * 没登记的走默认（temperature 0.1、不发 thinking）。
  */
 const MODEL_QUIRKS: Record<string, VlQuirks> = {
-  // 默认开思考；不显式关掉会先烧思维链，JSON 也不稳。
+  // 2026-08-24 实测：必须发 thinking:disabled（不发则默认开思考，约 6s）。
   "glm-5v-turbo": { temperature: 0.1, sendThinking: true },
-  // 非思考模式只接受 0.6。
+  // 关思考只接受 temperature 0.6；不发 thinking 字段则只接受 temperature 1。
   "kimi-k2.6": { temperature: 0.6, sendThinking: true },
+  // 发不发 thinking 都无推理链，耗时一样。不发以免个别网关 400。
   "hy-vision-2.0-instruct": { temperature: 0.1, sendThinking: false },
 };
 

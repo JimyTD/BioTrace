@@ -124,7 +124,8 @@ export const env = {
     "",
   /** On-demand GBIF occurrence counts for rarity; disable for offline/dev. */
   gbifEnabled: (process.env.GBIF_ENABLED ?? "1") === "1",
-  identifyConcurrency: Number(process.env.IDENTIFY_CONCURRENCY ?? 1),
+  /** 免费档 Flash 约 15 次/分钟；单次约数秒时并发 2 贴着上限，3 饱和易 429。 */
+  identifyConcurrency: Number(process.env.IDENTIFY_CONCURRENCY ?? 2),
   /** Max time to wait on a short Gemini cool-down before switching to TokenHub VL. */
   identifyGeminiWaitMaxMs: Number(process.env.IDENTIFY_GEMINI_WAIT_MAX_MS ?? 90_000),
   /** Wall-clock budget for one observation identify (wait + calls). */

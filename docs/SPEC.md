@@ -58,7 +58,7 @@ docs/        筹划 + 本实现规格
 
 ## 1.1 识图韧性
 
-- **识图队列**（默认 concurrency=1），只跑视觉识别，避免 Gemini 免费层被并行打爆。
+- **识图队列**（默认 concurrency=2），只跑视觉识别。免费档 Flash 约 15 次/分钟，并发 2 贴边，再高饱和时易 429。
 - **稀有度队列**（concurrency=1）与识图分开：TokenHub 量表不再占 Gemini 坑。观察仍保持 `analyzing`，写完 rarity 才变 `pending_settle`（开包一定有档）。
 - **Gemini 健康态**（进程内）：短限流 → 保持 `analyzing` 等待（≤90s）再试；瞬时 5xx/503 → 冷却约 20s 再试 **1 次**；日额耗尽/长冷却 → **切 TokenHub 视觉链**（同一把 `TOKENHUB_API_KEY`，只换模型名：`glm-5v-turbo` → `kimi-k2.6` → `hy-vision-2.0-instruct`）。编排：[`orchestrator.ts`](../apps/api/src/identify/orchestrator.ts)；链：[`vl-chain.ts`](../apps/api/src/identify/vl-chain.ts)。
 - 观察记下 `identify_provider`（`gemini` / `tokenhub`）和真正出货的 `identify_model`。
@@ -69,7 +69,7 @@ docs/        筹划 + 本实现规格
 
 在开包 / 稀有度 / 图鉴之前拦截「不是现场活体生物」的结果（书、人、玩具、卡通等）。
 
-- Prompt 要求模型声明 `subject_kind` / `subject_living` / `eligibility`；代码：[`eligibility.ts`](../apps/api/src/identify/eligibility.ts)。
+- Prompt 要求模型声明 `subject_kind` / `subject_living` / `eligibility`；有坐标时带上离线判定的国家中文名作分布先验（不打天地图）；代码：[`eligibility.ts`](../apps/api/src/identify/eligibility.ts)、[`prompt.ts`](../apps/api/src/identify/prompt.ts)。
 - **可收集**：`living_organism` 且活体（含饲养/动物园）。
 - **不可收集**：人、玩具/模型、影像/印刷形象、无生物、不明；写 `failed` + 分型码，**清空**俗名/学名/taxonomy/稀有度/`taxonKey`/`accepted_taxonomy_json`，不开包、不进图鉴。
 - 用户主文案（术语表）：**「东西是真的，但没用。」**（`error.identifyNotCollectible`）+ 副句换活体照片；徽章「不可收集」。
