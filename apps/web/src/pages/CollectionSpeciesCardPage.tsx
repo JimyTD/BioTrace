@@ -3,6 +3,7 @@ import { flushSync } from "react-dom";
 import { matchPath, useLocation, useNavigate, useParams } from "react-router-dom";
 import { hasMessage, t, type MessageKey } from "@biotrace/messages";
 import { api, type CollectionEntry, type CollectionSighting, type Rarity } from "../api";
+import { ListTagRow } from "../components/ListTagRow";
 import { useBackClose } from "../androidBack";
 import { measureBox } from "../motion";
 import { playPhotoLift } from "../photoLift";
@@ -182,10 +183,8 @@ export default function CollectionSpeciesCardPage() {
             <span className="muted">
               {t("collection.speciesFirstCollected", { date: shortDate(entry.firstCollectedAt) })}
             </span>
-            {entry.alertIntroduced ? (
-              <span className="muted">{t("settle.alertIntroduced")}</span>
-            ) : null}
           </div>
+          <ListTagRow tags={entry.tags} />
 
           <h2 className="section-title">{t("collection.speciesSightings")}</h2>
           {sightings.length === 0 ? (

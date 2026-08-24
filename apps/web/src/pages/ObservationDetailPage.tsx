@@ -5,6 +5,7 @@ import { acceptedScientificIfDifferent, api, type Observation, type Taxonomy } f
 import { identifyDisplayName } from "../identifyLabel";
 import { useBackClose } from "../androidBack";
 import ConfirmDialog from "../components/ConfirmDialog";
+import { ListTagRow } from "../components/ListTagRow";
 import ReidentifyDialog from "../components/ReidentifyDialog";
 import {
   identifyErrorHint,
@@ -302,6 +303,7 @@ export default function ObservationDetailPage() {
             </span>
           ) : null}
         </div>
+        <ListTagRow tags={notCollectible ? [] : obs.tags} />
       </header>
 
       {notice ? <p className="muted">{notice}</p> : null}
@@ -326,13 +328,6 @@ export default function ObservationDetailPage() {
         </section>
       ) : obs.description ? (
         <p className="muted detail-caption">{obs.description}</p>
-      ) : null}
-
-      {!notCollectible && obs.alertIntroduced ? (
-        <div className="alert-banner">
-          <strong>{t("settle.alertIntroduced")}</strong>
-          <p>{t("settle.alertHint")}</p>
-        </div>
       ) : null}
 
       {showTaxonomy ? (

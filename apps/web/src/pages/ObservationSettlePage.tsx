@@ -5,6 +5,7 @@ import { acceptedScientificIfDifferent, api, type Observation, type Rarity, type
 import { identifyByLine } from "../identifyLabel";
 import { useBackClose } from "../androidBack";
 import { SettlePackStage } from "../components/SettlePackStage";
+import { ListTagRow } from "../components/ListTagRow";
 import { peekObservation, rememberObservation } from "../pageCache";
 import { peekLiftBackground } from "../photoLiftHandoff";
 import { volumeCeremonyBgUrl, volumeSealCompleteUrl } from "../themes";
@@ -180,6 +181,7 @@ export default function ObservationSettlePage() {
                   {acceptedSci ? (
                     <span className="muted">{t("detail.acceptedScientificName", { name: acceptedSci })}</span>
                   ) : null}
+                  <ListTagRow tags={obs.tags} />
                   {(() => {
                     const by = identifyByLine(obs.identifyProvider, obs.identifyModel);
                     return by ? <span className="muted identify-by">{by}</span> : null;
@@ -194,12 +196,6 @@ export default function ObservationSettlePage() {
                   ) : null}
                   {!obs.locationPrecise ? (
                     <p className="muted">{t("settle.locationImprecise")}</p>
-                  ) : null}
-                  {obs.alertIntroduced ? (
-                    <div className="alert-banner">
-                      <strong>{t("settle.alertIntroduced")}</strong>
-                      <p>{t("settle.alertHint")}</p>
-                    </div>
                   ) : null}
                   {obs.blurb ? <p className="blurb">{obs.blurb}</p> : null}
 

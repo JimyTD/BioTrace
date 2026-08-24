@@ -11,7 +11,7 @@
 |------|------|------|
 | Cut 1 / 1.1 | 已完成 | 旅途、识图、相册、地图、删除、详情、术语表（当时登录是临时假登录，见 Cut 5） |
 | Cut 2 | 已完成 | 待开包 → 抽卡结算、图鉴、引入警示 UI |
-| Cut 3 | 已收口 | 引入名录/识图韧性；稀有度 = 12 题原子量表 + 名录（§3.2），已接结算 |
+| Cut 3 | 已收口 | 引入名录/识图韧性；稀有度 = 12 题原子量表 + 名录（§3.2），已接结算；名录标签对用户可见（§3.2 / §3.5） |
 | Cut 4 | 已上线 | 腾讯云轻量；手册 [`OPS.md`](./OPS.md) |
 | Cut 5 | 已上线 | 邮箱+密码主路径（取代魔法链接）；Resend 仅用于找回码；持久会话；见 §5 |
 | Cut 6 | 制品就绪 | Capacitor Android 侧载壳；手册 [`features/Android套壳.md`](./features/Android套壳.md) |
@@ -178,7 +178,8 @@ docs/        筹划 + 本实现规格
 
 #### 12 题与权重
 
-保护级四项（一级 / 二级 / 三有 / 灭绝）**只查名录不问模型**，见 [`cn-status.ts`](../apps/api/src/rarity/cn-status.ts)。
+保护级四项（一级 / 二级 / 三有 / 灭绝）**只查名录不问模型**，见 [`cn-status.ts`](../apps/api/src/rarity/cn-status.ts)。  
+观察 / 图鉴序列化时把命中项（可多枚）与引入种拼成 `tags` 给前端，稀有度下一行芯片；**评分仍只算最高档**。待开包 `tags: []`。
 
 | 键 | 问的是 | 权重 |
 |----|--------|------|
@@ -353,7 +354,7 @@ computeSettle
       → 无国家 / 非种级可靠鉴定 → false
       → 查 introduced-index ∪ introduced-seed overlay
       → 二项名精确匹配（禁止属名模糊）
-  → 写 alertIntroduced → 结算/详情横幅；图鉴按种聚合「曾警示」轻标
+  → 写 alertIntroduced → 开包/详情/图鉴与保护名录同一行芯片（`tags`）；相册格仍用 intro-tag
 ```
 
 | 文件 | 职责 |
@@ -365,8 +366,8 @@ computeSettle
 | `scripts/smoke-introduced.mjs` | 命中/不命中冒烟（含 JP/US 样例） |
 
 名录口径：保留 Compendium 全部引入/外来记录（**不**仅 `isInvasive`）。TW/HK/MO 源行（若有）并入 `CN`，与结算 `iso3166` 一致。  
-图鉴：`GET /api/collection` 对每种聚合「任意已结算观察曾 `alertIntroduced`」→ 卡片轻标（同文案，非整条横幅）。  
-相册：已结算且本条 `alertIntroduced` → 格内更小一档轻标（字段已有，不改 API）。
+图鉴：`GET /api/collection` 对每种聚合「任意已结算观察曾 `alertIntroduced`」→ 并进该种 `tags`（与保护名录同一行）。  
+相册：已结算且本条 `alertIntroduced` → 格内更小一档轻标（字段已有，不改 API）。开包/详情不再用整条横幅。
 
 验收锚点（种级 + 有国家）：CN 红耳龟 / 福寿螺 / 非洲大蜗牛类 → 警示；JP 牛蛙、US 斑马贻贝 → 警示；无 GPS、仅科/属、麻雀等本土常见 → 不警示。
 

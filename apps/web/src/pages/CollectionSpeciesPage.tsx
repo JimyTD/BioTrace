@@ -3,6 +3,7 @@ import { Link, useMatch, useNavigate } from "react-router-dom";
 import { useBackClose } from "../androidBack";
 import { hasMessage, t, type MessageKey } from "@biotrace/messages";
 import { api, type CollectionEntry, type Rarity } from "../api";
+import { ListTagRow } from "../components/ListTagRow";
 import {
   buildSpeciesFuse,
   filterSpecies,
@@ -167,10 +168,8 @@ export default function CollectionSpeciesPage() {
                       <span className={`rarity-badge rarity-${entry.rarity}`}>
                         {rarityLabel(entry.rarity)}
                       </span>
-                      {entry.alertIntroduced ? (
-                        <span className="muted">{t("settle.alertIntroduced")}</span>
-                      ) : null}
                     </span>
+                    <ListTagRow tags={entry.tags} />
                   </span>
                 </Link>
               ))}

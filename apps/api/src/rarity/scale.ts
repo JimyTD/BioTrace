@@ -9,7 +9,7 @@ import { env } from "../env.js";
 import { extractJson } from "../llm/json.js";
 import { callTextChain } from "../llm/text-chain.js";
 import { readRarityCache, writeRarityCache } from "./cache.js";
-import { lookupCnStatus, type CnListLevel, type CnStatus } from "./cn-status.js";
+import { lookupListed, type CnListLevel, type CnStatus } from "./cn-status.js";
 import {
   SCALE_BATCHES,
   distanceToBand,
@@ -87,23 +87,6 @@ function taxonBlock(input: ScaleRarityInput, country: string): string {
 - rank: ${input.finestReliableRank?.trim() || "unknown"}
 - country: ${country}
 - context: ordinary encounter`;
-}
-
-/**
- * 名录查名要把识图原名和 GBIF 接受名都试一遍：同物异名时往往只有一个在名录里，
- * 只试一个就可能整个漏掉保护级——那是 0.8～2.5 分，足够错两档。
- */
-function lookupListed(input: ScaleRarityInput): CnStatus {
-  const names = [input.scientificName?.trim(), input.taxonKey?.trim()].filter(
-    (n): n is string => Boolean(n),
-  );
-  let last: CnStatus | null = null;
-  for (const name of names) {
-    const hit = lookupCnStatus(name, input.label);
-    if (hit.level) return hit;
-    last = hit;
-  }
-  return last ?? lookupCnStatus(null, input.label);
 }
 
 function listOpts(listed: CnStatus) {

@@ -53,6 +53,7 @@ export type ObsStatus = "analyzing" | "pending_settle" | "settled" | "failed";
 export type SettleTier = "full" | "weak" | "none";
 /** Tier codes from API (default N/R/SR/UR; may grow via config). */
 export type Rarity = string;
+export type StatusTag = "extinct" | "class_i" | "class_ii" | "sanyou" | "introduced";
 
 export type Observation = {
   id: string;
@@ -80,6 +81,8 @@ export type Observation = {
   countryCode: string | null;
   locationPrecise: boolean | null;
   alertIntroduced: boolean;
+  /** 保护名录 + 引入种；待开包为空。 */
+  tags?: StatusTag[];
   taxonKey: string | null;
   identifyProvider: string | null;
   identifyModel?: string | null;
@@ -114,6 +117,7 @@ export type CollectionEntry = {
   rarity: Rarity;
   /** 该种任意已结算观察曾命中引入警示。 */
   alertIntroduced?: boolean;
+  tags?: StatusTag[];
   coverObservationId: string | null;
   coverDisplayUrl: string | null;
   firstCollectedAt: string;

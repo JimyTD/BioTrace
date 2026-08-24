@@ -72,6 +72,9 @@ export {
 export {
   lookupCnStatus,
   lookupCnProtected,
+  lookupListed,
+  statusTagsFrom,
   type CnStatus,
   type CnProtectLevel,
+  type StatusTag,
 } from "./cn-status.js";

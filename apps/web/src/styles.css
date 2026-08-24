@@ -964,6 +964,47 @@ button.film-tile-link {
   font-weight: 600;
 }
 
+.list-tag-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+}
+
+.list-tag {
+  display: inline-flex;
+  width: fit-content;
+  align-items: center;
+  padding: 2px 8px;
+  border-radius: var(--radius-sm);
+  font-size: 0.7rem;
+  font-weight: 700;
+  letter-spacing: 0.02em;
+  background: var(--list-tag-bg);
+  color: var(--list-tag-fg);
+}
+
+.list-tag-class_i {
+  --list-tag-bg: var(--list-tag-class_i-bg);
+  --list-tag-fg: var(--list-tag-class_i-fg);
+}
+.list-tag-class_ii {
+  --list-tag-bg: var(--list-tag-class_ii-bg);
+  --list-tag-fg: var(--list-tag-class_ii-fg);
+}
+.list-tag-sanyou {
+  --list-tag-bg: var(--list-tag-sanyou-bg);
+  --list-tag-fg: var(--list-tag-sanyou-fg);
+}
+.list-tag-extinct {
+  --list-tag-bg: var(--list-tag-extinct-bg);
+  --list-tag-fg: var(--list-tag-extinct-fg);
+}
+
+.detail-marks + .list-tag-row,
+.species-card-marks + .list-tag-row {
+  margin-top: 6px;
+}
+
 .settle-card {
   border-radius: var(--radius-lg);
   border: 1px solid var(--line);

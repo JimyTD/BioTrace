@@ -1,0 +1,354 @@
+<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>名录标签 · 设计预览</title>
+    <style>
+      :root {
+        --ink: #1f2a24;
+        --muted: #6b6258;
+        --line: rgba(42, 64, 51, 0.14);
+        --card: #faf8f3;
+        --nav-bg: #f3efe7;
+        --nav-active-ink: #9a4030;
+        --plate: #efe6d6;
+        --cta: #d3543c;
+        --cta-ink: #fffaf7;
+        --shadow: 0 10px 26px rgba(42, 36, 28, 0.1);
+        --font: "Segoe UI", "PingFang SC", "Microsoft YaHei", sans-serif;
+        --bg:
+          radial-gradient(900px 480px at 8% -8%, rgba(212, 168, 120, 0.22), transparent 55%),
+          linear-gradient(180deg, #f3efe7, #ebe6dc);
+        --rarity-N-bg: #ebe9e3; --rarity-N-fg: #4a4f48;
+        --rarity-SR-bg: #f0d8ff; --rarity-SR-fg: #7a22c8;
+        --rarity-UR-bg: #ffb8b4; --rarity-UR-fg: #b00018;
+        --rarity-LR-fg: #5a1a6e;
+        --rarity-UR-seal: #ff1f3a; --rarity-UR-seal-ink: #fff0f0;
+        --tag-i-bg: #8b2a22; --tag-i-fg: #fff6f1;
+        --tag-ii-bg: #7a4e28; --tag-ii-fg: #fff8f0;
+        --tag-sy-bg: #1f5c4e; --tag-sy-fg: #eef8f4;
+        --tag-ex-bg: #3d3f3c; --tag-ex-fg: #f4f2ec;
+        --tag-in-bg: #f3e3c4; --tag-in-fg: #9a6b24; --tag-in-line: rgba(154, 107, 36, 0.28);
+      }
+      * { box-sizing: border-box; }
+      body {
+        margin: 0; padding: 16px 12px 48px;
+        font-family: var(--font); color: var(--ink); background: #d9d0c2;
+      }
+      h1.doc { margin: 0 0 6px; font-size: 1.15rem; }
+      .note { margin: 0 0 10px; color: #5a5248; font-size: 0.92rem; max-width: 68ch; }
+      .diffs { margin: 0 0 16px; padding-left: 1.2em; color: #5a5248; font-size: 0.92rem; max-width: 68ch; }
+      .swatches { display: flex; flex-wrap: wrap; gap: 8px; margin: 0 0 18px; }
+      .phones { display: flex; flex-wrap: wrap; gap: 18px; }
+      .label { margin: 0 0 6px; font-size: 0.8rem; font-weight: 700; color: #5a5248; }
+      .phone {
+        width: min(100%, 360px); height: 640px; background: var(--bg);
+        border-radius: 22px; border: 1px solid rgba(42,36,28,.18);
+        box-shadow: 0 16px 40px rgba(42,36,28,.14);
+        display: grid; grid-template-rows: auto 1fr auto; overflow: hidden;
+      }
+      .topbar { padding: 12px 16px 10px; background: var(--nav-bg); border-bottom: 1px solid var(--line); font-weight: 700; }
+      .content { min-height: 0; overflow-y: auto; padding: 16px; display: grid; gap: 12px; align-content: start; }
+      .head-row { display: flex; justify-content: space-between; color: var(--muted); font-size: 0.9rem; }
+      .title { margin: 0; font-size: 1.35rem; font-weight: 700; }
+      .sci { margin: 0; color: var(--muted); font-size: 0.92rem; font-style: italic; }
+      .muted { margin: 0; color: var(--muted); font-size: 0.88rem; }
+      .h2 { margin: 0; font-size: 0.95rem; }
+      .marks { display: flex; flex-wrap: wrap; align-items: center; gap: 8px; }
+      .tag-row { display: flex; flex-wrap: wrap; gap: 6px; }
+      .rarity {
+        display: inline-flex; width: fit-content; padding: 3px 10px; border-radius: 8px;
+        font-size: 0.78rem; font-weight: 700;
+      }
+      .rarity.n { background: var(--rarity-N-bg); color: var(--rarity-N-fg); }
+      .rarity.sr { background: var(--rarity-SR-bg); color: var(--rarity-SR-fg); }
+      .rarity.ur { background: var(--rarity-UR-bg); color: var(--rarity-UR-fg); }
+      .rarity.lr {
+        background: linear-gradient(135deg, #e0c4ff 0%, #ffe566 48%, #ffb0d8 100%);
+        color: var(--rarity-LR-fg);
+      }
+      .list-tag {
+        display: inline-flex; width: fit-content; align-items: center;
+        padding: 2px 8px; border-radius: 8px;
+        font-size: 0.7rem; font-weight: 700; letter-spacing: 0.02em;
+      }
+      .list-tag.i { background: var(--tag-i-bg); color: var(--tag-i-fg); }
+      .list-tag.ii { background: var(--tag-ii-bg); color: var(--tag-ii-fg); }
+      .list-tag.sy { background: var(--tag-sy-bg); color: var(--tag-sy-fg); }
+      .list-tag.ex { background: var(--tag-ex-bg); color: var(--tag-ex-fg); }
+      .list-tag.in {
+        background: var(--tag-in-bg); color: var(--tag-in-fg);
+        border: 1px solid var(--tag-in-line); font-weight: 600;
+      }
+      .cover {
+        display: block; width: 100%; aspect-ratio: 4 / 3; object-fit: cover;
+        border-radius: 11px; background: var(--plate); box-shadow: var(--shadow);
+      }
+      .hero {
+        display: block; width: 100%; height: 168px; object-fit: cover;
+        border-radius: 8px; background: var(--plate); border: 1px solid var(--line);
+        box-shadow: var(--shadow);
+      }
+      .sightings { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+      .sighting { display: grid; gap: 4px; }
+      .sighting img {
+        width: 100%; aspect-ratio: 4 / 3; object-fit: cover; border-radius: 8px;
+        background: var(--plate);
+      }
+      .index {
+        border: 1px solid var(--line); border-radius: 11px; background: var(--card); overflow: hidden;
+      }
+      .row {
+        display: flex; gap: 12px; padding: 10px 12px; border-bottom: 1px solid var(--line);
+        align-items: flex-start;
+      }
+      .row:last-child { border-bottom: 0; }
+      .thumb {
+        width: 48px; height: 48px; object-fit: cover; border-radius: 8px;
+        background: var(--plate); flex-shrink: 0;
+      }
+      .copy { display: grid; gap: 3px; min-width: 0; }
+      .copy strong { font-size: 0.95rem; }
+      .stage {
+        position: relative; width: 100%; aspect-ratio: 4 / 3; border-radius: 12px;
+        overflow: hidden; background: #efe6d6;
+      }
+      .pack-bg { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; }
+      .photo-mat { position: absolute; inset: 8%; z-index: 1; }
+      .photo-window {
+        position: absolute; inset: 5%; overflow: hidden; border-radius: 2px; background: #2a241c;
+      }
+      .photo-window img { width: 100%; height: 100%; object-fit: contain; display: block; }
+      .frame { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: fill; z-index: 2; pointer-events: none; }
+      .seal {
+        position: absolute; z-index: 4; right: 3%; bottom: 5%;
+        width: 28%; aspect-ratio: 1; color: var(--rarity-UR-seal);
+      }
+      .seal svg { display: block; width: 100%; height: 100%; overflow: visible; filter: drop-shadow(0 2px 4px rgba(42,36,28,.28)); }
+      .seal span {
+        position: absolute; inset: 0; display: grid; place-items: center;
+        font-weight: 800; font-size: 1.05rem; color: var(--rarity-UR-seal-ink); z-index: 1;
+      }
+      .seal span::before {
+        content: ""; position: absolute; width: 42%; height: 42%; border-radius: 50%;
+        background: color-mix(in srgb, var(--rarity-UR-seal) 88%, #1a1200); z-index: -1;
+      }
+      .btn {
+        display: inline-flex; justify-content: center; border: 0; border-radius: 10px;
+        padding: 10px 16px; font: inherit; font-weight: 700;
+        background: var(--cta); color: var(--cta-ink);
+      }
+      .nav {
+        display: grid; grid-template-columns: repeat(4, 1fr);
+        padding: 0 4px 8px; background: var(--nav-bg); border-top: 1px solid var(--line);
+      }
+      .nav span {
+        position: relative; text-align: center; font-size: 0.86rem;
+        color: var(--muted); padding: 12px 6px 14px;
+      }
+      .nav span.on { color: var(--nav-active-ink); font-weight: 700; }
+      .nav span.on::after {
+        content: ""; position: absolute; left: 22%; right: 22%; bottom: 6px;
+        height: 2px; border-radius: 1px; background: var(--nav-active-ink);
+      }
+    </style>
+  </head>
+  <body>
+    <h1 class="doc">名录标签 · 设计预览</h1>
+    <p class="note">
+      照片上不叠。稀有度一行，身份标签另起一行（保护名录 + 引入种）。没标签就不画这行。开包/详情不再用整条横幅。
+    </p>
+    <ul class="diffs">
+      <li>展示按命中枚举，评分仍只算最高档；引入种不折进稀有度</li>
+      <li>引入种只并展示槽，数据仍走 alertIntroduced</li>
+      <li>相册胶片格维持现在的小 intro-tag，不加保护名录</li>
+    </ul>
+
+    <p class="label">芯片样子</p>
+    <div class="swatches">
+      <span class="list-tag i">一级保护</span>
+      <span class="list-tag ii">二级保护</span>
+      <span class="list-tag sy">三有动物</span>
+      <span class="list-tag ex">已灭绝</span>
+      <span class="list-tag in" title="依据该国公开名录判定">当地引入/关注种</span>
+    </div>
+
+    <div class="phones">
+      <div>
+        <p class="label">图鉴 · 物种卡</p>
+        <div class="phone">
+          <div class="topbar">BioTrace</div>
+          <div class="content">
+            <div class="head-row"><span>← 收集树</span><span></span></div>
+            <h2 class="title">川金丝猴</h2>
+            <p class="sci">Rhinopithecus roxellana</p>
+            <img class="cover" src="../trips/_sample-photo.jpg" alt="" />
+            <div class="marks">
+              <span class="rarity ur">UR · 极稀有</span>
+              <span class="muted">2024/10/12 首次收录</span>
+            </div>
+            <div class="tag-row">
+              <span class="list-tag i">一级保护</span>
+              <span class="list-tag sy">三有动物</span>
+            </div>
+            <h3 class="h2">目击</h3>
+            <div class="sightings">
+              <div class="sighting">
+                <img src="../trips/_sample-photo.jpg" alt="" />
+                <strong>神农架</strong>
+                <span class="muted">2024/10/12</span>
+              </div>
+              <div class="sighting">
+                <img src="../trips/_sample-photo.jpg" alt="" />
+                <strong>卧龙</strong>
+                <span class="muted">2025/4/3</span>
+              </div>
+            </div>
+          </div>
+          <div class="nav">
+            <span>旅途</span><span>地图</span><span class="on">图鉴</span><span>我的</span>
+          </div>
+        </div>
+      </div>
+
+      <div>
+        <p class="label">观察详情</p>
+        <div class="phone">
+          <div class="topbar">BioTrace</div>
+          <div class="content">
+            <div class="head-row"><span>← 旅途</span><span>地图</span></div>
+            <img class="hero" src="../trips/_sample-photo.jpg" alt="" />
+            <h2 class="title">川金丝猴</h2>
+            <p class="sci">Rhinopithecus roxellana</p>
+            <div class="marks">
+              <span class="rarity ur">UR · 极稀有</span>
+              <span class="muted">可靠到：种</span>
+            </div>
+            <div class="tag-row">
+              <span class="list-tag i">一级保护</span>
+              <span class="list-tag sy">三有动物</span>
+            </div>
+            <div>
+              <h3 class="h2">简介</h3>
+              <p class="muted">金黄色绒毛、朝天鼻，只在川陕甘的高海拔林带。</p>
+            </div>
+          </div>
+          <div class="nav">
+            <span class="on">旅途</span><span>地图</span><span>图鉴</span><span>我的</span>
+          </div>
+        </div>
+      </div>
+
+      <div>
+        <p class="label">开包展出</p>
+        <div class="phone">
+          <div class="topbar">BioTrace</div>
+          <div class="content">
+            <h2 class="title">结算</h2>
+            <p class="muted">请过目这次遇见。</p>
+            <div class="stage">
+              <img class="pack-bg" src="../settle/daylight/pack-bg.png" alt="" />
+              <div class="photo-mat">
+                <div class="photo-window">
+                  <img src="../trips/_sample-photo.jpg" alt="" />
+                </div>
+                <img class="frame" src="../settle/daylight/photo-frame.svg" alt="" />
+                <div class="seal" aria-hidden>
+                  <svg viewBox="0 0 128 128">
+                    <defs>
+                      <linearGradient id="ur" x1="20%" y1="0%" x2="80%" y2="100%">
+                        <stop offset="0%" stop-color="#ff8a96" />
+                        <stop offset="40%" stop-color="#ff1f3a" />
+                        <stop offset="100%" stop-color="#b00018" />
+                      </linearGradient>
+                    </defs>
+                    <path fill="url(#ur)" fill-rule="evenodd" d="M64 6 L70.85 11.95 L79.01 7.98 L84.09 15.5 L93 13.77 L95.96 22.35 L105.01 22.99 L105.65 32.04 L114.23 35 L112.5 43.91 L120.02 48.99 L116.05 57.15 L122 64 L116.05 70.85 L120.02 79.01 L112.5 84.09 L114.23 93 L105.65 95.96 L105.01 105.01 L95.96 105.65 L93 114.23 L84.09 112.5 L79.01 120.02 L70.85 116.05 L64 122 L57.15 116.05 L48.99 120.02 L43.91 112.5 L35 114.23 L32.04 105.65 L22.99 105.01 L22.35 95.96 L13.77 93 L15.5 84.09 L7.98 79.01 L11.95 70.85 L6 64 L11.95 57.15 L7.98 48.99 L15.5 43.91 L13.77 35 L22.35 32.04 L22.99 22.99 L32.04 22.35 L35 13.77 L43.91 15.5 L48.99 7.98 L57.15 11.95 Z M98 64 A34 34 0 1 1 30 64 A34 34 0 1 1 98 64 Z" />
+                  </svg>
+                  <span>UR</span>
+                </div>
+              </div>
+            </div>
+            <strong class="title" style="font-size:1.2rem">川金丝猴</strong>
+            <p class="sci">Rhinopithecus roxellana</p>
+            <div class="tag-row">
+              <span class="list-tag i">一级保护</span>
+              <span class="list-tag sy">三有动物</span>
+            </div>
+            <button class="btn" type="button">收下</button>
+          </div>
+          <div class="nav">
+            <span class="on">旅途</span><span>地图</span><span>图鉴</span><span>我的</span>
+          </div>
+        </div>
+      </div>
+
+      <div>
+        <p class="label">图鉴 · 物种列表</p>
+        <div class="phone">
+          <div class="topbar">BioTrace</div>
+          <div class="content">
+            <div class="head-row"><span>图鉴</span><span></span></div>
+            <h2 class="title">物种</h2>
+            <div class="index">
+              <div class="row">
+                <img class="thumb" src="../trips/_sample-photo.jpg" alt="" />
+                <div class="copy">
+                  <strong>川金丝猴</strong>
+                  <span class="sci">Rhinopithecus roxellana</span>
+                  <div class="marks">
+                    <span class="rarity ur">UR · 极稀有</span>
+                  </div>
+                  <div class="tag-row">
+                    <span class="list-tag i">一级保护</span>
+                    <span class="list-tag sy">三有动物</span>
+                  </div>
+                </div>
+              </div>
+              <div class="row">
+                <img class="thumb" src="../trips/_sample-photo.jpg" alt="" />
+                <div class="copy">
+                  <strong>中华穿山甲</strong>
+                  <span class="sci">Manis pentadactyla</span>
+                  <div class="marks">
+                    <span class="rarity lr">LR · 传说</span>
+                  </div>
+                  <div class="tag-row">
+                    <span class="list-tag i">一级保护</span>
+                  </div>
+                </div>
+              </div>
+              <div class="row">
+                <img class="thumb" src="../trips/_sample-photo.jpg" alt="" />
+                <div class="copy">
+                  <strong>清道夫</strong>
+                  <span class="sci">Pterygoplichthys pardalis</span>
+                  <div class="marks">
+                    <span class="rarity n">N · 常见</span>
+                  </div>
+                  <div class="tag-row">
+                    <span class="list-tag in" title="依据该国公开名录判定">当地引入/关注种</span>
+                  </div>
+                </div>
+              </div>
+              <div class="row">
+                <img class="thumb" src="../trips/_sample-photo.jpg" alt="" />
+                <div class="copy">
+                  <strong>喜鹊</strong>
+                  <span class="sci">Pica pica</span>
+                  <div class="marks">
+                    <span class="rarity n">N · 常见</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <p class="muted">没标签就不占那一行。收集树格子太挤，第一期不贴。</p>
+          </div>
+          <div class="nav">
+            <span>旅途</span><span>地图</span><span class="on">图鉴</span><span>我的</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </body>
+</html>

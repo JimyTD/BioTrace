@@ -92,6 +92,15 @@
   --rarity-XR-seal: #ff00a8;
   --rarity-XR-seal-ink: #fff5fb;
 
+  --list-tag-class_i-bg: #8b2a22;
+  --list-tag-class_i-fg: #fff6f1;
+  --list-tag-class_ii-bg: #7a4e28;
+  --list-tag-class_ii-fg: #fff8f0;
+  --list-tag-sanyou-bg: #1f5c4e;
+  --list-tag-sanyou-fg: #eef8f4;
+  --list-tag-extinct-bg: #3d3f3c;
+  --list-tag-extinct-fg: #f4f2ec;
+
   --rarity-LR-seal-rainbow: conic-gradient(
     from 210deg,
     #b14ef0 0deg,

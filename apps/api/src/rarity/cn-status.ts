@@ -8,6 +8,7 @@ export type CnProtectLevel = "class_i" | "class_ii";
 export type CnExtinctStatus = "EX" | "EW" | "FE";
 export type CnListLevel = "extinct" | "class_i" | "class_ii" | "sanyou" | null;
 export type CnMatchBy = "scientificName" | "alias" | "taxon" | "zh" | null;
+export type StatusTag = "extinct" | "class_i" | "class_ii" | "sanyou" | "introduced";
 
 export type CnStatus = {
   extinct: boolean;
@@ -175,6 +176,37 @@ export function lookupCnStatus(
     return { ...empty, sanyou: true, level: "sanyou", matchedBy };
   }
   return empty;
+}
+
+/**
+ * 名录查名要把识图原名和 GBIF 接受名都试一遍：同物异名时往往只有一个在名录里。
+ */
+export function lookupListed(input: {
+  scientificName?: string | null;
+  taxonKey?: string | null;
+  label?: string | null;
+}): CnStatus {
+  const names = [input.scientificName?.trim(), input.taxonKey?.trim()].filter(
+    (n): n is string => Boolean(n),
+  );
+  let last: CnStatus | null = null;
+  for (const name of names) {
+    const hit = lookupCnStatus(name, input.label);
+    if (hit.level) return hit;
+    last = hit;
+  }
+  return last ?? lookupCnStatus(null, input.label);
+}
+
+/** 展示用：按命中枚举。一级/二级互斥；三有可与保护级同时出现。引入种由调用方传入。 */
+export function statusTagsFrom(listed: CnStatus, introduced = false): StatusTag[] {
+  const tags: StatusTag[] = [];
+  if (listed.extinct) tags.push("extinct");
+  if (listed.class_i) tags.push("class_i");
+  else if (listed.class_ii) tags.push("class_ii");
+  if (listed.sanyou) tags.push("sanyou");
+  if (introduced) tags.push("introduced");
+  return tags;
 }
 
 /** 中国国家重点保护。查不到 = 非名录内。 */

@@ -1,6 +1,25 @@
 import { normalizeTaxonomy, type Taxonomy } from "./identify/types.js";
 import type { CollectionEntry, Observation, Trip, User } from "./db/schema.js";
+import { lookupListed, statusTagsFrom, type StatusTag } from "./rarity/cn-status.js";
 import type { TripSummaryResolved } from "./trips/summary.js";
+
+function tagsForNames(
+  input: {
+    scientificName?: string | null;
+    taxonKey?: string | null;
+    commonName?: string | null;
+  },
+  introduced: boolean,
+): StatusTag[] {
+  return statusTagsFrom(
+    lookupListed({
+      scientificName: input.scientificName,
+      taxonKey: input.taxonKey,
+      label: input.commonName,
+    }),
+    introduced,
+  );
+}
 
 export function serializeUser(user: User) {
   return {
@@ -90,6 +109,9 @@ export function serializeObservation(
     countryCode: obs.countryCode,
     locationPrecise: obs.locationPrecise,
     alertIntroduced: redact ? false : Boolean(obs.alertIntroduced),
+    tags: redact
+      ? []
+      : tagsForNames(obs, Boolean(obs.alertIntroduced)),
     taxonKey: redact ? null : obs.taxonKey,
     identifyProvider: redact ? null : obs.identifyProvider ?? null,
     identifyModel: redact ? null : obs.identifyModel ?? null,
@@ -113,6 +135,7 @@ export function serializeCollectionEntry(
     rarity: entry.rarity,
     /** 该种任意已结算观察曾命中引入警示（图鉴轻标；详情仍看单条观察）。 */
     alertIntroduced: Boolean(opts?.alertIntroduced),
+    tags: tagsForNames(entry, Boolean(opts?.alertIntroduced)),
     coverObservationId: entry.coverObservationId,
     coverDisplayUrl: coverDisplayUrl ?? null,
     firstCollectedAt: entry.firstCollectedAt.toISOString(),
