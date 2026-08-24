@@ -5,6 +5,8 @@ import exifr from "exifr";
 import { env } from "../env.js";
 import { validCoords } from "../settle/geo/coords.js";
 
+export { embedFallbackExif } from "./exifEmbed.js";
+
 export type ExifMeta = {
   capturedAt: Date | null;
   lat: number | null;

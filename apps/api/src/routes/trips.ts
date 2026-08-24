@@ -11,7 +11,8 @@ import { env } from "../env.js";
 import { enqueueIdentify } from "../jobs/identify.js";
 import { isPlatformIdentifyQuotaExhausted } from "../services/identify-quota.js";
 import { usesOwnIdentifyKey } from "../services/user-identify.js";
-import { readExif, saveObservationMedia } from "../services/media.js";
+import { embedFallbackExif, readExif, saveObservationMedia } from "../services/media.js";
+import { validCoords } from "../settle/geo/coords.js";
 import { repairCollectionAfterObservationDeleted } from "../services/collection.js";
 import { removeObservationFiles } from "../services/observationFiles.js";
 import {
@@ -42,6 +43,21 @@ import {
 export const tripRoutes = new Hono<{ Variables: Variables }>();
 
 tripRoutes.use("*", requireUser);
+
+function parseFormNumber(value: unknown): number | null {
+  if (typeof value === "number" && Number.isFinite(value)) return value;
+  if (typeof value === "string" && value.trim()) {
+    const n = Number(value);
+    return Number.isFinite(n) ? n : null;
+  }
+  return null;
+}
+
+function parseFormDate(value: unknown): Date | null {
+  if (typeof value !== "string" || !value.trim()) return null;
+  const d = new Date(value);
+  return Number.isNaN(d.getTime()) ? null : d;
+}
 
 async function loadTripObsSummary(tripIds: string[]) {
   if (tripIds.length === 0) {
@@ -397,8 +413,11 @@ tripRoutes.post("/:id/observations", async (c) => {
       ? body.description.trim()
       : null;
 
-  const buffer = Buffer.from(await file.arrayBuffer());
-  if (buffer.byteLength > env.uploadMaxBytes) {
+  const formCoords = validCoords(parseFormNumber(body.lat), parseFormNumber(body.lng));
+  const formCapturedAt = parseFormDate(body.capturedAt);
+
+  const incoming = Buffer.from(await file.arrayBuffer());
+  if (incoming.byteLength > env.uploadMaxBytes) {
     return c.json(
       {
         error: t("album.fileTooLarge", { maxMb: Math.round(env.uploadMaxBytes / (1024 * 1024)) }),
@@ -407,6 +426,12 @@ tripRoutes.post("/:id/observations", async (c) => {
       400,
     );
   }
+
+  const exif = await readExif(incoming);
+  const lat = exif.lat ?? formCoords?.lat ?? null;
+  const lng = exif.lng ?? formCoords?.lng ?? null;
+  const capturedAt = exif.capturedAt ?? formCapturedAt;
+  const buffer = embedFallbackExif(incoming, { lat, lng, capturedAt }, exif);
 
   const contentHash = createHash("sha256").update(buffer).digest("hex");
   const dup = await db.query.observations.findFirst({
@@ -417,7 +442,6 @@ tripRoutes.post("/:id/observations", async (c) => {
     return c.json({ error: t("album.duplicatePhoto"), code: "duplicate_photo" }, 409);
   }
 
-  const exif = await readExif(buffer);
   const observationId = crypto.randomUUID();
   const now = new Date();
 
@@ -437,9 +461,9 @@ tripRoutes.post("/:id/observations", async (c) => {
     userId: user.id,
     status: (quotaExhausted ? "failed" : "analyzing") as "failed" | "analyzing",
     description,
-    capturedAt: exif.capturedAt,
-    lat: exif.lat,
-    lng: exif.lng,
+    capturedAt,
+    lat,
+    lng,
     contentHash,
     displayPath: saved.displayPath,
     originalPath: saved.originalPath,
@@ -480,9 +504,9 @@ tripRoutes.post("/:id/observations", async (c) => {
       observationId,
       imagePath: saved.displayAbsolutePath,
       mimeType: saved.mimeType,
-      lat: exif.lat,
-      lng: exif.lng,
-      capturedAt: exif.capturedAt,
+      lat,
+      lng,
+      capturedAt,
       description,
     });
   }

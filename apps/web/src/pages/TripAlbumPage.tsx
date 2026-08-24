@@ -19,7 +19,15 @@ import {
   identifyErrorPrimary,
   isNotCollectibleError,
 } from "../identifyErrors";
-import { canUseNativePicker, MAX_UPLOAD_BATCH, pickImageNative } from "../pickImage";
+import {
+  canUseNativePicker,
+  MAX_UPLOAD_BATCH,
+  pickImageNative,
+  readDeviceFix,
+  resolveDeviceFix,
+  type DeviceFix,
+  type PickImageMode,
+} from "../pickImage";
 import { easeOutCubic, measureBox, nextPaint, prefersReducedMotion, tween } from "../motion";
 import { playPhotoLift } from "../photoLift";
 import {
@@ -108,6 +116,9 @@ export default function TripAlbumPage({ userId }: { userId: string }) {
   const [picking, setPicking] = useState(false);
   const [toast, setToast] = useState<string | null>(null);
   const fileInputRef = useRef<HTMLInputElement | null>(null);
+  const cameraInputRef = useRef<HTMLInputElement | null>(null);
+  const deviceFixRef = useRef<Promise<DeviceFix> | null>(null);
+  const [useDeviceFix, setUseDeviceFix] = useState(false);
   const nativePicker = canUseNativePicker();
   const prevPending = useRef(0);
   const seenIds = useRef<Set<string> | null>(null);
@@ -344,12 +355,15 @@ export default function TripAlbumPage({ userId }: { userId: string }) {
 
   function clearPickedInputs() {
     if (fileInputRef.current) fileInputRef.current.value = "";
+    if (cameraInputRef.current) cameraInputRef.current.value = "";
   }
 
-  function applyPickedFiles(list: File[] | FileList | null) {
+  function applyPickedFiles(list: File[] | FileList | null, source: PickImageMode = "gallery") {
     if (!list || list.length === 0) {
       setFiles([]);
       setDescription("");
+      setUseDeviceFix(false);
+      deviceFixRef.current = null;
       return;
     }
     const arr = Array.from(list);
@@ -361,29 +375,56 @@ export default function TripAlbumPage({ userId }: { userId: string }) {
     setFiles(next);
     if (next.length !== 1) setDescription("");
     setError(null);
+    setUseDeviceFix(source === "camera");
+    if (source !== "camera") deviceFixRef.current = null;
   }
 
   function clearPicked() {
     setFiles([]);
     setDescription("");
+    setUseDeviceFix(false);
+    deviceFixRef.current = null;
     clearPickedInputs();
   }
 
-  async function onPick() {
+  async function onPick(mode: PickImageMode) {
     setError(null);
+    if (mode === "camera") {
+      deviceFixRef.current = readDeviceFix();
+    } else {
+      deviceFixRef.current = null;
+      setUseDeviceFix(false);
+    }
     if (nativePicker) {
       setPicking(true);
       try {
-        const picked = await pickImageNative();
-        if (picked.length) applyPickedFiles(picked);
+        const picked = await pickImageNative(mode);
+        if (picked.length) {
+          if (mode === "camera") {
+            deviceFixRef.current = resolveDeviceFix(deviceFixRef.current);
+          }
+          applyPickedFiles(picked, mode);
+        }
+        else if (mode === "camera" && files.length === 0) {
+          deviceFixRef.current = null;
+          setUseDeviceFix(false);
+        }
       } catch {
         setError(t("album.pickFailed"));
+        if (mode === "camera" && files.length === 0) {
+          deviceFixRef.current = null;
+          setUseDeviceFix(false);
+        }
       } finally {
         setPicking(false);
       }
       return;
     }
-    fileInputRef.current?.click();
+    if (mode === "camera") {
+      cameraInputRef.current?.click();
+    } else {
+      fileInputRef.current?.click();
+    }
   }
 
   async function onUpload(e: FormEvent) {
@@ -393,6 +434,7 @@ export default function TripAlbumPage({ userId }: { userId: string }) {
     setError(null);
     const batch = [...files];
     const desc = batch.length === 1 ? description : "";
+    const fix = useDeviceFix ? await deviceFixRef.current : null;
     let ok = 0;
     let fail = 0;
     let dup = 0;
@@ -401,7 +443,7 @@ export default function TripAlbumPage({ userId }: { userId: string }) {
       for (let i = 0; i < batch.length; i++) {
         setUploadProgress({ current: i + 1, total: batch.length });
         try {
-          const res = await api.uploadObservation(id, batch[i]!, desc);
+          const res = await api.uploadObservation(id, batch[i]!, desc, fix ?? undefined);
           ok += 1;
           if (res.code === "identify_daily_limit") dailyLimitHits += 1;
         } catch (err) {
@@ -513,19 +555,43 @@ export default function TripAlbumPage({ userId }: { userId: string }) {
         type="file"
         accept="image/*"
         multiple
-        onChange={(e) => applyPickedFiles(e.target.files)}
+        onChange={(e) => applyPickedFiles(e.target.files, "gallery")}
+      />
+      <input
+        ref={cameraInputRef}
+        className="file-input-hidden"
+        type="file"
+        accept="image/*"
+        capture="environment"
+        onChange={(e) => {
+          if (e.target.files?.length) {
+            deviceFixRef.current = resolveDeviceFix(deviceFixRef.current);
+          }
+          applyPickedFiles(e.target.files, "camera");
+        }}
       />
 
       {!pickingOpen ? (
-        <div className="album-toolbar">
-          <button
-            className="btn"
-            type="button"
-            disabled={picking}
-            onClick={() => void onPick()}
-          >
-            {picking ? t("album.picking") : t("album.addPhotos")}
-          </button>
+        <div>
+          <div className="album-toolbar">
+            <button
+              className="btn"
+              type="button"
+              disabled={picking}
+              onClick={() => void onPick("gallery")}
+            >
+              {picking ? t("album.picking") : t("album.addPhotos")}
+            </button>
+            <button
+              className="text-link"
+              type="button"
+              disabled={picking || uploading}
+              onClick={() => void onPick("camera")}
+            >
+              {t("album.takePhoto")}
+            </button>
+          </div>
+          <p className="muted album-camera-hint">{t("album.cameraQualityHint")}</p>
         </div>
       ) : (
         <form className="album-uploader stack" onSubmit={onUpload}>
@@ -534,7 +600,15 @@ export default function TripAlbumPage({ userId }: { userId: string }) {
               className="btn secondary"
               type="button"
               disabled={picking || uploading}
-              onClick={() => void onPick()}
+              onClick={() => void onPick("camera")}
+            >
+              {t("album.takePhoto")}
+            </button>
+            <button
+              className="btn secondary"
+              type="button"
+              disabled={picking || uploading}
+              onClick={() => void onPick("gallery")}
             >
               {t("album.pickGallery")}
             </button>

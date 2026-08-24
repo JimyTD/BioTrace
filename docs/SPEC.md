@@ -92,6 +92,7 @@ docs/        筹划 + 本实现规格
 ## 1.4 原图上传 / 可读地名 / 同图去重（已收口）
 
 - **Android 相册**：默认传**原图**（`@capawesome/capacitor-file-picker` + `ACCESS_MEDIA_LOCATION`），不再走会把 GPS 涂成 `0,0` 的 Photo Picker 重编码。服务端 `readExif` 将近 Null Island 视为无定位；历史 `0,0` 启动时清洗。落盘 **原图 + display.jpg**（列表/识图用 display；详情优先原图若浏览器可显示）。单张上限默认 25MB（`UPLOAD_MAX_BYTES`）。
+- **现场拍照**：相册页「拍照」走系统相机（`@capacitor/camera`）。系统相机 Intent / `Camera.getPhoto` 回传图通常没有 EXIF GPS（Android 会重编码），因此拍照时另取设备定位（`@capacitor/geolocation`；Web 用 `navigator.geolocation`），上传表单可带 `lat` / `lng` / `capturedAt`。服务端把缺的 GPS / 拍摄时间**写进 JPEG EXIF** 再落盘原图（已有有效 EXIF 不覆盖）。库字段仍以读到的 EXIF 优先、表单补缺。定位权限被拒或旧壳没有该插件时不挡上传，之后仍可地图补标。要让 App 里拍照带上定位，需重打含 Geolocation 与定位权限的 APK。
 - **可读地名**：天地图逆地理同一调用取 `province/city/county`，写入 `location_label`（国内省市区连写；海外「国家 · 城市」）。详情/地图优先展示；失败不挡主路径。
 - **同图去重**：上传原字节 SHA-256 → `content_hash`，按用户唯一；重复 `409 duplicate_photo`。删观察后可再传。不做感知哈希。
 

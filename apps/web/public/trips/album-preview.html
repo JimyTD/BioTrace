@@ -39,6 +39,7 @@
       .title { margin: 0; font-size: 1.45rem; font-weight: 700; }
       .meta { margin: 0; color: var(--muted); font-size: 0.92rem; }
       .toolbar { display: flex; align-items: center; gap: 14px; }
+      .hint { margin: 2px 0 0; color: var(--muted); font-size: 0.82rem; line-height: 1.4; }
       .btn {
         border: 0; border-radius: 10px; padding: 8px 14px; font: inherit;
         background: var(--cta); color: var(--cta-ink);
@@ -85,8 +86,8 @@
   <body>
     <h1 class="doc">相册页 · 真布局预览</h1>
     <p class="note">
-      第一屏只留标题、一行摘要、加入照片、胶片格。管理进二级页（功能都在，位置换了）。
-      点「加入照片」直接选图；选中后才出现缩略图和上传。拍照仍在旁边。
+      第一屏只留标题、一行摘要、上传照片、胶片格。管理进二级页（功能都在，位置换了）。
+      点「上传照片」直接选图；选中后才出现缩略图和「上传并鉴定」。拍照仍在旁边。
     </p>
     <div class="phones">
       <div>
@@ -98,9 +99,10 @@
             <h2 class="title">潮间带午后</h2>
             <p class="meta">3 张照片 · 厦门 · 共享 · 2 人同行</p>
             <div class="toolbar">
-              <button class="btn" type="button">加入照片</button>
+              <button class="btn" type="button">上传照片</button>
               <button class="text-link" type="button">拍照</button>
             </div>
+            <p class="hint">系统相机拍完再从相册上传，比这里直接拍更清晰。</p>
             <div class="film">
               <div>
                 <div class="tile-media">
@@ -132,10 +134,11 @@
             <h2 class="title">海岸线</h2>
             <p class="meta">还没有照片</p>
             <div class="toolbar">
-              <button class="btn" type="button">加入照片</button>
+              <button class="btn" type="button">上传照片</button>
               <button class="text-link" type="button">拍照</button>
             </div>
-            <p class="caption">册页还空着。加入照片，开始记录。</p>
+            <p class="hint">系统相机拍完再从相册上传，比这里直接拍更清晰。</p>
+            <p class="caption">册页还空着。上传照片，开始记录。</p>
           </div>
           <nav class="nav">
             <span class="on">旅途</span><span>地图</span><span>图鉴</span><span>我的</span>

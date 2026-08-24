@@ -34,6 +34,9 @@ importers:
       hono:
         specifier: ^4.9.6
         version: 4.13.0
+      piexifjs:
+        specifier: 1.0.6
+        version: 1.0.6
       sharp:
         specifier: ^0.34.3
         version: 0.34.5
@@ -80,6 +83,9 @@ importers:
       '@capacitor/filesystem':
         specifier: 7.0.0
         version: 7.0.0(@capacitor/core@7.6.8)
+      '@capacitor/geolocation':
+        specifier: ^7.0.0
+        version: 7.1.8(@capacitor/core@7.6.8)
       '@capacitor/splash-screen':
         specifier: ^7.0.2
         version: 7.0.5(@capacitor/core@7.6.8)
@@ -114,6 +120,9 @@ importers:
       '@capacitor/filesystem':
         specifier: 7.0.0
         version: 7.0.0(@capacitor/core@7.6.8)
+      '@capacitor/geolocation':
+        specifier: ^7.0.0
+        version: 7.1.8(@capacitor/core@7.6.8)
       '@capawesome/capacitor-file-picker':
         specifier: 7.2.0
         version: 7.2.0(@capacitor/core@7.6.8)
@@ -283,10 +292,18 @@ packages:
     peerDependencies:
       '@capacitor/core': '>=7.0.0'
 
+  '@capacitor/geolocation@7.1.8':
+    resolution: {integrity: sha512-x/rJieD2N2zlGvXFRD3ru4ArJWTwXAIYmyhfo5zg4F1DKGos7mCCOvIOSVMdfQmt14SCsmJeO9Qe8EtDGNGCrw==}
+    peerDependencies:
+      '@capacitor/core': '>=7.0.0'
+
   '@capacitor/splash-screen@7.0.5':
     resolution: {integrity: sha512-bPG2SamFL7VT5I3XsgsGgJhkiyxq3OXCOVKEDupSieVdtEiG7j2vLbSD0xL+91zteF/qLuxsjbugGy5LD8mS2A==}
     peerDependencies:
       '@capacitor/core': '>=7.0.0'
+
+  '@capacitor/synapse@1.0.4':
+    resolution: {integrity: sha512-/C1FUo8/OkKuAT4nCIu/34ny9siNHr9qtFezu4kxm6GY1wNFxrCFWjfYx5C1tUhVGz3fxBABegupkpjXvjCHrw==}
 
   '@capawesome/capacitor-file-picker@7.2.0':
     resolution: {integrity: sha512-qUNa+Ypem575xSNiJwgiOaaHXzAHaxMtERySRIsIC0HggoCa11xGS3xEVtMooQ3fS0cDXfl4/17DYoHQtkDjXA==}
@@ -1716,6 +1733,9 @@ packages:
     resolution: {integrity: sha512-RvwwcruNjI1ncT5xRakeyS9Lf8lcItv34KD+aif+VH9kduAyfYBipGh12274xtenIPZ119/R9BdTBa8gAwSh0A==}
     engines: {node: '>=12'}
 
+  piexifjs@1.0.6:
+    resolution: {integrity: sha512-0wVyH0cKohzBQ5Gi2V1BuxYpxWfxF3cSqfFXfPIpl5tl9XLS5z4ogqhUCD20AbHi0h9aJkqXNJnkVev6gwh2ag==}
+
   pinyin-pro@3.29.2:
     resolution: {integrity: sha512-L2AemHDHVFIgr207HFdjiU+4i8Hu15kcHX0Ab5iZCWH0NDmX404tyCQ06kglotGpqOLXNst2NK/A2K8qdC301Q==}
 
@@ -2179,9 +2199,16 @@ snapshots:
     dependencies:
       '@capacitor/core': 7.6.8
 
+  '@capacitor/geolocation@7.1.8(@capacitor/core@7.6.8)':
+    dependencies:
+      '@capacitor/core': 7.6.8
+      '@capacitor/synapse': 1.0.4
+
   '@capacitor/splash-screen@7.0.5(@capacitor/core@7.6.8)':
     dependencies:
       '@capacitor/core': 7.6.8
+
+  '@capacitor/synapse@1.0.4': {}
 
   '@capawesome/capacitor-file-picker@7.2.0(@capacitor/core@7.6.8)':
     dependencies:
@@ -3263,6 +3290,8 @@ snapshots:
   picocolors@1.1.1: {}
 
   picomatch@4.0.5: {}
+
+  piexifjs@1.0.6: {}
 
   pinyin-pro@3.29.2: {}
 

@@ -65,8 +65,8 @@ cd apps/mobile/android
 
 - `capacitor.config.js`：`server.cleartext: true`、`android.allowMixedContent: true`
 - Manifest：`usesCleartextTraffic` + [`network_security_config.xml`](../../apps/mobile/android/app/src/main/res/xml/network_security_config.xml)
-- 权限：`INTERNET`、`CAMERA`、读写图片（相册上传）
-- 插件：`@capawesome/capacitor-file-picker`（相册原图）、`@capacitor/filesystem` + `@capacitor-community/file-opener`（应用内下载 APK 并唤起安装）
+- 权限：`INTERNET`、`CAMERA`、粗/精定位（现场拍补 GPS）、读写图片（相册上传）
+- 插件：`@capacitor/camera`（拍照）、`@capacitor/geolocation`（拍照补定位）、`@capawesome/capacitor-file-picker`（相册原图）、`@capacitor/filesystem` + `@capacitor-community/file-opener`（应用内下载 APK 并唤起安装）
 - 权限：含 `REQUEST_INSTALL_PACKAGES`（侧载更新）
 - 应用内更新：见 [`OPS.md`](../OPS.md) §7.2「发布到服务器」；元数据 `GET /api/app/android`，包落在 `/opt/biotrace/data/android-release/`（仅最新）
 
@@ -109,7 +109,8 @@ cd apps/mobile/android
 - [ ] 真机安装 debug 或 **Release** APK，启动后进入与浏览器一致的站点首页
 - [ ] 能走登录（邮箱+密码；找回用 App 内填重置码；会话 Cookie 杀进程后仍在）
 - [ ] 主路径可点：旅途 / 上传识图 / 图鉴或地图（视账号数据而定）
-- [ ] 「加入照片」打开系统相册（原图 FilePicker）；可多选
+- [ ] 「上传照片」打开系统相册（原图 FilePicker）；可多选
+- [ ] 「拍照」可拍摄并上传；允许定位后观察应有坐标（无 EXIF 时用设备定位）
 - [ ] 「我的」显示壳版本并可「检查更新」；有新包时下载后弹出系统安装页
 - [ ] 修改 `server-url.txt` → `pnpm mobile:sync` → 重装/重跑后指向新地址
 - [ ] GitHub Release 附件可下载并安装；同签名升级时 `versionCode` 递增可覆盖安装

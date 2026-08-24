@@ -604,6 +604,12 @@ button.me-row {
   margin-top: 2px;
 }
 
+.album-camera-hint {
+  margin: 2px 0 0;
+  font-size: 0.82rem;
+  line-height: 1.4;
+}
+
 .share-member-list {
   list-style: none;
   margin: 0;

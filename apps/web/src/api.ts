@@ -303,10 +303,20 @@ export const api = {
     }),
   listTripObservations: (tripId: string) =>
     request<{ observations: Observation[] }>(`/api/trips/${tripId}/observations`),
-  uploadObservation: (tripId: string, file: File, description?: string) => {
+  uploadObservation: (
+    tripId: string,
+    file: File,
+    description?: string,
+    fix?: { lat?: number | null; lng?: number | null; capturedAt?: Date },
+  ) => {
     const form = new FormData();
     form.append("file", file);
     if (description?.trim()) form.append("description", description.trim());
+    if (fix?.lat != null && fix.lng != null) {
+      form.append("lat", String(fix.lat));
+      form.append("lng", String(fix.lng));
+    }
+    if (fix?.capturedAt) form.append("capturedAt", fix.capturedAt.toISOString());
     return request<{ observation: Observation; code?: string }>(
       `/api/trips/${tripId}/observations`,
       {
