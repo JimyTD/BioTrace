@@ -2577,6 +2577,14 @@ button.species-card-cover {
 .page-lift-overlay.is-onboard {
   padding: 0;
   overflow: hidden;
+  overscroll-behavior-x: none;
+}
+
+.onboard-track {
+  display: flex;
+  height: 100%;
+  touch-action: none;
+  will-change: transform;
 }
 
 .app-shell.is-onboard .nav {
@@ -2613,6 +2621,9 @@ button.species-card-cover {
 }
 
 .onboard-folio {
+  flex: 0 0 100%;
+  width: 100%;
+  min-width: 0;
   height: 100%;
   display: grid;
   grid-template-rows: 1fr auto;
@@ -2622,6 +2633,12 @@ button.species-card-cover {
   background-repeat: no-repeat;
   background-size: cover;
   cursor: pointer;
+  user-select: none;
+  -webkit-user-select: none;
+}
+
+.onboard-folio img {
+  -webkit-user-drag: none;
 }
 
 .onboard-folio.is-map {

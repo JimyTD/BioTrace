@@ -1,4 +1,4 @@
-import { useEffect, useLayoutEffect, useRef, useState } from "react";
+import { useEffect, useLayoutEffect, useRef, useState, type MouseEvent, type PointerEvent } from "react";
 import { useNavigate } from "react-router-dom";
 import { App } from "@capacitor/app";
 import { Capacitor, type PluginListenerHandle } from "@capacitor/core";
@@ -16,21 +16,13 @@ const PAGES: { tab: "trips" | "map" | "collection"; ledeKey: MessageKey }[] = [
   { tab: "collection", ledeKey: "onboard.collectionLede" },
 ];
 
+const LAST = PAGES.length - 1;
+
 const MAP_DOTS = [
   { lng: 104.06, lat: 30.67, on: false },
   { lng: 113.26, lat: 23.13, on: false },
   { lng: 121.47, lat: 31.23, on: true },
 ];
-
-function sleep(ms: number) {
-  return new Promise<void>((resolve) => {
-    window.setTimeout(resolve, ms);
-  });
-}
-
-function waitAnim(anim: Animation, ms: number) {
-  return Promise.race([anim.finished.catch(() => undefined), sleep(ms)]);
-}
 
 export default function OnboardInsert({
   mode,
@@ -41,17 +33,22 @@ export default function OnboardInsert({
 }) {
   const navigate = useNavigate();
   const [page, setPage] = useState(0);
-  const folioRef = useRef<HTMLDivElement | null>(null);
-  const busyRef = useRef(false);
+  const trackRef = useRef<HTMLDivElement | null>(null);
   const closedRef = useRef(false);
   const pageRef = useRef(0);
   const modeRef = useRef(mode);
   const onCloseRef = useRef(onClose);
+  const dragRef = useRef<{
+    pid: number;
+    x: number;
+    y: number;
+    t: number;
+    axis: "h" | "v" | null;
+  } | null>(null);
+  const swallowClickRef = useRef(false);
   pageRef.current = page;
   modeRef.current = mode;
   onCloseRef.current = onClose;
-  const current = PAGES[page]!;
-  const last = page === PAGES.length - 1;
 
   useEffect(() => {
     const shell = document.querySelector(".app-shell");
@@ -64,8 +61,15 @@ export default function OnboardInsert({
   }, []);
 
   useEffect(() => {
-    document.querySelector(".app-shell")?.setAttribute("data-onboard-tab", current.tab);
-  }, [current.tab]);
+    document.querySelector(".app-shell")?.setAttribute("data-onboard-tab", PAGES[page]!.tab);
+  }, [page]);
+
+  useLayoutEffect(() => {
+    paintTrack(page, 0, false);
+    const onResize = () => paintTrack(pageRef.current, 0, false);
+    window.addEventListener("resize", onResize);
+    return () => window.removeEventListener("resize", onResize);
+  }, []);
 
   useEffect(() => {
     if (window.history.state?.biotraceOnboard !== true) {
@@ -75,17 +79,15 @@ export default function OnboardInsert({
       if (closedRef.current) return;
       if (pageRef.current > 0) {
         window.history.pushState({ biotraceOnboard: true }, "");
-        void fadeTo(() => setPage((n) => Math.max(0, n - 1)));
-        return;
       }
-      finish(true);
+      retreat(true);
     };
     window.addEventListener("popstate", onPop);
     let handle: PluginListenerHandle | undefined;
     let cancelled = false;
     if (Capacitor.isNativePlatform()) {
       void App.addListener("backButton", () => {
-        window.history.back();
+        retreat();
       }).then((h) => {
         if (cancelled) void h.remove();
         else handle = h;
@@ -98,11 +100,27 @@ export default function OnboardInsert({
     };
   }, []);
 
+  function paneWidth() {
+    return trackRef.current?.parentElement?.clientWidth || 1;
+  }
+
+  function paintTrack(index: number, dx: number, animate: boolean) {
+    const el = trackRef.current;
+    if (!el) return;
+    const w = paneWidth();
+    let shift = dx;
+    if (index <= 0 && dx > 0) shift = dx * 0.32;
+    if (index >= LAST && dx < 0) shift = dx * 0.32;
+    const reduced = prefersReducedMotion();
+    el.style.transition = animate && !reduced ? "transform 280ms cubic-bezier(0.22, 1, 0.36, 1)" : "none";
+    el.style.transform = `translate3d(${-index * w + shift}px, 0, 0)`;
+  }
+
   function finish(fromPop = false) {
     if (closedRef.current) return;
     closedRef.current = true;
     if (!fromPop && window.history.state?.biotraceOnboard === true) {
-      if (modeRef.current === "replay" || pageRef.current === PAGES.length - 1) {
+      if (modeRef.current === "replay" || pageRef.current === LAST) {
         window.history.replaceState(null, "");
       } else {
         window.history.back();
@@ -110,89 +128,165 @@ export default function OnboardInsert({
     }
     onCloseRef.current();
     if (modeRef.current === "replay") navigate("/me", { replace: true });
-    else if (pageRef.current === PAGES.length - 1) navigate("/", { replace: true });
+    else if (pageRef.current === LAST) navigate("/", { replace: true });
   }
 
-  async function fadeTo(next: () => void) {
-    if (busyRef.current || closedRef.current) return;
-    busyRef.current = true;
-    const el = folioRef.current;
-    const reduced = prefersReducedMotion();
-    try {
-      if (el && !reduced) {
-        const a = el.animate([{ opacity: 1 }, { opacity: 0 }], {
-          duration: 180,
-          easing: "ease-in",
-          fill: "forwards",
-        });
-        await waitAnim(a, 220);
-        a.cancel();
-      }
-      if (closedRef.current) return;
-      next();
-      if (el && !reduced && !el.classList.contains("is-gone")) {
-        const b = el.animate([{ opacity: 0 }, { opacity: 1 }], {
-          duration: 280,
-          easing: "ease-out",
-        });
-        await waitAnim(b, 320);
-      }
-      if (el) el.style.opacity = "";
-    } finally {
-      busyRef.current = false;
+  function goTo(next: number) {
+    const index = Math.max(0, Math.min(LAST, next));
+    pageRef.current = index;
+    setPage(index);
+    paintTrack(index, 0, true);
+  }
+
+  function retreat(fromPop = false) {
+    if (closedRef.current) return;
+    if (pageRef.current > 0) {
+      goTo(pageRef.current - 1);
+      return;
     }
+    finish(fromPop);
   }
 
   function advance() {
-    if (last) {
-      void fadeTo(() => finish());
+    if (pageRef.current >= LAST) {
+      finish();
       return;
     }
-    void fadeTo(() => setPage((n) => n + 1));
+    goTo(pageRef.current + 1);
   }
 
-  const turnLabel = last && mode === "first" ? t("trips.createLabel") : t("onboard.turn");
+  function onTrackPointerDown(e: PointerEvent<HTMLDivElement>) {
+    if (e.pointerType === "mouse" && e.button !== 0) return;
+    if ((e.target as HTMLElement).closest("button, a")) return;
+    dragRef.current = { pid: e.pointerId, x: e.clientX, y: e.clientY, t: e.timeStamp, axis: null };
+  }
+
+  function onTrackPointerMove(e: PointerEvent<HTMLDivElement>) {
+    const drag = dragRef.current;
+    if (!drag || drag.pid !== e.pointerId) return;
+    const dx = e.clientX - drag.x;
+    const dy = e.clientY - drag.y;
+    if (!drag.axis && (Math.abs(dx) > 8 || Math.abs(dy) > 8)) {
+      drag.axis = Math.abs(dx) > Math.abs(dy) ? "h" : "v";
+      if (drag.axis === "h") trackRef.current?.setPointerCapture(e.pointerId);
+    }
+    if (drag.axis !== "h") return;
+    e.preventDefault();
+    paintTrack(pageRef.current, dx, false);
+  }
+
+  function onTrackPointerUp(e: PointerEvent<HTMLDivElement>) {
+    const drag = dragRef.current;
+    dragRef.current = null;
+    if (!drag || drag.pid !== e.pointerId) return;
+    if (drag.axis !== "h") {
+      paintTrack(pageRef.current, 0, true);
+      return;
+    }
+    swallowClickRef.current = true;
+    window.setTimeout(() => {
+      swallowClickRef.current = false;
+    }, 0);
+    const dx = e.clientX - drag.x;
+    const dt = Math.max(16, e.timeStamp - drag.t);
+    const v = dx / dt;
+    const w = paneWidth();
+    const goNext = v < -0.35 || dx < -w * 0.18;
+    const goPrev = v > 0.35 || dx > w * 0.18;
+    if (goNext && pageRef.current < LAST) goTo(pageRef.current + 1);
+    else if (goPrev && pageRef.current > 0) goTo(pageRef.current - 1);
+    else paintTrack(pageRef.current, 0, true);
+  }
+
+  function onTrackClickCapture(e: MouseEvent<HTMLDivElement>) {
+    if (!swallowClickRef.current) return;
+    e.preventDefault();
+    e.stopPropagation();
+    swallowClickRef.current = false;
+  }
 
   return (
     <PageOverlay className="is-onboard">
       <div
-        className={`onboard-folio${current.tab === "map" ? " is-map" : ""}`}
-        ref={folioRef}
+        className="onboard-track"
+        ref={trackRef}
+        onPointerDown={onTrackPointerDown}
+        onPointerMove={onTrackPointerMove}
+        onPointerUp={onTrackPointerUp}
+        onPointerCancel={() => {
+          dragRef.current = null;
+          paintTrack(pageRef.current, 0, true);
+        }}
+        onClickCapture={onTrackClickCapture}
       >
-        <div className="onboard-mast" onClick={advance}>
-          {current.tab === "trips" ? <OnboardCover /> : null}
-          {current.tab === "map" ? <OnboardMap /> : null}
-          {current.tab === "collection" ? <OnboardStamp /> : null}
-        </div>
-        <div className="onboard-colophon">
-          <p className="onboard-lede" onClick={advance}>
-            {t(current.ledeKey)}
-          </p>
-          <div className="onboard-rule" aria-hidden onClick={advance} />
-          <div className="onboard-actions">
-            <button
-              className="text-link onboard-skip"
-              type="button"
-              onPointerDown={(e) => e.stopPropagation()}
-              onClick={(e) => {
-                e.stopPropagation();
-                e.preventDefault();
-                finish();
-              }}
-            >
-              {t("onboard.skip")}
-            </button>
-            <button
-              className={last && mode === "first" ? "btn" : "text-link"}
-              type="button"
-              onClick={advance}
-            >
-              {turnLabel}
-            </button>
-          </div>
-        </div>
+        {PAGES.map((item, index) => (
+          <OnboardFolio
+            key={item.tab}
+            tab={item.tab}
+            ledeKey={item.ledeKey}
+            last={index === LAST}
+            mode={mode}
+            onAdvance={advance}
+            onSkip={() => finish()}
+          />
+        ))}
       </div>
     </PageOverlay>
+  );
+}
+
+function OnboardFolio({
+  tab,
+  ledeKey,
+  last,
+  mode,
+  onAdvance,
+  onSkip,
+}: {
+  tab: "trips" | "map" | "collection";
+  ledeKey: MessageKey;
+  last: boolean;
+  mode: "first" | "replay";
+  onAdvance: () => void;
+  onSkip: () => void;
+}) {
+  const turnLabel = last && mode === "first" ? t("trips.createLabel") : t("onboard.turn");
+  return (
+    <div className={`onboard-folio${tab === "map" ? " is-map" : ""}`}>
+      <div className="onboard-mast" onClick={onAdvance}>
+        {tab === "trips" ? <OnboardCover /> : null}
+        {tab === "map" ? <OnboardMap /> : null}
+        {tab === "collection" ? <OnboardStamp /> : null}
+      </div>
+      <div className="onboard-colophon">
+        <p className="onboard-lede" onClick={onAdvance}>
+          {t(ledeKey)}
+        </p>
+        <div className="onboard-rule" aria-hidden onClick={onAdvance} />
+        <div className="onboard-actions">
+          <button
+            className="text-link onboard-skip"
+            type="button"
+            onPointerDown={(e) => e.stopPropagation()}
+            onClick={(e) => {
+              e.stopPropagation();
+              e.preventDefault();
+              onSkip();
+            }}
+          >
+            {t("onboard.skip")}
+          </button>
+          <button
+            className={last && mode === "first" ? "btn" : "text-link"}
+            type="button"
+            onPointerDown={(e) => e.stopPropagation()}
+            onClick={onAdvance}
+          >
+            {turnLabel}
+          </button>
+        </div>
+      </div>
+    </div>
   );
 }
 
