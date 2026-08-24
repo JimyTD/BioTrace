@@ -2693,6 +2693,10 @@ button.species-card-cover {
   justify-content: space-between;
 }
 
+.onboard-actions.is-done {
+  justify-content: flex-end;
+}
+
 .onboard-skip {
   position: relative;
   z-index: 2;

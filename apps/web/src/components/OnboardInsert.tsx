@@ -46,6 +46,7 @@ export default function OnboardInsert({
     axis: "h" | "v" | null;
   } | null>(null);
   const swallowClickRef = useRef(false);
+  const leavingRef = useRef(false);
   pageRef.current = page;
   modeRef.current = mode;
   onCloseRef.current = onClose;
@@ -108,12 +109,20 @@ export default function OnboardInsert({
     const el = trackRef.current;
     if (!el) return;
     const w = paneWidth();
-    let shift = dx;
-    if (index <= 0 && dx > 0) shift = dx * 0.32;
-    if (index >= LAST && dx < 0) shift = dx * 0.32;
     const reduced = prefersReducedMotion();
     el.style.transition = animate && !reduced ? "transform 280ms cubic-bezier(0.22, 1, 0.36, 1)" : "none";
-    el.style.transform = `translate3d(${-index * w + shift}px, 0, 0)`;
+    el.style.transform = `translate3d(${-index * w + dx}px, 0, 0)`;
+  }
+
+  function slideAway(dir: 1 | -1, then: () => void) {
+    if (leavingRef.current || closedRef.current) return;
+    leavingRef.current = true;
+    if (prefersReducedMotion()) {
+      then();
+      return;
+    }
+    paintTrack(pageRef.current, dir * paneWidth(), true);
+    window.setTimeout(then, 280);
   }
 
   function finish(fromPop = false) {
@@ -139,7 +148,7 @@ export default function OnboardInsert({
   }
 
   function retreat(fromPop = false) {
-    if (closedRef.current) return;
+    if (closedRef.current || leavingRef.current) return;
     if (pageRef.current > 0) {
       goTo(pageRef.current - 1);
       return;
@@ -148,6 +157,7 @@ export default function OnboardInsert({
   }
 
   function advance() {
+    if (leavingRef.current || closedRef.current) return;
     if (pageRef.current >= LAST) {
       finish();
       return;
@@ -193,9 +203,15 @@ export default function OnboardInsert({
     const w = paneWidth();
     const goNext = v < -0.35 || dx < -w * 0.18;
     const goPrev = v > 0.35 || dx > w * 0.18;
-    if (goNext && pageRef.current < LAST) goTo(pageRef.current + 1);
-    else if (goPrev && pageRef.current > 0) goTo(pageRef.current - 1);
-    else paintTrack(pageRef.current, 0, true);
+    if (goNext) {
+      if (pageRef.current < LAST) goTo(pageRef.current + 1);
+      else slideAway(-1, () => finish());
+    } else if (goPrev) {
+      if (pageRef.current > 0) goTo(pageRef.current - 1);
+      else slideAway(1, () => finish());
+    } else {
+      paintTrack(pageRef.current, 0, true);
+    }
   }
 
   function onTrackClickCapture(e: MouseEvent<HTMLDivElement>) {
@@ -250,7 +266,6 @@ function OnboardFolio({
   onAdvance: () => void;
   onSkip: () => void;
 }) {
-  const turnLabel = last && mode === "first" ? t("trips.createLabel") : t("onboard.turn");
   return (
     <div className={`onboard-folio${tab === "map" ? " is-map" : ""}`}>
       <div className="onboard-mast" onClick={onAdvance}>
@@ -263,26 +278,28 @@ function OnboardFolio({
           {t(ledeKey)}
         </p>
         <div className="onboard-rule" aria-hidden onClick={onAdvance} />
-        <div className="onboard-actions">
+        <div className={`onboard-actions${last ? " is-done" : ""}`}>
+          {last ? null : (
+            <button
+              className="text-link onboard-skip"
+              type="button"
+              onPointerDown={(e) => e.stopPropagation()}
+              onClick={(e) => {
+                e.stopPropagation();
+                e.preventDefault();
+                onSkip();
+              }}
+            >
+              {t("onboard.skip")}
+            </button>
+          )}
           <button
-            className="text-link onboard-skip"
-            type="button"
-            onPointerDown={(e) => e.stopPropagation()}
-            onClick={(e) => {
-              e.stopPropagation();
-              e.preventDefault();
-              onSkip();
-            }}
-          >
-            {t("onboard.skip")}
-          </button>
-          <button
-            className={last && mode === "first" ? "btn" : "text-link"}
+            className={last ? "btn" : "text-link"}
             type="button"
             onPointerDown={(e) => e.stopPropagation()}
             onClick={onAdvance}
           >
-            {turnLabel}
+            {last ? (mode === "replay" ? t("me.back") : t("onboard.done")) : t("onboard.turn")}
           </button>
         </div>
       </div>
