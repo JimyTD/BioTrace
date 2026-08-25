@@ -1,0 +1,678 @@
+<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>日光图版 · 走查</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700&display=swap"
+      rel="stylesheet"
+    />
+    <style>
+      :root {
+        --font-sans: "Outfit", system-ui, sans-serif;
+        --bg0: #f3efe7;
+        --ink: #1f2a24;
+        --muted: #6b6258;
+        --line: rgba(42, 64, 51, 0.14);
+        --cta: #d3543c;
+        --cta-ink: #fffaf7;
+        --card: #faf8f3;
+        --nav-active-bg: #f0ddd4;
+        --nav-active-ink: #9a4030;
+        --volume-cover-empty: #e7dfd2;
+        --volume-complete-line: #d3543c;
+        --volume-plate-opacity: 0.92;
+        --frontispiece-ink: #5c5347;
+        --trip-cover-shadow: 0 10px 26px rgba(42, 36, 28, 0.1);
+        --shadow: 0 8px 22px rgba(42, 36, 28, 0.07);
+        --radius-sm: 8px;
+        --radius-lg: 14px;
+        --bg-atmosphere:
+          radial-gradient(ellipse 120% 70% at 8% -18%, rgba(212, 168, 120, 0.34) 0%, transparent 56%),
+          radial-gradient(ellipse 80% 55% at 100% 108%, rgba(90, 70, 48, 0.07) 0%, transparent 52%),
+          linear-gradient(168deg, #f6f1e8 0%, #efe8dc 46%, #e9e1d4 100%);
+      }
+
+      * {
+        box-sizing: border-box;
+      }
+
+      body {
+        margin: 0;
+        padding: 40px 24px 80px;
+        background: #33302b;
+        color: #e8e3d8;
+        font-family: var(--font-sans);
+        -webkit-font-smoothing: antialiased;
+      }
+
+      .doc {
+        max-width: 1180px;
+        margin: 0 auto;
+      }
+
+      h1 {
+        font-size: 1.5rem;
+        margin: 0 0 10px;
+        letter-spacing: -0.02em;
+      }
+
+      .lead {
+        max-width: 780px;
+        line-height: 1.75;
+        color: #bdb5a6;
+        margin: 0 0 6px;
+        font-size: 0.93rem;
+      }
+
+      .lead strong {
+        color: #f0e9db;
+        font-weight: 600;
+      }
+
+      .lead code,
+      .sub code,
+      .note code {
+        background: rgba(255, 255, 255, 0.08);
+        border-radius: 4px;
+        padding: 1px 5px;
+        font-size: 0.88em;
+      }
+
+      h2 {
+        font-size: 1.06rem;
+        margin: 54px 0 4px;
+        letter-spacing: -0.01em;
+      }
+
+      h2 .idx {
+        color: #8d8578;
+        font-weight: 500;
+        margin-right: 8px;
+      }
+
+      .sub {
+        color: #a49c8d;
+        font-size: 0.86rem;
+        margin: 0 0 20px;
+        line-height: 1.65;
+        max-width: 780px;
+      }
+
+      .pair {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 34px;
+        align-items: flex-start;
+      }
+
+      .col {
+        display: grid;
+        gap: 10px;
+        justify-items: start;
+      }
+
+      .tag {
+        font-size: 0.74rem;
+        letter-spacing: 0.1em;
+        color: #8d8578;
+        text-transform: uppercase;
+      }
+
+      .tag.next {
+        color: #e2b98a;
+      }
+
+      .phone {
+        width: 360px;
+        border-radius: 26px;
+        overflow: hidden;
+        background: var(--bg0);
+        background-image: var(--bg-atmosphere);
+        color: var(--ink);
+        box-shadow: 0 22px 50px rgba(0, 0, 0, 0.42);
+        display: flex;
+        flex-direction: column;
+        min-height: 610px;
+      }
+
+      .topbar {
+        padding: 13px 16px 9px;
+        font-weight: 700;
+        font-size: 0.98rem;
+        letter-spacing: -0.01em;
+        border-bottom: 1px solid var(--line);
+      }
+
+      .screen {
+        flex: 1;
+        padding: 14px 16px 18px;
+        display: grid;
+        gap: 14px;
+        align-content: start;
+      }
+
+      .nav {
+        display: grid;
+        grid-template-columns: repeat(4, 1fr);
+        border-top: 1px solid var(--line);
+        background: var(--bg0);
+      }
+
+      .nav span {
+        padding: 11px 0 14px;
+        text-align: center;
+        font-size: 0.79rem;
+        color: var(--muted);
+      }
+
+      .nav span.on {
+        color: var(--nav-active-ink);
+        font-weight: 600;
+        background: var(--nav-active-bg);
+      }
+
+      .backlink {
+        font-size: 0.83rem;
+        color: var(--muted);
+      }
+
+      .vol-head {
+        display: flex;
+        gap: 12px;
+        align-items: flex-start;
+      }
+
+      .vol-head img {
+        width: 72px;
+        aspect-ratio: 4 / 3;
+        object-fit: cover;
+        border-radius: var(--radius-sm);
+        box-shadow: var(--trip-cover-shadow);
+        flex: none;
+      }
+
+      .vol-title {
+        margin: 0;
+        font-size: 1.22rem;
+        letter-spacing: -0.02em;
+        line-height: 1.25;
+      }
+
+      .vol-lede {
+        margin: 3px 0 0;
+        font-size: 0.83rem;
+        color: var(--muted);
+        line-height: 1.45;
+      }
+
+      .vol-prog {
+        margin: 5px 0 0;
+        font-size: 0.79rem;
+        color: var(--muted);
+      }
+
+      .stamps {
+        display: grid;
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+        gap: 10px;
+      }
+
+      .stamp {
+        display: grid;
+        gap: 4px;
+      }
+
+      .face {
+        position: relative;
+        aspect-ratio: 1;
+        width: 100%;
+        overflow: hidden;
+      }
+
+      .win {
+        position: absolute;
+        inset: 8%;
+        overflow: hidden;
+        background: var(--volume-cover-empty);
+      }
+
+      .win > img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+        display: block;
+      }
+
+      .win > img.plate {
+        position: absolute;
+        inset: 0;
+        opacity: var(--volume-plate-opacity);
+      }
+
+      .hatch {
+        position: absolute;
+        inset: 0;
+        background: repeating-linear-gradient(
+          -45deg,
+          transparent,
+          transparent 5px,
+          rgba(58, 50, 44, 0.05) 5px,
+          rgba(58, 50, 44, 0.05) 6px
+        );
+      }
+
+      .frame {
+        position: absolute;
+        inset: 0;
+        border: 1px solid rgba(58, 50, 44, 0.28);
+        border-radius: 2px;
+        pointer-events: none;
+      }
+
+      .cap {
+        font-size: 0.78rem;
+        color: var(--muted);
+        line-height: 1.25;
+      }
+
+      .stamp.lit .cap {
+        color: var(--ink);
+        font-weight: 600;
+      }
+
+      .empty-old {
+        padding: 28px 8px 12px;
+      }
+
+      .empty-old p {
+        margin: 0 auto;
+        color: var(--muted);
+        text-align: center;
+        max-width: 28ch;
+        font-size: 0.95rem;
+        line-height: 1.45;
+      }
+
+      .front {
+        display: grid;
+        place-items: center;
+        aspect-ratio: 4 / 3;
+        padding: 0 21%;
+        border-radius: var(--radius-lg);
+        background-size: cover;
+        background-position: center;
+        background-repeat: no-repeat;
+        box-shadow: var(--shadow);
+      }
+
+      .front p {
+        margin: 0;
+        max-width: 14ch;
+        text-align: center;
+        color: var(--frontispiece-ink);
+        font-size: 0.82rem;
+        line-height: 1.5;
+        word-break: keep-all;
+        overflow-wrap: break-word;
+      }
+
+      .cere {
+        border-radius: var(--radius-lg);
+        overflow: hidden;
+        background: var(--card);
+        box-shadow: 0 12px 36px rgba(42, 36, 28, 0.18);
+        border: 1px solid var(--line);
+      }
+
+      .cere.done {
+        border-color: var(--volume-complete-line);
+        box-shadow: 0 12px 36px rgba(211, 84, 60, 0.16);
+      }
+
+      .cere img {
+        display: block;
+        width: 100%;
+        aspect-ratio: 4 / 3;
+        object-fit: cover;
+      }
+
+      .cere .say {
+        padding: 14px 16px 16px;
+        text-align: center;
+        display: grid;
+        gap: 8px;
+      }
+
+      .cere .say p {
+        margin: 0;
+        font-size: 1.18rem;
+        letter-spacing: -0.02em;
+        line-height: 1.35;
+      }
+
+      .cere .say .small {
+        font-size: 0.82rem;
+        color: var(--muted);
+      }
+
+      .scrim {
+        background: rgba(31, 42, 36, 0.48);
+        padding: 40px 22px;
+        display: grid;
+        place-items: center;
+        flex: 1;
+      }
+
+      .covers {
+        display: flex;
+        gap: 28px;
+        flex-wrap: wrap;
+      }
+
+      .covers figure {
+        margin: 0;
+        display: grid;
+        gap: 8px;
+        width: 360px;
+      }
+
+      .covers img {
+        width: 100%;
+        display: block;
+        border-radius: 11px;
+        box-shadow: 0 14px 34px rgba(0, 0, 0, 0.35);
+      }
+
+      .covers figcaption {
+        font-size: 0.82rem;
+        color: #a49c8d;
+      }
+
+      .note {
+        margin: 46px auto 0;
+        max-width: 780px;
+        border-left: 2px solid #5c564c;
+        padding: 2px 0 2px 16px;
+        color: #a49c8d;
+        font-size: 0.86rem;
+        line-height: 1.75;
+      }
+
+      .note strong {
+        color: #e2b98a;
+        font-weight: 600;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="doc">
+      <h1>日光图版 · 走查</h1>
+      <p class="lead">
+        这页引的是<strong>已经装进资源域的正式文件</strong>——<code>/volumes/daylight/</code> 与
+        <code>/trips/daylight/</code>，不是演示副本。图能出来，就说明路径、命名、helper 都对得上。
+      </p>
+      <p class="lead">
+        配色、字体、圆角、间距、底纹全是 daylight 原有 token，一个色号没改。
+        皮肤没变，只是把缺的画补上了。
+      </p>
+
+      <h2><span class="idx">一</span>图鉴 · 林缘遇见（进度 2/6）</h2>
+      <p class="sub">
+        没集到的四格印素版线刻，集到的两格用自己的照片盖住。印样透明度走
+        <code>--volume-plate-opacity: 0.92</code>，比真照片退半步。
+        没备图版的套册（潮间带、城野）由 <code>onError</code> 摘掉这层，露出原来的斜线空槽，不会破图。
+      </p>
+      <div class="pair">
+        <div class="col">
+          <span class="tag">改前</span>
+          <div class="phone">
+            <div class="topbar">BioTrace</div>
+            <div class="screen">
+              <span class="backlink">← 图鉴</span>
+              <div class="vol-head">
+                <img src="/volumes/daylight/cover-woodland_edge.png" alt="" />
+                <div>
+                  <h3 class="vol-title">林缘遇见</h3>
+                  <p class="vol-lede">林边道上，从翅翼到偶尔一闪的兽影。</p>
+                  <p class="vol-prog">已点亮 2 / 6</p>
+                </div>
+              </div>
+              <div class="stamps">
+                <div class="stamp">
+                  <div class="face">
+                    <div class="win"><div class="hatch"></div></div>
+                    <div class="frame"></div>
+                  </div>
+                  <span class="cap">林缘小鸟</span>
+                </div>
+                <div class="stamp lit">
+                  <div class="face">
+                    <div class="win"><img src="/themes/_demo/demo-photo-butterfly.jpg" alt="" /></div>
+                    <div class="frame"></div>
+                  </div>
+                  <span class="cap">蝶或蛾</span>
+                </div>
+                <div class="stamp">
+                  <div class="face">
+                    <div class="win"><div class="hatch"></div></div>
+                    <div class="frame"></div>
+                  </div>
+                  <span class="cap">蜻蜓或豆娘</span>
+                </div>
+                <div class="stamp lit">
+                  <div class="face">
+                    <div class="win"><img src="/themes/_demo/demo-photo-squirrel.jpg" alt="" /></div>
+                    <div class="frame"></div>
+                  </div>
+                  <span class="cap">松鼠</span>
+                </div>
+                <div class="stamp">
+                  <div class="face">
+                    <div class="win"><div class="hatch"></div></div>
+                    <div class="frame"></div>
+                  </div>
+                  <span class="cap">蝉</span>
+                </div>
+                <div class="stamp">
+                  <div class="face">
+                    <div class="win"><div class="hatch"></div></div>
+                    <div class="frame"></div>
+                  </div>
+                  <span class="cap">中小型食肉</span>
+                </div>
+              </div>
+            </div>
+            <div class="nav">
+              <span>旅途</span><span>地图</span><span class="on">图鉴</span><span>我的</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="col">
+          <span class="tag next">改后</span>
+          <div class="phone">
+            <div class="topbar">BioTrace</div>
+            <div class="screen">
+              <span class="backlink">← 图鉴</span>
+              <div class="vol-head">
+                <img src="/volumes/daylight/cover-woodland_edge.png" alt="" />
+                <div>
+                  <h3 class="vol-title">林缘遇见</h3>
+                  <p class="vol-lede">林边道上，从翅翼到偶尔一闪的兽影。</p>
+                  <p class="vol-prog">已点亮 2 / 6</p>
+                </div>
+              </div>
+              <div class="stamps">
+                <div class="stamp">
+                  <div class="face">
+                    <div class="win">
+                      <div class="hatch"></div>
+                      <img class="plate" src="/volumes/daylight/plate-woodland_edge-forest_bird.png" alt="" />
+                    </div>
+                    <div class="frame"></div>
+                  </div>
+                  <span class="cap">林缘小鸟</span>
+                </div>
+                <div class="stamp lit">
+                  <div class="face">
+                    <div class="win"><img src="/themes/_demo/demo-photo-butterfly.jpg" alt="" /></div>
+                    <div class="frame"></div>
+                  </div>
+                  <span class="cap">蝶或蛾</span>
+                </div>
+                <div class="stamp">
+                  <div class="face">
+                    <div class="win">
+                      <div class="hatch"></div>
+                      <img class="plate" src="/volumes/daylight/plate-woodland_edge-odonata.png" alt="" />
+                    </div>
+                    <div class="frame"></div>
+                  </div>
+                  <span class="cap">蜻蜓或豆娘</span>
+                </div>
+                <div class="stamp lit">
+                  <div class="face">
+                    <div class="win"><img src="/themes/_demo/demo-photo-squirrel.jpg" alt="" /></div>
+                    <div class="frame"></div>
+                  </div>
+                  <span class="cap">松鼠</span>
+                </div>
+                <div class="stamp">
+                  <div class="face">
+                    <div class="win">
+                      <div class="hatch"></div>
+                      <img class="plate" src="/volumes/daylight/plate-woodland_edge-cicada.png" alt="" />
+                    </div>
+                    <div class="frame"></div>
+                  </div>
+                  <span class="cap">蝉</span>
+                </div>
+                <div class="stamp">
+                  <div class="face">
+                    <div class="win">
+                      <div class="hatch"></div>
+                      <img class="plate" src="/volumes/daylight/plate-woodland_edge-small_carnivoran.png" alt="" />
+                    </div>
+                    <div class="frame"></div>
+                  </div>
+                  <span class="cap">中小型食肉</span>
+                </div>
+              </div>
+            </div>
+            <div class="nav">
+              <span>旅途</span><span>地图</span><span class="on">图鉴</span><span>我的</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <h2><span class="idx">二</span>旅途 · 空态</h2>
+      <p class="sub">
+        卷首图中心那圈象牙色留白不是装饰，<code>trips.empty</code> 就落在里面。
+        缺图时 <code>.trip-frontispiece</code> 退化成透明方框，文案照样居中，不塌版。
+      </p>
+      <div class="pair">
+        <div class="col">
+          <span class="tag">改前</span>
+          <div class="phone">
+            <div class="topbar">旅途</div>
+            <div class="screen">
+              <div class="empty-old"><p>还没有旅途。写下名字，翻开第一页。</p></div>
+            </div>
+            <div class="nav">
+              <span class="on">旅途</span><span>地图</span><span>图鉴</span><span>我的</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="col">
+          <span class="tag next">改后</span>
+          <div class="phone">
+            <div class="topbar">旅途</div>
+            <div class="screen">
+              <div class="front" style="background-image: url('/trips/daylight/frontispiece.jpg')">
+                <p>还没有旅途。写下名字，翻开第一页。</p>
+              </div>
+            </div>
+            <div class="nav">
+              <span class="on">旅途</span><span>地图</span><span>图鉴</span><span>我的</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <h2><span class="idx">三</span>两个仪式底</h2>
+      <p class="sub">
+        原来的 <code>ceremony-slot.png</code> 与 <code>ceremony-complete.png</code> 是两张纯米色空白纸，
+        加起来 2.6 MB，已删除。现在换成上色台与上完色的册子，改走 <code>.jpg</code>，两张共 367 KB。
+      </p>
+      <div class="pair">
+        <div class="col">
+          <span class="tag next">点亮一格</span>
+          <div class="phone">
+            <div class="topbar">BioTrace</div>
+            <div class="scrim">
+              <div class="cere">
+                <img src="/volumes/daylight/ceremony-slot.jpg" alt="" />
+                <div class="say">
+                  <p>林缘遇见 · 点亮一格</p>
+                  <span class="small">蝶或蛾</span>
+                </div>
+              </div>
+            </div>
+            <div class="nav">
+              <span>旅途</span><span>地图</span><span class="on">图鉴</span><span>我的</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="col">
+          <span class="tag next">集齐成册</span>
+          <div class="phone">
+            <div class="topbar">BioTrace</div>
+            <div class="scrim">
+              <div class="cere done">
+                <img src="/volumes/daylight/ceremony-complete.jpg" alt="" />
+                <div class="say">
+                  <p>林缘遇见 · 集齐</p>
+                  <span class="small">封面已上色</span>
+                </div>
+              </div>
+            </div>
+            <div class="nav">
+              <span>旅途</span><span>地图</span><span class="on">图鉴</span><span>我的</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <h2><span class="idx">四</span>集齐的奖励：素版 → 彩版</h2>
+      <p class="sub">
+        同一块版、同一根线、同一个构图，只是上了色。
+        <code>volumeCoverUrl(id, { colored: vol.completed })</code> 决定书架和册头拿哪一张。
+      </p>
+      <div class="covers">
+        <figure>
+          <img src="/volumes/daylight/cover-woodland_edge.png" alt="" />
+          <figcaption>素版 · 未集齐（原有资源，只做了压缩）</figcaption>
+        </figure>
+        <figure>
+          <img src="/volumes/daylight/cover-woodland_edge-colored.jpg" alt="" />
+          <figcaption>彩版 · 集齐后</figcaption>
+        </figure>
+      </div>
+
+      <p class="note">
+        <strong>已知问题，没在这轮解决：</strong><br />
+        一、两张仪式底是写实照片（木桌、真笔、真书），和素版线刻不是同一种媒介，同屏会打架。<br />
+        二、只有林缘遇见备了图版，潮间带与城野的空槽仍是斜线。<br />
+        三、画只补在了「空态」上——集齐之后素版全被照片盖住，画会随使用变少。
+        真正的解法是图版按科/目挂、在物种索引里复用，那是下一步。
+      </p>
+    </div>
+  </body>
+</html>

@@ -3,16 +3,17 @@
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <title>皮肤 · 日光胶片 / 潮间带</title>
+    <title>默认皮肤 · 现状快照</title>
     <style>
       * { box-sizing: border-box; }
       body {
         margin: 0; padding: 16px 12px 40px;
         font-family: "Segoe UI", "PingFang SC", "Microsoft YaHei", sans-serif;
-        background: #c8c4bc; color: #1a2a32;
+        background: #c8c4bc; color: #2a241c;
       }
       h1.doc { margin: 0 0 8px; font-size: 1.15rem; }
-      .note { margin: 0 0 16px; color: #5a5248; font-size: 0.88rem; max-width: 58ch; }
+      h2.sec { margin: 28px 0 6px; font-size: 1rem; }
+      .note { margin: 0 0 16px; color: #5a5248; font-size: 0.88rem; max-width: 62ch; line-height: 1.7; }
       .phones { display: flex; flex-wrap: wrap; gap: 18px; }
       .label { margin: 0 0 6px; font-size: 0.8rem; font-weight: 700; color: #5a5248; }
 
@@ -20,7 +21,7 @@
         width: min(100%, 360px); height: 640px;
         border-radius: 22px; overflow: hidden;
         display: grid; grid-template-rows: auto 1fr auto;
-        box-shadow: 0 16px 40px rgba(20, 36, 42, 0.16);
+        box-shadow: 0 16px 40px rgba(42, 36, 28, 0.16);
       }
       .topbar { padding: 12px 16px 10px; font-weight: 700; border-bottom: 1px solid var(--line); background: var(--nav-bg); }
       .content { min-height: 0; overflow: hidden; padding: 16px; display: grid; gap: 12px; align-content: start; }
@@ -36,6 +37,7 @@
         border: 0; border-radius: 10px; padding: 8px 14px; font: inherit; font-weight: 700;
         background: var(--cta); color: var(--cta-ink);
       }
+      .cta.wide { width: 100%; padding: 11px 14px; }
       .media {
         position: relative; aspect-ratio: 3/2; border-radius: 12px; overflow: hidden;
         background: var(--plate); box-shadow: var(--shadow);
@@ -50,6 +52,7 @@
       }
       .meta strong { display: block; font-size: 1.12rem; }
       .meta span { color: var(--muted); font-size: 0.9rem; }
+      .sci { margin: 0; font-style: italic; color: var(--muted); font-size: 0.9rem; }
       .badges { display: flex; gap: 6px; flex-wrap: wrap; }
       .badge { padding: 2px 8px; border-radius: 8px; font-size: 0.72rem; font-weight: 700; }
       .nav {
@@ -58,19 +61,29 @@
       }
       .nav span { text-align: center; font-size: 0.72rem; color: var(--muted); padding: 8px 4px; border-radius: 10px; }
       .nav span.on { background: var(--nav-active-bg); color: var(--nav-active-ink); font-weight: 700; }
-      .menu { display: grid; border-radius: 14px; border: 1px solid var(--line); background: var(--card); overflow: hidden; }
-      .row {
-        display: flex; justify-content: space-between; align-items: center;
-        padding: 14px 16px; border-bottom: 1px solid var(--line);
-      }
-      .row:last-child { border-bottom: 0; }
-      .back { color: var(--muted); font-size: 0.9rem; }
+
+      /* 结算舞台：底 + 照片窗 + 相纸边，与 SettlePackStage 的叠层次序一致 */
+      .stage { position: relative; aspect-ratio: 3/2; border-radius: 12px; overflow: hidden; background: var(--plate); }
+      .stage .bg { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; }
+      .stage .mat { position: absolute; inset: 10%; overflow: hidden; background: var(--mat); }
+      .stage .mat img { width: 100%; height: 100%; object-fit: cover; display: block; }
+      .stage .rim { position: absolute; inset: 10%; width: 80%; height: 80%; object-fit: fill; z-index: 2; }
+      .stage .shell { position: absolute; inset: 10%; width: 80%; height: 80%; object-fit: cover; z-index: 3; }
+
+      /* 图鉴邮票墙 */
+      .wall { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; }
+      .cell { position: relative; aspect-ratio: 1; background: var(--empty); overflow: hidden; border-radius: 3px; }
+      .cell img.ph { width: 100%; height: 100%; object-fit: cover; display: block; }
+      .cell img.fr { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: fill; }
+      .cover { border-radius: 10px; overflow: hidden; box-shadow: var(--shadow); }
+      .cover img { display: block; width: 100%; }
 
       .daylight {
         --ink: #1f2a24; --muted: #6b6258; --line: rgba(42, 64, 51, 0.14);
         --card: #faf8f3; --nav-bg: #f3efe7; --cta: #d3543c; --cta-ink: #fffaf7;
         --nav-active-bg: #f0ddd4; --nav-active-ink: #9a4030;
         --create: #f3ebe0; --plate: #efe6d6; --share-bg: #f0ddd4; --share-ink: #9a4030;
+        --empty: #e7dfd2; --mat: #2a241c;
         --shadow: 0 10px 26px rgba(42, 36, 28, 0.1);
         color: var(--ink);
         background:
@@ -79,30 +92,19 @@
           linear-gradient(168deg, #f6f1e8 0%, #efe8dc 46%, #e9e1d4 100%);
         border: 1px solid rgba(42, 36, 28, 0.18);
       }
-      .tide {
-        --ink: #1a2a32; --muted: #5a6b72; --line: rgba(26, 42, 50, 0.14);
-        --card: #f4f8f9; --nav-bg: #e7eef0; --cta: #2a7a78; --cta-ink: #f4fbfb;
-        --nav-active-bg: #d2e4e4; --nav-active-ink: #1a5c5a;
-        --create: #dce8ea; --plate: #d5e0e4; --share-bg: #d2e4e4; --share-ink: #1a5c5a;
-        --shadow: 0 10px 26px rgba(20, 36, 42, 0.1);
-        color: var(--ink);
-        background:
-          radial-gradient(ellipse 120% 70% at 8% -18%, rgba(90, 168, 176, 0.26), transparent 56%),
-          radial-gradient(ellipse 80% 55% at 100% 108%, rgba(30, 58, 66, 0.08), transparent 52%),
-          linear-gradient(168deg, #eef4f6 0%, #e4eef1 46%, #dce7eb 100%);
-        border: 1px solid rgba(20, 36, 42, 0.18);
-      }
     </style>
   </head>
   <body>
-    <h1 class="doc">皮肤 · 日光胶片 / 潮间带</h1>
+    <h1 class="doc">默认皮肤「日光图版」· 现状快照</h1>
     <p class="note">
-      同一本相册、同一套页面，只换纸色。日常页用颜色和光，不贴纸的照片。稀有度色阶跨皮共用。
-      真机入口：我的 → 外观。默认仍是日光胶片。
+      潮间带与暗房已退役，现在只剩这一套默认皮肤。这页是它当前长什么样的原样记录，
+      用来对着找问题——注意三处东西的画风是不是同一套：套册封面的铜版画、包装层的灰框、稀有度徽章的亮色。
     </p>
+
+    <h2 class="sec">一 · 旅途页</h2>
     <div class="phones">
       <div>
-        <p class="label">日光胶片 · 旅途</p>
+        <p class="label">旅途封面墙</p>
         <div class="phone daylight">
           <div class="topbar">BioTrace</div>
           <div class="content">
@@ -118,51 +120,98 @@
             <div class="badges">
               <span class="badge" style="background:#ebe9e3;color:#4a4f48">N</span>
               <span class="badge" style="background:#c8e8ff;color:#0b6aa8">R</span>
+              <span class="badge" style="background:#f0d8ff;color:#7a22c8">SR</span>
               <span class="badge" style="background:#ffe566;color:#6b4200">SSR</span>
+              <span class="badge" style="background:#ffb8b4;color:#b00018">UR</span>
+              <span class="badge" style="background:#ffc2f0;color:#9a0070">XR</span>
             </div>
           </div>
           <nav class="nav"><span class="on">旅途</span><span>地图</span><span>图鉴</span><span>我的</span></nav>
         </div>
       </div>
+
       <div>
-        <p class="label">潮间带 · 旅途</p>
-        <div class="phone tide">
-          <div class="topbar">BioTrace</div>
+        <p class="label">结算 · 未拆封</p>
+        <div class="phone daylight">
+          <div class="topbar">← 鉴定证书</div>
           <div class="content">
-            <h2 class="title">旅途</h2>
-            <p class="lede">路上遇见的，记在这一本里。</p>
-            <div class="slip"><span>新旅途标题</span><button class="cta" type="button">创建</button></div>
-            <div class="media">
-              <div class="window"><img class="photo" src="/trips/_sample-photo.jpg" alt="" /></div>
-              <img class="frame" src="/trips/tide/cover-frame.svg" alt="" />
-              <span class="share">共享</span>
+            <p class="lede">这趟遇见的生命，现在有名字了。</p>
+            <div class="stage">
+              <img class="bg" src="/settle/daylight/pack-bg.png" alt="" />
+              <div class="mat"><img src="/trips/_sample-photo.jpg" alt="" /></div>
+              <img class="shell" src="/settle/daylight/pack-sealed.png" alt="" />
             </div>
-            <p class="meta"><strong>潮间带下午</strong><span>12 张 · 青岛</span></p>
+            <button class="cta wide" type="button">请过目</button>
+          </div>
+          <nav class="nav"><span class="on">旅途</span><span>地图</span><span>图鉴</span><span>我的</span></nav>
+        </div>
+      </div>
+
+      <div>
+        <p class="label">结算 · 已拆封</p>
+        <div class="phone daylight">
+          <div class="topbar">← 鉴定证书</div>
+          <div class="content">
+            <div class="stage">
+              <img class="bg" src="/settle/daylight/pack-bg.png" alt="" />
+              <div class="mat"><img src="/trips/_sample-photo.jpg" alt="" /></div>
+              <img class="rim" src="/settle/daylight/photo-frame.svg" alt="" />
+            </div>
+            <p class="meta"><strong>散大蜗牛</strong></p>
+            <p class="sci">Helix pomatia</p>
             <div class="badges">
-              <span class="badge" style="background:#e4e8e8;color:#4a4f48">N</span>
-              <span class="badge" style="background:#c8e8ff;color:#0b6aa8">R</span>
-              <span class="badge" style="background:#ffe566;color:#6b4200">SSR</span>
+              <span class="badge" style="background:#f0d8ff;color:#7a22c8">SR · 稀有</span>
             </div>
+            <button class="cta wide" type="button">收下</button>
           </div>
           <nav class="nav"><span class="on">旅途</span><span>地图</span><span>图鉴</span><span>我的</span></nav>
         </div>
       </div>
+    </div>
+
+    <h2 class="sec">二 · 图鉴邮票墙</h2>
+    <p class="note">格子框是 <code>stamp-frame.svg</code>：一圈灰底加齿孔挖空，内窗 8% inset。</p>
+    <div class="phones">
       <div>
-        <p class="label">外观 · 切纸色</p>
-        <div class="phone tide">
-          <div class="topbar">BioTrace</div>
+        <p class="label">套册内页</p>
+        <div class="phone daylight">
+          <div class="topbar">← 潮间带</div>
           <div class="content">
-            <span class="back">← 返回</span>
-            <h2 class="title">外观</h2>
-            <p class="lede">这本相册现在用的纸色。</p>
-            <div class="menu">
-              <div class="row"><span>日光胶片</span><span class="lede"></span></div>
-              <div class="row"><span>潮间带</span><span class="lede">使用中</span></div>
+            <h2 class="title">邮票</h2>
+            <p class="lede">点开一本，看邮票一点一点盖上。</p>
+            <div class="wall">
+              <div class="cell"><img class="ph" src="/trips/_sample-photo.jpg" alt="" /><img class="fr" src="/volumes/daylight/stamp-frame.svg" alt="" /></div>
+              <div class="cell"><img class="fr" src="/volumes/daylight/stamp-frame.svg" alt="" /></div>
+              <div class="cell"><img class="ph" src="/trips/_sample-photo.jpg" alt="" /><img class="fr" src="/volumes/daylight/stamp-frame.svg" alt="" /></div>
+              <div class="cell"><img class="fr" src="/volumes/daylight/stamp-frame.svg" alt="" /></div>
+              <div class="cell"><img class="fr" src="/volumes/daylight/stamp-frame.svg" alt="" /></div>
+              <div class="cell"><img class="ph" src="/trips/_sample-photo.jpg" alt="" /><img class="fr" src="/volumes/daylight/stamp-frame.svg" alt="" /></div>
             </div>
           </div>
-          <nav class="nav"><span>旅途</span><span>地图</span><span>图鉴</span><span class="on">我的</span></nav>
+          <nav class="nav"><span>旅途</span><span>地图</span><span class="on">图鉴</span><span>我的</span></nav>
         </div>
       </div>
+
+      <div>
+        <p class="label">整册点亮（仪式底）</p>
+        <div class="phone daylight">
+          <div class="topbar">← 图鉴</div>
+          <div class="content">
+            <div class="cover"><img src="/volumes/daylight/ceremony-complete.jpg" alt="" /></div>
+            <p class="meta"><strong>「潮间带」整册集齐</strong><span>遇见过的，都在这里。</span></p>
+            <button class="cta wide" type="button">去图鉴看看</button>
+          </div>
+          <nav class="nav"><span>旅途</span><span>地图</span><span class="on">图鉴</span><span>我的</span></nav>
+        </div>
+      </div>
+    </div>
+
+    <h2 class="sec">三 · 三本套册封面</h2>
+    <p class="note">这是整套美术里唯一有内容、有工艺的一层：19 世纪博物学铜版画。上面两节的灰框与亮徽章，跟它不是同一个世界。</p>
+    <div class="phones">
+      <div><p class="label">潮间带</p><div class="cover" style="width:340px"><img src="/volumes/daylight/cover-intertidal.png" alt="" /></div></div>
+      <div><p class="label">城市野地</p><div class="cover" style="width:340px"><img src="/volumes/daylight/cover-urban_wild.png" alt="" /></div></div>
+      <div><p class="label">林缘</p><div class="cover" style="width:340px"><img src="/volumes/daylight/cover-woodland_edge.png" alt="" /></div></div>
     </div>
   </body>
 </html>

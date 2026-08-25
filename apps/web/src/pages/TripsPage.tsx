@@ -3,7 +3,7 @@ import { useNavigate } from "react-router-dom";
 import { t } from "@biotrace/messages";
 import { api, type Trip } from "../api";
 import { captureCoverBox, setOpenBookHandoff } from "../openBookHandoff";
-import { tripCoverFrameUrl } from "../themes";
+import { tripCoverFrameUrl, tripFrontispieceUrl } from "../themes";
 import { restoreContentScroll, saveContentScroll } from "../scrollMemory";
 import { tripMetaLine } from "../tripMeta";
 
@@ -140,7 +140,12 @@ export default function TripsPage({
 
       {!loading && trips.length === 0 ? (
         <div className="trip-empty">
-          <p className="trip-empty-caption">{t("trips.empty")}</p>
+          <div
+            className="trip-frontispiece"
+            style={{ backgroundImage: `url(${tripFrontispieceUrl()})` }}
+          >
+            <p className="trip-empty-caption">{t("trips.empty")}</p>
+          </div>
         </div>
       ) : (
         <div className="trip-cover-list">

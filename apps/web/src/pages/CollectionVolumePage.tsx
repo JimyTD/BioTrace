@@ -13,7 +13,7 @@ import {
   setPhotoLiftHandoff,
 } from "../photoLiftHandoff";
 import { peekVolume, rememberVolume } from "../pageCache";
-import { volumeCoverUrl, volumeStampFrameUrl } from "../themes";
+import { volumeCoverUrl, volumeSlotPlateUrl, volumeStampFrameUrl } from "../themes";
 import { restoreNamedScroll, saveNamedScroll } from "../scrollMemory";
 import { useRealLocation } from "../realLocation";
 import {
@@ -28,10 +28,12 @@ function msg(key: string) {
 
 function StampFace({
   photoUrl,
+  plateUrl,
   label,
   lit,
 }: {
   photoUrl: string | null;
+  plateUrl: string;
   label: string;
   lit: boolean;
 }) {
@@ -41,7 +43,18 @@ function StampFace({
         {photoUrl ? (
           <img src={photoUrl} alt={label} />
         ) : (
-          <span className="stamp-photo-empty" aria-hidden />
+          <>
+            <span className="stamp-photo-empty" aria-hidden />
+            <img
+              className="stamp-plate"
+              src={plateUrl}
+              alt=""
+              aria-hidden
+              onError={(e) => {
+                e.currentTarget.style.display = "none";
+              }}
+            />
+          </>
         )}
       </div>
       <img className="stamp-frame" src={volumeStampFrameUrl()} alt="" aria-hidden />
@@ -170,7 +183,7 @@ export default function CollectionVolumePage() {
     if (cover) {
       setVolumeOpenHandoff({
         volumeId: id,
-        coverUrl: volumeCoverUrl(id),
+        coverUrl: volumeCoverUrl(id, { colored: volume?.completed ?? false }),
         box: measureBox(cover),
         dir: "close",
       });
@@ -200,7 +213,7 @@ export default function CollectionVolumePage() {
           <img
             className="volume-head-cover"
             ref={coverRef}
-            src={volumeCoverUrl(id)}
+            src={volumeCoverUrl(id, { colored: volume?.completed ?? false })}
             alt=""
           />
           {volume ? (
@@ -230,7 +243,14 @@ export default function CollectionVolumePage() {
           {volume.slots.map((slot) => {
             const label = msg(slot.titleKey);
             const photoUrl = slot.lit ? slot.coverDisplayUrl : null;
-            const face = <StampFace photoUrl={photoUrl} label={label} lit={slot.lit} />;
+            const face = (
+              <StampFace
+                photoUrl={photoUrl}
+                plateUrl={volumeSlotPlateUrl(id, slot.id)}
+                label={label}
+                lit={slot.lit}
+              />
+            );
             const sourceHidden = liftSourceId === slot.coverObservationId;
 
             if (slot.lit && slot.coverObservationId && photoUrl) {

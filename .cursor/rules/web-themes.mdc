@@ -12,10 +12,11 @@ alwaysApply: true
 ## 必须
 
 - 配色 / 字体 / 圆角 / 氛围底 / 稀有度徽章色：写在 `apps/web/src/themes/<id>.css` 的 `[data-theme="<id>"]` 下
-- 套册位图：`public/volumes/<id>/`，经 `themes/volumeAssets` helper 引用（见 [`套册美术分层.md`](docs/features/套册美术分层.md)）
-- 壳纸纹：`public/shell/<id>/page-texture.png`，经 `--page-texture` / `--nav-texture`；日常页不是纯色 hex
+- 主题化位图：`public/{volumes,trips,settle,shell}/<id>/`，只经 `themes/*Assets` helper 引用（见 [`套册美术分层.md`](docs/features/套册美术分层.md)）
+- 壳纸纹：`public/shell/<id>/page-texture.jpg`，经 `--page-texture` / `--nav-texture`；日常页不是纯色 hex
 - 结构样式只使用语义 `var(--*)`（见 `apps/web/src/styles.css`）
-- 新增皮肤：加 CSS → 加 `volumes/<id>/` 资源包 → 登记 `ThemeId` / `THEME_IDS` → `main.tsx` import →（可选）`applyTheme`
+- 新增皮肤：加 CSS → 备资源包 → 登记 `ThemeId` / `THEME_IDS` / `THEME_META` → `main.tsx` import → 加 `theme.<id>` 与 `theme.<id>Hint` 文案
+- 皮肤要换说法（拆封 / 显影之类）：加 `packages/messages/src/voices/<voice>.ts` 覆盖表，在 `THEME_META.voice` 指过去
 - 切换皮肤用 `applyTheme`；不要复制整页组件换皮
 
 ## 禁止
@@ -23,9 +24,13 @@ alwaysApply: true
 - 在 `pages/*` / `components/*` 里写死主题十六进制色、写死 `/volumes/daylight/` 或 `/shell/daylight/`，或为换皮分叉业务流程
 - 只改某一皮肤、却在 `styles.css` 留下硬编码品牌色
 - 未在 `THEME_IDS` 登记的 id 当作可用皮肤
+- 在 `THEME_META.assets` 里声明没有实际文件的资源域（声明即承诺，缺文件就是 404）
+- 借换皮之名改内部状态码或增删功能——voice 只换说法，不换含义
 - 用不规则复合 PNG 当邮票相框（相框用几何 SVG）
 
 ## 当前与后置
 
-- 默认：`daylight`（日光胶片 · 旅游）
-- 第二皮肤：`tide`（潮间带）已落地 token + 资源槽；册皮/开包氛围图可后补，勿为换皮复制 `pages/*`
+- 当前只有一套皮肤：`daylight`，它就是默认皮肤，正在重做表现
+- `tide`（潮间带）与 `darkroom`（暗房）已退役删除：前者是半套东西且与套册 `intertidal` 撞名，后者把一道后期工序当成了全局世界
+- 皮肤是**一整套情境**（你是谁、在哪儿观察），自带底、资源包、开包仪式与用词；不是同一张纸换个色
+- 机制（`THEME_META` / 资源域回退 / voice）保留待用，深色皮肤将来仍可能出现（如深海），改结构样式时别写死浅色前提

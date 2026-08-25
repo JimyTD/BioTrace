@@ -1,6 +1,7 @@
 /**
- * 日光胶片 · 旅游默认皮肤
- * 暖米灰底、深柏绿、胶片橙 CTA；照片优先、少毛玻璃。
+ * 日光图版 · 旅游默认皮肤
+ * 暖米灰底、深柏绿、砖红 CTA；照片优先、少毛玻璃。
+ * 美术走 19 世纪博物图版：没集到的印素版线刻，集齐把封面换成手工上色的彩版。
  */
 [data-theme="daylight"] {
   --font-sans: "Outfit", system-ui, sans-serif;
@@ -27,6 +28,7 @@
   --nav-active-ink: #9a4030;
   --warn: #9a6b24;
   --danger: #8b2e2e;
+  --danger-ink: #fffaf7;
   --danger-soft: rgba(139, 46, 46, 0.08);
   --danger-line: rgba(139, 46, 46, 0.35);
   --danger-badge-bg: #f3d4d4;
@@ -43,6 +45,8 @@
   --nav-bg: #f3efe7;
   --nav-texture: none;
   --page-texture: none;
+  --page-texture-opacity: 1;
+  --page-texture-blend: normal;
   --shadow: 0 8px 22px rgba(42, 36, 28, 0.07);
 
   --radius-sm: 8px;
@@ -101,6 +105,7 @@
   --list-tag-extinct-bg: #3d3f3c;
   --list-tag-extinct-fg: #f4f2ec;
 
+  --rarity-LR-badge: linear-gradient(135deg, #e0c4ff 0%, #ffe566 48%, #ffb0d8 100%);
   --rarity-LR-seal-rainbow: conic-gradient(
     from 210deg,
     #b14ef0 0deg,
@@ -114,9 +119,12 @@
   /* 套册 / 邮票 */
   --volume-cover-empty: #e7dfd2;
   --volume-stamp-empty-line: rgba(58, 50, 44, 0.28);
+  /* 空槽印样压低一点，让已点亮的真照片在格子里更跳 */
+  --volume-plate-opacity: 0.92;
   --volume-complete-line: #d3543c;
   --volume-complete-soft: #f0ddd4;
   --volume-complete-ink: #9a4030;
+  --volume-complete-glow: 0 12px 36px rgba(211, 84, 60, 0.16);
 
   /* 旅途封面墙 / 胶片格 */
   --trip-cover-shadow: 0 10px 26px rgba(42, 36, 28, 0.1);
@@ -128,6 +136,8 @@
   --trip-pending-veil: color-mix(in srgb, var(--volume-cover-empty) 88%, var(--card));
   --trip-pending-band-ink: var(--accent);
   --trip-empty-caption: var(--muted);
+  /* 卷首图中心那圈象牙色留白上的字 */
+  --frontispiece-ink: #5c5347;
 
   /* 我的：名片 / 设置行 */
   --me-card-bg: color-mix(in srgb, var(--card) 88%, var(--volume-cover-empty));

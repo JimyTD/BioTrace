@@ -2,16 +2,17 @@
  * 单开包主题资源包：/settle/<themeId>/
  * 叠层元件须透明底（SVG 引子，或绿幕 HSV 色键 PNG）；氛围底可为不透明整幅。
  */
-import { getActiveTheme, type ThemeId } from "./core";
+import { getActiveTheme, themeAssetBase, themeAssetUrl, type ThemeId } from "./core";
 
 export function themeSettleBase(theme: ThemeId = getActiveTheme()): string {
-  return `/settle/${theme}`;
+  return themeAssetBase("settle", theme);
 }
 
 export function themeSettleAsset(file: string, theme: ThemeId = getActiveTheme()): string {
-  return `${themeSettleBase(theme)}/${file.replace(/^\/+/, "")}`;
+  return themeAssetUrl("settle", file, theme);
 }
 
+/** 未揭示时盖住照片的壳：日光是封缄牛皮纸，暗房是未显影的相纸。 */
 export function settlePackSealedUrl(theme?: ThemeId): string {
   return themeSettleAsset("pack-sealed.png", theme ?? getActiveTheme());
 }

@@ -1,5 +1,6 @@
 import type { Map, StyleSpecification } from "maplibre-gl";
 import { t } from "@biotrace/messages";
+import { themeMeta, type ColorScheme } from "../themes";
 
 /**
  * 天地图浏览器端 key 链：主 key + 可选备用（逗号分隔多个）。
@@ -73,64 +74,84 @@ export function tiandituStyle(key: string): StyleSpecification {
  * 内置简图：Natural Earth 1:50m 国界（China POV：台湾并入中国几何），无国名注记。
  * 用作天地图全部不可用时的最终回落（防灰屏，规避 OSM 国界表达风险）。
  */
-export const SIMPLE_STYLE: StyleSpecification = {
-  version: 8,
-  sources: {
-    countries: {
-      type: "geojson",
-      data: "/map/ne_50m_countries_chn_pov.geojson",
-      attribution: t("map.simpleBasemapAttribution"),
-    },
+/** 简图配色随皮肤明暗切换；深色皮肤下不能甩出一张亮白纸地图。 */
+const SIMPLE_PALETTE: Record<ColorScheme, { sea: string; land: string[]; border: string }> = {
+  light: {
+    sea: "#c5d6e8",
+    // MAPCOLOR7 轻微分色，便于分辨邻国，仍保持低对比「简图」气质
+    land: ["#e7dfd2", "#e2d7c4", "#ebe3d6", "#ddd2c0", "#e9e0d0", "#e0d5c2", "#efe6da", "#e8e0d4"],
+    border: "#8f7f68",
   },
-  layers: [
-    {
-      id: "background",
-      type: "background",
-      paint: { "background-color": "#c5d6e8" },
-    },
-    {
-      id: "country-fill",
-      type: "fill",
-      source: "countries",
-      paint: {
-        // MAPCOLOR7 轻微分色，便于分辨邻国，仍保持低对比「简图」气质
-        "fill-color": [
-          "match",
-          ["get", "c"],
-          1,
-          "#e7dfd2",
-          2,
-          "#e2d7c4",
-          3,
-          "#ebe3d6",
-          4,
-          "#ddd2c0",
-          5,
-          "#e9e0d0",
-          6,
-          "#e0d5c2",
-          7,
-          "#efe6da",
-          "#e8e0d4",
-        ],
-      },
-    },
-    {
-      id: "country-borders",
-      type: "line",
-      source: "countries",
-      paint: {
-        "line-color": "#8f7f68",
-        "line-width": ["interpolate", ["linear"], ["zoom"], 1, 0.4, 4, 0.8, 8, 1.2],
-        "line-opacity": 0.85,
-      },
-    },
-  ],
+  dark: {
+    sea: "#0f1418",
+    land: ["#2c231c", "#312720", "#281f19", "#352a22", "#2a221b", "#302620", "#372b23", "#2e251e"],
+    border: "#6d5a46",
+  },
 };
+
+export function simpleStyle(scheme: ColorScheme = themeMeta().scheme): StyleSpecification {
+  const palette = SIMPLE_PALETTE[scheme];
+  return {
+    version: 8,
+    sources: {
+      countries: {
+        type: "geojson",
+        data: "/map/ne_50m_countries_chn_pov.geojson",
+        attribution: t("map.simpleBasemapAttribution"),
+      },
+    },
+    layers: [
+      {
+        id: "background",
+        type: "background",
+        paint: { "background-color": palette.sea },
+      },
+      {
+        id: "country-fill",
+        type: "fill",
+        source: "countries",
+        paint: {
+          "fill-color": [
+            "match",
+            ["get", "c"],
+            1,
+            palette.land[0]!,
+            2,
+            palette.land[1]!,
+            3,
+            palette.land[2]!,
+            4,
+            palette.land[3]!,
+            5,
+            palette.land[4]!,
+            6,
+            palette.land[5]!,
+            7,
+            palette.land[6]!,
+            palette.land[7]!,
+          ],
+        },
+      },
+      {
+        id: "country-borders",
+        type: "line",
+        source: "countries",
+        paint: {
+          "line-color": palette.border,
+          "line-width": ["interpolate", ["linear"], ["zoom"], 1, 0.4, 4, 0.8, 8, 1.2],
+          "line-opacity": 0.85,
+        },
+      },
+    ],
+  };
+}
+
+/** @deprecated 固定浅色版；随皮肤走请用 simpleStyle()。onboardBasemap 的预渲染与它同色。 */
+export const SIMPLE_STYLE: StyleSpecification = simpleStyle("light");
 
 export const MAP_STYLE: StyleSpecification = TIANDITU_KEYS_BUILD[0]
   ? tiandituStyle(TIANDITU_KEYS_BUILD[0])
-  : SIMPLE_STYLE;
+  : simpleStyle();
 
 /** Prefer API-served keys (admin overlay); fall back to build-time VITE_* keys. */
 export async function fetchTiandituKeys(): Promise<string[]> {
@@ -147,7 +168,7 @@ export async function fetchTiandituKeys(): Promise<string[]> {
 }
 
 export function mapStyleForKeys(keys: string[]): StyleSpecification {
-  return keys[0] ? tiandituStyle(keys[0]!) : SIMPLE_STYLE;
+  return keys[0] ? tiandituStyle(keys[0]!) : simpleStyle();
 }
 
 /** 自动定位的落点缩放上限。压低可显著省瓦片配额（自动行为不必钻太深）。 */
@@ -209,7 +230,7 @@ export function attachBasemapFallback(map: Map, keys: string[] = TIANDITU_KEYS_B
         `已回落内置简图（Natural Earth 国界 / China POV，无国名注记）。`,
     );
     keyIndex = keys.length;
-    map.setStyle(SIMPLE_STYLE);
+    map.setStyle(simpleStyle());
   };
 
   map.on("error", onError);

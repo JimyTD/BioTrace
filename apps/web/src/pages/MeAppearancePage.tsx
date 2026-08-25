@@ -8,6 +8,11 @@ function themeLabel(id: ThemeId) {
   return hasMessage(key) ? t(key) : id;
 }
 
+function themeHint(id: ThemeId) {
+  const key = `theme.${id}Hint` as MessageKey;
+  return hasMessage(key) ? t(key) : null;
+}
+
 export default function MeAppearancePage() {
   const [current, setCurrent] = useState<ThemeId>(getActiveTheme);
 
@@ -23,15 +28,19 @@ export default function MeAppearancePage() {
       <div className="me-menu">
         {THEME_IDS.map((id) => {
           const on = id === current;
+          const hint = themeHint(id);
           return (
             <button
               key={id}
               type="button"
-              className="me-row"
+              className="me-row theme-row"
               aria-pressed={on}
               onClick={() => pick(id)}
             >
-              <span>{themeLabel(id)}</span>
+              <span className="theme-row-main">
+                <span>{themeLabel(id)}</span>
+                {hint ? <span className="theme-row-hint">{hint}</span> : null}
+              </span>
               <span className="me-row-side">
                 {on ? <span className="muted">{t("me.appearanceOn")}</span> : null}
               </span>

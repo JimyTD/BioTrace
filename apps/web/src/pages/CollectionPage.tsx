@@ -95,7 +95,7 @@ export default function CollectionPage() {
     if (coverEl) {
       setVolumeOpenHandoff({
         volumeId: vol.id,
-        coverUrl: volumeCoverUrl(vol.id),
+        coverUrl: volumeCoverUrl(vol.id, { colored: vol.completed }),
         box: measureBox(coverEl),
         dir: "open",
       });
@@ -135,7 +135,7 @@ export default function CollectionPage() {
                     if (cover instanceof HTMLElement) {
                       setVolumeOpenHandoff({
                         volumeId: vol.id,
-                        coverUrl: volumeCoverUrl(vol.id),
+                        coverUrl: volumeCoverUrl(vol.id, { colored: vol.completed }),
                         box: measureBox(cover),
                         dir: "open",
                       });
@@ -149,7 +149,7 @@ export default function CollectionPage() {
                   <div className="volume-tile-cover">
                     <img
                       className="volume-tile-art"
-                      src={volumeCoverUrl(vol.id)}
+                      src={volumeCoverUrl(vol.id, { colored: vol.completed })}
                       alt=""
                       onError={(e) => {
                         const el = e.currentTarget;

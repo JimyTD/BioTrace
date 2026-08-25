@@ -5,7 +5,8 @@ import type { Rarity } from "../api";
 import { SettlePackStage, type SettleStagePhase } from "../components/SettlePackStage";
 import { volumeCeremonyBgUrl, volumeSealCompleteUrl } from "../themes";
 
-const SAMPLE_PHOTO = "/volumes/daylight/cover-intertidal.png";
+/** 中性样张，跟着皮肤走；勿写死某一皮肤目录。 */
+const SAMPLE_PHOTO = "/trips/_sample-photo.jpg";
 const RARITIES: Rarity[] = ["N", "R", "SR", "SSR", "UR", "LR", "XR"];
 
 export default function SettleArtPreviewPage() {

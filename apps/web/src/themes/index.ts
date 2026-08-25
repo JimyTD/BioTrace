@@ -9,12 +9,20 @@
  */
 export {
   applyTheme,
+  ASSET_DOMAINS,
   DEFAULT_THEME,
   getActiveTheme,
   initTheme,
   isThemeId,
   THEME_IDS,
+  THEME_META,
+  themeAssetBase,
+  themeAssetUrl,
+  themeMeta,
+  type AssetDomain,
+  type ColorScheme,
   type ThemeId,
+  type ThemeMeta,
 } from "./core";
 
 export {
@@ -23,6 +31,7 @@ export {
   volumeCeremonyBgUrl,
   volumeCoverUrl,
   volumeSealCompleteUrl,
+  volumeSlotPlateUrl,
   volumeStampFrameUrl,
 } from "./volumeAssets";
 
@@ -40,6 +49,7 @@ export {
   themeTripBase,
   tripCoverFrameUrl,
   tripFilmFrameUrl,
+  tripFrontispieceUrl,
 } from "./tripAssets";
 
 export {

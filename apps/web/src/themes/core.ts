@@ -1,12 +1,37 @@
 /**
- * 皮肤 id 与切换（配色 CSS 在 *.css；套册位图在 /volumes/<id>/）。
+ * 皮肤 id、登记表与切换（配色 CSS 在 *.css；资源包在 /<域>/<id>/）。
  */
-export type ThemeId = "daylight" | "tide";
+import { setMessageVoice, type VoiceId } from "@biotrace/messages";
 
-/** 已实现的皮肤。默认仍是 daylight；tide 走同一套页面，只换 token 与资源槽。 */
-export const THEME_IDS = ["daylight", "tide"] as const satisfies readonly ThemeId[];
+export type ThemeId = "daylight";
+
+/** 已实现的皮肤。走同一套页面，只换 token、资源槽与包装用词。 */
+export const THEME_IDS = ["daylight"] as const satisfies readonly ThemeId[];
 
 export const DEFAULT_THEME: ThemeId = "daylight";
+
+/** 主题化的静态资源域，对应 public/<域>/<themeId>/。 */
+export type AssetDomain = "volumes" | "trips" | "settle" | "shell";
+
+export const ASSET_DOMAINS = ["volumes", "trips", "settle", "shell"] as const satisfies readonly AssetDomain[];
+
+/** 界面明暗。结构层据此调少量与底色方向绑定的效果（照片垫、反白描边等）。 */
+export type ColorScheme = "light" | "dark";
+
+export type ThemeMeta = {
+  scheme: ColorScheme;
+  /**
+   * 该皮肤自备资源的域。未列出的域回退到 DEFAULT_THEME，
+   * 所以新皮肤可以先只出一部分图，不会满屏破图。
+   */
+  assets: readonly AssetDomain[];
+  /** 包装用词。default 用 packages/messages 基础文案。 */
+  voice: VoiceId;
+};
+
+export const THEME_META: Record<ThemeId, ThemeMeta> = {
+  daylight: { scheme: "light", assets: ASSET_DOMAINS, voice: "default" },
+};
 
 const STORAGE_KEY = "bt_theme";
 
@@ -14,8 +39,30 @@ export function isThemeId(value: string | null | undefined): value is ThemeId {
   return THEME_IDS.includes(value as ThemeId);
 }
 
+export function themeMeta(id: ThemeId = getActiveTheme()): ThemeMeta {
+  return THEME_META[id] ?? THEME_META[DEFAULT_THEME];
+}
+
+/** 资源目录前缀。该皮肤没有这个域的资源包时回退默认皮肤。 */
+export function themeAssetBase(domain: AssetDomain, id: ThemeId = getActiveTheme()): string {
+  const owner = themeMeta(id).assets.includes(domain) ? id : DEFAULT_THEME;
+  return `/${domain}/${owner}`;
+}
+
+export function themeAssetUrl(
+  domain: AssetDomain,
+  file: string,
+  id: ThemeId = getActiveTheme(),
+): string {
+  return `${themeAssetBase(domain, id)}/${file.replace(/^\/+/, "")}`;
+}
+
 export function applyTheme(id: ThemeId = DEFAULT_THEME): void {
+  const meta = themeMeta(id);
   document.documentElement.dataset.theme = id;
+  document.documentElement.dataset.scheme = meta.scheme;
+  document.documentElement.style.colorScheme = meta.scheme;
+  setMessageVoice(meta.voice);
   try {
     localStorage.setItem(STORAGE_KEY, id);
   } catch {

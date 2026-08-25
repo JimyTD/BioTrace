@@ -9,11 +9,41 @@ export type { MessageKey };
 
 export const defaultLocale: Locale = "zh";
 
+/**
+ * 包装用词（voice）：同一功能的不同叙事说法，由 Web 皮肤选定。
+ * 覆盖表只写与基础文案不同的 key；当前仅 zh，加语言时按语言分表。
+ * 服务端不调 setMessageVoice，恒为 default。
+ */
+export type VoiceId = "default";
+
+const voices: Record<VoiceId, Partial<Record<MessageKey, string>>> = {
+  default: {},
+};
+
+export const VOICE_IDS = Object.keys(voices) as VoiceId[];
+
+export const defaultVoice: VoiceId = "default";
+
+let activeVoice: VoiceId = defaultVoice;
+
+export function isVoiceId(value: string | null | undefined): value is VoiceId {
+  return typeof value === "string" && value in voices;
+}
+
+export function setMessageVoice(id: VoiceId = defaultVoice): void {
+  activeVoice = isVoiceId(id) ? id : defaultVoice;
+}
+
+export function getMessageVoice(): VoiceId {
+  return activeVoice;
+}
+
 type Vars = Record<string, string | number>;
 
 export function t(key: MessageKey, vars?: Vars, locale: Locale = defaultLocale): string {
   const table = catalogs[locale] ?? catalogs.zh;
-  let text: string = table[key] ?? catalogs.zh[key] ?? String(key);
+  const spoken = locale === "zh" ? voices[activeVoice][key] : undefined;
+  let text: string = spoken ?? table[key] ?? catalogs.zh[key] ?? String(key);
   if (vars) {
     for (const [k, v] of Object.entries(vars)) {
       text = text.replaceAll(`{${k}}`, String(v));
