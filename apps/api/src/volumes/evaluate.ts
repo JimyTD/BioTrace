@@ -1,5 +1,5 @@
 import type { Observation } from "../db/schema.js";
-import { parseTaxonomy } from "../settle/taxon.js";
+import { ensureAcceptedTaxonomy } from "../settle/taxon.js";
 import { loadVolumeConfigs } from "./load.js";
 import { slotMatches } from "./match.js";
 import {
@@ -7,7 +7,6 @@ import {
   writeVolumeProgress,
   type LitSlotEntry,
 } from "./progress.js";
-import { resolveTaxonomyForVolumes } from "./taxonomy-resolve.js";
 
 export type VolumeEvalResult = {
   newlyLit: Array<{
@@ -38,17 +37,7 @@ export async function evaluateVolumesForUser(
     return { newlyLit, newlyCompletedVolumeIds, newlyCompleted };
   }
 
-  const rawTaxonomy = parseTaxonomy(obs.taxonomyJson);
-  const { taxonomy, meta } = await resolveTaxonomyForVolumes({
-    taxonomy: rawTaxonomy,
-    scientificName: obs.scientificName,
-    finestReliableRank: obs.finestReliableRank,
-  });
-  if (meta.source === "gbif") {
-    console.info(
-      `[volumes] taxonomy anchored via GBIF ${meta.matchType} conf=${meta.confidence} name=${meta.matchedName}`,
-    );
-  }
+  const taxonomy = await ensureAcceptedTaxonomy(obs);
   const volumes = loadVolumeConfigs();
 
   for (const vol of volumes) {

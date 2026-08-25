@@ -1,4 +1,7 @@
+import { eq } from "drizzle-orm";
 import { env } from "../env.js";
+import { db } from "../db/index.js";
+import { observations, type Observation } from "../db/schema.js";
 import {
   TAXONOMY_RANKS,
   emptyTaxonomy,
@@ -38,6 +41,42 @@ export function parseCollectionTaxonomy(obs: {
   taxonomyJson?: string | null;
 }) {
   return parseTaxonomy(obs.acceptedTaxonomyJson) ?? parseTaxonomy(obs.taxonomyJson);
+}
+
+/** 开包之后必须有值：GBIF 骨架，或识图原文。null 只表示还没走过开包解析（旧行）。 */
+export function storeAcceptedTaxonomyJson(
+  accepted: Taxonomy | null,
+  taxonomyJson: string | null | undefined,
+): string | null {
+  if (accepted) return JSON.stringify(accepted);
+  return taxonomyJson ?? null;
+}
+
+/**
+ * 套册点亮只认开包同一套 `resolveTaxonKey`。
+ * 有存档（含「问过但只能用识图」写下的原文）直接用。
+ * null 才是旧行没问过：用同一函数问一次并写回。
+ */
+export async function ensureAcceptedTaxonomy(obs: Observation): Promise<Taxonomy | null> {
+  const stored = parseTaxonomy(obs.acceptedTaxonomyJson);
+  if (stored) return stored;
+
+  const raw = parseTaxonomy(obs.taxonomyJson);
+  const resolved = await resolveTaxonKey({
+    scientificName: obs.scientificName,
+    taxonomy: raw,
+    finestReliableRank: obs.finestReliableRank,
+  });
+  const next = resolved.acceptedTaxonomy ?? raw;
+  const json = storeAcceptedTaxonomyJson(resolved.acceptedTaxonomy, obs.taxonomyJson);
+  if (json) {
+    await db
+      .update(observations)
+      .set({ acceptedTaxonomyJson: json, updatedAt: new Date() })
+      .where(eq(observations.id, obs.id));
+    obs.acceptedTaxonomyJson = json;
+  }
+  return next;
 }
 
 function normalizeRank(rank: string | null | undefined): string {

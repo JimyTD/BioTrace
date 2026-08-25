@@ -50,6 +50,7 @@ import {
 import { removeObservationFiles } from "../services/observationFiles.js";
 import { getIdentifyQuota, utcDayKey } from "../services/identify-quota.js";
 import { computeSettle } from "../settle/rules.js";
+import { storeAcceptedTaxonomyJson } from "../settle/taxon.js";
 import {
   deleteRarityCacheKey,
   getRarityCacheEntry,
@@ -635,9 +636,7 @@ adminRoutes.post("/observations/:id/recompute-settle", async (c) => {
       rarity: derived.rarity,
       settleTier: derived.settleTier,
       taxonKey: derived.taxonKey,
-      acceptedTaxonomyJson: derived.acceptedTaxonomy
-        ? JSON.stringify(derived.acceptedTaxonomy)
-        : null,
+      acceptedTaxonomyJson: storeAcceptedTaxonomyJson(derived.acceptedTaxonomy, row.taxonomyJson),
       updatedAt: now,
     })
     .where(eq(observations.id, row.id));

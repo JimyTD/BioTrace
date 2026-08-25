@@ -6,6 +6,7 @@ import { evaluateEligibility } from "../identify/eligibility.js";
 import { runIdentifyForUser } from "../identify/run.js";
 import { emptyTaxonomy, type IdentifyResult } from "../identify/types.js";
 import { computeSettle } from "../settle/rules.js";
+import { storeAcceptedTaxonomyJson } from "../settle/taxon.js";
 import { enqueueIdentifyJob } from "./identify-queue.js";
 import { enqueueSettleJob } from "./settle-queue.js";
 
@@ -94,9 +95,7 @@ async function persistSettle(opts: {
         locationPrecise: settle.locationPrecise,
         alertIntroduced: false,
         taxonKey: settle.taxonKey,
-        acceptedTaxonomyJson: settle.acceptedTaxonomy
-          ? JSON.stringify(settle.acceptedTaxonomy)
-          : null,
+        acceptedTaxonomyJson: storeAcceptedTaxonomyJson(settle.acceptedTaxonomy, taxonomyJson),
         identifyProvider: opts.provider,
         identifyModel: opts.model,
         settledAt: null,
@@ -129,9 +128,7 @@ async function persistSettle(opts: {
       locationPrecise: settle.locationPrecise,
       alertIntroduced: settle.alertIntroduced,
       taxonKey: settle.taxonKey,
-      acceptedTaxonomyJson: settle.acceptedTaxonomy
-        ? JSON.stringify(settle.acceptedTaxonomy)
-        : null,
+      acceptedTaxonomyJson: storeAcceptedTaxonomyJson(settle.acceptedTaxonomy, taxonomyJson),
       identifyProvider: opts.provider,
       identifyModel: opts.model,
       settledAt: null,

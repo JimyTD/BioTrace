@@ -22,6 +22,7 @@ import { serializeObservation } from "../serialize.js";
 import { validCoords } from "../settle/geo/coords.js";
 import { resolveCountry } from "../settle/country.js";
 import { computeSettle } from "../settle/rules.js";
+import { storeAcceptedTaxonomyJson } from "../settle/taxon.js";
 export const observationRoutes = new Hono<{ Variables: Variables }>();
 
 observationRoutes.use("*", requireUser);
@@ -133,9 +134,7 @@ observationRoutes.patch("/:id/location", async (c) => {
       rarity: derived.rarity,
       settleTier: derived.settleTier,
       taxonKey: derived.taxonKey,
-      acceptedTaxonomyJson: derived.acceptedTaxonomy
-        ? JSON.stringify(derived.acceptedTaxonomy)
-        : null,
+      acceptedTaxonomyJson: storeAcceptedTaxonomyJson(derived.acceptedTaxonomy, row.taxonomyJson),
     };
   } else {
     const country = await resolveCountry(lat, lng);
