@@ -46,6 +46,9 @@ model-bakeoff/images/*.heic
 !model-bakeoff/images/.gitkeep
 !model-bakeoff/images/manifest.example.yaml
 
+# 本地走查截图（无头浏览器出的图，不入库）
+.shot/
+
 # OS / editor
 .DS_Store
 Thumbs.db

@@ -1,0 +1,21 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 128 128" fill="none">
+  <!-- Volume complete: the lamp is on and every pocket is filled. Slide glyph inside a lit disc. -->
+  <circle cx="64" cy="64" r="52" fill="#d9531e" fill-opacity="0.16" />
+  <circle cx="64" cy="64" r="45" fill="#d9531e" />
+  <circle cx="64" cy="64" r="38.5" stroke="#fff6f1" stroke-opacity="0.5" stroke-width="1.2" />
+  <g stroke="#fff6f1" stroke-opacity="0.72" stroke-width="2.4" stroke-linecap="round">
+    <path d="M64 6.5 V15" />
+    <path d="M64 113 V121.5" />
+    <path d="M6.5 64 H15" />
+    <path d="M113 64 H121.5" />
+    <path d="M23.3 23.3 L29.3 29.3" />
+    <path d="M98.7 98.7 L104.7 104.7" />
+    <path d="M104.7 23.3 L98.7 29.3" />
+    <path d="M29.3 98.7 L23.3 104.7" />
+  </g>
+  <path
+    fill="#fff6f1"
+    fill-rule="evenodd"
+    d="M44 44 H84 V84 H44 Z M53 53 H75 V75 H53 Z"
+  />
+</svg>

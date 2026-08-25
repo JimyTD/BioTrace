@@ -749,7 +749,7 @@ button.film-tile-link {
   border-radius: 3px;
   overflow: visible;
   background: var(--trip-cover-plate);
-  box-shadow: 0 4px 14px rgba(42, 36, 28, 0.08);
+  box-shadow: var(--film-tile-shadow);
 }
 
 .film-tile-window {
@@ -833,6 +833,12 @@ button.film-tile-link {
 .film-tile-meta strong {
   font-size: 0.95rem;
   line-height: 1.25;
+}
+
+/* 日期、编号这类标注：皮肤可以换成打字机体（--font-meta），默认跟正文同一套 */
+.film-tile-meta .muted,
+.trip-cover-meta .muted {
+  font-family: var(--font-meta, var(--font-sans));
 }
 
 .film-tile-delete {

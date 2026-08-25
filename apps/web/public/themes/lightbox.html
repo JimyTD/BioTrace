@@ -1,0 +1,383 @@
+<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>明室（灯箱）· 风格示意</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600&family=Courier+Prime:wght@400;700&display=swap"
+      rel="stylesheet"
+    />
+    <style>
+      :root {
+        --sans: "Outfit", system-ui, sans-serif;
+        --type: "Courier Prime", "Courier New", monospace;
+        --lb-ink: #2b3238;
+        --lb-muted: #7a858d;
+        --lb-line: rgba(60, 80, 95, 0.14);
+        --mount: #f0ede5;
+        --mount-ink: #4c4740;
+        --kodak: #d9531e;
+        --lightbox: radial-gradient(ellipse 100% 70% at 50% 30%, #ffffff 0%, #f2f6f8 42%, #e2eaef 74%, #d6e0e6 100%);
+      }
+
+      * {
+        box-sizing: border-box;
+      }
+
+      body {
+        margin: 0;
+        padding: 36px 24px 70px;
+        background: #2c3136;
+        color: #dfe4e8;
+        font-family: var(--sans);
+        -webkit-font-smoothing: antialiased;
+      }
+
+      .doc {
+        max-width: 1000px;
+        margin: 0 auto;
+      }
+
+      h1 {
+        font-size: 1.4rem;
+        margin: 0 0 8px;
+        letter-spacing: -0.02em;
+      }
+
+      .lead {
+        margin: 0;
+        max-width: 760px;
+        font-size: 0.9rem;
+        line-height: 1.7;
+        color: #a9b2b9;
+      }
+
+      .pair {
+        display: flex;
+        gap: 44px;
+        flex-wrap: wrap;
+        margin-top: 30px;
+      }
+
+      .col {
+        display: grid;
+        gap: 10px;
+        justify-items: start;
+      }
+
+      .tag {
+        font-size: 0.72rem;
+        letter-spacing: 0.12em;
+        text-transform: uppercase;
+        color: #8b949b;
+      }
+
+      .phone {
+        width: 380px;
+        height: 760px;
+        border-radius: 26px;
+        overflow: hidden;
+        background: var(--lightbox);
+        color: var(--lb-ink);
+        display: flex;
+        flex-direction: column;
+        box-shadow: 0 20px 46px rgba(0, 0, 0, 0.45);
+      }
+
+      .topbar {
+        flex: none;
+        padding: 13px 18px 10px;
+        display: flex;
+        justify-content: space-between;
+        align-items: baseline;
+        border-bottom: 1px solid var(--lb-line);
+      }
+
+      .topbar b {
+        font-size: 0.98rem;
+        font-weight: 600;
+      }
+
+      .topbar span {
+        font-family: var(--type);
+        font-size: 0.72rem;
+        letter-spacing: 0.06em;
+        color: var(--lb-muted);
+      }
+
+      .body {
+        flex: 1;
+        overflow: hidden;
+        padding: 18px 18px 0;
+      }
+
+      .nav {
+        flex: none;
+        display: grid;
+        grid-template-columns: repeat(4, 1fr);
+        border-top: 1px solid var(--lb-line);
+        background: rgba(255, 255, 255, 0.55);
+      }
+
+      .nav span {
+        padding: 11px 0 14px;
+        text-align: center;
+        font-size: 0.79rem;
+        color: var(--lb-muted);
+      }
+
+      .nav span.on {
+        color: var(--kodak);
+        font-weight: 600;
+      }
+
+      /* 片框 */
+      .sheet {
+        display: grid;
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        gap: 16px 14px;
+      }
+
+      .slide {
+        background: var(--mount);
+        padding: 9px 9px 0;
+        box-shadow:
+          0 1px 2px rgba(40, 55, 65, 0.22),
+          0 8px 16px rgba(40, 55, 65, 0.13);
+      }
+
+      .slide img {
+        display: block;
+        width: 100%;
+        aspect-ratio: 1;
+        object-fit: cover;
+      }
+
+      .slide .mark {
+        display: flex;
+        justify-content: space-between;
+        gap: 6px;
+        padding: 5px 1px 7px;
+        font-family: var(--type);
+        font-size: 0.53rem;
+        letter-spacing: 0.06em;
+        color: var(--mount-ink);
+        white-space: nowrap;
+      }
+
+      .slide .mark em {
+        font-style: normal;
+        opacity: 0.55;
+      }
+
+      .r1 {
+        transform: rotate(-0.5deg);
+      }
+      .r2 {
+        transform: rotate(0.4deg);
+      }
+      .r3 {
+        transform: rotate(0.7deg);
+      }
+      .r4 {
+        transform: rotate(-0.3deg);
+      }
+
+      .album-title {
+        margin: 0 0 14px;
+      }
+
+      .album-title h2 {
+        margin: 0;
+        font-size: 1.3rem;
+        letter-spacing: -0.02em;
+      }
+
+      .album-title p {
+        margin: 3px 0 0;
+        font-family: var(--type);
+        font-size: 0.72rem;
+        letter-spacing: 0.05em;
+        color: var(--lb-muted);
+      }
+
+      /* 开包：点亮 */
+      .lit-stage {
+        height: 100%;
+        display: grid;
+        align-content: center;
+        justify-items: center;
+        gap: 20px;
+        padding-bottom: 22px;
+      }
+
+      .lit-wrap {
+        position: relative;
+        width: 250px;
+      }
+
+      .lit-wrap::before {
+        content: "";
+        position: absolute;
+        inset: -40px;
+        background: radial-gradient(ellipse at 50% 50%, rgba(255, 255, 255, 0.95) 0%, rgba(255, 255, 255, 0) 70%);
+        filter: blur(2px);
+      }
+
+      .lit-wrap .slide {
+        position: relative;
+        padding: 13px 13px 0;
+        box-shadow:
+          0 2px 4px rgba(40, 55, 65, 0.2),
+          0 18px 40px rgba(40, 55, 65, 0.22),
+          0 0 60px rgba(255, 255, 255, 0.9);
+      }
+
+      .lit-wrap .slide .mark {
+        font-size: 0.6rem;
+        padding: 7px 2px 9px;
+      }
+
+      .dim {
+        display: flex;
+        gap: 10px;
+        opacity: 0.32;
+        filter: saturate(0.25);
+      }
+
+      .dim .slide {
+        width: 74px;
+        padding: 5px 5px 0;
+        box-shadow: 0 1px 2px rgba(40, 55, 65, 0.18);
+      }
+
+      .lit-cap {
+        text-align: center;
+        display: grid;
+        gap: 4px;
+      }
+
+      .lit-cap .zh {
+        font-size: 1.22rem;
+        font-weight: 600;
+        letter-spacing: -0.01em;
+      }
+
+      .lit-cap .la {
+        font-family: var(--type);
+        font-size: 0.78rem;
+        letter-spacing: 0.04em;
+        color: var(--lb-muted);
+      }
+
+      .rank {
+        justify-self: center;
+        font-family: var(--type);
+        font-size: 0.66rem;
+        letter-spacing: 0.22em;
+        color: #fff;
+        background: var(--kodak);
+        padding: 4px 11px 3px;
+      }
+
+      .btn {
+        justify-self: center;
+        appearance: none;
+        border: 0;
+        background: var(--kodak);
+        color: #fff;
+        font-family: var(--sans);
+        font-size: 0.92rem;
+        font-weight: 600;
+        padding: 11px 30px;
+        border-radius: 3px;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="doc">
+      <h1>明室（灯箱）· 风格示意</h1>
+      <p class="lead">
+        底是发亮的灯箱面（偏蓝冷白），照片装在暖白卡纸片框里，框上打字机字印编号日期。左：旅途相册。右：开包——片子推上灯箱，灯亮，颜色显出来，周围的片子暗下去。
+      </p>
+
+      <div class="pair">
+        <div class="col">
+          <span class="tag">旅途相册</span>
+          <div class="phone">
+            <div class="topbar"><b>林缘一日</b><span>ROLL 03 · 6</span></div>
+            <div class="body">
+              <div class="album-title">
+                <h2>林缘一日</h2>
+                <p>14 AUG · BAIYUN SHAN</p>
+              </div>
+              <div class="sheet">
+                <div class="slide r1">
+                  <img src="/themes/_demo/demo-photo-bird.jpg" alt="" />
+                  <div class="mark"><span>14 AUG</span><em>03-01</em></div>
+                </div>
+                <div class="slide r2">
+                  <img src="/themes/_demo/demo-photo-dragonfly.jpg" alt="" />
+                  <div class="mark"><span>14 AUG</span><em>03-02</em></div>
+                </div>
+                <div class="slide r3">
+                  <img src="/themes/_demo/demo-photo-mushroom.jpg" alt="" />
+                  <div class="mark"><span>14 AUG</span><em>03-03</em></div>
+                </div>
+                <div class="slide r4">
+                  <img src="/themes/_demo/demo-photo-squirrel.jpg" alt="" />
+                  <div class="mark"><span>14 AUG</span><em>03-04</em></div>
+                </div>
+                <div class="slide r2">
+                  <img src="/themes/_demo/demo-photo-butterfly.jpg" alt="" />
+                  <div class="mark"><span>14 AUG</span><em>03-05</em></div>
+                </div>
+                <div class="slide r1">
+                  <img src="/themes/_demo/demo-photo-trail.jpg" alt="" />
+                  <div class="mark"><span>14 AUG</span><em>03-06</em></div>
+                </div>
+              </div>
+            </div>
+            <div class="nav">
+              <span class="on">旅途</span><span>地图</span><span>图鉴</span><span>我的</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="col">
+          <span class="tag">开包 · 点亮</span>
+          <div class="phone">
+            <div class="topbar"><b>上灯箱</b><span>03-02</span></div>
+            <div class="body">
+              <div class="lit-stage">
+                <div class="dim">
+                  <div class="slide"><img src="/themes/_demo/demo-photo-bird.jpg" alt="" /></div>
+                  <div class="slide"><img src="/themes/_demo/demo-photo-mushroom.jpg" alt="" /></div>
+                  <div class="slide"><img src="/themes/_demo/demo-photo-trail.jpg" alt="" /></div>
+                </div>
+                <div class="lit-wrap">
+                  <div class="slide">
+                    <img src="/themes/_demo/demo-photo-dragonfly.jpg" alt="" />
+                    <div class="mark"><span>14 AUG · BAIYUN SHAN</span><em>03-02</em></div>
+                  </div>
+                </div>
+                <div class="lit-cap">
+                  <span class="zh">红蜻</span>
+                  <span class="la">Crocothemis servilia</span>
+                </div>
+                <span class="rank">R</span>
+                <button class="btn">收进图鉴</button>
+              </div>
+            </div>
+            <div class="nav">
+              <span>旅途</span><span>地图</span><span class="on">图鉴</span><span>我的</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </body>
+</html>

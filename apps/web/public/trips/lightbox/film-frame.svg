@@ -1,0 +1,17 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100" preserveAspectRatio="none" fill="none">
+  <!--
+    Slide mount: four equal cardboard borders, opaque so an enlarged photo
+    cannot bleed out from under it. Photo window: 8% inset on every side.
+  -->
+  <path
+    fill="#eee9de"
+    fill-rule="evenodd"
+    d="M0 0 H100 V100 H0 Z M8 8 H92 V92 H8 Z"
+  />
+  <rect x="8" y="8" width="84" height="84" stroke="#26414f" stroke-opacity="0.3" stroke-width="0.7" />
+  <rect x="0.35" y="0.35" width="99.3" height="99.3" stroke="#26414f" stroke-opacity="0.18" stroke-width="0.7" />
+  <!-- printed marks on the cardboard: batch strip above, frame number below -->
+  <rect x="9" y="3.4" width="15" height="1.2" fill="#4c4740" fill-opacity="0.24" />
+  <rect x="9" y="95.4" width="23" height="1.3" fill="#4c4740" fill-opacity="0.34" />
+  <rect x="84" y="95.4" width="7" height="1.3" fill="#4c4740" fill-opacity="0.34" />
+</svg>

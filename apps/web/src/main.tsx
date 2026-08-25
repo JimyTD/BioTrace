@@ -7,6 +7,7 @@ import { isNativeAndroidShell } from "./androidUpdate";
 import DownloadPage from "./pages/DownloadPage";
 import { initTheme } from "./themes";
 import "./themes/daylight.css";
+import "./themes/lightbox.css";
 import "./styles.css";
 
 initTheme();

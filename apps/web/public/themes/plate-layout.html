@@ -1,0 +1,436 @@
+<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>图版排法 · 示例</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700&display=swap"
+      rel="stylesheet"
+    />
+    <style>
+      :root {
+        --font-sans: "Outfit", system-ui, sans-serif;
+        --font-latin: Georgia, "Times New Roman", serif;
+        --bg0: #f3efe7;
+        --ink: #1f2a24;
+        --muted: #6b6258;
+        --line: rgba(42, 64, 51, 0.14);
+        --cta: #d3543c;
+        --card: #faf8f3;
+        --nav-active-bg: #f0ddd4;
+        --nav-active-ink: #9a4030;
+        --radius-md: 11px;
+        --radius-lg: 14px;
+        --shadow: 0 8px 22px rgba(42, 36, 28, 0.07);
+        --bg-atmosphere:
+          radial-gradient(ellipse 120% 70% at 8% -18%, rgba(212, 168, 120, 0.34) 0%, transparent 56%),
+          radial-gradient(ellipse 80% 55% at 100% 108%, rgba(90, 70, 48, 0.07) 0%, transparent 52%),
+          linear-gradient(168deg, #f6f1e8 0%, #efe8dc 46%, #e9e1d4 100%);
+      }
+
+      * {
+        box-sizing: border-box;
+      }
+
+      body {
+        margin: 0;
+        padding: 40px 24px 80px;
+        background: #33302b;
+        color: #e8e3d8;
+        font-family: var(--font-sans);
+        -webkit-font-smoothing: antialiased;
+      }
+
+      .doc {
+        max-width: 1240px;
+        margin: 0 auto;
+      }
+
+      h1 {
+        font-size: 1.5rem;
+        margin: 0 0 10px;
+        letter-spacing: -0.02em;
+      }
+
+      .lead {
+        max-width: 800px;
+        line-height: 1.75;
+        color: #bdb5a6;
+        margin: 0 0 6px;
+        font-size: 0.93rem;
+      }
+
+      .lead strong {
+        color: #f0e9db;
+        font-weight: 600;
+      }
+
+      .pair {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 40px;
+        align-items: flex-start;
+        margin-top: 34px;
+      }
+
+      .col {
+        display: grid;
+        gap: 10px;
+        justify-items: start;
+      }
+
+      .tag {
+        font-size: 0.74rem;
+        letter-spacing: 0.1em;
+        color: #8d8578;
+        text-transform: uppercase;
+      }
+
+      .tag.next {
+        color: #e2b98a;
+      }
+
+      .phone {
+        width: 380px;
+        height: 760px;
+        border-radius: 26px;
+        overflow: hidden;
+        background: var(--bg0);
+        background-image: var(--bg-atmosphere);
+        color: var(--ink);
+        box-shadow: 0 22px 50px rgba(0, 0, 0, 0.42);
+        display: flex;
+        flex-direction: column;
+      }
+
+      .topbar {
+        padding: 13px 16px 9px;
+        border-bottom: 1px solid var(--line);
+        display: flex;
+        justify-content: space-between;
+        align-items: baseline;
+        flex: none;
+      }
+
+      .topbar b {
+        font-size: 0.98rem;
+        letter-spacing: -0.01em;
+      }
+
+      .topbar span {
+        font-size: 0.8rem;
+        color: var(--muted);
+      }
+
+      .scroll {
+        flex: 1;
+        overflow: hidden;
+        position: relative;
+      }
+
+      .nav {
+        display: grid;
+        grid-template-columns: repeat(4, 1fr);
+        border-top: 1px solid var(--line);
+        background: var(--bg0);
+        flex: none;
+      }
+
+      .nav span {
+        padding: 11px 0 14px;
+        text-align: center;
+        font-size: 0.79rem;
+        color: var(--muted);
+      }
+
+      .nav span.on {
+        color: var(--nav-active-ink);
+        font-weight: 600;
+        background: var(--nav-active-bg);
+      }
+
+      /* ---------------- 现状：两列缩略图 ---------------- */
+      .now-body {
+        padding: 14px 16px 20px;
+        display: grid;
+        gap: 14px;
+        align-content: start;
+      }
+
+      .album-head h2 {
+        margin: 0;
+        font-size: 1.35rem;
+        letter-spacing: -0.02em;
+      }
+
+      .album-head p {
+        margin: 4px 0 0;
+        font-size: 0.92rem;
+        color: var(--muted);
+      }
+
+      .album-tools {
+        display: flex;
+        gap: 10px;
+      }
+
+      .album-tools .btn {
+        appearance: none;
+        border: 1px solid var(--line);
+        background: var(--card);
+        border-radius: 10px;
+        font-family: inherit;
+        font-size: 0.85rem;
+        color: var(--ink);
+        padding: 8px 12px;
+      }
+
+      .album-tools .btn.primary {
+        background: var(--cta);
+        border-color: transparent;
+        color: #fffaf7;
+        font-weight: 600;
+      }
+
+      .film-grid {
+        display: grid;
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        gap: 16px 12px;
+      }
+
+      .film-tile {
+        display: grid;
+        gap: 6px;
+      }
+
+      .film-face {
+        position: relative;
+        aspect-ratio: 1;
+        width: 100%;
+      }
+
+      .film-face .win {
+        position: absolute;
+        inset: 8%;
+        overflow: hidden;
+      }
+
+      .film-face .win img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+        display: block;
+      }
+
+      .film-face .frame {
+        position: absolute;
+        inset: 0;
+        width: 100%;
+        height: 100%;
+        pointer-events: none;
+      }
+
+      .film-cap {
+        font-size: 0.78rem;
+        color: var(--muted);
+        line-height: 1.3;
+      }
+
+      /* ---------------- 图版：一屏一版 ---------------- */
+      .plate-body {
+        padding: 0;
+      }
+
+      .plate {
+        padding: 22px 24px 26px;
+        border-bottom: 1px solid var(--line);
+      }
+
+      .plate-num {
+        display: block;
+        text-align: right;
+        font-size: 0.68rem;
+        letter-spacing: 0.18em;
+        color: var(--muted);
+        margin-bottom: 7px;
+      }
+
+      .plate-img {
+        display: block;
+        width: 100%;
+        aspect-ratio: 1;
+        object-fit: cover;
+        box-shadow: 0 2px 10px rgba(42, 36, 28, 0.14);
+      }
+
+      .plate-img.wide {
+        aspect-ratio: 4 / 3;
+      }
+
+      .plate-cap {
+        margin-top: 13px;
+        display: grid;
+        gap: 3px;
+      }
+
+      .plate-cap .zh {
+        font-size: 1.06rem;
+        font-weight: 600;
+        letter-spacing: -0.01em;
+        line-height: 1.2;
+      }
+
+      .plate-cap .la {
+        font-family: var(--font-latin);
+        font-style: italic;
+        font-size: 0.9rem;
+        color: var(--muted);
+        line-height: 1.2;
+      }
+
+      .plate-cap .meta {
+        margin-top: 4px;
+        font-size: 0.72rem;
+        letter-spacing: 0.09em;
+        color: var(--muted);
+      }
+
+      .note {
+        margin: 44px auto 0;
+        max-width: 800px;
+        border-left: 2px solid #5c564c;
+        padding: 2px 0 2px 16px;
+        color: #a49c8d;
+        font-size: 0.86rem;
+        line-height: 1.75;
+      }
+
+      .note strong {
+        color: #e2b98a;
+        font-weight: 600;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="doc">
+      <h1>图版排法 · 示例</h1>
+      <p class="lead">
+        左边是现在的旅途相册：两列缩略图。右边是图版排法。
+        <strong>配色、字体、纸底全没动，用的还是 daylight 那套 token。</strong>
+      </p>
+      <p class="lead">
+        右边不出血——照片四周留纸边；右上角有版号；下面有说明行（中文名 / 拉丁名斜体 / 日期·地点·稀有度）。
+        这三样就是图版和信息流的实际区别。
+      </p>
+
+      <div class="pair">
+        <div class="col">
+          <span class="tag">现状 · 两列缩略图</span>
+          <div class="phone">
+            <div class="topbar"><b>林缘一日</b><span>6 张</span></div>
+            <div class="scroll">
+              <div class="now-body">
+                <div class="album-head">
+                  <h2>林缘一日</h2>
+                  <p>8月14日 · 白云山</p>
+                </div>
+                <div class="album-tools">
+                  <button class="btn primary">上传照片</button>
+                  <button class="btn">拍照</button>
+                </div>
+                <div class="film-grid">
+                  <div class="film-tile">
+                    <div class="film-face">
+                      <div class="win"><img src="/themes/_demo/demo-photo-bird.jpg" alt="" /></div>
+                      <img class="frame" src="/trips/daylight/film-frame.svg" alt="" />
+                    </div>
+                    <span class="film-cap">红耳鹎</span>
+                  </div>
+                  <div class="film-tile">
+                    <div class="film-face">
+                      <div class="win"><img src="/themes/_demo/demo-photo-dragonfly.jpg" alt="" /></div>
+                      <img class="frame" src="/trips/daylight/film-frame.svg" alt="" />
+                    </div>
+                    <span class="film-cap">红蜻</span>
+                  </div>
+                  <div class="film-tile">
+                    <div class="film-face">
+                      <div class="win"><img src="/themes/_demo/demo-photo-mushroom.jpg" alt="" /></div>
+                      <img class="frame" src="/trips/daylight/film-frame.svg" alt="" />
+                    </div>
+                    <span class="film-cap">滑锈伞</span>
+                  </div>
+                  <div class="film-tile">
+                    <div class="film-face">
+                      <div class="win"><img src="/themes/_demo/demo-photo-squirrel.jpg" alt="" /></div>
+                      <img class="frame" src="/trips/daylight/film-frame.svg" alt="" />
+                    </div>
+                    <span class="film-cap">赤腹松鼠</span>
+                  </div>
+                  <div class="film-tile">
+                    <div class="film-face">
+                      <div class="win"><img src="/themes/_demo/demo-photo-butterfly.jpg" alt="" /></div>
+                      <img class="frame" src="/trips/daylight/film-frame.svg" alt="" />
+                    </div>
+                    <span class="film-cap">牧女珍眼蝶</span>
+                  </div>
+                  <div class="film-tile">
+                    <div class="film-face">
+                      <div class="win"><img src="/themes/_demo/demo-photo-trail.jpg" alt="" /></div>
+                      <img class="frame" src="/trips/daylight/film-frame.svg" alt="" />
+                    </div>
+                    <span class="film-cap">林缘步道</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div class="nav">
+              <span class="on">旅途</span><span>地图</span><span>图鉴</span><span>我的</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="col">
+          <span class="tag next">图版排法 · 一屏一版</span>
+          <div class="phone">
+            <div class="topbar"><b>林缘一日</b><span>PL. 1–6</span></div>
+            <div class="scroll">
+              <div class="plate-body">
+                <div class="plate">
+                  <span class="plate-num">PL. 01</span>
+                  <img class="plate-img" src="/themes/_demo/demo-photo-bird.jpg" alt="" />
+                  <div class="plate-cap">
+                    <span class="zh">红耳鹎</span>
+                    <span class="la">Pycnonotus jocosus</span>
+                    <span class="meta">8月14日 · 白云山 · N</span>
+                  </div>
+                </div>
+                <div class="plate">
+                  <span class="plate-num">PL. 02</span>
+                  <img class="plate-img" src="/themes/_demo/demo-photo-dragonfly.jpg" alt="" />
+                  <div class="plate-cap">
+                    <span class="zh">红蜻</span>
+                    <span class="la">Crocothemis servilia</span>
+                    <span class="meta">8月14日 · 白云山 · R</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div class="nav">
+              <span class="on">旅途</span><span>地图</span><span>图鉴</span><span>我的</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <p class="note">
+        <strong>两笔代价，先说清楚：</strong><br />
+        一、一屏一张，40 张的相册要滑很久。要么图版页只做「精选/已鉴定」的那些，缩略图网格保留作另一个视图。<br />
+        二、拉丁名斜体这里用的是系统衬线（Georgia），真上线要么接受系统字，要么加载一个衬线字体。
+      </p>
+    </div>
+  </body>
+</html>

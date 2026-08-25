@@ -1,0 +1,12 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 128 128" fill="none">
+  <!-- Backup die for the rarity mark (the UI fills an inline path). Lit disc, slide glyph. -->
+  <circle cx="64" cy="64" r="50" fill="currentColor" fill-opacity="0.18" />
+  <circle cx="64" cy="64" r="43" fill="currentColor" />
+  <circle cx="64" cy="64" r="36.5" stroke="#ffffff" stroke-opacity="0.45" stroke-width="1.2" />
+  <path
+    fill="#ffffff"
+    fill-opacity="0.9"
+    fill-rule="evenodd"
+    d="M46 46 H82 V82 H46 Z M54 54 H74 V74 H54 Z"
+  />
+</svg>

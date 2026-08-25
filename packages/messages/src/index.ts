@@ -1,3 +1,4 @@
+import { lightboxVoice } from "./voices/lightbox.js";
 import { zh, type MessageKey } from "./zh.js";
 
 const catalogs = {
@@ -14,10 +15,11 @@ export const defaultLocale: Locale = "zh";
  * 覆盖表只写与基础文案不同的 key；当前仅 zh，加语言时按语言分表。
  * 服务端不调 setMessageVoice，恒为 default。
  */
-export type VoiceId = "default";
+export type VoiceId = "default" | "lightbox";
 
 const voices: Record<VoiceId, Partial<Record<MessageKey, string>>> = {
   default: {},
+  lightbox: lightboxVoice,
 };
 
 export const VOICE_IDS = Object.keys(voices) as VoiceId[];

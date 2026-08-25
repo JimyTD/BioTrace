@@ -3,10 +3,10 @@
  */
 import { setMessageVoice, type VoiceId } from "@biotrace/messages";
 
-export type ThemeId = "daylight";
+export type ThemeId = "daylight" | "lightbox";
 
 /** 已实现的皮肤。走同一套页面，只换 token、资源槽与包装用词。 */
-export const THEME_IDS = ["daylight"] as const satisfies readonly ThemeId[];
+export const THEME_IDS = ["daylight", "lightbox"] as const satisfies readonly ThemeId[];
 
 export const DEFAULT_THEME: ThemeId = "daylight";
 
@@ -31,6 +31,7 @@ export type ThemeMeta = {
 
 export const THEME_META: Record<ThemeId, ThemeMeta> = {
   daylight: { scheme: "light", assets: ASSET_DOMAINS, voice: "default" },
+  lightbox: { scheme: "light", assets: ASSET_DOMAINS, voice: "lightbox" },
 };
 
 const STORAGE_KEY = "bt_theme";
