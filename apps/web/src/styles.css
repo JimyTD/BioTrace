@@ -699,14 +699,52 @@ button.me-row {
   }
 }
 
+/* ── 片框 ──────────────────────────────────────────────────
+   零件一次渲全，摆在哪由皮肤决定。栅格是三列四行：
+
+     lip-tl    lip-top      lip-tr
+     lip-left  window       lip-right
+     lip-bl    lip-bottom   lip-br
+     below     below        below
+
+   前三行是卡纸本身，below 在卡纸之外。跨格用线名 mount-start / mount-end
+   （整张卡纸）、win-start / win-end、below-start / below-end。
+   边宽单位是 cqw（片框宽的 1%），横竖同尺，皮肤改边只动 --film-lip-*。
+   零件清单与改法见 docs/features/皮肤主题.md §2.3。 */
 .film-tile {
+  /* 卡纸四边宽。皮肤改这四个就换了片框比例，零件跟着走 */
+  --film-lip-top: 8cqw;
+  --film-lip-right: 8cqw;
+  --film-lip-bottom: 8cqw;
+  --film-lip-left: 8cqw;
+  /* 窗口行高。auto 让窗口自己按 aspect-ratio 取正方，皮肤要非方窗就写死这个值 */
+  --film-window-h: auto;
+  --film-caption-gap: 6px;
   display: grid;
   gap: 6px;
+  container-type: inline-size;
 }
 
 .film-tile-link {
+  position: relative;
   display: grid;
-  gap: 6px;
+  grid-template-columns:
+    [mount-start] var(--film-lip-left)
+    [win-start] minmax(0, 1fr)
+    [win-end] var(--film-lip-right) [mount-end];
+  grid-template-rows:
+    [mount-start] var(--film-lip-top)
+    [win-start] var(--film-window-h)
+    [win-end] var(--film-lip-bottom)
+    [mount-end below-start] auto [below-end];
+  /* 同排格子被拉到一样高时，多出来的高度不许摊给窗口那一行：
+     一摊卡纸就比窗口高出一截，边框 SVG 会被拉变形 */
+  align-content: start;
+  grid-template-areas:
+    "lip-tl   lip-top    lip-tr"
+    "lip-left window     lip-right"
+    "lip-bl   lip-bottom lip-br"
+    "below    below      below";
   color: inherit;
 }
 
@@ -743,22 +781,20 @@ button.film-tile-link {
   display: block;
 }
 
-.film-tile-media {
-  position: relative;
-  aspect-ratio: 1;
+/* 卡纸本体。只是一层底，不装零件，这样贴在上面的字才能自由进出 */
+.film-tile-mount {
+  grid-row: mount-start / mount-end;
+  grid-column: mount-start / mount-end;
   border-radius: 3px;
-  overflow: visible;
   background: var(--trip-cover-plate);
   box-shadow: var(--film-tile-shadow);
 }
 
 .film-tile-window {
-  position: absolute;
-  top: 8%;
-  left: 8%;
-  width: 84%;
-  height: 84%;
+  grid-area: window;
+  aspect-ratio: 1;
   overflow: hidden;
+  z-index: 1;
 }
 
 .film-tile-photo {
@@ -779,8 +815,8 @@ button.film-tile-link {
 }
 
 .film-tile-frame {
-  position: absolute;
-  inset: 0;
+  grid-row: mount-start / mount-end;
+  grid-column: mount-start / mount-end;
   width: 100%;
   height: 100%;
   object-fit: fill;
@@ -788,13 +824,14 @@ button.film-tile-link {
   z-index: 2;
 }
 
-.film-tile-pending-seal {
+/* 封条横穿整格并甩出卡纸两侧，所以不进栅格，直接钉在片框上 */
+.film-tile-seal {
   position: absolute;
-  left: -8%;
-  right: -8%;
-  top: 38%;
+  left: -8cqw;
+  right: -8cqw;
+  top: 38cqw;
   z-index: 4;
-  display: flex;
+  display: none;
   align-items: center;
   justify-content: center;
   padding: 0.55em 0.4em 0.6em;
@@ -816,27 +853,46 @@ button.film-tile-link {
   transform: rotate(-1.4deg);
 }
 
+/* 待开包才亮封条：状态由类名说了算，皮肤只管它长什么样、摆哪儿 */
+.film-tile.is-pending:not(.is-slotting) .film-tile-seal {
+  display: flex;
+}
+
 .film-tile-badge {
-  position: absolute;
-  top: 10%;
-  left: 10%;
+  grid-area: window;
+  place-self: start start;
+  margin: 2cqw 0 0 2cqw;
   z-index: 3;
 }
 
-.film-tile-meta {
+/* 沿上标注（日期、序号）。默认皮肤不用这道边，皮肤要用自己打开 */
+.film-tile-mark {
+  grid-area: lip-bottom;
+  z-index: 3;
+  display: none;
+  align-items: center;
+  justify-content: space-between;
+  gap: 6px;
+  white-space: nowrap;
+  font-family: var(--font-meta, var(--font-sans));
+}
+
+.film-tile-caption {
+  grid-area: below;
+  margin-top: var(--film-caption-gap);
   display: grid;
   gap: 2px;
   padding: 0 2px;
   min-height: 2.4em;
 }
 
-.film-tile-meta strong {
+.film-tile-caption strong {
   font-size: 0.95rem;
   line-height: 1.25;
 }
 
 /* 日期、编号这类标注：皮肤可以换成打字机体（--font-meta），默认跟正文同一套 */
-.film-tile-meta .muted,
+.film-tile-caption .muted,
 .trip-cover-meta .muted {
   font-family: var(--font-meta, var(--font-sans));
 }

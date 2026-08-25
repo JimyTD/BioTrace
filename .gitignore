@@ -49,6 +49,11 @@ model-bakeoff/images/*.heic
 # 本地走查截图（无头浏览器出的图，不入库）
 .shot/
 
+# 本地走查用的两张辅助页：换会话、跳过引导、量零件盒子。
+# 放在 public/ 才同源，但不该跟着构建产物发出去
+apps/web/public/dev-login.html
+apps/web/public/measure.html
+
 # OS / editor
 .DS_Store
 Thumbs.db

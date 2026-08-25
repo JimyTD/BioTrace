@@ -63,6 +63,20 @@ function statusBadge(obs: Observation) {
   return <span className="badge">{t("status.settled")}</span>;
 }
 
+/**
+ * 片框沿上的标注。默认皮肤不显示（CSS 关掉），要用的皮肤自己打开。
+ * 只给日期和序号这类纯数据，不出句子，所以不走 messages。
+ */
+function tileDate(obs: Observation) {
+  const d = new Date(obs.capturedAt ?? obs.createdAt);
+  if (Number.isNaN(d.getTime())) return "";
+  return `${String(d.getMonth() + 1).padStart(2, "0")}-${String(d.getDate()).padStart(2, "0")}`;
+}
+
+function tileNo(index: number) {
+  return String(index + 1).padStart(2, "0");
+}
+
 function obsHref(obs: Observation) {
   if (obs.status === "pending_settle") return `/settle/${obs.id}`;
   return `/observations/${obs.id}`;
@@ -652,7 +666,7 @@ export default function TripAlbumPage({ userId }: { userId: string }) {
       ) : null}
 
       <div className="album film-grid">
-        {observations.map((obs) => (
+        {observations.map((obs, index) => (
           <article
             className={`film-tile${obs.status === "pending_settle" ? " is-pending" : ""}${
               slottingIds.has(obs.id) ? " is-slotting" : ""
@@ -681,30 +695,32 @@ export default function TripAlbumPage({ userId }: { userId: string }) {
                 openPhoto(obs, windowEl instanceof HTMLElement ? windowEl : null);
               }}
             >
-              <div className="film-tile-media">
-                <div className="film-tile-window">
-                  <img
-                    className="film-tile-photo"
-                    src={obs.displayUrl}
-                    alt={
-                      obs.status === "pending_settle"
-                        ? t("status.pending_settle")
-                        : isNotCollectibleError(obs.error)
-                          ? t("status.notCollectible")
-                          : obs.commonName || t("map.observationFallback")
-                    }
-                  />
-                </div>
-                <img className="film-tile-frame" src={tripFilmFrameUrl()} alt="" aria-hidden />
-                {obs.status === "pending_settle" && !slottingIds.has(obs.id) ? (
-                  <div className="film-tile-pending-seal">{t("settle.open")}</div>
-                ) : null}
-                <div className="film-tile-badge">{statusBadge(obs)}</div>
-              </div>
-              <div className="film-tile-meta">
+              {/* 零件一次渲全，摆在哪由皮肤的 CSS 定。见 docs/features/皮肤主题.md §2.3 */}
+              <span className="film-tile-mount" aria-hidden />
+              <span className="film-tile-window">
+                <img
+                  className="film-tile-photo"
+                  src={obs.displayUrl}
+                  alt={
+                    obs.status === "pending_settle"
+                      ? t("status.pending_settle")
+                      : isNotCollectibleError(obs.error)
+                        ? t("status.notCollectible")
+                        : obs.commonName || t("map.observationFallback")
+                  }
+                />
+              </span>
+              <img className="film-tile-frame" src={tripFilmFrameUrl()} alt="" aria-hidden />
+              <span className="film-tile-seal">{t("settle.open")}</span>
+              <span className="film-tile-badge">{statusBadge(obs)}</span>
+              <span className="film-tile-mark" aria-hidden>
+                <span className="film-tile-mark-date">{tileDate(obs)}</span>
+                <span className="film-tile-mark-no">{tileNo(index)}</span>
+              </span>
+              <span className="film-tile-caption">
                 {obs.status === "settled" ? (
                   <>
-                    <strong>
+                    <strong className="film-tile-name">
                       {obs.commonName || obs.scientificName || t("detail.unnamed")}
                     </strong>
                     {obs.alertIntroduced ? (
@@ -712,7 +728,7 @@ export default function TripAlbumPage({ userId }: { userId: string }) {
                         {t("settle.alertIntroduced")}
                       </span>
                     ) : null}
-                    <span className="muted">
+                    <span className="muted film-tile-rank">
                       {t("album.reliableTo", {
                         rank: formatRank(obs.finestReliableRank),
                       })}
@@ -720,22 +736,22 @@ export default function TripAlbumPage({ userId }: { userId: string }) {
                   </>
                 ) : null}
                 {obs.status === "pending_settle" ? (
-                  <span className="muted">{t("album.pendingHint")}</span>
+                  <span className="muted film-tile-hint">{t("album.pendingHint")}</span>
                 ) : null}
                 {obs.status === "analyzing" ? (
-                  <span className="muted">{t("status.analyzing")}</span>
+                  <span className="muted film-tile-hint">{t("status.analyzing")}</span>
                 ) : null}
                 {obs.status === "failed" ? (
-                  <span className="error">{identifyErrorPrimary(obs.error)}</span>
+                  <span className="error film-tile-error">{identifyErrorPrimary(obs.error)}</span>
                 ) : null}
                 {obs.uploaderName ? (
-                  <span className="muted">
+                  <span className="muted film-tile-owner">
                     {t("album.uploadedBy", {
                       name: obs.userId === userId ? t("share.you") : obs.uploaderName,
                     })}
                   </span>
                 ) : null}
-              </div>
+              </span>
             </button>
             {obs.userId === userId ? (
               <button

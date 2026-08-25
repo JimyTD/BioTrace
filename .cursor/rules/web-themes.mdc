@@ -5,7 +5,7 @@ alwaysApply: true
 
 # Web 皮肤主题（强制）
 
-表现层三分离：**文案** `packages/messages` · **皮肤** `apps/web/src/themes/` · **流程 UI** `pages/` + `styles.css`。
+表现层四分离：**文案** `packages/messages` · **配色** `apps/web/src/themes/` · **结构摆放** `styles.css` · **流程与数据** `pages/`。
 
 完整清单与 token 表见 [`docs/features/皮肤主题.md`](docs/features/皮肤主题.md)。
 
@@ -15,22 +15,27 @@ alwaysApply: true
 - 主题化位图：`public/{volumes,trips,settle,shell}/<id>/`，只经 `themes/*Assets` helper 引用（见 [`套册美术分层.md`](docs/features/套册美术分层.md)）
 - 壳纸纹：`public/shell/<id>/page-texture.jpg`，经 `--page-texture` / `--nav-texture`；日常页不是纯色 hex
 - 结构样式只使用语义 `var(--*)`（见 `apps/web/src/styles.css`）
+- **零件常在、位置由 CSS 决定**：承载质感的结构（片框、封面、套册格、开包舞台）把零件节点一次渲全，各皮肤用 `[data-theme]` 下的 grid / 定位决定摆在哪。皮肤之间的差别优先靠摆放实现，不靠分叉组件
 - 新增皮肤：加 CSS → 备资源包 → 登记 `ThemeId` / `THEME_IDS` / `THEME_META` → `main.tsx` import → 加 `theme.<id>` 与 `theme.<id>Hint` 文案
 - 皮肤要换说法（拆封 / 显影之类）：加 `packages/messages/src/voices/<voice>.ts` 覆盖表，在 `THEME_META.voice` 指过去
-- 切换皮肤用 `applyTheme`；不要复制整页组件换皮
+- 切换皮肤用 `applyTheme`
+- 出过风格示意页（`public/themes/*.html`）的，实现完必须和示意页**并排截图比对**再汇报。只确认「皮肤生效了」不算验收——2026-08-25 的灯箱就是漏了这步，示意里打在卡纸下沿的说明字实现成了框外正文，整个质感没落地
 
 ## 禁止
 
-- 在 `pages/*` / `components/*` 里写死主题十六进制色、写死 `/volumes/daylight/` 或 `/shell/daylight/`，或为换皮分叉业务流程
+- 在 `pages/*` / `components/*` 里写死主题十六进制色、写死 `/volumes/daylight/` 或 `/shell/daylight/`
+- 皮肤触碰数据、状态机、请求、路由、埋点——皮肤只拿算好的 props 决定怎么摆
 - 只改某一皮肤、却在 `styles.css` 留下硬编码品牌色
 - 未在 `THEME_IDS` 登记的 id 当作可用皮肤
 - 在 `THEME_META.assets` 里声明没有实际文件的资源域（声明即承诺，缺文件就是 404）
-- 借换皮之名改内部状态码或增删功能——voice 只换说法，不换含义
+- 借换皮之名改内部状态码或增删功能——换的是摆法与说法，不换含义，功能一个都不许少
 - 用不规则复合 PNG 当邮票相框（相框用几何 SVG）
 
 ## 当前与后置
 
-- 当前只有一套皮肤：`daylight`，它就是默认皮肤，正在重做表现
+- 两套皮肤：默认 `daylight`（日光图版，19 世纪博物图版），备选 `lightbox`（灯箱，冷白灯面 + 卡纸片框），后者待实地检验
 - `tide`（潮间带）与 `darkroom`（暗房）已退役删除：前者是半套东西且与套册 `intertidal` 撞名，后者把一道后期工序当成了全局世界
 - 皮肤是**一整套情境**（你是谁、在哪儿观察），自带底、资源包、开包仪式与用词；不是同一张纸换个色
-- 机制（`THEME_META` / 资源域回退 / voice）保留待用，深色皮肤将来仍可能出现（如深海），改结构样式时别写死浅色前提
+- 「不许动结构」这条旧禁令已作废：它逼出过「只换 token、DOM 一个字不改」的假实现。现在的边界是数据不许动，摆放随便改
+- 结构真正不同的皮肤（如深海开包不是「上灯箱」），后置一层**登记过的组件槽位覆盖**：清单限旅途相册格 / 旅途封面 / 套册格子 / 开包舞台四项，未覆盖的回退默认皮肤实现，写法照抄 `THEME_META.assets` 的域回退。尚未实现，改结构时给它留位置
+- 深色皮肤将来仍可能出现，改结构样式时别写死浅色前提
