@@ -1,4 +1,5 @@
 import { Fragment, useEffect, useState, type FormEvent, type ReactNode } from "react";
+import { createPortal } from "react-dom";
 import { Link, NavLink, Navigate, Route, Routes, useNavigate, useParams } from "react-router-dom";
 import { t, formatRank } from "@biotrace/messages";
 import { adminApi, type AdminUser, type RarityCacheEntry, type RarityCacheItem } from "./api";
@@ -32,6 +33,74 @@ function bytes(n: unknown) {
 function dash(v: unknown): string {
   if (v == null || v === "") return "—";
   return String(v);
+}
+
+function AdminStoredPhoto({ src, variant }: { src: string; variant: "thumb" | "detail" }) {
+  const [open, setOpen] = useState(false);
+  const [size, setSize] = useState<{ w: number; h: number } | null>(null);
+
+  useEffect(() => {
+    if (!open) return;
+    const prev = document.body.style.overflow;
+    document.body.style.overflow = "hidden";
+    const onKey = (e: KeyboardEvent) => {
+      if (e.key === "Escape") setOpen(false);
+    };
+    window.addEventListener("keydown", onKey);
+    return () => {
+      document.body.style.overflow = prev;
+      window.removeEventListener("keydown", onKey);
+    };
+  }, [open]);
+
+  useEffect(() => {
+    if (!open) setSize(null);
+  }, [open]);
+
+  const lightbox = open
+    ? createPortal(
+        <div className="admin-lightbox" role="dialog" aria-modal="true" aria-label={t("admin.photo.stored")}>
+          <div className="admin-lightbox-bar">
+            <span>
+              {size
+                ? t("admin.photo.size", { width: size.w, height: size.h })
+                : t("admin.photo.stored")}
+            </span>
+            <button type="button" onClick={() => setOpen(false)}>
+              {t("admin.photo.close")}
+            </button>
+          </div>
+          <div className="admin-lightbox-scroll" onClick={() => setOpen(false)}>
+            <img
+              src={src}
+              alt=""
+              className="admin-lightbox-img"
+              onClick={(e) => e.stopPropagation()}
+              onLoad={(e) => {
+                const img = e.currentTarget;
+                setSize({ w: img.naturalWidth, h: img.naturalHeight });
+              }}
+            />
+          </div>
+        </div>,
+        document.body,
+      )
+    : null;
+
+  return (
+    <>
+      <button
+        type="button"
+        className={variant === "thumb" ? "admin-photo-btn admin-photo-btn-thumb" : "admin-photo-btn admin-photo-btn-detail"}
+        onClick={() => setOpen(true)}
+        title={t("admin.photo.open")}
+        aria-label={t("admin.photo.open")}
+      >
+        <img src={src} alt="" className={variant === "thumb" ? "admin-thumb" : "admin-photo-preview"} />
+      </button>
+      {lightbox}
+    </>
+  );
 }
 
 function Kv({ rows }: { rows: Array<[string, ReactNode]> }) {
@@ -680,7 +749,7 @@ function ObservationsPage() {
             return (
             <tr key={String(o.id)}>
               <td>
-                <img className="admin-thumb" src={String(o.displayUrl)} alt="" />
+                {o.displayUrl ? <AdminStoredPhoto src={String(o.displayUrl)} variant="thumb" /> : "—"}
               </td>
               <td>
                 <Link to={`/admin/observations/${o.id}`}>{obsStatusLabel(String(o.status))}</Link>
@@ -739,7 +808,7 @@ function ObservationDetailPage() {
         {t("admin.nav.observations")} {String(o.id).slice(0, 8)}
       </h1>
       <div className="admin-panel" style={{ maxWidth: "960px" }}>
-        {o.displayUrl ? <img src={String(o.displayUrl)} alt="" style={{ maxWidth: "100%", maxHeight: 320 }} /> : null}
+        {o.displayUrl ? <AdminStoredPhoto src={String(o.displayUrl)} variant="detail" /> : null}
         <Kv
           rows={[
             [t("admin.col.status"), obsStatusLabel(String(o.status ?? ""))],
