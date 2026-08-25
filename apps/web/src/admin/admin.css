@@ -2,7 +2,8 @@
   font-family: ui-sans-serif, system-ui, sans-serif;
   color: #1a1a1a;
   background: #f4f4f5;
-  min-height: 100vh;
+  height: 100%;
+  min-height: 0;
   margin: 0;
 }
 
@@ -28,14 +29,17 @@
 
 .admin-shell {
   display: grid;
-  grid-template-columns: 180px 1fr;
-  min-height: 100vh;
+  grid-template-columns: 180px minmax(0, 1fr);
+  height: 100%;
+  max-height: 100%;
+  overflow: hidden;
 }
 
 .admin-side {
   background: #18181b;
   color: #fafafa;
   padding: 1rem 0.75rem;
+  overflow-y: auto;
 }
 
 .admin-side a {
@@ -61,6 +65,10 @@
 }
 
 .admin-main {
+  min-width: 0;
+  min-height: 0;
+  overflow: auto;
+  -webkit-overflow-scrolling: touch;
   padding: 1.25rem 1.5rem 3rem;
 }
 
