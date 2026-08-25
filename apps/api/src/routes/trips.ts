@@ -37,6 +37,7 @@ import {
   requireTripAdmin,
   requireTripMember,
   setAllowJoin,
+  uploaderNamesForObservations,
   TRIP_MEMBER_LIMIT,
 } from "../services/trip-share.js";
 
@@ -382,8 +383,11 @@ tripRoutes.get("/:id/observations", async (c) => {
     where: eq(observations.tripId, trip.id),
     orderBy: [desc(observations.createdAt)],
   });
+  const names = await uploaderNamesForObservations(rows);
   return c.json({
-    observations: rows.map((r) => serializeObservation(r, { redactPending: true })),
+    observations: rows.map((r) =>
+      serializeObservation(r, { redactPending: true, uploaderName: names.get(r.id) ?? null }),
+    ),
   });
 });
 
@@ -511,9 +515,13 @@ tripRoutes.post("/:id/observations", async (c) => {
     });
   }
 
+  const names = await uploaderNamesForObservations([row]);
   return c.json(
     {
-      observation: serializeObservation(row, { redactPending: true }),
+      observation: serializeObservation(row, {
+        redactPending: true,
+        uploaderName: names.get(row.id) ?? null,
+      }),
       ...(quotaExhausted ? { code: "identify_daily_limit" as const } : {}),
     },
     201,

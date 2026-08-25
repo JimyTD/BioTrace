@@ -16,7 +16,7 @@ import {
   grantSharedProgressToAllMembers,
   revokeCreditsForObservation,
 } from "../services/shared-progress.js";
-import { isTripMember, listTripsForUser } from "../services/trip-share.js";
+import { isTripMember, listTripsForUser, uploaderNamesForObservations } from "../services/trip-share.js";
 import { removeObservationFiles } from "../services/observationFiles.js";
 import { serializeObservation } from "../serialize.js";
 import { validCoords } from "../settle/geo/coords.js";
@@ -25,6 +25,11 @@ import { computeSettle } from "../settle/rules.js";
 export const observationRoutes = new Hono<{ Variables: Variables }>();
 
 observationRoutes.use("*", requireUser);
+
+async function serializeObs(row: Observation, opts?: { redactPending?: boolean }) {
+  const names = await uploaderNamesForObservations([row]);
+  return serializeObservation(row, { ...opts, uploaderName: names.get(row.id) ?? null });
+}
 
 async function loadAccessibleObservation(
   obsId: string,
@@ -54,8 +59,11 @@ observationRoutes.get("/", async (c) => {
     where: mappedOnly ? and(scope, isNotNull(observations.lat), isNotNull(observations.lng)) : scope,
     orderBy: [desc(observations.createdAt)],
   });
+  const names = await uploaderNamesForObservations(rows);
   return c.json({
-    observations: rows.map((r) => serializeObservation(r, { redactPending: true })),
+    observations: rows.map((r) =>
+      serializeObservation(r, { redactPending: true, uploaderName: names.get(r.id) ?? null }),
+    ),
   });
 });
 
@@ -68,8 +76,12 @@ observationRoutes.get("/:id", async (c) => {
   }
   const forSettle = c.req.query("forSettle") === "1";
   const redactPending = !(forSettle && row.status === "pending_settle");
+  const names = await uploaderNamesForObservations([row]);
   return c.json({
-    observation: serializeObservation(row, { redactPending }),
+    observation: serializeObservation(row, {
+      redactPending,
+      uploaderName: names.get(row.id) ?? null,
+    }),
   });
 });
 
@@ -152,7 +164,7 @@ observationRoutes.patch("/:id/location", async (c) => {
   }
 
   return c.json({
-    observation: serializeObservation(updated, { redactPending: true }),
+    observation: await serializeObs(updated, { redactPending: true }),
   });
 });
 
@@ -188,7 +200,7 @@ observationRoutes.post("/:id/settle", async (c) => {
   const volumeEval = await grantSharedProgressToAllMembers(updated, user.id);
 
   return c.json({
-    observation: serializeObservation(updated, { redactPending: false }),
+    observation: await serializeObs(updated, { redactPending: false }),
     volumes: volumeEval,
   });
 });
@@ -286,5 +298,5 @@ observationRoutes.post("/:id/reidentify", async (c) => {
   const updated = await db.query.observations.findFirst({
     where: eq(observations.id, row.id),
   });
-  return c.json({ observation: serializeObservation(updated!, { redactPending: true }) });
+  return c.json({ observation: await serializeObs(updated!, { redactPending: true }) });
 });

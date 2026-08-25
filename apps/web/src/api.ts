@@ -59,6 +59,8 @@ export type Observation = {
   id: string;
   tripId: string;
   userId: string;
+  /** 共享旅途才有：上传者昵称或邮箱 */
+  uploaderName?: string | null;
   status: ObsStatus;
   description: string | null;
   capturedAt: string | null;

@@ -108,7 +108,7 @@ function AppShell({
             </Route>
             <Route path="/trips/:id/manage" element={<TripManagePage userId={user.id} />} />
             <Route path="/observations/:id/pin" element={<PinLocationPage />} />
-            <Route path="/observations/:id" element={<ObservationDetailPage />} />
+            <Route path="/observations/:id" element={<ObservationDetailPage userId={user.id} />} />
             <Route path="/settle/:id" element={<ObservationSettlePage />} />
             <Route path="/dev/settle-art" element={<SettleArtPreviewPage />} />
             <Route path="/map" element={<MapPage />} />
@@ -153,7 +153,7 @@ function AppShell({
           {overlayPhoto ? (
             <PageOverlay className="is-photo">
               <Routes location={location}>
-                <Route path="/observations/:id" element={<ObservationDetailPage />} />
+                <Route path="/observations/:id" element={<ObservationDetailPage userId={user.id} />} />
                 <Route path="/settle/:id" element={<ObservationSettlePage />} />
               </Routes>
             </PageOverlay>

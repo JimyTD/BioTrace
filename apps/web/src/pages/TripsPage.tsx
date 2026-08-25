@@ -39,14 +39,18 @@ export default function TripsPage({
     restoreContentScroll("trips");
   }, [loading]);
 
+  function upsertTrip(trip: Trip) {
+    setTrips((prev) => [trip, ...prev.filter((row) => row.id !== trip.id)]);
+  }
+
   async function onCreate(e: FormEvent) {
     e.preventDefault();
     if (!title.trim()) return;
     setError(null);
     try {
-      await api.createTrip(title.trim());
+      const { trip } = await api.createTrip(title.trim());
       setTitle("");
-      await refresh();
+      upsertTrip(trip);
     } catch (err) {
       setError(err instanceof Error ? err.message : t("trips.createFailed"));
     }
@@ -58,10 +62,10 @@ export default function TripsPage({
     setError(null);
     setJoining(true);
     try {
-      await api.joinTrip(joinCode.trim());
+      const { trip } = await api.joinTrip(joinCode.trim());
       setJoinCode("");
       setShowJoin(false);
-      await refresh();
+      upsertTrip(trip);
     } catch (err) {
       setError(err instanceof Error ? err.message : t("trips.joinFailed"));
     } finally {
@@ -115,7 +119,7 @@ export default function TripsPage({
               autoComplete="off"
             />
             <button className="btn secondary" type="submit" disabled={!joinCode.trim() || joining}>
-              {t("trips.joinAction")}
+              {joining ? t("trips.joining") : t("trips.joinAction")}
             </button>
           </form>
           <button

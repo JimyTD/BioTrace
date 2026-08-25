@@ -112,6 +112,8 @@ export default function TripManagePage({ userId }: { userId: string }) {
   }
 
   async function onToggleAllowJoin(next: boolean) {
+    const prevAllow = Boolean(trip?.allowJoin);
+    setTrip((prev) => (prev ? { ...prev, allowJoin: next } : prev));
     setAllowJoinBusy(true);
     setError(null);
     try {
@@ -122,6 +124,7 @@ export default function TripManagePage({ userId }: { userId: string }) {
           : prev,
       );
     } catch (err) {
+      setTrip((prev) => (prev ? { ...prev, allowJoin: prevAllow } : prev));
       setError(err instanceof Error ? err.message : t("share.actionFailed"));
     } finally {
       setAllowJoinBusy(false);

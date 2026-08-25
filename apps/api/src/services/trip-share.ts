@@ -85,6 +85,35 @@ export async function listTripMembersDetailed(tripId: string) {
     .orderBy(asc(tripMembers.joinedAt));
 }
 
+export async function uploaderNamesForObservations(
+  rows: { id: string; tripId: string; userId: string }[],
+): Promise<Map<string, string>> {
+  const tripIds = [...new Set(rows.map((r) => r.tripId))];
+  if (tripIds.length === 0) return new Map();
+
+  const counts = await db
+    .select({ tripId: tripMembers.tripId, n: sql<number>`count(*)`.mapWith(Number) })
+    .from(tripMembers)
+    .where(inArray(tripMembers.tripId, tripIds))
+    .groupBy(tripMembers.tripId);
+  const shared = new Set(counts.filter((r) => r.n > 1).map((r) => r.tripId));
+  const userIds = [...new Set(rows.filter((r) => shared.has(r.tripId)).map((r) => r.userId))];
+  if (userIds.length === 0) return new Map();
+
+  const people = await db.query.users.findMany({
+    where: inArray(users.id, userIds),
+    columns: { id: true, displayName: true, email: true },
+  });
+  const label = new Map(people.map((u) => [u.id, u.displayName?.trim() || u.email]));
+  const out = new Map<string, string>();
+  for (const r of rows) {
+    if (!shared.has(r.tripId)) continue;
+    const name = label.get(r.userId);
+    if (name) out.set(r.id, name);
+  }
+  return out;
+}
+
 export async function countTripMembers(tripId: string): Promise<number> {
   const rows = await db
     .select({ n: sql<number>`count(*)`.mapWith(Number) })

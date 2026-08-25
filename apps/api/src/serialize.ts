@@ -70,7 +70,7 @@ export function observationDisplayUrl(displayPath: string) {
 
 export function serializeObservation(
   obs: Observation,
-  opts?: { redactPending?: boolean },
+  opts?: { redactPending?: boolean; uploaderName?: string | null },
 ) {
   const redact = opts?.redactPending !== false && obs.status === "pending_settle";
 
@@ -119,6 +119,7 @@ export function serializeObservation(
     createdAt: obs.createdAt.toISOString(),
     updatedAt: obs.updatedAt.toISOString(),
     pendingReveal: obs.status === "pending_settle",
+    uploaderName: opts?.uploaderName ?? null,
   };
 }
 

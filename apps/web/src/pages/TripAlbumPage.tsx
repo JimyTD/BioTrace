@@ -728,6 +728,13 @@ export default function TripAlbumPage({ userId }: { userId: string }) {
                 {obs.status === "failed" ? (
                   <span className="error">{identifyErrorPrimary(obs.error)}</span>
                 ) : null}
+                {obs.uploaderName ? (
+                  <span className="muted">
+                    {t("album.uploadedBy", {
+                      name: obs.userId === userId ? t("share.you") : obs.uploaderName,
+                    })}
+                  </span>
+                ) : null}
               </div>
             </button>
             {obs.userId === userId ? (

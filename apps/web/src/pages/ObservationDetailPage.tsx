@@ -14,7 +14,7 @@ import {
 } from "../identifyErrors";
 import { hasValidCoords } from "../geo";
 import { peekObservation, rememberObservation } from "../pageCache";
-import { containedImageBox, playPhotoLift } from "../photoLift";
+import { containedImageBox, decodeIfSimilarAspect, playPhotoLift } from "../photoLift";
 import {
   clearPhotoLiftHandoff,
   peekLiftBackground,
@@ -72,7 +72,7 @@ function TaxonomyList({ taxonomy }: { taxonomy: Taxonomy }) {
   return <ol className="taxonomy-chain">{rows}</ol>;
 }
 
-export default function ObservationDetailPage() {
+export default function ObservationDetailPage({ userId }: { userId?: string }) {
   const { id = "" } = useParams();
   const navigate = useNavigate();
   const location = useLocation();
@@ -87,9 +87,15 @@ export default function ObservationDetailPage() {
     const found = peekPhotoLiftHandoff();
     return found && found.dir === "open" && found.observationId === id ? found : null;
   });
+  const [heroSrc, setHeroSrc] = useState(() => {
+    if (liftOpen) return liftOpen.photoUrl;
+    const cached = peekObservation(id);
+    return cached ? heroUrl(cached) : "";
+  });
   const pageRef = useRef<HTMLDivElement | null>(null);
   const heroRef = useRef<HTMLImageElement | null>(null);
   const liftPlayed = useRef(false);
+  const [liftLanded, setLiftLanded] = useState(false);
 
   useEffect(() => {
     const state = location.state as { locationSaved?: boolean } | null;
@@ -127,6 +133,36 @@ export default function ObservationDetailPage() {
     };
   }, [id, navigate, background]);
 
+  useEffect(() => {
+    if (!obs || liftOpen) return;
+    setHeroSrc(heroUrl(obs));
+  }, [obs, liftOpen]);
+
+  useEffect(() => {
+    if (!liftOpen || !obs) return;
+    const next = heroUrl(obs);
+    if (!next || next === liftOpen.photoUrl) return;
+    const prefetch = new Image();
+    prefetch.src = next;
+  }, [liftOpen, obs]);
+
+  useEffect(() => {
+    if (!liftOpen || !liftLanded || !obs) return;
+    const next = heroUrl(obs);
+    if (!next || next === heroSrc) return;
+    let cancelled = false;
+    const box = heroRef.current;
+    void decodeIfSimilarAspect(
+      next,
+      box ? { width: box.naturalWidth, height: box.naturalHeight } : null,
+    ).then((url) => {
+      if (!cancelled && url) setHeroSrc(url);
+    });
+    return () => {
+      cancelled = true;
+    };
+  }, [liftOpen, liftLanded, obs, heroSrc]);
+
   useLayoutEffect(() => {
     if (!liftOpen || liftPlayed.current) return;
     const page = pageRef.current;
@@ -146,6 +182,8 @@ export default function ObservationDetailPage() {
       duration: 480,
       pageFade: "in",
       cancelled: () => cancelled,
+    }).then(() => {
+      if (!cancelled) setLiftLanded(true);
     });
     return () => {
       cancelled = true;
@@ -164,7 +202,7 @@ export default function ObservationDetailPage() {
     if (hero) {
       setPhotoLiftHandoff({
         observationId: obs.id,
-        photoUrl: heroUrl(obs),
+        photoUrl: hero.currentSrc || hero.src || heroSrc || heroUrl(obs),
         box: containedImageBox(hero),
         dir: "close",
         origin,
@@ -242,7 +280,7 @@ export default function ObservationDetailPage() {
   const title = notCollectible
     ? t("detail.notCollectibleTitle")
     : obs?.commonName || obs?.scientificName || t("detail.unnamed");
-  const photoSrc = obs ? heroUrl(obs) : liftOpen?.photoUrl ?? "";
+  const photoSrc = heroSrc || liftOpen?.photoUrl || (obs ? heroUrl(obs) : "");
   const busy = deleting || reidentifying || obs?.status === "analyzing";
   const failedCoarse =
     !!obs &&
@@ -344,6 +382,12 @@ export default function ObservationDetailPage() {
       <section className="detail-block detail-record">
         <h2 className="section-title">{t("detail.record")}</h2>
         <dl className="detail-facts">
+          {obs.uploaderName ? (
+            <div className="detail-fact">
+              <dt>{t("detail.uploader")}</dt>
+              <dd>{userId && obs.userId === userId ? t("share.you") : obs.uploaderName}</dd>
+            </div>
+          ) : null}
           <div className="detail-fact">
             <dt>{t("detail.capturedAt")}</dt>
             <dd>{obs.capturedAt ? new Date(obs.capturedAt).toLocaleString() : "—"}</dd>

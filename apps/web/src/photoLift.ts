@@ -109,6 +109,28 @@ export function waitImage(el: HTMLImageElement) {
   });
 }
 
+/** 后台拉原图并 decode。比例和当前图差太多则返回 null（不换，避免落地后拧一下）。 */
+export async function decodeIfSimilarAspect(
+  url: string,
+  current: { width: number; height: number } | null,
+): Promise<string | null> {
+  const img = new Image();
+  img.src = url;
+  await waitImage(img);
+  if (!img.naturalWidth || !img.naturalHeight) return null;
+  if (current?.width && current.height) {
+    const a = current.width / current.height;
+    const b = img.naturalWidth / img.naturalHeight;
+    if (Math.abs(a - b) / a > 0.08) return null;
+  }
+  try {
+    await img.decode();
+  } catch {
+    /* 部分 WebView 无 decode；load 过即可换 */
+  }
+  return url;
+}
+
 /** 观察页 contain 真正画出的那块，不是灰底外框。 */
 export function containedImageBox(el: HTMLImageElement): MotionBox {
   const r = el.getBoundingClientRect();
