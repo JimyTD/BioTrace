@@ -148,10 +148,12 @@
   align-items: center;
   justify-content: space-between;
   gap: 8px;
-  padding: 2.6cqw 0.5cqw 3.2cqw;
+  padding: 2.4cqw 0.5cqw 3cqw;
   font-family: var(--font-meta, var(--font-sans));
   font-size: 0.62rem;
-  line-height: 1;
+  /* 不能写 1：地点是中文，1em 的行盒装不下字形，会被 .reveal-mark-where
+     的 overflow: hidden 削掉顶端 */
+  line-height: 1.35;
   letter-spacing: 0.06em;
   color: var(--mount-ink);
   white-space: nowrap;

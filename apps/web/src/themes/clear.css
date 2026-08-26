@@ -246,7 +246,9 @@
   margin: 0;
   padding: 0 0.4cqw;
   font-size: 4cqw;
-  line-height: 1;
+  /* 别写 line-height: 1。行盒只有 1em 高，而中日文字形本来就顶满 em 框、
+     常常还溢出一点，配上下面这句 overflow: hidden 就会把字的顶端削掉一截 */
+  line-height: 1.35;
   letter-spacing: -0.01em;
   color: var(--mount-title-ink);
   white-space: nowrap;
@@ -263,7 +265,8 @@
   margin: 0;
   padding: 0 0.4cqw;
   font-size: 2.8cqw;
-  line-height: 1;
+  /* 同上：line-height: 1 + overflow: hidden 会削掉「张照片」的顶部 */
+  line-height: 1.35;
   letter-spacing: 0.06em;
   color: var(--mount-ink);
   white-space: nowrap;
@@ -443,14 +446,24 @@
   box-shadow: var(--shadow);
 }
 
-[data-theme="clear"] .me-quota-bar {
+/* 进度条：底是淡彩、走过的部分是同族的深一档。识图配额用雾蓝，
+   套册进度用苔绿——和各自那行图标同色，扫一眼就知道是一码事 */
+[data-theme="clear"] .tint-bar {
   display: block;
   background: var(--tint-2-bg);
 }
 
-[data-theme="clear"] .me-quota-bar::before {
+[data-theme="clear"] .tint-bar::before {
   background: var(--tint-2-ink);
   opacity: 0.55;
+}
+
+[data-theme="clear"] .volume-tile-bar {
+  background: var(--tint-1-bg);
+}
+
+[data-theme="clear"] .volume-tile-bar::before {
+  background: var(--tint-1-ink);
 }
 
 /* 勾选行变成开关行：字在左、开关顶到右。DOM 顺序是 input 在前，

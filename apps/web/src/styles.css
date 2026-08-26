@@ -601,7 +601,7 @@ button.trip-cover {
   border-bottom: 0;
 }
 
-/* 名片上的首字母牌与配额用量条。和设置行图标一样：零件常在、默认不显示，
+/* 名片上的首字母牌与淡彩进度条。和设置行图标一样：零件常在、默认不显示，
    皮肤要就在自己的 [data-theme] 下打开（见 §2.3） */
 .me-avatar {
   display: none;
@@ -614,19 +614,21 @@ button.trip-cover {
   font-weight: 500;
 }
 
-.me-quota-bar {
+/* 淡彩进度条。识图配额、套册点亮进度共用同一个零件——
+   两处都是「已经用掉／已经集到多少」，没必要各写一份 */
+.tint-bar {
   display: none;
   height: 6px;
   border-radius: 999px;
   overflow: hidden;
 }
 
-.me-quota-bar::before {
+.tint-bar::before {
   content: "";
   display: block;
   height: 100%;
-  /* 比例由页面挂在 .me-quota 上的 --quota-ratio 给，CSS 自己算不出 used / limit */
-  width: calc(var(--quota-ratio, 0) * 100%);
+  /* 比例由页面挂在自己身上的 --bar-ratio 给，CSS 算不出 used / limit */
+  width: calc(var(--bar-ratio, 0) * 100%);
   border-radius: inherit;
 }
 

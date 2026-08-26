@@ -13,7 +13,7 @@ function themeLabel(id: ThemeId) {
 /** 用量条的比例只能从这儿传：CSS 算不出 used / limit。 */
 function quotaStyle(quota: IdentifyQuota): CSSProperties {
   const ratio = quota.limit > 0 ? Math.min(1, Math.max(0, quota.used / quota.limit)) : 0;
-  return { "--quota-ratio": ratio } as CSSProperties;
+  return { "--bar-ratio": ratio } as CSSProperties;
 }
 
 export default function MePage({
@@ -64,8 +64,8 @@ export default function MePage({
             used: String(identifyQuota.used),
             limit: String(identifyQuota.limit),
           })}
-          {/* 用量条：同上，零件常在、日光关着。比例由 --quota-ratio 传给 CSS */}
-          <span className="me-quota-bar" aria-hidden />
+          {/* 用量条：同上，零件常在、日光关着。比例由 --bar-ratio 传给 CSS */}
+          <span className="tint-bar me-quota-bar" aria-hidden />
         </p>
       ) : null}
 

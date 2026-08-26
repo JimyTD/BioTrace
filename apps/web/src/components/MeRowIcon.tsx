@@ -7,7 +7,14 @@
  *
  * 底色走 `--tint-{1..4}-bg/-ink`，两套皮肤都填了值。
  */
-export type MeRowIconName = "security" | "identify" | "appearance" | "help" | "about";
+export type MeRowIconName =
+  | "security"
+  | "identify"
+  | "appearance"
+  | "help"
+  | "about"
+  | "species"
+  | "tree";
 
 /** 图标 → 用第几号淡彩。同一枚图标在哪个页面都是同一色。 */
 const TINT: Record<MeRowIconName, 1 | 2 | 3 | 4> = {
@@ -16,6 +23,8 @@ const TINT: Record<MeRowIconName, 1 | 2 | 3 | 4> = {
   appearance: 3,
   help: 4,
   about: 1,
+  species: 3,
+  tree: 1,
 };
 
 function Glyph({ name }: { name: MeRowIconName }) {
@@ -51,6 +60,20 @@ function Glyph({ name }: { name: MeRowIconName }) {
         <>
           <circle cx="12" cy="12" r="8.2" />
           <path d="M12 11.1v5.1M12 8.1v.01" />
+        </>
+      );
+    // 已收录：一枚书签，翻到哪一页都记着
+    case "species":
+      return <path d="M6.6 4.2h10.8v15.6L12 15.9l-5.4 3.9V4.2z" />;
+    // 收集树：分类阶元一层层分叉
+    case "tree":
+      return (
+        <>
+          <path d="M12 20v-5.4M12 14.6L6.6 9.8M12 14.6l5.4-4.8" />
+          <circle cx="12" cy="4.6" r="1.9" />
+          <path d="M12 6.5v3.3" />
+          <circle cx="5.6" cy="10.6" r="1.9" />
+          <circle cx="18.4" cy="10.6" r="1.9" />
         </>
       );
   }

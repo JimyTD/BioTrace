@@ -1,8 +1,9 @@
-import { useEffect, useLayoutEffect, useRef, useState } from "react";
+import { useEffect, useLayoutEffect, useRef, useState, type CSSProperties } from "react";
 import { flushSync } from "react-dom";
 import { Link, useMatch, useNavigate } from "react-router-dom";
 import { hasMessage, t } from "@biotrace/messages";
 import { api, type VolumeListItem } from "../api";
+import { MeRowIcon } from "../components/MeRowIcon";
 import { measureBox } from "../motion";
 import { playPhotoLift } from "../photoLift";
 import { volumeCoverUrl, volumeSealCompleteUrl } from "../themes";
@@ -17,6 +18,16 @@ import {
 
 function msg(key: string) {
   return hasMessage(key) ? t(key) : key;
+}
+
+/** 点亮比例只能从这儿传：CSS 算不出 litCount / totalSlots。 */
+function volumeBarStyle(vol: VolumeListItem): CSSProperties {
+  const ratio = vol.completed
+    ? 1
+    : vol.totalSlots > 0
+      ? Math.min(1, Math.max(0, vol.litCount / vol.totalSlots))
+      : 0;
+  return { "--bar-ratio": ratio } as CSSProperties;
 }
 
 export default function CollectionPage() {
@@ -177,6 +188,12 @@ export default function CollectionPage() {
                           total: vol.totalSlots,
                         })}
                   </span>
+                  {/* 点亮进度。零件常在、日光关着，比例只能从这儿传 */}
+                  <span
+                    className="tint-bar volume-tile-bar"
+                    style={volumeBarStyle(vol)}
+                    aria-hidden
+                  />
                 </button>
               ))}
             </div>
@@ -191,6 +208,7 @@ export default function CollectionPage() {
             to="/collection/species"
             onClick={() => saveContentScroll("collection")}
           >
+            <MeRowIcon name="species" />
             <span>{t("collection.speciesTitle")}</span>
             <span className="me-row-side">
               <span className="muted">
@@ -206,6 +224,7 @@ export default function CollectionPage() {
             to="/collection/tree"
             onClick={() => saveContentScroll("collection")}
           >
+            <MeRowIcon name="tree" />
             <span>{t("collection.treeTitle")}</span>
             <span className="me-row-side">
               <span className="muted">
