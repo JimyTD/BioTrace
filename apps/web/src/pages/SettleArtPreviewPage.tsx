@@ -22,6 +22,12 @@ export default function SettleArtPreviewPage() {
     const want = params.get("rarity") as Rarity | null;
     return want && RARITIES.includes(want) ? want : "SR";
   });
+  // ?photo=/... 换样张。默认那张是棕褐铜版画，判断不了「颜色显出来」这类效果，
+  // 走查要看真实照片时传一张进来（只收同源路径）
+  const photoUrl = (() => {
+    const want = params.get("photo");
+    return want?.startsWith("/") ? want : SAMPLE_PHOTO;
+  })();
   const SettleStage = themeSlot("settleStage");
   // ?hold=1 让阶段停在原地不自己往下走。揭示只有几百毫秒，不冻住就截不到中间态
   const hold = params.get("hold") === "1";
@@ -61,9 +67,10 @@ export default function SettleArtPreviewPage() {
         <div className="settle-card-inner">
           <SettleStage
             phase={phase}
-            photoUrl={SAMPLE_PHOTO}
+            photoUrl={photoUrl}
             photoAlt={t("settle.preview.sampleName")}
             rarity={rarity}
+            mark={{ when: params.get("when"), where: params.get("where") }}
             onRevealed={onRevealed}
           />
           {phase === "sealed" ? (

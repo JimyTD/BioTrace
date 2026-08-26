@@ -133,6 +133,8 @@
   --trip-cover-shadow: 0 10px 26px rgba(42, 36, 28, 0.1);
   --trip-cover-shadow-hover: 0 14px 32px rgba(42, 36, 28, 0.14);
   --trip-cover-plate: #efe6d6;
+  /* 日光不在卡纸上打字（沿上标注关着），备着给共用零件用 */
+  --mount-ink: #5c5347;
   --film-tile-shadow: 0 4px 14px rgba(42, 36, 28, 0.08);
   /* 套册空格的斜线底纹，与开包礼章落在纸上的影 */
   --stamp-empty-hatch: rgba(58, 50, 44, 0.05);

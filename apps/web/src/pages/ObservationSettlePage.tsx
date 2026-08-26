@@ -19,6 +19,14 @@ function msgKey(key: string): string {
   return hasMessage(key) ? t(key) : key;
 }
 
+/** 打在片框上的日期。给卡纸型皮肤用，取月-日，和相册格上那行同一个形状。 */
+function stampDate(iso: string | null): string | null {
+  if (!iso) return null;
+  const d = new Date(iso);
+  if (Number.isNaN(d.getTime())) return null;
+  return `${String(d.getMonth() + 1).padStart(2, "0")}-${String(d.getDate()).padStart(2, "0")}`;
+}
+
 type CeremonyKind = "complete" | "slot";
 
 function buildCeremony(volumes: SettleVolumesResult): {
@@ -162,6 +170,7 @@ export default function ObservationSettlePage() {
             photoUrl={obs.displayUrl}
             photoAlt={sealed ? "" : title}
             rarity={obs.rarity}
+            mark={{ when: stampDate(obs.capturedAt), where: obs.locationLabel }}
             onRevealed={onRevealed}
           />
 

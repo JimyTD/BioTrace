@@ -51,7 +51,9 @@
   --nav-texture-size: 300px;
   --page-texture: url("/shell/lightbox/page-texture.jpg");
   --page-texture-size: 300px;
-  --page-texture-opacity: 0.5;
+  /* 灯面是块发光的板子，不是纸。纹理只留一点点当扩散板的磨砂感，
+     再重一档就把光压成灰的了（0.22 那版并排一比就是整页发灰） */
+  --page-texture-opacity: 0.09;
   --page-texture-blend: multiply;
   --shadow: 0 8px 22px rgba(30, 50, 65, 0.1);
 
@@ -61,11 +63,15 @@
   --radius-lg: 5px;
   --radius-btn: 3px;
 
-  /* 灯管在上方，中心亮、四角落一点 */
+  /* 灯面：中上最亮，往四边落到冷灰。取值同风格示意 themes/lightbox.html */
   --bg-atmosphere:
-    radial-gradient(ellipse 116% 66% at 50% 14%, #ffffff 0%, rgba(255, 255, 255, 0) 62%),
-    radial-gradient(ellipse 92% 58% at 50% 106%, rgba(120, 152, 172, 0.2) 0%, transparent 58%),
-    linear-gradient(180deg, #f5f9fb 0%, #eaf1f5 54%, #dfe8ee 100%);
+    radial-gradient(
+      ellipse 100% 70% at 50% 30%,
+      #ffffff 0%,
+      #f2f6f8 42%,
+      #e2eaef 74%,
+      #d6e0e6 100%
+    );
   --page-wash: transparent;
 
   --map-dot: #2b3238;
@@ -138,7 +144,10 @@
   /* 旅途封面墙 / 片框格 */
   --trip-cover-shadow: 0 10px 26px rgba(30, 50, 65, 0.14);
   --trip-cover-shadow-hover: 0 14px 32px rgba(30, 50, 65, 0.2);
-  --trip-cover-plate: #f4f1ea;
+  /* 卡纸比卡片再暖一档，靠冷暖差从灯面上浮起来 */
+  --trip-cover-plate: #f0ede5;
+  /* 打在卡纸上的字：不是界面文字，是写在实物上的 */
+  --mount-ink: #4c4740;
   /* 片框是压在灯面上的实物：贴身一道硬边，再一层扩散影 */
   --film-tile-shadow:
     0 1px 2px rgba(30, 50, 65, 0.22),
@@ -161,4 +170,128 @@
 
   /* 还没上灯的片子：暗、灰、看不清 */
   --photo-mat: #1d242a;
+}
+
+/* ── 摆放层 ────────────────────────────────────────────────────────────
+   到这儿为止都是换色。下面换的是零件摆在哪——这才是灯箱和日光的真区别：
+   日光把说明写在框外（像图鉴条目），灯箱写在卡纸下沿（像实物上的字）。
+   零件是共用的那套，见 styles.css「卡纸栅格」与 §2.3。 */
+
+/* 相册格＝一张装片卡纸。三边窄、下沿宽出来放那行打字机字。
+   尺寸按风格示意换算：380px 手机两列 → 卡纸 165px，边 9px＝5.5%，
+   下沿 5+10+7＝22px＝13.3%。用 cqw 所以换几列都同比例。 */
+[data-theme="lightbox"] .film-tile {
+  --mount-lip-top: 5.5cqw;
+  --mount-lip-right: 5.5cqw;
+  --mount-lip-bottom: 13.3cqw;
+  --mount-lip-left: 5.5cqw;
+  --mount-caption-gap: 5px;
+}
+
+/* 卡纸由 .film-tile-mount 那层底提供，不再叠一张边框图：
+   边框图的窗口是四边等宽的，套不住这里下沿加宽的卡纸 */
+[data-theme="lightbox"] .film-tile-frame {
+  display: none;
+}
+
+/* 沿上标注：日期在左、片号在右，打字机体。日光把这道边关着 */
+[data-theme="lightbox"] .film-tile-mark {
+  display: flex;
+  padding: 0 0.6cqw;
+  font-size: 5.1cqw;
+  line-height: 1;
+  letter-spacing: 0.06em;
+  color: var(--mount-ink);
+}
+
+[data-theme="lightbox"] .film-tile-mark-no {
+  opacity: 0.55;
+}
+
+/* 旅途封面墙是同一种物件，只是大一号：卡纸四边等宽（cqw 横竖同尺），
+   下沿宽出来，把「几张·日期·地点」那行从框外挪上卡纸 */
+[data-theme="lightbox"] .trip-cover-slot {
+  --mount-lip-top: 5.5cqw;
+  --mount-lip-right: 5.5cqw;
+  --mount-lip-bottom: 9cqw;
+  --mount-lip-left: 5.5cqw;
+  --mount-caption-gap: 8px;
+}
+
+[data-theme="lightbox"] .trip-cover-frame {
+  display: none;
+}
+
+[data-theme="lightbox"] .trip-cover-mark {
+  grid-area: lip-bottom;
+  z-index: 3;
+  align-self: center;
+  margin: 0;
+  padding: 0 0.4cqw;
+  font-size: 3.1cqw;
+  line-height: 1;
+  letter-spacing: 0.06em;
+  color: var(--mount-ink);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+/* 页头那行「几张·日期·地点」是标注不是正文，跟卡纸上的字同一套 */
+[data-theme="lightbox"] .album-meta-line {
+  font-family: var(--font-meta, var(--font-sans));
+  font-size: 0.74rem;
+  letter-spacing: 0.04em;
+}
+
+/* 框外那段是随手记的账，不该跟卡纸上的印字抢：收小、收紧。
+   示意里格子下面什么都没有，但名字、可靠到、上传者是真信息不能删，
+   所以让几条标注挤成一行，从四行压到两行 */
+[data-theme="lightbox"] .film-tile-caption {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  gap: 0 7px;
+  padding: 0 1px;
+}
+
+[data-theme="lightbox"] .film-tile-caption strong {
+  flex-basis: 100%;
+}
+
+[data-theme="lightbox"] .film-tile-caption strong {
+  font-size: 0.84rem;
+}
+
+[data-theme="lightbox"] .film-tile-caption .muted {
+  font-size: 0.68rem;
+  letter-spacing: 0.03em;
+}
+
+[data-theme="lightbox"] .film-tile-delete {
+  font-size: 0.7rem;
+}
+
+/* 状态牌是贴上去的纸标，不是药丸 */
+[data-theme="lightbox"] .trip-cover-share,
+[data-theme="lightbox"] .film-tile-badge .badge {
+  border-radius: 0;
+  padding: 2px 6px 1px;
+  font-family: var(--font-meta, var(--font-sans));
+  font-size: 0.62rem;
+  letter-spacing: 0.06em;
+}
+
+/* 片子是一张张摆上灯台的，不会摆得笔直 */
+[data-theme="lightbox"] .film-tile:nth-child(4n + 1) {
+  transform: rotate(-0.5deg);
+}
+[data-theme="lightbox"] .film-tile:nth-child(4n + 2) {
+  transform: rotate(0.4deg);
+}
+[data-theme="lightbox"] .film-tile:nth-child(4n + 3) {
+  transform: rotate(0.7deg);
+}
+[data-theme="lightbox"] .film-tile:nth-child(4n + 4) {
+  transform: rotate(-0.3deg);
 }

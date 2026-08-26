@@ -18,6 +18,8 @@ import type { ComponentType } from "react";
 
 import type { Rarity } from "../api";
 import type { MotionBox } from "../motion";
+import { LightboxLampStage } from "../components/LightboxLampStage";
+import { LightboxRankTag } from "../components/LightboxRankTag";
 import { SettlePackStage } from "../components/SettlePackStage";
 import { SettleRaritySeal } from "../components/SettleRaritySeal";
 import { flipBook } from "../bookFlip";
@@ -101,6 +103,14 @@ export type SettleStageProps = {
   photoAlt?: string;
   rarity: Rarity | null;
   onRevealed: () => void;
+  /**
+   * 这张片子的时间与地点。给**卡纸型**的皮肤打在片框上用——
+   * 默认皮肤那只牛皮纸包上没地方写字，收到也不理会。
+   *
+   * 语义给到这一层就打住：叫 when / where 而不是 left / right，
+   * 摆左摆右、用不用得上，是皮肤自己的事。
+   */
+  mark?: { when?: string | null; where?: string | null };
 };
 
 // ── 登记表 ─────────────────────────────────────────────────────
@@ -141,7 +151,12 @@ const DEFAULT_SLOTS: Required<SlotTable> = {
 /** 各皮肤自己的实现。没列的槽位自动落回 DEFAULT_SLOTS。 */
 const THEME_SLOTS: Partial<Record<ThemeId, SlotTable>> = {
   // daylight 就是缺省实现，不必登记
-  // lightbox: { settleStage: () => LightboxLampStage },
+  // 灯箱里没有可撕的壳：开包是「推上灯箱、灯亮」，稀有度是归档打上去的等级码，
+  // 不是封蜡章。这两块换的是物件本身，不是颜色，所以走槽位而不是 token。
+  lightbox: {
+    settleStage: () => LightboxLampStage,
+    raritySeal: () => LightboxRankTag,
+  },
 };
 
 /**

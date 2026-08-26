@@ -33,9 +33,10 @@ powershell -ExecutionPolicy Bypass -File scripts\walkthrough\shot.ps1 `
 # 指定皮肤
 ... -Theme lightbox
 
-# 开包三个阶段（预览页认 ?phase= / ?rarity= / ?hold=1）
-# hold=1 让阶段停在原地不自己往下走——揭示只有 700ms，不冻住就只能截到它演完的样子
-... -To "/dev/settle-art?phase=revealing&rarity=SSR&hold=1"
+# 开包三个阶段（预览页认 ?phase= / ?rarity= / ?hold=1 / ?photo= / ?when= / ?where=）
+# hold=1 让阶段停在原地不自己往下走——揭示只有几百毫秒，不冻住就只能截到它演完的样子
+# photo= 换样张：默认那张 _sample-photo.jpg 是棕褐铜版画，判断不了「颜色显出来」这类效果
+... -To "/dev/settle-art?phase=revealing&rarity=SSR&hold=1&photo=/themes/_demo/demo-photo-dragonfly.jpg"
 
 # 落在开书动画里（预置交接）
 ... -To "/trips/<tripId>" -Extra "book=<tripId>"
@@ -53,6 +54,19 @@ python scripts/walkthrough/diff.py .shot/before.png .shot/after.png
 ```
 
 输出不同像素数、最大通道差、差异外接框；有差异时写一张 `*-diff.png` 把差异点涂红。
+
+## 和风格示意页并排
+
+`diff.py` 只能比两张同源截图。要验「示意页上那个东西到底做出来没有」，
+得把示意和实现拼在一起看——这是**出过 `public/themes/*.html` 的皮肤在汇报前必做的一步**。
+
+```powershell
+# 示意页是多栏的，先切出要比的那一栏（x,y,w,h）
+python scripts/walkthrough/side.py .shot/demo.png .shot/impl.png .shot/cmp.png --crop-left=24,172,381,728
+```
+
+两图按同高缩放后左右拼。分开看两张图都「像那么回事」，拼一起才看得出
+卡纸下沿该有的字是不是跑到框外去了、片子是不是小了一圈。
 
 ## 拿改造前的基准图
 
