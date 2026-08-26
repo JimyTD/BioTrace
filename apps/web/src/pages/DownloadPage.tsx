@@ -37,6 +37,7 @@ export default function DownloadPage() {
       <div className="login-page">
         <div className="login-page-front">
           <div className="login-mast">
+            <img className="brand-mark" src="/brand/icon-tile-framed.svg" alt="" width={76} height={76} />
             <h1 className="login-brand">{t("app.name")}</h1>
             <p className="lede">{t("auth.lede")}</p>
             <div className="login-rule" aria-hidden />

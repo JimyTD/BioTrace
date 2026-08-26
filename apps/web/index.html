@@ -4,6 +4,22 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
     <title>BioTrace</title>
+    <!-- 这句的正本是 messages 的 app.tagline；meta 与 manifest 在 React 起来之前
+         就要被爬虫和安装器读走，取不到 t()，只能在这里各抄一份 -->
+    <meta name="description" content="路上遇见的，都有名字。" />
+    <!-- 标记走三档：矢量与 32/16 用极小档（只留蜗牛），装到桌面的 180/192/512
+         用桌面档（出血胶片条）。档位与理由见 apps/web/public/brand/final.html -->
+    <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
+    <link rel="icon" href="/favicon-32.png" sizes="32x32" type="image/png" />
+    <link rel="icon" href="/favicon-16.png" sizes="16x16" type="image/png" />
+    <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
+    <link rel="manifest" href="/manifest.webmanifest" />
+    <meta name="theme-color" content="#2F4A3C" />
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content="BioTrace" />
+    <meta property="og:description" content="路上遇见的，都有名字。" />
+    <meta property="og:image" content="/og.png" />
+    <meta name="twitter:card" content="summary_large_image" />
     <script>
       if (/Android/i.test(navigator.userAgent)) {
         document.documentElement.setAttribute("data-webview", "android");

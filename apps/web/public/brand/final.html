@@ -1,0 +1,242 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<title>BioTrace · 品牌标记（推荐最终版）</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;600;700&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --field: #2F4A3C;
+    --cream: #EFE9D8;
+    --page: #eceef0;
+    --ink: #262d33;
+    --muted: #737d86;
+    --line: #dcdfe2;
+  }
+  * { box-sizing: border-box; }
+  body {
+    margin: 0; padding: 0 0 80px;
+    background: var(--page); color: var(--ink);
+    font-family: "Outfit", system-ui, "PingFang SC", "Microsoft YaHei", sans-serif;
+  }
+  .wrap { max-width: 860px; margin: 0 auto; padding: 0 36px; }
+
+  /* 头图：一眼看见推荐的是什么 */
+  .banner {
+    background: var(--field); color: var(--cream);
+    padding: 54px 0 58px; margin-bottom: 46px;
+  }
+  .banner .wrap { display: flex; align-items: center; gap: 30px; }
+  .banner .icon { width: 116px; height: 116px; border-radius: 26%; flex: none; overflow: hidden; }
+  .banner h1 { font-size: 2.5rem; margin: 0; letter-spacing: -.035em; font-weight: 700; }
+  .banner p { margin: 6px 0 0; font-size: 1.06rem; opacity: .8; letter-spacing: .02em; }
+
+  h2 {
+    font-size: .78rem; font-weight: 600; letter-spacing: .12em; text-transform: uppercase;
+    color: var(--muted); margin: 0 0 18px;
+    padding-bottom: 9px; border-bottom: 1px solid var(--line);
+  }
+  section { margin-bottom: 46px; }
+  .note { color: var(--muted); font-size: .8rem; line-height: 1.75; margin: 14px 0 0; }
+  .row { display: flex; gap: 26px; flex-wrap: wrap; align-items: flex-start; }
+  figure { margin: 0; }
+  figcaption { font-size: .72rem; color: var(--muted); margin-top: 9px; line-height: 1.6; }
+  figcaption b { display: block; color: var(--ink); font-size: .82rem; margin-bottom: 2px; }
+
+  .tile { background: var(--field); color: var(--cream); overflow: hidden; }
+  .tile svg { width: 100%; height: 100%; display: block; }
+  .m-circle { border-radius: 50%; }
+  .m-squircle { border-radius: 26%; }
+  .m-round { border-radius: 19%; }
+
+  /* 三档 */
+  .tiers { display: grid; grid-template-columns: repeat(3, 1fr); gap: 26px; }
+  .tiers .tile { width: 100%; aspect-ratio: 1; border-radius: 18px; }
+
+  /* 桌面 */
+  .home { width: 372px; padding: 24px 20px 20px; border-radius: 24px;
+    background: linear-gradient(160deg, #5f7180, #2c3a44 72%); }
+  .home-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 18px 12px; }
+  .home-app { display: grid; justify-items: center; gap: 6px; }
+  .home-app span { font-size: .56rem; color: #eef2f5; }
+  .home-app .tile, .home-app .stub { width: 56px; height: 56px; border-radius: 27%; }
+
+  /* 启动图 */
+  .splash { width: 232px; height: 412px; border-radius: 20px; background: var(--field);
+    display: grid; align-content: center; justify-items: center; color: var(--cream); }
+  .splash .big { width: 92px; height: 92px; }
+  .splash b { font-size: 1.4rem; font-weight: 700; letter-spacing: -.03em; margin-top: 22px; }
+  .splash em { font-style: normal; font-size: .78rem; opacity: .75; margin-top: 5px; }
+
+  .hero { width: 348px; padding: 20px 24px; border-radius: 16px; background: var(--field);
+    color: var(--cream); display: flex; align-items: center; gap: 18px; }
+  .hero .big { width: 76px; height: 76px; flex: none; }
+  .hero b { font-size: 1.22rem; font-weight: 700; letter-spacing: -.03em; display: block; }
+  .hero em { font-style: normal; font-size: .74rem; opacity: .72; display: block; margin-top: 2px; }
+  .hero .pill { display: inline-block; margin-top: 11px; padding: 6px 14px; border-radius: 999px;
+    background: var(--cream); color: var(--field); font-size: .7rem; font-weight: 600; }
+
+  .og { width: 348px; height: 183px; border-radius: 12px; background: var(--field); color: var(--cream);
+    display: grid; place-content: center; justify-items: center; }
+  .og .big { width: 58px; height: 58px; }
+  .og b { font-size: 1.12rem; font-weight: 700; letter-spacing: -.03em; margin-top: 9px; }
+  .og em { font-style: normal; font-size: .73rem; opacity: .72; margin-top: 2px; }
+
+  /* 色卡 */
+  .swatches { display: flex; gap: 18px; }
+  .sw { width: 168px; border-radius: 12px; overflow: hidden; background: #fff;
+    box-shadow: 0 1px 2px rgba(20,30,40,.07), 0 10px 24px -18px rgba(20,30,40,.5); }
+  .sw i { display: block; height: 74px; }
+  .sw div { padding: 11px 13px 13px; }
+  .sw strong { display: block; font-size: .84rem; }
+  .sw code { font-size: .74rem; color: var(--muted); }
+  .sw span { display: block; font-size: .7rem; color: var(--muted); margin-top: 5px; line-height: 1.6; }
+
+  .slogan { background: #fff; border-radius: 16px; padding: 24px 26px;
+    box-shadow: 0 1px 2px rgba(20,30,40,.06), 0 10px 26px -18px rgba(20,30,40,.5); }
+  .slogan p { margin: 0; font-size: 1.7rem; letter-spacing: .015em; font-weight: 600; }
+  .slogan small { display: block; color: var(--muted); font-size: .78rem; margin-top: 12px; line-height: 1.75; }
+</style>
+</head>
+<body>
+
+<div class="banner">
+  <div class="wrap">
+    <div class="icon tile" id="banner-icon"></div>
+    <div>
+      <h1>BioTrace</h1>
+      <p>路上遇见的，都有名字</p>
+    </div>
+  </div>
+</div>
+
+<div class="wrap">
+
+<section>
+  <h2>三档标记</h2>
+  <div class="tiers">
+    <figure>
+      <div class="tile" id="t-strip"></div>
+      <figcaption><b>桌面档</b>安卓桌面图标、apple-touch-icon、PWA 192/512。胶片条横向出血，任何遮罩下形状一致</figcaption>
+    </figure>
+    <figure>
+      <div class="tile" id="t-framed"></div>
+      <figcaption><b>大档</b>启动图、侧载页、关于页、分享图。60px 以上使用</figcaption>
+    </figure>
+    <figure>
+      <div class="tile" id="t-bare"></div>
+      <figcaption><b>极小档</b>浏览器标签页 favicon（svg / 32 / 16）。标签页那个槽位只有 16 CSS px，齿孔一定糊成灰点，只留蜗牛</figcaption>
+    </figure>
+  </div>
+  <p class="note">同一只蜗牛，同一套齿孔语言，从繁到简。三档都是双色，没有渐变、没有描边、没有投影。</p>
+</section>
+
+<section>
+  <h2>桌面图标</h2>
+  <div class="row">
+    <div class="home"><div class="home-grid" id="home"></div></div>
+    <div class="row" style="gap:18px">
+      <figure><div class="tile m-circle" id="k-circle" style="width:84px;height:84px"></div><figcaption>圆形</figcaption></figure>
+      <figure><div class="tile m-squircle" id="k-squircle" style="width:84px;height:84px"></div><figcaption>方圆</figcaption></figure>
+      <figure><div class="tile m-round" id="k-round" style="width:84px;height:84px"></div><figcaption>圆角方</figcaption></figure>
+    </div>
+  </div>
+  <p class="note">
+    自适应图标两层：背景层纯色 <code>#2F4A3C</code>（<code>values/ic_launcher_background.xml</code>），
+    前景层是奶油色的胶片条与蜗牛（<code>mipmap-*/ic_launcher_foreground.png</code>，五档密度）。
+    同一枚图标固定不变，不随皮肤切换——桌面图标是产品在 App 之外的身份。
+    位图由 <code>scripts/brand-export.py</code> 从本页这几个 SVG 导出，改形状改矢量再重导。
+  </p>
+</section>
+
+<section>
+  <h2>大档的用法</h2>
+  <div class="row">
+    <figure>
+      <div class="splash">
+        <svg class="big" viewBox="0 0 108 108" fill="currentColor"></svg>
+        <b>BioTrace</b><em>路上遇见的，都有名字</em>
+      </div>
+      <figcaption>启动图</figcaption>
+    </figure>
+    <div style="display:grid; gap:22px">
+      <figure>
+        <div class="hero">
+          <svg class="big" viewBox="0 0 108 108" fill="currentColor"></svg>
+          <div><b>BioTrace</b><em>路上遇见的，都有名字</em><span class="pill">下载安卓安装包</span></div>
+        </div>
+        <figcaption>侧载页 hero</figcaption>
+      </figure>
+      <figure>
+        <div class="og">
+          <svg class="big" viewBox="0 0 108 108" fill="currentColor"></svg>
+          <b>BioTrace</b><em>路上遇见的，都有名字</em>
+        </div>
+        <figcaption>分享图</figcaption>
+      </figure>
+    </div>
+  </div>
+</section>
+
+<section>
+  <h2>色与字</h2>
+  <div class="swatches">
+    <div class="sw">
+      <i style="background:#2F4A3C"></i>
+      <div><strong>书布绿</strong><code>#2F4A3C</code>
+        <span>标识色。图标底、启动图、品牌物料。大面积、低明度</span></div>
+    </div>
+    <div class="sw">
+      <i style="background:#EFE9D8"></i>
+      <div><strong>纸奶油</strong><code>#EFE9D8</code>
+        <span>形色。蜗牛、齿孔带、品牌物料上的字</span></div>
+    </div>
+  </div>
+  <p class="note">
+    字用 <b>Outfit</b>（App 里 <code>--font-brand</code> 已经是它）。
+    这两色只在 App 之外露面——桌面图标、启动图、侧载页、分享图。
+    进不到任何皮肤的 token 里，皮肤内部的配色与行动色照旧各管各的。
+  </p>
+</section>
+
+<section>
+  <h2>Slogan</h2>
+  <div class="slogan">
+    <p>路上遇见的，都有名字。</p>
+    <small>
+      正本在 messages 的 <code>app.tagline</code>（原值「旅行自然观察」是品类描述，不是 slogan）。<br>
+      它不是新编的：<code>settle.lede</code> 现在就是「这趟遇见的生命，现在有名字了」，
+      「遇见」在整张文案表里反复出现。一句话说清出门与定名两头，和蜗牛也同构——背着房子在路上。<br>
+      <code>index.html</code> 的 meta 与 <code>manifest.webmanifest</code> 各抄了一份：
+      它们在 React 起来之前就要被爬虫和安装器读走，取不到 <code>t()</code>。
+    </small>
+  </div>
+</section>
+
+</div>
+
+<script>
+const inner = s => s.replace(/^[\s\S]*?<svg[^>]*>/, "").replace(/<\/svg>\s*$/, "");
+const STUBS = ["#3b7de3", "#e0483c", "#22aa63", "#f0a417", "#6d4bd8", "#0e9ec4", "#e2534f", "#4b5563"];
+
+Promise.all(["snail.svg", "snail-framed.svg", "snail-strip.svg"]
+  .map(f => fetch(f).then(r => r.text()).then(inner)))
+  .then(([bare, framed, strip]) => {
+    const svg = m => `<svg viewBox="0 0 108 108" fill="currentColor">${m}</svg>`;
+    for (const id of ["banner-icon", "t-strip", "k-circle", "k-squircle", "k-round"]) {
+      document.getElementById(id).innerHTML = svg(strip);
+    }
+    document.getElementById("t-framed").innerHTML = svg(framed);
+    document.getElementById("t-bare").innerHTML = svg(bare);
+    document.querySelectorAll("svg.big").forEach(el => { el.innerHTML = framed; });
+
+    document.getElementById("home").innerHTML = Array.from({ length: 9 }, (_, i) =>
+      i === 5
+        ? `<div class="home-app"><div class="tile m-squircle">${svg(strip)}</div><span>BioTrace</span></div>`
+        : `<div class="home-app"><div class="stub" style="background:${STUBS[i > 5 ? i - 1 : i]}"></div><span>&nbsp;</span></div>`
+    ).join("");
+  });
+</script>
+</body>
+</html>

@@ -1,7 +1,7 @@
 /** 默认中文术语与界面文案。key 稳定后勿随意改名，只改正文。 */
 export const zh = {
   "app.name": "BioTrace",
-  "app.tagline": "旅行自然观察",
+  "app.tagline": "路上遇见的，都有名字",
   "app.loading": "加载中…",
 
   "nav.trips": "旅途",

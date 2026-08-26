@@ -1,0 +1,17 @@
+{
+  "name": "BioTrace",
+  "short_name": "BioTrace",
+  "description": "路上遇见的，都有名字。",
+  "start_url": "/",
+  "scope": "/",
+  "display": "standalone",
+  "orientation": "portrait",
+  "lang": "zh-CN",
+  "theme_color": "#2F4A3C",
+  "background_color": "#2F4A3C",
+  "icons": [
+    { "src": "/icon-192.png", "sizes": "192x192", "type": "image/png", "purpose": "any" },
+    { "src": "/icon-512.png", "sizes": "512x512", "type": "image/png", "purpose": "any" },
+    { "src": "/icon-512.png", "sizes": "512x512", "type": "image/png", "purpose": "maskable" }
+  ]
+}

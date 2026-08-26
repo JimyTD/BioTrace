@@ -70,8 +70,13 @@ export default function MeAboutPage() {
     <div className="stack page-me">
       <MeSubHead title={t("me.about")} />
       <div className="me-section stack">
-        <strong>{t("app.name")}</strong>
-        <p className="muted">{t("app.tagline")}</p>
+        <div className="about-identity">
+          <img className="brand-mark" src="/brand/icon-tile-framed.svg" alt="" width={64} height={64} />
+          <div>
+            <strong>{t("app.name")}</strong>
+            <p className="muted">{t("app.tagline")}</p>
+          </div>
+        </div>
         {nativeAndroid ? (
           <>
             <p className="muted">

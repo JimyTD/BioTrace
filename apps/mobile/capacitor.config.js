@@ -30,7 +30,8 @@ const config = {
   plugins: {
     SplashScreen: {
       launchAutoHide: true,
-      backgroundColor: "#f4f1ea",
+      // 书布绿，和 drawable/splash.png 的底同色，不然会闪一下浅底
+      backgroundColor: "#2F4A3C",
     },
   },
 };

@@ -725,6 +725,16 @@ button.me-row {
   font-size: 1.05rem;
 }
 
+.about-identity {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+}
+
+.about-identity p {
+  margin: 4px 0 0;
+}
+
 .me-field {
   display: grid;
   gap: 0.35rem;
@@ -1954,6 +1964,18 @@ button.film-tile-link {
   align-items: center;
   justify-content: center;
   padding-bottom: 8%;
+}
+
+/* 品牌标记（大档：片框里的蜗牛，自带书布绿底）。
+   它是产品在皮肤之外的身份，两套皮肤共用同一枚，所以这里不走 token、
+   也不留 [data-theme] 覆盖点——换皮换的是界面，不是这枚章 */
+.brand-mark {
+  display: block;
+  border-radius: 22%;
+}
+
+.login-mast .brand-mark {
+  margin: 0 0 22px;
 }
 
 .login-brand {

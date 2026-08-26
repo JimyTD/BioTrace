@@ -1,0 +1,331 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<title>BioTrace · 品牌标记演示</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;600;700&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --field: #2F4A3C;      /* 书布绿 */
+    --field-alt: #8C2F23;  /* 牛血红 */
+    --cream: #EFE9D8;
+    --page: #e8eaec;
+    --ink: #2b3238;
+    --muted: #6d7780;
+  }
+  * { box-sizing: border-box; }
+  body {
+    margin: 0; padding: 40px 32px 64px;
+    background: var(--page); color: var(--ink);
+    font-family: "Outfit", system-ui, "PingFang SC", "Microsoft YaHei", sans-serif;
+  }
+  h1 { font-size: 1.5rem; margin: 0 0 4px; letter-spacing: -0.02em; }
+  .sub { color: var(--muted); font-size: .86rem; margin: 0 0 34px; }
+  h2 {
+    font-size: .82rem; font-weight: 600; letter-spacing: .1em;
+    color: var(--muted); margin: 38px 0 14px; text-transform: uppercase;
+  }
+  .note { color: var(--muted); font-size: .78rem; margin: 10px 0 0; line-height: 1.7; }
+  .row { display: flex; align-items: flex-end; gap: 22px; flex-wrap: wrap; }
+  figcaption { color: var(--muted); font-size: .68rem; text-align: center; margin-top: 7px; }
+  figure { margin: 0; }
+
+  /* 图标块：一层底色 + 一枚奶油蜗牛。遮罩由 CSS 给，模拟桌面的三种异形 */
+  .tile { display: grid; place-items: center; background: var(--field); color: var(--cream); }
+  .tile.alt { background: var(--field-alt); }
+  .tile svg { width: 100%; height: 100%; }
+  .m-circle { border-radius: 50%; }
+  .m-squircle { border-radius: 28%; }
+  .m-round { border-radius: 20%; }
+
+  /* 桌面模拟 */
+  .home {
+    width: 400px; padding: 26px 22px 22px; border-radius: 26px;
+    background: linear-gradient(160deg, #5d6f7d, #2f3d47 70%);
+  }
+  .home-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 20px 14px; }
+  .home-app { display: grid; justify-items: center; gap: 7px; }
+  .home-app span { font-size: .58rem; color: #eef2f5; letter-spacing: .01em; }
+  .home-app .tile, .home-app .stub { width: 58px; height: 58px; border-radius: 28%; }
+
+  /* 启动图 */
+  .splash {
+    width: 268px; height: 470px; border-radius: 22px; background: var(--field);
+    display: grid; align-content: center; justify-items: center; gap: 20px; color: var(--cream);
+  }
+  .splash svg { width: 96px; height: 96px; }
+  .splash .word { font-size: 1.5rem; font-weight: 700; letter-spacing: -.02em; }
+  .splash .tag { font-size: .8rem; opacity: .74; letter-spacing: .04em; margin-top: -12px; }
+
+  /* 文字锁定 */
+  .lockup { display: flex; align-items: center; gap: 13px; }
+  .lockup .tile { width: 46px; height: 46px; border-radius: 26%; }
+  .lockup b { font-size: 1.4rem; font-weight: 700; letter-spacing: -.03em; display: block; }
+  .lockup em { font-style: normal; font-size: .8rem; color: var(--muted); }
+
+  .m-none { border-radius: 0; }
+  .tile .big { width: 100%; height: 100%; }
+
+  /* 侧载页 hero */
+  .hero {
+    width: 372px; padding: 22px 26px; border-radius: 18px; background: var(--field);
+    color: var(--cream); display: flex; align-items: center; gap: 20px;
+  }
+  .hero .big { width: 84px; height: 84px; flex: none; }
+  .hero b { font-size: 1.32rem; font-weight: 700; letter-spacing: -.03em; display: block; }
+  .hero em { font-style: normal; font-size: .78rem; opacity: .72; display: block; margin-top: 3px; }
+  .hero .pill {
+    display: inline-block; margin-top: 12px; padding: 6px 15px; border-radius: 999px;
+    background: var(--cream); color: var(--field); font-size: .72rem; font-weight: 600;
+  }
+
+  /* 分享图（OG 卡片比例） */
+  .og {
+    width: 372px; height: 195px; border-radius: 12px; background: var(--field); color: var(--cream);
+    display: grid; place-content: center; justify-items: center; gap: 2px; text-align: center;
+  }
+  .og .big { width: 62px; height: 62px; }
+  .og b { font-size: 1.18rem; font-weight: 700; letter-spacing: -.03em; margin-top: 8px; }
+  .og em { font-style: normal; font-size: .76rem; opacity: .72; }
+
+  .slogan { display: grid; gap: 16px; max-width: 620px; }
+  .slogan div {
+    background: #fff; border-radius: 14px; padding: 16px 20px;
+    box-shadow: 0 1px 2px rgba(20,30,40,.06), 0 8px 22px -14px rgba(20,30,40,.4);
+  }
+  .slogan p { margin: 0; font-size: 1.22rem; letter-spacing: .01em; }
+  .slogan small { color: var(--muted); font-size: .74rem; display: block; margin-top: 7px; }
+</style>
+</head>
+<body>
+
+<h1>BioTrace · 品牌标记演示</h1>
+<p class="sub">书布绿蜗牛。构图沿用 <code>docs/brand/drafts/hue-2-album-green.png</code>，重画成矢量以修正笔画粗细与取景。</p>
+
+<h2>桌面上的真实尺寸</h2>
+<div class="row" id="sizes"></div>
+<p class="note">
+  192 / 96 / 72 / 48dp，圆形遮罩。48dp 是最小的一档，站不住就是站不住。<br>
+  修过之后：奶油带 3.6px、缝 3.1px、触角 2.3px（草稿分别是 1.7px / 2.8px / 不到 0.4px）。
+</p>
+
+<h2>三种桌面遮罩</h2>
+<div class="row" id="masks"></div>
+<p class="note">没有边框、没有齿孔、没有绳子，所以怎么切都不伤主体——这正是邮票版下放不到桌面的原因。</p>
+
+<h2>放到桌面上</h2>
+<div class="row">
+  <div class="home">
+    <div class="home-grid" id="home"></div>
+  </div>
+  <div>
+    <p class="note" style="max-width:250px">
+      旁边八格是常见的配色占位。深绿这一档桌面上几乎没人占；
+      之前那版胶片橙落在最挤的一档里，缩小之后要靠形状认，认不出来。
+    </p>
+  </div>
+</div>
+
+<h2>两个色向</h2>
+<div class="row" id="hues"></div>
+<p class="note">左：书布绿（推荐）。右：牛血红，暖一档，仓库里 <code>hue-1-oxblood.png</code> 就是这个色向。</p>
+
+<h2>启动图与文字锁定</h2>
+<div class="row" style="align-items:flex-start; gap:36px">
+  <figure>
+    <div class="splash">
+      <svg viewBox="0 0 108 108" fill="currentColor"></svg>
+      <span class="word">BioTrace</span>
+      <span class="tag">路上遇见的，都有名字</span>
+    </div>
+    <figcaption>启动图（小档放大 · 偷懒版）</figcaption>
+  </figure>
+  <div style="display:grid; gap:26px; padding-top:8px">
+    <div class="lockup">
+      <div class="tile m-squircle"></div>
+      <div><b>BioTrace</b><em>路上遇见的，都有名字</em></div>
+    </div>
+    <figure>
+      <div class="row" style="gap:14px; align-items:center">
+        <div class="tile m-round" style="width:32px;height:32px"></div>
+        <div class="tile m-round" style="width:16px;height:16px"></div>
+      </div>
+      <figcaption style="text-align:left">favicon 32 / 16</figcaption>
+    </figure>
+  </div>
+</div>
+
+<h2>大档：装进片框</h2>
+<div class="row" style="align-items:flex-start; gap:30px">
+  <figure>
+    <div class="tile m-none" style="width:150px;height:150px"><svg class="big" viewBox="0 0 108 108" fill="currentColor"></svg></div>
+    <figcaption>大档</figcaption>
+  </figure>
+  <figure>
+    <div class="tile m-squircle" style="width:150px;height:150px"></div>
+    <figcaption>小档（对照）</figcaption>
+  </figure>
+  <p class="note" style="max-width:290px; margin-top:0">
+    片框风格取自相册里那只 <code>film-frame.svg</code>（正方、四边齿孔），但没照搬——
+    那只每边九个齿孔，缩成图标是一圈麻点。这里齿孔少一半、大一倍，片边加粗，内窗放大。<br><br>
+    窗里是空的，露出底色，所以蜗牛和小档同色，两档看着是同一只。
+    大档只走大面，不下放到桌面。
+  </p>
+</div>
+
+<h2>带框的能不能当桌面图标</h2>
+<div class="row" id="framed-asis"></div>
+<p class="note">
+  <b>甲 · 原样放上去。</b>片框占画布 80%，而自适应图标只保证中间 66.7% 不被裁。
+  圆形遮罩把四角连同齿孔一起切掉，方圆遮罩勉强留住，圆角方遮罩最全——
+  但你控制不了用户桌面用哪种遮罩，得三种都活才行。
+</p>
+
+<div class="row" id="framed-fit"></div>
+<p class="note">
+  <b>乙 · 缩进安全圆。</b>86×88 的方框要整个塞进直径 72 的圆，对角线得压到 72，
+  也就是缩到 58.5%。这时候框只占画布 47%，48dp 下齿孔单个 1.8px——没了，
+  片框退化成一圈虚边，中间的蜗牛还比小档小了一半。
+</p>
+
+<div class="row" id="framed-strip"></div>
+<p class="note">
+  <b>丙 · 横向出血的胶片条。</b>去掉左右竖边，上下两条齿孔带横着铺满并主动溢出画布，
+  于是任何遮罩下看见的都是「一条胶片穿过去」，形状一致。代价是蜗牛缩到 83%。
+</p>
+
+<div class="row" id="framed-cmp"></div>
+<p class="note"><b>丁 · 裸蜗牛同尺寸对照。</b></p>
+
+<h2>大档的三个用法</h2>
+<div class="row" style="align-items:flex-start; gap:30px">
+  <figure>
+    <div class="splash">
+      <svg class="big" viewBox="0 0 108 108" fill="currentColor"></svg>
+      <span class="word">BioTrace</span>
+      <span class="tag">路上遇见的，都有名字</span>
+    </div>
+    <figcaption>启动图</figcaption>
+  </figure>
+  <div style="display:grid; gap:22px">
+    <figure>
+      <div class="hero">
+        <svg class="big" viewBox="0 0 108 108" fill="currentColor"></svg>
+        <div>
+          <b>BioTrace</b>
+          <em>路上遇见的，都有名字</em>
+          <span class="pill">下载安卓安装包</span>
+        </div>
+      </div>
+      <figcaption style="text-align:left">侧载页 hero</figcaption>
+    </figure>
+    <figure>
+      <div class="og">
+        <svg class="big" viewBox="0 0 108 108" fill="currentColor"></svg>
+        <b>BioTrace</b>
+        <em>路上遇见的，都有名字</em>
+      </div>
+      <figcaption style="text-align:left">分享图</figcaption>
+    </figure>
+  </div>
+</div>
+
+<h2>Slogan</h2>
+<div class="slogan">
+  <div>
+    <p>路上遇见的，都有名字。</p>
+    <small>主推。产品自己已经在说这句话——<code>settle.lede</code> 是「这趟遇见的生命，现在有名字了」。</small>
+  </div>
+  <div>
+    <p>遇见了，就认识了。</p>
+    <small>备选。更短更口语，「认识」双关；适合应用商店那行副标题。</small>
+  </div>
+</div>
+
+<script>
+const SIZES = [192, 96, 72, 48];
+const MASKS = [["m-circle", "圆形"], ["m-squircle", "方圆"], ["m-round", "圆角方"]];
+const STUBS = ["#3b7de3", "#e0483c", "#22aa63", "#f0a417", "#6d4bd8", "#0e9ec4", "#e2534f", "#4b5563"];
+
+let markup = "";
+let framed = "";
+
+// 取出 <svg> 里的内容，好在页面各处按不同尺寸复用同一份路径
+const inner = svg => svg.replace(/^[\s\S]*?<svg[^>]*>/, "").replace(/<\/svg>\s*$/, "");
+
+let strip = "";
+Promise.all([
+  fetch("snail.svg").then(r => r.text()),
+  fetch("snail-framed.svg").then(r => r.text()),
+  fetch("snail-strip.svg").then(r => r.text()),
+]).then(([small, big, band]) => {
+  markup = inner(small);
+  framed = inner(big);
+  strip = inner(band);
+  render();
+});
+
+function tile(size, mask = "m-circle", alt = false) {
+  return `<div class="tile ${mask}${alt ? " alt" : ""}" style="width:${size}px;height:${size}px">
+    <svg viewBox="0 0 108 108" fill="currentColor">${markup}</svg></div>`;
+}
+
+// 大档当图标用的样子。scale<1 表示先把整个片框缩进安全圆再放上去
+function bigTile(size, mask, scale = 1) {
+  const g = scale === 1 ? framed
+    : `<g transform="translate(54 54) scale(${scale}) translate(-54 -54)">${framed}</g>`;
+  return `<div class="tile ${mask}" style="width:${size}px;height:${size}px">
+    <svg viewBox="0 0 108 108" fill="currentColor">${g}</svg></div>`;
+}
+
+function render() {
+  document.getElementById("sizes").innerHTML = SIZES
+    .map(s => `<figure>${tile(s)}<figcaption>${s}dp</figcaption></figure>`).join("");
+
+  document.getElementById("masks").innerHTML = MASKS
+    .map(([c, n]) => `<figure>${tile(96, c)}<figcaption>${n}</figcaption></figure>`).join("");
+
+  document.getElementById("hues").innerHTML =
+    `<figure>${tile(120, "m-squircle")}<figcaption>#2F4A3C 书布绿</figcaption></figure>` +
+    `<figure>${tile(120, "m-squircle", true)}<figcaption>#8C2F23 牛血红</figcaption></figure>`;
+
+  const slot = i => i === 5
+    ? `<div class="home-app">${tile(58, "m-squircle")}<span>BioTrace</span></div>`
+    : `<div class="home-app"><div class="stub" style="background:${STUBS[i > 5 ? i - 1 : i]}"></div><span>&nbsp;</span></div>`;
+  document.getElementById("home").innerHTML =
+    Array.from({ length: 9 }, (_, i) => slot(i)).join("");
+
+  // 大档先注：它们是 svg.big，注完就不空了，下面那句挑不到
+  document.querySelectorAll("svg.big").forEach(el => { el.innerHTML = framed; });
+  document.querySelectorAll(".splash svg:not(.big)").forEach(el => { el.innerHTML = markup; });
+  // 页面里手写的那些 .tile（文字锁定、favicon）也要注进去，
+  // 别按祖先选——favicon 两块不在 .lockup 里，第一版就是这么漏掉的
+  // 甲：片框原样，三种遮罩各来一遍——遮罩吃掉什么，一眼就看见
+  document.getElementById("framed-asis").innerHTML = MASKS
+    .flatMap(([c, n]) => [96, 48].map(s =>
+      `<figure>${bigTile(s, c)}<figcaption>${n} ${s}dp</figcaption></figure>`))
+    .join("");
+
+  // 乙：整个塞进安全圆。对角线 123 压到 72 → 0.585
+  document.getElementById("framed-fit").innerHTML = [192, 96, 48]
+    .map(s => `<figure>${bigTile(s, "m-circle", 0.585)}<figcaption>${s}dp</figcaption></figure>`)
+    .join("");
+
+  document.getElementById("framed-strip").innerHTML = MASKS
+    .flatMap(([c, n]) => [96, 48].map(s =>
+      `<figure><div class="tile ${c}" style="width:${s}px;height:${s}px">
+        <svg viewBox="0 0 108 108" fill="currentColor">${strip}</svg></div>
+       <figcaption>${n} ${s}dp</figcaption></figure>`))
+    .join("");
+
+  document.getElementById("framed-cmp").innerHTML = [192, 96, 48]
+    .map(s => `<figure>${tile(s)}<figcaption>${s}dp</figcaption></figure>`).join("");
+
+  document.querySelectorAll(".tile:empty").forEach(el => {
+    el.innerHTML = `<svg viewBox="0 0 108 108" fill="currentColor" style="width:100%;height:100%">${markup}</svg>`;
+  });
+}
+</script>
+</body>
+</html>

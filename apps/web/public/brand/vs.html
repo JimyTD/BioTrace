@@ -1,0 +1,128 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<title>BioTrace · 桌面图标：胶片条 vs 裸蜗牛</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;600;700&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --field: #2F4A3C;
+    --cream: #EFE9D8;
+    --page: #eceef0;
+    --ink: #262d33;
+    --muted: #737d86;
+    --line: #dcdfe2;
+  }
+  * { box-sizing: border-box; }
+  body {
+    margin: 0; padding: 40px 0 80px;
+    background: var(--page); color: var(--ink);
+    font-family: "Outfit", system-ui, "PingFang SC", "Microsoft YaHei", sans-serif;
+  }
+  .wrap { max-width: 940px; margin: 0 auto; padding: 0 36px; }
+  h1 { font-size: 1.65rem; letter-spacing: -.03em; margin: 0 0 6px; }
+  .lede { color: var(--muted); font-size: .86rem; margin: 0 0 34px; line-height: 1.7; }
+
+  .grid { display: grid; grid-template-columns: 92px 1fr 1fr; gap: 0 26px; align-items: start; }
+  .head { position: sticky; top: 0; background: var(--page); padding: 6px 0 12px; z-index: 2; }
+  .head b { font-size: .96rem; }
+  .head span { display: block; font-size: .74rem; color: var(--muted); margin-top: 2px; }
+
+  .rowlabel {
+    font-size: .74rem; letter-spacing: .1em; color: var(--muted);
+    padding-top: 20px; text-transform: uppercase;
+  }
+  .cell { padding: 20px 0 26px; border-top: 1px solid var(--line); }
+  .rowlabel { border-top: 1px solid var(--line); }
+  .cap { font-size: .74rem; color: var(--muted); margin: 12px 0 0; line-height: 1.7; }
+
+  .tile { background: var(--field); color: var(--cream); overflow: hidden; flex: none; }
+  .tile svg { width: 100%; height: 100%; display: block; }
+  .m-circle { border-radius: 50%; }
+  .m-squircle { border-radius: 26%; }
+  .m-round { border-radius: 19%; }
+
+  .home { width: 322px; padding: 20px 16px 16px; border-radius: 22px;
+    background: linear-gradient(160deg, #5f7180, #2c3a44 72%); }
+  .home-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 16px 10px; }
+  .home-app { display: grid; justify-items: center; gap: 5px; }
+  .home-app span { font-size: .52rem; color: #eef2f5; }
+  .home-app .tile, .home-app .stub { width: 52px; height: 52px; border-radius: 27%; }
+
+  .masks { display: flex; gap: 16px; align-items: flex-end; }
+  .masks figure { margin: 0; }
+  .masks figcaption { font-size: .68rem; color: var(--muted); margin-top: 7px; text-align: center; }
+  .masks .tile { width: 76px; height: 76px; }
+
+  .steps { display: flex; gap: 18px; align-items: flex-end; }
+  .steps figure { margin: 0; display: grid; justify-items: center; gap: 7px; }
+  .steps figcaption { font-size: .66rem; color: var(--muted); }
+  .steps .tile { border-radius: 27%; }
+
+  .blur .tile { filter: blur(1.6px); }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <h1>桌面图标：胶片条 vs 裸蜗牛</h1>
+  <p class="lede">同一只蜗牛、同一组底色，唯一变量是要不要那两条齿孔带。左右两栏每一行都是同尺寸、同遮罩、同环境。</p>
+
+  <div class="grid">
+    <div></div>
+    <div class="head"><b>胶片条</b><span>推荐。上下齿孔带横向出血</span></div>
+    <div class="head"><b>裸蜗牛</b><span>只有主体，四周留白</span></div>
+
+    <div class="rowlabel">桌面</div>
+    <div class="cell"><div class="home"><div class="home-grid" id="home-a"></div></div></div>
+    <div class="cell"><div class="home"><div class="home-grid" id="home-b"></div></div></div>
+
+    <div class="rowlabel">遮罩</div>
+    <div class="cell"><div class="masks" id="mask-a"></div></div>
+    <div class="cell"><div class="masks" id="mask-b"></div></div>
+
+    <div class="rowlabel">尺寸</div>
+    <div class="cell"><div class="steps" id="step-a"></div></div>
+    <div class="cell"><div class="steps" id="step-b"></div></div>
+
+    <div class="rowlabel">眯眼</div>
+    <div class="cell blur"><div class="steps" id="fuzz-a"></div></div>
+    <div class="cell blur"><div class="steps" id="fuzz-b"></div></div>
+  </div>
+</div>
+
+<script>
+const inner = s => s.replace(/^[\s\S]*?<svg[^>]*>/, "").replace(/<\/svg>\s*$/, "");
+const STUBS = ["#3b7de3", "#e0483c", "#22aa63", "#f0a417", "#6d4bd8", "#0e9ec4", "#e2534f", "#4b5563"];
+const MASKS = [["m-circle", "圆形"], ["m-squircle", "方圆"], ["m-round", "圆角方"]];
+const SIZES = [56, 48, 40, 32, 24, 16];
+
+Promise.all(["snail.svg", "snail-strip.svg"].map(f => fetch(f).then(r => r.text()).then(inner)))
+  .then(([bare, strip]) => {
+    const svg = m => `<svg viewBox="0 0 108 108" fill="currentColor">${m}</svg>`;
+
+    const home = m => Array.from({ length: 9 }, (_, i) =>
+      i === 5
+        ? `<div class="home-app"><div class="tile m-squircle">${svg(m)}</div><span>BioTrace</span></div>`
+        : `<div class="home-app"><div class="stub" style="background:${STUBS[i > 5 ? i - 1 : i]}"></div><span>&nbsp;</span></div>`
+    ).join("");
+
+    const masks = m => MASKS.map(([cls, name]) =>
+      `<figure><div class="tile ${cls}">${svg(m)}</div><figcaption>${name}</figcaption></figure>`).join("");
+
+    const steps = (m, cap) => SIZES.map(px =>
+      `<figure><div class="tile" style="width:${px}px;height:${px}px">${svg(m)}</div>` +
+      (cap ? `<figcaption>${px}</figcaption>` : "") + `</figure>`).join("");
+
+    document.getElementById("home-a").innerHTML = home(strip);
+    document.getElementById("home-b").innerHTML = home(bare);
+    document.getElementById("mask-a").innerHTML = masks(strip);
+    document.getElementById("mask-b").innerHTML = masks(bare);
+    document.getElementById("step-a").innerHTML = steps(strip, true);
+    document.getElementById("step-b").innerHTML = steps(bare, true);
+    document.getElementById("fuzz-a").innerHTML = steps(strip, false);
+    document.getElementById("fuzz-b").innerHTML = steps(bare, false);
+  });
+</script>
+</body>
+</html>
