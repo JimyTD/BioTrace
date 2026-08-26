@@ -302,6 +302,13 @@
   font-size: 0.7rem;
 }
 
+[data-theme="clear"] .film-tile-rank,
+[data-theme="clear"] .film-tile-owner,
+[data-theme="clear"] .film-tile-hint,
+[data-theme="clear"] .film-tile-error {
+  flex-basis: 100%;
+}
+
 [data-theme="clear"] .film-tile-delete {
   font-size: 0.72rem;
 }
