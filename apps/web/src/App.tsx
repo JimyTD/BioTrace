@@ -109,7 +109,7 @@ function AppShell({
             <Route path="/trips/:id/manage" element={<TripManagePage userId={user.id} />} />
             <Route path="/observations/:id/pin" element={<PinLocationPage />} />
             <Route path="/observations/:id" element={<ObservationDetailPage userId={user.id} />} />
-            <Route path="/settle/:id" element={<ObservationSettlePage />} />
+            <Route path="/settle/:id" element={<ObservationSettlePage userId={user.id} />} />
             <Route path="/dev/settle-art" element={<SettleArtPreviewPage />} />
             <Route path="/map" element={<MapPage />} />
             <Route path="/collection" element={<CollectionLayout />}>
@@ -154,7 +154,7 @@ function AppShell({
             <PageOverlay className="is-photo">
               <Routes location={location}>
                 <Route path="/observations/:id" element={<ObservationDetailPage userId={user.id} />} />
-                <Route path="/settle/:id" element={<ObservationSettlePage />} />
+                <Route path="/settle/:id" element={<ObservationSettlePage userId={user.id} />} />
               </Routes>
             </PageOverlay>
           ) : null}

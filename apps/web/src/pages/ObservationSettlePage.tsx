@@ -5,6 +5,7 @@ import { acceptedScientificIfDifferent, api, type Observation, type Rarity, type
 import { identifyByLine } from "../identifyLabel";
 import { useBackClose } from "../androidBack";
 import { ListTagRow } from "../components/ListTagRow";
+import ReidentifyDialog from "../components/ReidentifyDialog";
 import { themeSlot } from "../themes/slots";
 import { peekObservation, rememberObservation } from "../pageCache";
 import { peekLiftBackground } from "../photoLiftHandoff";
@@ -59,7 +60,7 @@ function buildCeremony(volumes: SettleVolumesResult): {
   return { kind: "slot", line };
 }
 
-export default function ObservationSettlePage() {
+export default function ObservationSettlePage({ userId }: { userId?: string }) {
   const { id = "" } = useParams();
   const navigate = useNavigate();
   const location = useLocation();
@@ -71,6 +72,8 @@ export default function ObservationSettlePage() {
   const [error, setError] = useState<string | null>(null);
   const [phase, setPhase] = useState<"sealed" | "revealing" | "open" | "claimed">("sealed");
   const [claiming, setClaiming] = useState(false);
+  const [reidentifyOpen, setReidentifyOpen] = useState(false);
+  const [reidentifying, setReidentifying] = useState(false);
   const [ceremony, setCeremony] = useState<{ kind: CeremonyKind; line: string } | null>(null);
   useBackClose(() => {
     if (obs) navigate(`/trips/${obs.tripId}`);
@@ -89,7 +92,9 @@ export default function ObservationSettlePage() {
           return;
         }
         if (observation.status === "analyzing") {
-          navigate(`/trips/${observation.tripId}`, { replace: true });
+          setObs(observation);
+          rememberObservation(observation);
+          setPhase("sealed");
           return;
         }
         if (observation.status === "failed") {
@@ -137,6 +142,44 @@ export default function ObservationSettlePage() {
     }
   }
 
+  async function onReidentify(description: string) {
+    if (!obs) return;
+    setReidentifying(true);
+    setError(null);
+    try {
+      const { observation } = await api.reidentifyObservation(obs.id, description);
+      setReidentifyOpen(false);
+      rememberObservation(observation);
+      setObs(observation);
+      setPhase("sealed");
+    } catch (e) {
+      setError(e instanceof Error ? e.message : t("detail.reidentifyFailed"));
+    } finally {
+      setReidentifying(false);
+    }
+  }
+
+  useEffect(() => {
+    if (!obs || obs.status !== "analyzing") return;
+    const timer = window.setInterval(() => {
+      void api
+        .getObservation(id, true)
+        .then(({ observation }) => {
+          if (observation.status === "failed" || observation.status === "settled") {
+            navigate(`/observations/${id}`, {
+              replace: true,
+              state: background ? { background } : undefined,
+            });
+            return;
+          }
+          setObs(observation);
+          rememberObservation(observation);
+        })
+        .catch(() => undefined);
+    }, 2000);
+    return () => window.clearInterval(timer);
+  }, [id, obs?.status, navigate, background]);
+
   if (error && !obs) {
     return (
       <div className="stack">
@@ -152,6 +195,7 @@ export default function ObservationSettlePage() {
 
   const title = obs.commonName || obs.scientificName || t("detail.unnamed");
   const acceptedSci = acceptedScientificIfDifferent(obs);
+  const waitingIdentify = obs.status === "analyzing";
   const sealed = phase === "sealed";
   const stagePhase = phase === "claimed" ? "open" : phase;
   const SettleStage = themeSlot("settleStage");
@@ -176,8 +220,8 @@ export default function ObservationSettlePage() {
 
           {sealed ? (
             <div className="settle-actions">
-              <button className="btn" type="button" onClick={onOpen}>
-                {t("settle.open")}
+              <button className="btn" type="button" disabled={waitingIdentify} onClick={onOpen}>
+                {waitingIdentify ? t("detail.reidentifying") : t("settle.open")}
               </button>
             </div>
           ) : (
@@ -213,9 +257,21 @@ export default function ObservationSettlePage() {
                   {obs.blurb ? <p className="blurb">{obs.blurb}</p> : null}
 
                   {phase !== "claimed" ? (
-                    <button className="btn" type="button" disabled={claiming} onClick={onClaim}>
-                      {claiming ? t("settle.claiming") : t("settle.claim")}
-                    </button>
+                    <>
+                      <button className="btn" type="button" disabled={claiming || reidentifying} onClick={onClaim}>
+                        {claiming ? t("settle.claiming") : t("settle.claim")}
+                      </button>
+                      {userId && obs.userId === userId ? (
+                        <button
+                          className="btn secondary"
+                          type="button"
+                          disabled={claiming || reidentifying}
+                          onClick={() => setReidentifyOpen(true)}
+                        >
+                          {reidentifying ? t("detail.reidentifying") : t("detail.reidentify")}
+                        </button>
+                      ) : null}
+                    </>
                   ) : null}
                 </>
               )}
@@ -225,6 +281,16 @@ export default function ObservationSettlePage() {
       </div>
 
       {error ? <p className="error">{error}</p> : null}
+
+      <ReidentifyDialog
+        open={reidentifyOpen}
+        busy={reidentifying}
+        initialDescription={obs.description}
+        onCancel={() => {
+          if (!reidentifying) setReidentifyOpen(false);
+        }}
+        onConfirm={onReidentify}
+      />
       {phase !== "claimed" ? (
         <Link className="btn secondary" to={`/trips/${obs.tripId}`}>
           {t("settle.backAlbum")}

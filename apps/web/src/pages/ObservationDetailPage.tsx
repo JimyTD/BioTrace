@@ -253,6 +253,7 @@ export default function ObservationDetailPage({ userId }: { userId?: string }) {
     try {
       const { observation } = await api.reidentifyObservation(obs.id, description);
       setConfirmKind(null);
+      rememberObservation(observation);
       setObs(observation);
     } catch (e) {
       setError(e instanceof Error ? e.message : t("detail.reidentifyFailed"));
@@ -424,6 +425,7 @@ export default function ObservationDetailPage({ userId }: { userId?: string }) {
         </dl>
       </section>
 
+      {userId && obs.userId === userId ? (
       <div className="detail-danger danger-zone">
         <button
           className="btn secondary"
@@ -444,6 +446,7 @@ export default function ObservationDetailPage({ userId }: { userId?: string }) {
           {deleting ? t("detail.deleting") : t("detail.delete")}
         </button>
       </div>
+      ) : null}
 
       <ConfirmDialog
         open={confirmKind === "delete"}
