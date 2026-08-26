@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { Link } from "react-router-dom";
+import { Link, useSearchParams } from "react-router-dom";
 import { t, type MessageKey } from "@biotrace/messages";
 import type { Rarity } from "../api";
 import { SettlePackStage, type SettleStagePhase } from "../components/SettlePackStage";
@@ -9,9 +9,19 @@ import { volumeCeremonyBgUrl, volumeSealCompleteUrl } from "../themes";
 const SAMPLE_PHOTO = "/trips/_sample-photo.jpg";
 const RARITIES: Rarity[] = ["N", "R", "SR", "SSR", "UR", "LR", "XR"];
 
+const PHASES: SettleStagePhase[] = ["sealed", "revealing", "open"];
+
 export default function SettleArtPreviewPage() {
-  const [phase, setPhase] = useState<SettleStagePhase>("sealed");
-  const [rarity, setRarity] = useState<Rarity>("SR");
+  // ?phase= / ?rarity= 让走查能直接落在某一阶段，不必点按钮
+  const [params] = useSearchParams();
+  const [phase, setPhase] = useState<SettleStagePhase>(() => {
+    const want = params.get("phase") as SettleStagePhase | null;
+    return want && PHASES.includes(want) ? want : "sealed";
+  });
+  const [rarity, setRarity] = useState<Rarity>(() => {
+    const want = params.get("rarity") as Rarity | null;
+    return want && RARITIES.includes(want) ? want : "SR";
+  });
 
   return (
     <div className="stack settle-page settle-art-preview">

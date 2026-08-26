@@ -116,15 +116,19 @@ function tween(
 
 function CoverClone({ coverUrl }: { coverUrl: string | null }) {
   return (
-    <div className="trip-cover-media">
-      <div className="trip-cover-window">
-        {coverUrl ? (
-          <img className="trip-cover-photo" src={coverUrl} alt="" />
-        ) : (
-          <div className="trip-cover-placeholder" aria-hidden />
-        )}
+    /* 飞起来的那张就是列表封面的复制品，零件和栅格必须跟 TripsPage 一致 */
+    <div className="trip-cover-slot">
+      <div className="trip-cover">
+        <span className="trip-cover-media" aria-hidden />
+        <span className="trip-cover-window">
+          {coverUrl ? (
+            <img className="trip-cover-photo" src={coverUrl} alt="" />
+          ) : (
+            <span className="trip-cover-placeholder" aria-hidden />
+          )}
+        </span>
+        <img className="trip-cover-frame" src={tripCoverFrameUrl()} alt="" aria-hidden />
       </div>
-      <img className="trip-cover-frame" src={tripCoverFrameUrl()} alt="" aria-hidden />
     </div>
   );
 }

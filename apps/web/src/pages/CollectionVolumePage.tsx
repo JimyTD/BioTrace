@@ -26,20 +26,24 @@ function msg(key: string) {
   return hasMessage(key) ? t(key) : key;
 }
 
-function StampFace({
+/**
+ * 邮票格的零件。一次渲全摆成兄弟，摆在哪由皮肤的 CSS 定，
+ * 见 docs/features/皮肤主题.md §2.3。
+ */
+function StampParts({
   photoUrl,
   plateUrl,
   label,
-  lit,
 }: {
   photoUrl: string | null;
   plateUrl: string;
   label: string;
-  lit: boolean;
 }) {
   return (
-    <div className={`stamp-face${lit ? " is-lit" : ""}`}>
-      <div className="stamp-photo">
+    <>
+      {/* 卡纸本体不画东西，但抬照片的动画量的就是它这只盒子 */}
+      <span className="stamp-face" aria-hidden />
+      <span className="stamp-photo">
         {photoUrl ? (
           <img src={photoUrl} alt={label} />
         ) : (
@@ -56,9 +60,9 @@ function StampFace({
             />
           </>
         )}
-      </div>
+      </span>
       <img className="stamp-frame" src={volumeStampFrameUrl()} alt="" aria-hidden />
-    </div>
+    </>
   );
 }
 
@@ -243,55 +247,57 @@ export default function CollectionVolumePage() {
           {volume.slots.map((slot) => {
             const label = msg(slot.titleKey);
             const photoUrl = slot.lit ? slot.coverDisplayUrl : null;
-            const face = (
-              <StampFace
+            const parts = (
+              <StampParts
                 photoUrl={photoUrl}
                 plateUrl={volumeSlotPlateUrl(id, slot.id)}
                 label={label}
-                lit={slot.lit}
               />
             );
             const sourceHidden = liftSourceId === slot.coverObservationId;
 
             if (slot.lit && slot.coverObservationId && photoUrl) {
               return (
-                <button
-                  key={slot.id}
-                  type="button"
-                  className={`stamp stamp-lit${sourceHidden ? " is-lift-source" : ""}`}
-                  data-obs-id={slot.coverObservationId}
-                  aria-label={t("collection.stampLift")}
-                  onPointerDown={(e) => {
-                    const media = e.currentTarget.querySelector(".stamp-face");
-                    if (!(media instanceof HTMLElement)) return;
-                    setPhotoLiftHandoff({
-                      observationId: slot.coverObservationId!,
-                      photoUrl,
-                      box: measureBox(media),
-                      dir: "open",
-                      origin: { kind: "volume", volumeId: id },
-                    });
-                  }}
-                  onClick={(e) => {
-                    const media = e.currentTarget.querySelector(".stamp-face");
-                    if (!(media instanceof HTMLElement)) return;
-                    openStamp(slot.coverObservationId!, photoUrl, media);
-                  }}
-                >
-                  {face}
-                  <span className="stamp-caption">{label}</span>
-                </button>
+                /* 外面这层只为给卡纸栅格量宽（container-type），别塞别的东西 */
+                <div className="stamp-slot" key={slot.id}>
+                  <button
+                    type="button"
+                    className={`stamp stamp-lit${sourceHidden ? " is-lift-source" : ""}`}
+                    data-obs-id={slot.coverObservationId}
+                    aria-label={t("collection.stampLift")}
+                    onPointerDown={(e) => {
+                      const media = e.currentTarget.querySelector(".stamp-face");
+                      if (!(media instanceof HTMLElement)) return;
+                      setPhotoLiftHandoff({
+                        observationId: slot.coverObservationId!,
+                        photoUrl,
+                        box: measureBox(media),
+                        dir: "open",
+                        origin: { kind: "volume", volumeId: id },
+                      });
+                    }}
+                    onClick={(e) => {
+                      const media = e.currentTarget.querySelector(".stamp-face");
+                      if (!(media instanceof HTMLElement)) return;
+                      openStamp(slot.coverObservationId!, photoUrl, media);
+                    }}
+                  >
+                    {parts}
+                    <span className="stamp-caption">{label}</span>
+                  </button>
+                </div>
               );
             }
 
             return (
-              <div
-                key={slot.id}
-                className={`stamp${slot.lit ? " stamp-lit" : " stamp-empty"}`}
-                title={slot.lit ? label : t("collection.volumeStampEmpty")}
-              >
-                {face}
-                <span className="stamp-caption">{label}</span>
+              <div className="stamp-slot" key={slot.id}>
+                <div
+                  className={`stamp${slot.lit ? " stamp-lit" : " stamp-empty"}`}
+                  title={slot.lit ? label : t("collection.volumeStampEmpty")}
+                >
+                  {parts}
+                  <span className="stamp-caption">{label}</span>
+                </div>
               </div>
             );
           })}

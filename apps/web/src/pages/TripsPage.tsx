@@ -150,59 +150,59 @@ export default function TripsPage({
       ) : (
         <div className="trip-cover-list">
           {trips.map((trip) => (
-            <button
-              type="button"
-              className={`trip-cover${activeTripId === trip.id ? " is-book-source" : ""}`}
-              key={trip.id}
-              onPointerDown={(e) => {
-                const media = e.currentTarget.querySelector(".trip-cover-media");
-                if (!(media instanceof HTMLElement)) return;
-                setOpenBookHandoff({
-                  tripId: trip.id,
-                  coverUrl: trip.coverDisplayUrl ?? null,
-                  source: captureCoverBox(media),
-                });
-              }}
-              onTouchStart={(e) => {
-                const media = e.currentTarget.querySelector(".trip-cover-media");
-                if (!(media instanceof HTMLElement)) return;
-                setOpenBookHandoff({
-                  tripId: trip.id,
-                  coverUrl: trip.coverDisplayUrl ?? null,
-                  source: captureCoverBox(media),
-                });
-              }}
-              onClick={(e) => {
-                const media = e.currentTarget.querySelector(".trip-cover-media");
-                if (media instanceof HTMLElement) {
+            /* 外面这层只为给卡纸栅格量宽（container-type），别塞别的东西 */
+            <div className="trip-cover-slot" key={trip.id}>
+              <button
+                type="button"
+                className={`trip-cover${activeTripId === trip.id ? " is-book-source" : ""}${
+                  (trip.memberCount ?? 1) > 1 ? " is-shared" : ""
+                }`}
+                onPointerDown={(e) => {
+                  const media = e.currentTarget.querySelector(".trip-cover-media");
+                  if (!(media instanceof HTMLElement)) return;
                   setOpenBookHandoff({
                     tripId: trip.id,
                     coverUrl: trip.coverDisplayUrl ?? null,
                     source: captureCoverBox(media),
                   });
-                }
-                saveContentScroll("trips");
-                navigate(`/trips/${trip.id}`);
-              }}
-            >
-              <div className="trip-cover-media">
-                <div className="trip-cover-window">
+                }}
+                onTouchStart={(e) => {
+                  const media = e.currentTarget.querySelector(".trip-cover-media");
+                  if (!(media instanceof HTMLElement)) return;
+                  setOpenBookHandoff({
+                    tripId: trip.id,
+                    coverUrl: trip.coverDisplayUrl ?? null,
+                    source: captureCoverBox(media),
+                  });
+                }}
+                onClick={(e) => {
+                  const media = e.currentTarget.querySelector(".trip-cover-media");
+                  if (media instanceof HTMLElement) {
+                    setOpenBookHandoff({
+                      tripId: trip.id,
+                      coverUrl: trip.coverDisplayUrl ?? null,
+                      source: captureCoverBox(media),
+                    });
+                  }
+                  saveContentScroll("trips");
+                  navigate(`/trips/${trip.id}`);
+                }}
+              >
+                {/* 零件一次渲全，摆在哪由皮肤的 CSS 定。见 docs/features/皮肤主题.md §2.3 */}
+                <span className="trip-cover-media" aria-hidden />
+                <span className="trip-cover-window">
                   {trip.coverDisplayUrl ? (
                     <img className="trip-cover-photo" src={trip.coverDisplayUrl} alt="" />
                   ) : (
-                    <div className="trip-cover-placeholder" aria-hidden />
+                    <span className="trip-cover-placeholder" aria-hidden />
                   )}
-                </div>
+                </span>
                 <img className="trip-cover-frame" src={tripCoverFrameUrl()} alt="" aria-hidden />
-                {(trip.memberCount ?? 1) > 1 ? (
-                  <span className="trip-cover-share">{t("trips.sharedBadge")}</span>
-                ) : null}
-              </div>
-              <div className="trip-cover-meta">
-                <strong>{trip.title}</strong>
-                <span className="muted">{tripMetaLine(trip)}</span>
-              </div>
-            </button>
+                <span className="trip-cover-share">{t("trips.sharedBadge")}</span>
+                <strong className="trip-cover-title">{trip.title}</strong>
+                <span className="muted trip-cover-mark">{tripMetaLine(trip)}</span>
+              </button>
+            </div>
           ))}
         </div>
       )}
