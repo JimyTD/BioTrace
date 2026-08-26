@@ -33,7 +33,7 @@ export function buildIdentifyPrompt(input: IdentifyInput): string {
   const date = input.capturedAt ? input.capturedAt.toISOString().slice(0, 10) : "";
   const desc = input.description?.trim() || "";
 
-  return `你是生物分类助手，服务于「旅行现场生命观察」App：只收集图中主体为**活的**生物（动物/植物/菌等，野生或饲养均可）的观察。
+  return `你是生物分类助手，服务于「旅行现场生命观察」App：只收集图中主体为现场真实生物（动物/植物/菌等；野生或饲养；死活不限）的观察。
 
 ${identifyLocationLines(input)}
 拍摄日期：${date}
@@ -46,15 +46,15 @@ ${identifyLocationLines(input)}
 2. 字段必须包含：
    - subject_kind：枚举之一
      living_organism | human | artifact_or_toy | depiction_or_media | no_organism | unclear
-     · living_organism：现场活体生物（含动物园/盆栽等饲养个体）
+     · living_organism：现场真生物（含饲养与刚死；空壳/海胆壳/完整蟹蜕按该动物，寄居蟹收蟹；巢羽骨足迹不算）
      · human：真人/明显人类主体
-     · artifact_or_toy：玩具、雕像、手办、标本模型、仿生道具等
+     · artifact_or_toy：玩具、雕像、手办、馆藏标本、仿生道具等
      · depiction_or_media：卡通、插画、书页、屏幕截图、照片里的照片等影像/印刷形象
-     · no_organism：书本、建筑、纯风景、日用品等无明显生物
+     · no_organism：书本、建筑、纯风景、日用品、菜台食材等无明显现场生物
      · unclear：难以判断
-   - subject_living：boolean；仅 living_organism 可为 true，其余必须 false
+   - subject_living：boolean；是否仍活着。仅 living_organism 可 true，空壳等为 false
    - eligibility：collectible | not_collectible
-     · 只有 subject_kind=living_organism 且 subject_living=true 时才允许 collectible
+     · 仅 subject_kind=living_organism 允许 collectible（不要求仍活着）
      · 人、玩具、卡通、书页、无生物等必须 not_collectible
    - ineligibility_reason_zh：短中文；不合格时必填（说明为何不能进图鉴）；合格时可空字符串
    - common_name_zh（中文俗名；不合格时不要写真实物种名冒充；可空）
@@ -71,9 +71,9 @@ ${identifyLocationLines(input)}
    - 玩具熊/雕像/卡通熊 → 不得标成棕熊等真实种，不得 collectible
    - 卡通人物/真人 → human 或 depiction_or_media，不得 collectible，不得按人类分类发卡
    - 书本/物体照片 → no_organism 或 depiction_or_media，不得硬凑生物分类
-4. 不确定是否活体时：subject_kind=unclear，eligibility=not_collectible。
+4. 分不清是真生物还是玩具/印刷时：unclear + not_collectible。死活看不清不要紧。
 5. 合格但不确定种级时：finest_reliable_rank 最高只给到 genus 或 family，species 可为 null，不要编造异域种。
-6. 若提供了国家，优先考虑该国野外可能出现的类群（仅对合格活体）。图中形态与当地分布明显冲突时，宁可停在属/科，不要编造该国没有的种。无国家时不要按中国常见种硬猜。`;
+6. 若提供了国家，优先考虑该国野外可能出现的类群（仅对合格个体）。图中形态与当地分布明显冲突时，宁可停在属/科，不要编造该国没有的种。无国家时不要按中国常见种硬猜。`;
 }
 
 export function extractIdentifyJson(text: string): IdentifyResult {

@@ -41,26 +41,22 @@ function codeForKind(kind: SubjectKind): EligibilityErrorCode {
 }
 
 /**
- * Gate before settle/rarity: only living field organisms may become collectible.
- * Missing/invalid model fields default to not collectible (conservative).
+ * Gate before settle/rarity: only field organisms may become collectible
+ * (alive or dead; empty shells count). Missing/invalid fields default to no.
  */
 export function evaluateEligibility(result: IdentifyResult): EligibilityDecision {
   let kind = result.subject_kind;
-  let living = result.subject_living;
   let eligibility = result.eligibility;
 
   if (looksHuman(result)) {
     kind = "human";
-    living = false;
     eligibility = "not_collectible";
   } else if (kind === "living_organism" && looksArtifactOrDepiction(result)) {
     kind = "artifact_or_toy";
-    living = false;
     eligibility = "not_collectible";
   }
 
-  const collectible =
-    eligibility === "collectible" && kind === "living_organism" && living === true;
+  const collectible = eligibility === "collectible" && kind === "living_organism";
 
   if (collectible) return { ok: true };
 
