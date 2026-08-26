@@ -67,12 +67,12 @@ docs/        筹划 + 本实现规格
 
 ## 1.2 识图合格性闸门
 
-在开包 / 稀有度 / 图鉴之前拦截「不是现场活体生物」的结果（书、人、玩具、卡通等）。
+在开包 / 稀有度 / 图鉴之前拦截「不是现场真实生物」的结果（书、人、玩具、卡通等）。
 
 - Prompt 要求模型声明 `subject_kind` / `subject_living` / `eligibility`；有坐标时带上离线判定的国家中文名作分布先验（不打天地图）；代码：[`eligibility.ts`](../apps/api/src/identify/eligibility.ts)、[`prompt.ts`](../apps/api/src/identify/prompt.ts)。
-- **可收集**：`living_organism` 且活体（含饲养/动物园）。
-- **不可收集**：人、玩具/模型、影像/印刷形象、无生物、不明；写 `failed` + 分型码，**清空**俗名/学名/taxonomy/稀有度/`taxonKey`/`accepted_taxonomy_json`，不开包、不进图鉴。
-- 用户主文案（术语表）：**「东西是真的，但没用。」**（`error.identifyNotCollectible`）+ 副句换活体照片；徽章「不可收集」。
+- **可收集**：`living_organism`（死活不限；含饲养；空壳/海胆壳/完整蟹蜕按该动物；寄居蟹收蟹）。
+- **不可收集**：人、玩具/模型、馆藏标本、影像/印刷、菜台食材、巢羽骨足迹、无生物、不明；写 `failed` + 分型码，**清空**俗名/学名/taxonomy/稀有度/`taxonKey`/`accepted_taxonomy_json`，不开包、不进图鉴。
+- 用户主文案（术语表）：**「东西是真的，但没用。」**（`error.identifyNotCollectible`）+ 副句「图是好图，图鉴不收。」；徽章「不可收集」。
 - 过粗（真生物但粗于科）仍用 `identify_too_coarse`。
 - 详情可点进：不合格不渲染分类链，不因脏字段报错。
 

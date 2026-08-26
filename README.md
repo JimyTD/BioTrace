@@ -7,6 +7,10 @@
 
 > 文档导航 [`docs/README.md`](docs/README.md)：功能真源 [`docs/SPEC.md`](docs/SPEC.md) · 运维真源 [`docs/OPS.md`](docs/OPS.md) · 专题 [`docs/features/`](docs/features/) · 来时路 [`docs/planning/`](docs/planning/)。
 
+## 给协作 Agent
+
+强制约束的真源是 [`.cursor/rules/`](.cursor/rules/)，不是某家工具的默认人格。换了 Cursor / Claude / Codex / Copilot 或其他 Agent 进仓库时，先扫完这个目录，再把各条落到**自己这边**的 rule / 指令文件，不要假设已经读过 Cursor 的 alwaysApply。入口见根目录 [`AGENTS.md`](AGENTS.md)。
+
 ## 本机启动
 
 需要 Node 20+、pnpm。
@@ -60,7 +64,7 @@ HTTPS_PROXY=http://127.0.0.1:7890
 ```text
 apps/api             Node + Hono + SQLite(libsql) + Gemini/GLM
 apps/web             Vite + React + MapLibre
-  src/themes/        皮肤主题（配色/字体；默认 daylight）
+  src/themes/        皮肤主题（默认 daylight，备选 clear）
 packages/messages    统一界面/术语文案（默认 zh）
 deploy/              生产 env / Nginx 模板
 Dockerfile           API 镜像

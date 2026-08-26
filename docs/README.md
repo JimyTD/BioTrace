@@ -30,7 +30,7 @@
 |------|------|
 | [`features/旅行套册.md`](./features/旅行套册.md) | 套册成就：策展原则、当前目录、加册步骤 |
 | [`features/套册美术分层.md`](./features/套册美术分层.md) | 套册美术：一图一职责、相框 SVG、禁止复合图；§7.2 静态 HTML 叠层预览 |
-| [`features/皮肤主题.md`](./features/皮肤主题.md) | 皮肤 token 与新增皮肤清单 |
+| [`features/皮肤主题.md`](./features/皮肤主题.md) | 两套皮肤 `daylight` / `clear`；token、摆放、槽位与加皮肤清单 |
 | [`features/Android套壳.md`](./features/Android套壳.md) | Capacitor 侧载壳与签名发布 |
 | [`features/管理后台.md`](./features/管理后台.md) | 独立管理端：页面、识图线路、密钥与存储；与运维入口分离 |
 | [`features/识图护栏.md`](./features/识图护栏.md) | 账号日额度 + 自备 OpenAI 兼容 Key |
@@ -58,5 +58,6 @@
 | 位置 | 内容 |
 |------|------|
 | [`../README.md`](../README.md) | 本机启动、地图 key、仓库结构 |
+| [`../AGENTS.md`](../AGENTS.md) | 给协作 Agent：先扫 `.cursor/rules/`，再落到自己这边 |
 | [`../apps/api/data/volumes/README.md`](../apps/api/data/volumes/README.md) | 套册配置 DSL |
 | [`../model-bakeoff/README.md`](../model-bakeoff/README.md) | 多模型同图对照脚本（独立） |

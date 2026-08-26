@@ -1,6 +1,6 @@
 ﻿# 套册静态美术
 
-按皮肤分目录：`daylight/`、`tide/`。`tide` 册皮位图暂与 daylight 同构图，几何框已换色。
+按皮肤分目录：`daylight/`、`clear/`。`clear` 这批册皮是灯箱时期画的，改名沿用，见手册 §6.0。
 
 **分层规范：** [`docs/features/套册美术分层.md`](../../../docs/features/套册美术分层.md)
 

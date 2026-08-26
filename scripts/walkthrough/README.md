@@ -31,7 +31,7 @@ powershell -ExecutionPolicy Bypass -File scripts\walkthrough\shot.ps1 `
   -To "/" -Out ".shot\before.png" -Width 430 -Height 932
 
 # 指定皮肤
-... -Theme lightbox
+... -Theme clear
 
 # 开包三个阶段（预览页认 ?phase= / ?rarity= / ?hold=1 / ?photo= / ?when= / ?where=）
 # hold=1 让阶段停在原地不自己往下走——揭示只有几百毫秒，不冻住就只能截到它演完的样子

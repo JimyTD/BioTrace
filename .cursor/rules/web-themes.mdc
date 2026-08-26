@@ -1,5 +1,5 @@
 ---
-description: Web 皮肤主题与流程页分离；加主题按 docs/features/皮肤主题.md，禁止在页面写死品牌色
+description: Web 皮肤与流程页分离；加功能必须过皮肤清单，禁止在页面写死品牌色
 alwaysApply: true
 ---
 
@@ -7,45 +7,32 @@ alwaysApply: true
 
 表现层五分离：**文案** `packages/messages` · **配色** `apps/web/src/themes/` · **结构摆放** `styles.css` · **整块换实现** `themes/slots.ts` · **流程与数据** `pages/`。
 
-完整清单与 token 表见 [`docs/features/皮肤主题.md`](docs/features/皮肤主题.md)。
+细则与 token 表见 [`docs/features/皮肤主题.md`](docs/features/皮肤主题.md)。当前皮肤：默认 `daylight`，备选 `clear`（无世界观，只有观感）。`/admin`、地图在线瓦片不换皮；引导插页尚未主题化。
 
-## 必须
+## 加功能时过一遍
 
-- 配色 / 字体 / 圆角 / 氛围底 / 稀有度徽章色：写在 `apps/web/src/themes/<id>.css` 的 `[data-theme="<id>"]` 下
-- 主题化位图：`public/{volumes,trips,settle,shell}/<id>/`，只经 `themes/*Assets` helper 引用（见 [`套册美术分层.md`](docs/features/套册美术分层.md)）
-- 壳纸纹：`public/shell/<id>/page-texture.jpg`，经 `--page-texture` / `--nav-texture`；日常页不是纯色 hex
-- 结构样式只使用语义 `var(--*)`（见 `apps/web/src/styles.css`）
-- **零件常在、位置由 CSS 决定**：承载质感的结构（片框、封面、套册格、开包舞台）把零件节点一次渲全，各皮肤用 `[data-theme]` 下的 grid / 定位决定摆在哪。皮肤之间的差别优先靠摆放实现，不靠分叉组件
-- 新增皮肤：加 CSS → 备资源包 → 登记 `ThemeId` / `THEME_IDS` / `THEME_META` → `main.tsx` import → 加 `theme.<id>` 与 `theme.<id>Hint` 文案
-- 皮肤要换说法（拆封 / 显影之类）：加 `packages/messages/src/voices/<voice>.ts` 覆盖表，在 `THEME_META.voice` 指过去
-- 切换皮肤用 `applyTheme`
-- **加功能的那一轮就把皮肤补上**，别攒着。照 [`皮肤主题.md` §6](docs/features/皮肤主题.md) 那份清单过一遍：新中文进 messages、新颜色进 token 且**所有**皮肤都填、新结构件零件一次渲全、新图进 `public/<域>/<id>/`、新动作或新「概念的表现方式」按 §2.4 判断要不要开槽位。判断为不用开的，在汇报里写一句为什么对所有皮肤都一样——**默默写死不允许**
-- 出过风格示意页（`public/themes/*.html`）的，实现完必须和示意页**并排截图比对**再汇报，用 [`scripts/walkthrough/side.py`](scripts/walkthrough/README.md) 拼图。只确认「皮肤生效了」不算验收——2026-08-25 的灯箱就是漏了这步，示意里打在卡纸下沿的说明字实现成了框外正文，整个质感没落地
-- 纯改造类改动（只搬结构、不动观感）验收标准是**默认皮肤下逐像素 0 差异**，用 [`scripts/walkthrough/`](scripts/walkthrough/README.md) 出图比对。「看起来一样」不算
+命中就补；判断为不用补的，汇报里写一句为什么对**所有已登记皮肤**都一样。禁止默默写死。
+
+1. 新的用户可见中文 → `packages/messages`，用 `t()`。某套皮肤要换说法再加 `voices/`，不改状态码、不改含义。
+2. 新的颜色 / 字体 / 圆角 / 阴影 → `var(--*)`。没有合适 token 就新开，**同轮给所有已登记皮肤赋值**。漏填是 `unset`，不是回退。
+3. 新的承载质感的结构件 → 零件一次渲全，默认藏着，各皮肤用 `[data-theme]` 决定摆哪、亮哪。不要用条件渲染决定零件在不在。
+4. 新的主题化图片 → `public/<域>/<themeId>/`，只经 `themes/*Assets` helper。不要写死某个皮肤的路径。
+5. 新的动作，或新的「概念的表现方式」（等级、仪式、状态章）→ 先判断要不要开 `themes/slots.ts` 槽位。换的是物件或演法，不是颜色，才开槽。
+
+切换皮肤用 `applyTheme`。新皮肤：CSS → 资源包 → 登记 `ThemeId` / `THEME_IDS` / `THEME_META` → `main.tsx` import → `theme.<id>` / `theme.<id>Hint`。
 
 ## 禁止
 
-- 在 `pages/*` / `components/*` 里写死主题十六进制色、写死 `/volumes/daylight/` 或 `/shell/daylight/`
-- 皮肤触碰数据、状态机、请求、路由、埋点——皮肤只拿算好的 props 决定怎么摆
+- 在 `pages/*` / `components/*` 写死主题十六进制色或某个皮肤的资源路径
+- 皮肤触碰数据、状态机、请求、路由、埋点
 - 只改某一皮肤、却在 `styles.css` 留下硬编码品牌色
 - 未在 `THEME_IDS` 登记的 id 当作可用皮肤
-- 在 `THEME_META.assets` 里声明没有实际文件的资源域，或在 `ThemeSlots` 里声明没人调用的槽位（声明即承诺）
-- 把 `themes/slots.ts` 从 `themes/index.ts` 再导出（它 import 组件，组件 import 桶文件，一转就成环）
-- 借换皮之名改内部状态码或增删功能——换的是摆法与说法，不换含义，功能一个都不许少
-- 用不规则复合 PNG 当邮票相框（相框用几何 SVG）
+- 声明没有人读的资源域，或声明没人调用的槽位
+- 借换皮改内部状态码或增删功能——换摆法和说法，不换含义
+- 为换皮复制 `pages/*` 或分叉业务流程
 
-## 当前与后置
+## 验收
 
-- 两套皮肤：默认 `daylight`（日光图版，19 世纪博物图版），备选 `clear`（清透，浅冷白底 + 暖白卡纸边 + 圆角柔影淡彩）
-- `lightbox`（灯箱）的**设定**已退役，只留下照片那一半（暖白边、微微歪、软阴影、沿上小字）并入 `clear`，旧 id 由 `core.ts` 的 `LEGACY_THEME_IDS` 映射过去。`tide`（潮间带）与 `darkroom`（暗房）整套删除
-- 皮肤**不一定**要有世界观。`clear` 就没有，它只是一套观感（圆角、柔影、大留白、淡彩只做小面积、界面几乎消失）。别硬给它编叙事；也别因为它没叙事就以为可以少做，token / 槽位 / 摆放一样都不能省
-- 「不许动结构」这条旧禁令已作废：它逼出过「只换 token、DOM 一个字不改」的假实现。现在的边界是数据不许动，摆放随便改
-- 槽位层（`themes/slots.ts`）五个槽位已全部接上。清透覆盖了 `raritySeal`（淡彩药丸）与 `settleStage`（照片由糊到清地显出来），查表这条路已走通；三个动作槽位仍只有默认实现。碰到「换个表现方式」的需求先接槽位，别往组件里写死
-- **零件已经在 DOM 里了就别在图里仿它**。灯箱第一版没打开 `.film-tile-mark`，转而在 `film-frame.svg` 里画三条灰方块假装是字——远看像，凑近是三根杠。示意里的字要用真字
-- **往共用结构里加零件时默认 `display: none`**（`.me-row-icon` / `.me-avatar` / `.tint-bar` 就是这么加的），皮肤在自己的 `[data-theme]` 下打开。这样别的皮肤能拿到逐像素 0 差异。零件要跨页复用就复用（`.me-row` 与 `.tint-bar` 在「我的」和「图鉴」是同一份），别照抄一份改个类名
-- **卡纸沿上的字不许写 `line-height: 1`**。1em 行盒装不下中日文字形，配上 `overflow: hidden` 会削掉字顶五分之一，而截图缩小了看不出来。留 1.3 以上，塞不下就调字号或沿宽
-- **声明资源域之前先确认真有人读**。清透换掉了开包舞台与稀有度，`settle` 域一张图都读不到就不该声明——文件齐不等于该声明
-- 皮肤层的规则要压过 `styles.css` 得**同权重再高一档**：两边打平时后加载的赢，而 `styles.css` 排在皮肤表之后（底栏那道 `.nav a.active::after` 就是这么漏过去的）
-- 动作槽位（`lift` / `slot` / `album`）**没有自动验收手段**，中间帧抓不到（虚拟时钟不是白帧就是终态）。碰动作只能人工跑一遍，别在截图上耗时间
-- 地图页刻意不主题化（在线瓦片来自天地图，换不了配色）；引导页三张插页尚未主题化，是已知缺口
-- 深色皮肤将来仍可能出现，改结构样式时别写死浅色前提
+- 有风格示意页的，对着示意看，不只确认「皮肤生效了」
+- 只搬结构、不改观感时，默认皮肤不能漂
+- 改结构样式时别写死浅色前提
