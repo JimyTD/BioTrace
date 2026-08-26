@@ -1,0 +1,509 @@
+/**
+ * 清透 · 备选皮肤
+ *
+ * 这套没有世界观，只有观感：浅冷白底，照片带暖白边贴上去，界面轻到几乎不见。
+ * 前身是「灯箱」——那套设定（随队记录、把片子推上灯箱）已连同它的文案一并退役，
+ * 留下的只有当初真正被认可的那一半：大照片、暖白卡纸边、微微歪、软阴影。
+ *
+ * 两条规矩，加东西时照着办：
+ * 1. 界面不给材质。卡片是一层近白 + 一团柔影，不描边、不铺纹理。
+ * 2. 淡彩只做小面积（图标块、进度条、当前页签、名片底），橙只给主动作。
+ *
+ * 风格示意：apps/web/public/themes/clear.html
+ */
+[data-theme="clear"] {
+  --font-sans: "Outfit", system-ui, sans-serif;
+  --font-brand: "Outfit", system-ui, sans-serif;
+  /* 只用在卡纸下沿那行编号／日期。界面里一个等宽字都不许出现 */
+  --font-meta: "Courier Prime", "Courier New", ui-monospace, monospace;
+
+  --bg0: #f4f8fa;
+  --bg1: #eef3f6;
+  --ink: #333b41;
+  --muted: #8d979e;
+  --line: rgba(120, 140, 155, 0.13);
+
+  --accent: #444e55;
+  --accent-soft: #e8eef2;
+  --accent-border: rgba(90, 105, 115, 0.22);
+  --accent-border-strong: rgba(90, 105, 115, 0.34);
+
+  /* 主按钮等行动色 */
+  --cta: #d9531e;
+  --cta-ink: #fffaf7;
+
+  --secondary: #4a7089;
+  --nav-active-bg: #f8e3d0;
+  --nav-active-ink: #b8410f;
+  --warn: #a3600f;
+  --danger: #b3261e;
+  --danger-ink: #fffaf8;
+  --danger-soft: rgba(179, 38, 30, 0.07);
+  --danger-line: rgba(179, 38, 30, 0.3);
+  --danger-badge-bg: #f7dcd8;
+  --warn-badge-bg: #f8e8c8;
+  --warn-soft: rgba(163, 96, 15, 0.11);
+  --warn-line: rgba(163, 96, 15, 0.24);
+
+  /* 卡片没有材质：一层近白，靠柔影浮起来，不靠边框 */
+  --card: rgba(255, 255, 255, 0.86);
+  --card-muted: rgba(255, 255, 255, 0.62);
+  --input-bg: #ffffff;
+  --surface-wash: rgba(120, 140, 155, 0.07);
+  --modal-bg: #f9fbfc;
+  --modal-scrim: rgba(30, 45, 55, 0.42);
+  --nav-bg: rgba(255, 255, 255, 0.72);
+  /* 不铺纹理——底就该是干净的。THEME_META 里也没声明 shell 域 */
+  --nav-texture: none;
+  --page-texture: none;
+  --page-texture-opacity: 1;
+  --page-texture-blend: normal;
+  --shadow:
+    0 1px 2px rgba(90, 112, 128, 0.05),
+    0 10px 24px rgba(90, 112, 128, 0.07);
+  --shadow-sm:
+    0 1px 2px rgba(90, 112, 128, 0.06),
+    0 4px 10px rgba(90, 112, 128, 0.06);
+
+  /* 圆角是这套风格的骨头：直角一出来立刻变回白纸 */
+  --radius-sm: 10px;
+  --radius-md: 14px;
+  --radius-lg: 18px;
+  --radius-btn: 999px;
+
+  --bg-atmosphere: radial-gradient(ellipse 130% 90% at 50% 12%, #ffffff 0%, #f8fbfc 42%, #eef3f6 100%);
+  --page-wash: transparent;
+
+  /* 淡彩四色：苔 / 雾 / 杏 / 藕。只做小面积的底 */
+  --tint-1-bg: #dee9da;
+  --tint-1-ink: #556f48;
+  --tint-2-bg: #d9e8f2;
+  --tint-2-ink: #4a7089;
+  --tint-3-bg: #f8e3d0;
+  --tint-3-ink: #a26139;
+  --tint-4-bg: #f2e1e5;
+  --tint-4-ink: #8a5966;
+
+  /* 开关（三处 checkbox 靠纯 CSS 画成开关，不动 DOM） */
+  --switch-off: #dde4e8;
+  --switch-knob: #ffffff;
+
+  --map-dot: #444e55;
+  --map-dot-selected: #d9531e;
+  --map-dot-ring: rgba(217, 83, 30, 0.3);
+  --map-dot-border: #ffffff;
+  --map-dot-shadow: 0 2px 8px rgba(60, 85, 100, 0.26);
+
+  /* 稀有度：灰→亮蓝→亮紫→亮金→刺红→彩虹→霓虹洋红(+XR异形章) */
+  --rarity-N-bg: #e8edf0;
+  --rarity-N-fg: #5b656c;
+  --rarity-R-bg: #d9eaff;
+  --rarity-R-fg: #0a5f9e;
+  --rarity-SR-bg: #ebdcff;
+  --rarity-SR-fg: #6a20bd;
+  --rarity-SSR-bg: #ffe58c;
+  --rarity-SSR-fg: #6b4200;
+  --rarity-UR-bg: #ffc7be;
+  --rarity-UR-fg: #b02010;
+  --rarity-LR-bg: #f0e4ff; /* 徽章再用 styles 叠彩虹渐变 */
+  --rarity-LR-fg: #55187a;
+  --rarity-XR-bg: #ffc9ef;
+  --rarity-XR-fg: #96006e;
+
+  --rarity-N-seal: #8b959c;
+  --rarity-N-seal-ink: #f8fafb;
+  --rarity-R-seal: #1ba7f0;
+  --rarity-R-seal-ink: #f0faff;
+  --rarity-SR-seal: #a63ff0;
+  --rarity-SR-seal-ink: #fcf4ff;
+  --rarity-SSR-seal: #f0bf00;
+  --rarity-SSR-seal-ink: #3a2800;
+  --rarity-UR-seal: #ff2033;
+  --rarity-UR-seal-ink: #fff0f0;
+  --rarity-LR-seal: #f0bf00; /* 回退色；实际用 conic 彩虹 */
+  --rarity-LR-seal-ink: #14192b;
+  --rarity-XR-seal: #ff00a8;
+  --rarity-XR-seal-ink: #fff5fb;
+
+  --list-tag-class_i-bg: #9a2417;
+  --list-tag-class_i-fg: #fff6f1;
+  --list-tag-class_ii-bg: #7a4e28;
+  --list-tag-class_ii-fg: #fff8f0;
+  --list-tag-sanyou-bg: #1c5b62;
+  --list-tag-sanyou-fg: #eef8f8;
+  --list-tag-extinct-bg: #3a4046;
+  --list-tag-extinct-fg: #f2f5f7;
+
+  --rarity-LR-badge: linear-gradient(135deg, #d8c0ff 0%, #ffe27a 48%, #ffb0d8 100%);
+  --rarity-LR-seal-rainbow: conic-gradient(
+    from 210deg,
+    #a63ff0 0deg,
+    #1ba7f0 60deg,
+    #f0bf00 120deg,
+    #ff2033 200deg,
+    #ff00a8 280deg,
+    #a63ff0 360deg
+  );
+
+  /* 套册（暂为占位功能，沿用现有资源）。
+     空格底提到近白、印样压成水印：原来那档是深灰块 + 不透明剪影，
+     六个格子并排像六块加载占位 */
+  --volume-cover-empty: #f4f8fa;
+  --volume-stamp-empty-line: rgba(90, 115, 135, 0.18);
+  --volume-plate-opacity: 0.22;
+  --volume-complete-line: #d9531e;
+  --volume-complete-soft: #f8e3d0;
+  --volume-complete-ink: #b8410f;
+  --volume-complete-glow: 0 12px 36px rgba(217, 83, 30, 0.16);
+
+  /* 照片：暖白卡纸边贴在浅冷白底上，就是被认可的那一半 */
+  --trip-cover-shadow:
+    0 1px 2px rgba(70, 90, 105, 0.16),
+    0 10px 22px rgba(70, 90, 105, 0.13);
+  --trip-cover-shadow-hover:
+    0 2px 4px rgba(70, 90, 105, 0.18),
+    0 14px 30px rgba(70, 90, 105, 0.18);
+  --trip-cover-plate: #f3f0e9;
+  /* 打在卡纸上的字：写在实物上，不是界面文字。标题那档要压得住照片 */
+  --mount-ink: #6a6357;
+  --mount-title-ink: #453f37;
+  --film-tile-shadow:
+    0 1px 2px rgba(70, 90, 105, 0.14),
+    0 8px 18px rgba(70, 90, 105, 0.11);
+  --stamp-empty-hatch: rgba(90, 115, 135, 0.05);
+  --ceremony-seal-shadow: drop-shadow(0 2px 6px rgba(70, 90, 105, 0.22));
+  --trip-create-bg: var(--card);
+  --trip-share-badge-bg: var(--volume-complete-soft);
+  --trip-share-badge-ink: var(--volume-complete-ink);
+  --trip-pending-veil: color-mix(in srgb, var(--volume-cover-empty) 88%, #ffffff);
+  --trip-pending-band-ink: var(--accent);
+  --trip-empty-caption: var(--muted);
+  --frontispiece-ink: #6a6357;
+
+  /* 我的：名片是唯一一块大面积淡彩，把最闷的一页救活 */
+  --me-card-bg: linear-gradient(135deg, #e4efdf 0%, #dee9f2 54%, #f1e2e7 100%);
+  --me-row-line: rgba(120, 140, 155, 0.13);
+
+  --photo-mat: #e9eff3;
+}
+
+/* ── 摆放层 ────────────────────────────────────────────────────────────
+   到这儿为止都是换色。下面换的是零件摆在哪与长什么样。
+   零件是共用的那套，见 styles.css「卡纸栅格」与 docs/features/皮肤主题.md §2.3。 */
+
+/* ── 照片：原样留下的那一半 ─────────────────────────────────────────
+   相册格＝一张装片卡纸。三边窄、下沿宽出来放那行小字。
+   尺寸按风格示意换算：380px 手机两列 → 卡纸 165px，边 9px＝5.5%，
+   下沿 5+10+7＝22px＝13.3%。用 cqw 所以换几列都同比例。 */
+[data-theme="clear"] .film-tile {
+  --mount-lip-top: 5.5cqw;
+  --mount-lip-right: 5.5cqw;
+  --mount-lip-bottom: 13.3cqw;
+  --mount-lip-left: 5.5cqw;
+  --mount-caption-gap: 5px;
+}
+
+/* 卡纸由 .film-tile-mount 那层底提供，不再叠一张边框图：
+   边框图的窗口是四边等宽的，套不住这里下沿加宽的卡纸 */
+[data-theme="clear"] .film-tile-frame,
+[data-theme="clear"] .trip-cover-frame {
+  display: none;
+}
+
+/* 沿上标注：日期在左、片号在右。日光把这道边关着 */
+[data-theme="clear"] .film-tile-mark {
+  display: flex;
+  padding: 0 0.6cqw;
+  font-size: 5.1cqw;
+  line-height: 1;
+  letter-spacing: 0.06em;
+  color: var(--mount-ink);
+}
+
+[data-theme="clear"] .film-tile-mark-no {
+  opacity: 0.55;
+}
+
+/* 旅途封面是同一种物件，只大一号：下沿宽出来，
+   把名字和「几张·日期·地点」一起从框外挪上卡纸——左名字、右标注，
+   一行分两头，既不压在照片上，也不各占一行把卡纸撑长 */
+[data-theme="clear"] .trip-cover-slot {
+  /* 封面比相册格大一倍多，边按同一个百分比就显得笨重——照示意收到 3cqw */
+  --mount-lip-top: 3cqw;
+  --mount-lip-right: 3cqw;
+  --mount-lip-bottom: 7cqw;
+  --mount-lip-left: 3cqw;
+  --mount-caption-gap: 8px;
+}
+
+[data-theme="clear"] .trip-cover-title {
+  grid-area: lip-bottom;
+  z-index: 3;
+  align-self: center;
+  justify-self: start;
+  /* 两边加起来正好 100%，长标题配长标注也不会撞在一起 */
+  max-width: 38%;
+  margin: 0;
+  padding: 0 0.4cqw;
+  font-size: 4cqw;
+  line-height: 1;
+  letter-spacing: -0.01em;
+  color: var(--mount-title-ink);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+[data-theme="clear"] .trip-cover-mark {
+  grid-area: lip-bottom;
+  z-index: 3;
+  align-self: center;
+  justify-self: end;
+  max-width: 62%;
+  margin: 0;
+  padding: 0 0.4cqw;
+  font-size: 2.8cqw;
+  line-height: 1;
+  letter-spacing: 0.06em;
+  color: var(--mount-ink);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+/* 卡纸不跟界面卡片一样圆：它是张相片，不是一块面板 */
+[data-theme="clear"] .trip-cover-media {
+  border-radius: 6px;
+}
+
+[data-theme="clear"] .trip-cover-window,
+[data-theme="clear"] .film-tile-window {
+  border-radius: 3px;
+}
+
+/* 框外那段是随手记的账，不该跟卡纸上的字抢：收小、收紧 */
+[data-theme="clear"] .film-tile-caption {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  gap: 0 7px;
+  padding: 0 1px;
+}
+
+[data-theme="clear"] .film-tile-caption strong {
+  flex-basis: 100%;
+  font-size: 0.84rem;
+}
+
+[data-theme="clear"] .film-tile-caption .muted {
+  font-size: 0.7rem;
+}
+
+[data-theme="clear"] .film-tile-delete {
+  font-size: 0.72rem;
+}
+
+/* 片子是一张张贴上去的，不会贴得笔直 */
+[data-theme="clear"] .film-tile:nth-child(4n + 1) {
+  transform: rotate(-0.5deg);
+}
+[data-theme="clear"] .film-tile:nth-child(4n + 2) {
+  transform: rotate(0.4deg);
+}
+[data-theme="clear"] .film-tile:nth-child(4n + 3) {
+  transform: rotate(0.7deg);
+}
+[data-theme="clear"] .film-tile:nth-child(4n + 4) {
+  transform: rotate(-0.3deg);
+}
+
+/* ── 界面：不给材质 ─────────────────────────────────────────────────
+   卡片一律去掉描边，只留柔影。描边一加回来就变回「白纸上画格子」 */
+[data-theme="clear"] .card,
+[data-theme="clear"] .me-menu,
+[data-theme="clear"] .me-identity,
+[data-theme="clear"] .panel {
+  border-color: transparent;
+}
+
+/* 页签条：白到几乎化掉，当前项落一枚淡彩小药丸而不是一道下划线。
+   下划线是「标一下」，药丸是「站在这儿」——后者跟这套的圆角是一路 */
+[data-theme="clear"] .nav {
+  border-top-color: transparent;
+  padding-top: 6px;
+  padding-bottom: calc(8px + env(safe-area-inset-bottom, 0px));
+}
+
+[data-theme="clear"] .nav a {
+  margin: 0 4px;
+  padding: 8px 4px;
+  border-radius: var(--radius-btn);
+}
+
+[data-theme="clear"] .nav a.active {
+  background: var(--nav-active-bg);
+  font-weight: 600;
+}
+
+/* 药丸接手了「当前在哪」，那道横杠就多余了。
+   得写到 .active 这一档才压得住 styles.css 里的同名规则——两边等权重时
+   后加载的赢，而 styles.css 排在皮肤表后面 */
+[data-theme="clear"] .nav a::after,
+[data-theme="clear"] .nav a.active::after {
+  content: none;
+}
+
+/* 主动作要看得出是主动作。示意里「创建」是实心橙，「用邀请码加入」是杏色药丸；
+   现在两个都是白药丸，一页上没有落点 */
+[data-theme="clear"] .trip-create-inline .btn {
+  background: var(--cta);
+  border-color: transparent;
+  color: var(--cta-ink);
+  box-shadow: 0 4px 12px rgba(217, 83, 30, 0.2);
+}
+
+[data-theme="clear"] .trip-join-toggle.btn {
+  background: var(--nav-active-bg);
+  border-color: transparent;
+  color: var(--nav-active-ink);
+  box-shadow: none;
+}
+
+/* 设置行：淡彩图标块 + 大留白，分隔线从图标右侧起，细到快看不见 */
+[data-theme="clear"] .me-row {
+  gap: 13px;
+  padding: 13px 16px;
+  border-bottom: 0;
+  position: relative;
+}
+
+[data-theme="clear"] .me-row + .me-row::before {
+  content: "";
+  position: absolute;
+  left: 63px;
+  right: 16px;
+  top: 0;
+  height: 1px;
+  background: var(--me-row-line);
+}
+
+[data-theme="clear"] .me-row-icon {
+  display: grid;
+}
+
+/* 行内文字要占满中间，把值和 › 顶到右边 */
+[data-theme="clear"] .me-row > span:not([class]),
+[data-theme="clear"] .me-row .theme-row-main {
+  flex: 1;
+}
+
+/* 名片：唯一一块大面积淡彩，把最闷的一页救活。
+   首字母牌在左，名字与邮箱在中间，「编辑资料」收成右边一枚白药丸 */
+[data-theme="clear"] .me-identity {
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr) auto;
+  align-items: center;
+  gap: 2px 14px;
+  padding: 18px 17px;
+}
+
+[data-theme="clear"] .me-avatar {
+  display: grid;
+  grid-row: span 2;
+  background: rgba(255, 255, 255, 0.75);
+  color: var(--tint-1-ink);
+}
+
+[data-theme="clear"] .me-identity strong {
+  grid-column: 2;
+}
+
+[data-theme="clear"] .me-identity .muted {
+  grid-column: 2;
+  font-size: 0.81rem;
+}
+
+[data-theme="clear"] .me-identity-action {
+  grid-column: 3;
+  grid-row: span 2;
+  padding: 7px 14px;
+  border-radius: var(--radius-btn);
+  background: rgba(255, 255, 255, 0.85);
+  font-size: 0.79rem;
+  white-space: nowrap;
+}
+
+/* 配额：一条淡色细进度，比一行灰字有生气 */
+[data-theme="clear"] .me-quota {
+  display: grid;
+  gap: 9px;
+  padding: 14px 17px 16px;
+  border-radius: var(--radius-lg);
+  background: var(--card);
+  box-shadow: var(--shadow);
+}
+
+[data-theme="clear"] .me-quota-bar {
+  display: block;
+  background: var(--tint-2-bg);
+}
+
+[data-theme="clear"] .me-quota-bar::before {
+  background: var(--tint-2-ink);
+  opacity: 0.55;
+}
+
+/* 勾选行变成开关行：字在左、开关顶到右。DOM 顺序是 input 在前，
+   靠 order 掉个个儿，不动结构。styles.css 里已有 :has() 用例，可以放心用 */
+[data-theme="clear"] label.row:has(> input[type="checkbox"]) {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+[data-theme="clear"] label.row:has(> input[type="checkbox"]) > span {
+  order: -1;
+  flex: 1;
+}
+
+/* 开关：三处 checkbox 靠 CSS 变形，DOM 一个字不动 */
+[data-theme="clear"] input[type="checkbox"] {
+  appearance: none;
+  -webkit-appearance: none;
+  position: relative;
+  width: 42px;
+  height: 25px;
+  flex: none;
+  margin: 0;
+  border: 0;
+  border-radius: 999px;
+  background: var(--switch-off);
+  cursor: pointer;
+  transition: background 0.16s ease;
+}
+
+[data-theme="clear"] input[type="checkbox"]::after {
+  content: "";
+  position: absolute;
+  top: 3px;
+  left: 3px;
+  width: 19px;
+  height: 19px;
+  border-radius: 999px;
+  background: var(--switch-knob);
+  box-shadow: 0 1px 3px rgba(70, 90, 105, 0.28);
+  transition: left 0.16s ease;
+}
+
+[data-theme="clear"] input[type="checkbox"]:checked {
+  background: var(--cta);
+}
+
+[data-theme="clear"] input[type="checkbox"]:checked::after {
+  left: 20px;
+}
+
+[data-theme="clear"] input[type="checkbox"]:disabled {
+  opacity: 0.5;
+  cursor: default;
+}

@@ -18,8 +18,8 @@ import type { ComponentType } from "react";
 
 import type { Rarity } from "../api";
 import type { MotionBox } from "../motion";
-import { LightboxLampStage } from "../components/LightboxLampStage";
-import { LightboxRankTag } from "../components/LightboxRankTag";
+import { ClearRankChip } from "../components/ClearRankChip";
+import { ClearRevealStage } from "../components/ClearRevealStage";
 import { SettlePackStage } from "../components/SettlePackStage";
 import { SettleRaritySeal } from "../components/SettleRaritySeal";
 import { flipBook } from "../bookFlip";
@@ -151,11 +151,11 @@ const DEFAULT_SLOTS: Required<SlotTable> = {
 /** 各皮肤自己的实现。没列的槽位自动落回 DEFAULT_SLOTS。 */
 const THEME_SLOTS: Partial<Record<ThemeId, SlotTable>> = {
   // daylight 就是缺省实现，不必登记
-  // 灯箱里没有可撕的壳：开包是「推上灯箱、灯亮」，稀有度是归档打上去的等级码，
+  // 清透里没有可撕的壳：开包是「照片由糊到清地显出来」，稀有度是一枚淡彩药丸，
   // 不是封蜡章。这两块换的是物件本身，不是颜色，所以走槽位而不是 token。
-  lightbox: {
-    settleStage: () => LightboxLampStage,
-    raritySeal: () => LightboxRankTag,
+  clear: {
+    settleStage: () => ClearRevealStage,
+    raritySeal: () => ClearRankChip,
   },
 };
 

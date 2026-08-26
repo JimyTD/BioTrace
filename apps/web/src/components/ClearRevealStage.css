@@ -1,0 +1,293 @@
+/**
+ * 清透皮肤的开包舞台与稀有度药丸。
+ *
+ * 只服务 ClearRevealStage / ClearRankChip 这两个槽位实现，所以样式跟着组件走、
+ * 不进共享的 styles.css——理由同 SettleRaritySeal.css 的抬头：
+ * 这是某套皮肤的物件，别的皮肤要换就整块换掉，不该在共享结构表里留一份。
+ */
+
+/* 舞台外那张卡片让开：这一屏的主角是照片自己，不该再套一层卡片 */
+[data-theme="clear"] .settle-card {
+  border-color: transparent;
+  background: transparent;
+  box-shadow: none;
+}
+
+[data-theme="clear"] .settle-card-inner {
+  padding: 0;
+}
+
+[data-theme="clear"] .settle-reveal {
+  justify-items: center;
+  text-align: center;
+}
+
+.reveal-stage {
+  position: relative;
+  width: 100%;
+  aspect-ratio: 1 / 1.12;
+  display: grid;
+  align-content: center;
+  justify-items: center;
+  /* 舞台宽当 cqw 用：叠在下面那两张、间距都按台宽同比，换屏宽不走样 */
+  container-type: inline-size;
+  background: none;
+}
+
+/* ── 压在底下的两张 ───────────────────────────────────────────────
+   空卡纸，微微探出来一角。存在的意义是让最上面那张有个「最上面」。 */
+.reveal-under {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  z-index: 1;
+  width: 67cqw;
+  aspect-ratio: 1 / 1.16;
+  border-radius: 5px;
+  background: var(--trip-cover-plate);
+  box-shadow: 0 6px 16px rgba(70, 90, 105, 0.13);
+  pointer-events: none;
+  transition:
+    transform var(--reveal-ms, 780ms) cubic-bezier(0.2, 0.9, 0.25, 1),
+    opacity var(--reveal-ms, 780ms) ease-out;
+}
+
+.reveal-under-l {
+  transform: translate(-50%, -50%) rotate(-6.2deg) translateX(-3.5cqw);
+}
+
+.reveal-under-r {
+  transform: translate(-50%, -50%) rotate(4.8deg) translateX(3.5cqw);
+}
+
+/* 还没显出来时，底下那两张几乎和最上面那张重合——像刚从兜里掏出来的一小叠 */
+.reveal-stage.is-sealed .reveal-under {
+  opacity: 0.5;
+}
+
+.reveal-stage.is-sealed .reveal-under-l {
+  transform: translate(-50%, -50%) rotate(-1.4deg);
+}
+
+.reveal-stage.is-sealed .reveal-under-r {
+  transform: translate(-50%, -50%) rotate(1.1deg);
+}
+
+/* ── 柔光 ─────────────────────────────────────────────────────────
+   照片浮上来时边上漫开一层，散掉就没了。这套底本来就亮，只需一点点。 */
+.reveal-bloom {
+  position: absolute;
+  top: 48%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  z-index: 2;
+  width: 130%;
+  aspect-ratio: 1;
+  background: radial-gradient(
+    ellipse at 50% 50%,
+    rgba(255, 255, 255, 0.95) 0%,
+    rgba(255, 255, 255, 0.55) 34%,
+    rgba(255, 255, 255, 0) 62%
+  );
+  opacity: 0;
+  filter: blur(3px);
+  pointer-events: none;
+}
+
+.reveal-stage.is-revealing .reveal-bloom {
+  animation: revealBloom var(--reveal-ms, 780ms) ease-out forwards;
+}
+
+@keyframes revealBloom {
+  0% {
+    opacity: 0;
+  }
+  45% {
+    opacity: 1;
+  }
+  100% {
+    opacity: 0.28;
+  }
+}
+
+.reveal-stage.is-open .reveal-bloom {
+  opacity: 0.28;
+}
+
+/* ── 最上面那张 ───────────────────────────────────────────────────
+   和相册格是同一种物件：暖白卡纸、下沿宽出来放那行小字。 */
+.reveal-card {
+  position: relative;
+  z-index: 3;
+  width: 70cqw;
+  padding: 4.6cqw 4.6cqw 0;
+  border-radius: 6px;
+  background: var(--trip-cover-plate);
+  box-shadow:
+    0 2px 4px rgba(70, 90, 105, 0.16),
+    0 16px 34px rgba(70, 90, 105, 0.18);
+}
+
+.reveal-window {
+  display: block;
+  aspect-ratio: 1;
+  border-radius: 3px;
+  overflow: hidden;
+  background: var(--photo-mat);
+}
+
+.reveal-photo {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.reveal-mark {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  padding: 2.6cqw 0.5cqw 3.2cqw;
+  font-family: var(--font-meta, var(--font-sans));
+  font-size: 0.62rem;
+  line-height: 1;
+  letter-spacing: 0.06em;
+  color: var(--mount-ink);
+  white-space: nowrap;
+}
+
+.reveal-mark-where {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  opacity: 0.6;
+}
+
+/* ── 还没显出来 ───────────────────────────────────────────────────
+   照片糊着、淡着，卡片略小一圈。不压暗——这套底是亮的，压暗立刻回到暗房去了。 */
+.reveal-stage.is-sealed .reveal-photo {
+  filter: blur(9px) saturate(0.5);
+  transform: scale(1.07);
+}
+
+.reveal-stage.is-sealed .reveal-card {
+  transform: scale(0.965);
+}
+
+.reveal-stage.is-sealed .reveal-mark {
+  opacity: 0.3;
+}
+
+/* ── 显出来 ───────────────────────────────────────────────────────
+   由糊到清是「一段」不是「一下」；时长读组件挂的 --reveal-ms，
+   和「多久之后转 open」同源。 */
+.reveal-stage.is-revealing .reveal-photo {
+  animation: revealSharpen var(--reveal-ms, 780ms) ease-out forwards;
+}
+
+.reveal-stage.is-revealing .reveal-card {
+  animation: revealSettle var(--reveal-ms, 780ms) cubic-bezier(0.2, 0.9, 0.25, 1) forwards;
+}
+
+.reveal-stage.is-revealing .reveal-mark,
+.reveal-stage.is-revealing .reveal-rank {
+  animation: revealInk var(--reveal-ms, 780ms) ease-out forwards;
+}
+
+@keyframes revealSharpen {
+  from {
+    filter: blur(9px) saturate(0.5);
+    transform: scale(1.07);
+  }
+  to {
+    filter: none;
+    transform: none;
+  }
+}
+
+@keyframes revealSettle {
+  from {
+    transform: scale(0.965);
+  }
+  to {
+    transform: none;
+  }
+}
+
+@keyframes revealInk {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .reveal-stage.is-revealing .reveal-photo,
+  .reveal-stage.is-revealing .reveal-card,
+  .reveal-stage.is-revealing .reveal-bloom,
+  .reveal-stage.is-revealing .reveal-mark,
+  .reveal-stage.is-revealing .reveal-rank {
+    animation-duration: 1ms;
+  }
+
+  .reveal-under {
+    transition-duration: 1ms;
+  }
+}
+
+/* ── 稀有度药丸 ───────────────────────────────────────────────────
+   落在照片下沿正中。淡彩只做小面积，这儿是其中一处。 */
+.reveal-rank {
+  position: absolute;
+  left: 50%;
+  bottom: 1.5%;
+  transform: translateX(-50%);
+  z-index: 4;
+  padding: 5px 15px 4px;
+  border-radius: 999px;
+  font-size: 0.7rem;
+  font-weight: 600;
+  line-height: 1;
+  letter-spacing: 0.16em;
+  /* 疏排会把最后一个字距也算进去，右边看着比左边空，补回来 */
+  text-indent: 0.16em;
+  background: var(--rarity-N-bg);
+  color: var(--rarity-N-fg);
+  box-shadow: 0 2px 8px rgba(70, 90, 105, 0.14);
+}
+
+/* 等级是收下时才定的，照片还没显出来就先亮着说不通 */
+.reveal-stage.is-sealed .reveal-rank {
+  opacity: 0;
+}
+
+.reveal-rank.rarity-N {
+  background: var(--rarity-N-bg);
+  color: var(--rarity-N-fg);
+}
+.reveal-rank.rarity-R {
+  background: var(--rarity-R-bg);
+  color: var(--rarity-R-fg);
+}
+.reveal-rank.rarity-SR {
+  background: var(--rarity-SR-bg);
+  color: var(--rarity-SR-fg);
+}
+.reveal-rank.rarity-SSR {
+  background: var(--rarity-SSR-bg);
+  color: var(--rarity-SSR-fg);
+}
+.reveal-rank.rarity-UR {
+  background: var(--rarity-UR-bg);
+  color: var(--rarity-UR-fg);
+}
+.reveal-rank.rarity-LR {
+  background: var(--rarity-LR-badge, var(--rarity-LR-bg));
+  color: var(--rarity-LR-fg);
+}
+.reveal-rank.rarity-XR {
+  background: var(--rarity-XR-bg);
+  color: var(--rarity-XR-fg);
+}

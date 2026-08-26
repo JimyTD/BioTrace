@@ -3,12 +3,20 @@
  */
 import { setMessageVoice, type VoiceId } from "@biotrace/messages";
 
-export type ThemeId = "daylight" | "lightbox";
+export type ThemeId = "daylight" | "clear";
 
 /** 已实现的皮肤。走同一套页面，只换 token、资源槽与包装用词。 */
-export const THEME_IDS = ["daylight", "lightbox"] as const satisfies readonly ThemeId[];
+export const THEME_IDS = ["daylight", "clear"] as const satisfies readonly ThemeId[];
 
 export const DEFAULT_THEME: ThemeId = "daylight";
+
+/**
+ * 退役 id → 现 id。改名后本地存的旧偏好不认识就会静默掉回默认皮肤，
+ * 用户得重新去「外观」点一次；这张表免掉那一下。
+ */
+const LEGACY_THEME_IDS: Record<string, ThemeId> = {
+  lightbox: "clear",
+};
 
 /** 主题化的静态资源域，对应 public/<域>/<themeId>/。 */
 export type AssetDomain = "volumes" | "trips" | "settle" | "shell";
@@ -31,7 +39,9 @@ export type ThemeMeta = {
 
 export const THEME_META: Record<ThemeId, ThemeMeta> = {
   daylight: { scheme: "light", assets: ASSET_DOMAINS, voice: "default" },
-  lightbox: { scheme: "light", assets: ASSET_DOMAINS, voice: "lightbox" },
+  /* 清透不铺壳纸纹（--page-texture: none），开包舞台与稀有度也整块换成了自己的组件，
+     那两个域一张图都读不到，所以只声明 volumes / trips */
+  clear: { scheme: "light", assets: ["volumes", "trips"], voice: "default" },
 };
 
 const STORAGE_KEY = "bt_theme";
@@ -85,6 +95,7 @@ export function initTheme(): ThemeId {
   try {
     const saved = localStorage.getItem(STORAGE_KEY);
     if (isThemeId(saved)) id = saved;
+    else if (saved && LEGACY_THEME_IDS[saved]) id = LEGACY_THEME_IDS[saved];
   } catch {
     /* ignore */
   }

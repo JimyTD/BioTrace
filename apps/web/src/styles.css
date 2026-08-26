@@ -601,6 +601,68 @@ button.trip-cover {
   border-bottom: 0;
 }
 
+/* 名片上的首字母牌与配额用量条。和设置行图标一样：零件常在、默认不显示，
+   皮肤要就在自己的 [data-theme] 下打开（见 §2.3） */
+.me-avatar {
+  display: none;
+  place-items: center;
+  flex: none;
+  width: 52px;
+  height: 52px;
+  border-radius: 999px;
+  font-size: 1.25rem;
+  font-weight: 500;
+}
+
+.me-quota-bar {
+  display: none;
+  height: 6px;
+  border-radius: 999px;
+  overflow: hidden;
+}
+
+.me-quota-bar::before {
+  content: "";
+  display: block;
+  height: 100%;
+  /* 比例由页面挂在 .me-quota 上的 --quota-ratio 给，CSS 自己算不出 used / limit */
+  width: calc(var(--quota-ratio, 0) * 100%);
+  border-radius: inherit;
+}
+
+/* 设置行左边那枚淡彩图标块。零件常在、摆不摆由皮肤定（见 §2.3）：
+   默认不显示，皮肤要就在自己的 [data-theme] 下打开。底色走 --tint-* */
+.me-row-icon {
+  display: none;
+  place-items: center;
+  flex: none;
+  width: 34px;
+  height: 34px;
+  border-radius: var(--radius-md);
+}
+
+.me-row-icon svg {
+  width: 18px;
+  height: 18px;
+}
+
+.me-row-icon.tint-1 {
+  background: var(--tint-1-bg);
+  color: var(--tint-1-ink);
+}
+.me-row-icon.tint-2 {
+  background: var(--tint-2-bg);
+  color: var(--tint-2-ink);
+}
+.me-row-icon.tint-3 {
+  background: var(--tint-3-bg);
+  color: var(--tint-3-ink);
+}
+.me-row-icon.tint-4 {
+  background: var(--tint-4-bg);
+  color: var(--tint-4-ink);
+}
+
 .me-row-go {
   color: var(--muted);
   font-size: 1.2rem;

@@ -50,6 +50,7 @@
   --page-texture-opacity: 1;
   --page-texture-blend: normal;
   --shadow: 0 8px 22px rgba(42, 36, 28, 0.07);
+  --shadow-sm: 0 3px 10px rgba(42, 36, 28, 0.06);
 
   --radius-sm: 8px;
   --radius-md: 11px;
@@ -61,6 +62,21 @@
     radial-gradient(ellipse 80% 55% at 100% 108%, rgba(90, 70, 48, 0.07) 0%, transparent 52%),
     linear-gradient(168deg, #f6f1e8 0%, #efe8dc 46%, #e9e1d4 100%);
   --page-wash: transparent;
+
+  /* 淡彩四色。日光把设置行图标关着（见 styles.css .me-row-icon），
+     这四组仍要给值：token 不许只有一套皮肤填。取自它自己的沙／土／苔／砖 */
+  --tint-1-bg: #e3e7d8;
+  --tint-1-ink: #5a6640;
+  --tint-2-bg: #e6e2d4;
+  --tint-2-ink: #6b6250;
+  --tint-3-bg: #f0ddd4;
+  --tint-3-ink: #9a4030;
+  --tint-4-bg: #ece0cd;
+  --tint-4-ink: #8b6f4e;
+
+  /* 日光不把 checkbox 画成开关，值备着给共用零件用 */
+  --switch-off: #ded7c9;
+  --switch-knob: #fffdf9;
 
   --map-dot: #3a322c;
   --map-dot-selected: #d3543c;
@@ -135,6 +151,7 @@
   --trip-cover-plate: #efe6d6;
   /* 日光不在卡纸上打字（沿上标注关着），备着给共用零件用 */
   --mount-ink: #5c5347;
+  --mount-title-ink: #423b31;
   --film-tile-shadow: 0 4px 14px rgba(42, 36, 28, 0.08);
   /* 套册空格的斜线底纹，与开包礼章落在纸上的影 */
   --stamp-empty-hatch: rgba(58, 50, 44, 0.05);

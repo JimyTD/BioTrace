@@ -1,0 +1,748 @@
+<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>清透 · 界面示意</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600&family=Courier+Prime:wght@400&display=swap"
+      rel="stylesheet"
+    />
+    <style>
+      :root {
+        --sans: "Outfit", system-ui, sans-serif;
+        /* 等宽只留给照片边上那行小标注，界面里一个字都不用 */
+        --type: "Courier Prime", "Courier New", monospace;
+
+        /* 底：很浅的冷白，和示意里那张一样，只是更淡更匀 */
+        --ground: radial-gradient(ellipse 130% 90% at 50% 12%, #ffffff 0%, #f8fbfc 42%, #eef3f6 100%);
+        --ink: #333b41;
+        --ink-soft: #5f6a72;
+        --muted: #8d979e;
+        --hair: rgba(120, 140, 155, 0.13);
+
+        /* 界面没有材质：一层几乎透明的白，靠柔影浮起来，不靠边框 */
+        --card: rgba(255, 255, 255, 0.82);
+        --card-solid: #ffffff;
+        --soft:
+          0 1px 2px rgba(90, 112, 128, 0.05),
+          0 10px 24px rgba(90, 112, 128, 0.07);
+        --soft-sm: 0 1px 2px rgba(90, 112, 128, 0.06), 0 4px 10px rgba(90, 112, 128, 0.06);
+
+        /* 淡彩：黑衣服上的花。只做小面积的底，不做大块 */
+        --sage-bg: #dee9da;
+        --sage-ink: #556f48;
+        --sky-bg: #d9e8f2;
+        --sky-ink: #4a7089;
+        --apricot-bg: #f8e3d0;
+        --apricot-ink: #a26139;
+        --blush-bg: #f2e1e5;
+        --blush-ink: #8a5966;
+
+        /* 照片的暖白边——示意里让人舒服的就是它 */
+        --mount: #f3f0e9;
+        --mount-ink: #6a6357;
+
+        --accent: #d9531e;
+
+        --r-card: 18px;
+        --r-field: 14px;
+        --r-pill: 999px;
+      }
+
+      * {
+        box-sizing: border-box;
+      }
+
+      body {
+        margin: 0;
+        padding: 36px 24px 70px;
+        background: #2c3136;
+        color: #dfe4e8;
+        font-family: var(--sans);
+        -webkit-font-smoothing: antialiased;
+      }
+
+      .doc {
+        max-width: 1330px;
+        margin: 0 auto;
+      }
+
+      h1 {
+        font-size: 1.4rem;
+        margin: 0 0 8px;
+        letter-spacing: -0.02em;
+      }
+
+      .lead {
+        margin: 0;
+        max-width: 900px;
+        font-size: 0.9rem;
+        line-height: 1.75;
+        color: #a9b2b9;
+      }
+
+      .lead b {
+        color: #eef2f5;
+        font-weight: 600;
+      }
+
+      .swatches {
+        display: flex;
+        gap: 22px;
+        margin: 22px 0 4px;
+        flex-wrap: wrap;
+      }
+
+      .sw {
+        display: flex;
+        align-items: center;
+        gap: 9px;
+        font-size: 0.77rem;
+        color: #a9b2b9;
+      }
+
+      .sw i {
+        width: 30px;
+        height: 30px;
+        border-radius: 9px;
+        display: block;
+      }
+
+      .pair {
+        display: flex;
+        gap: 40px;
+        flex-wrap: wrap;
+        margin-top: 26px;
+      }
+
+      .col {
+        display: grid;
+        gap: 10px;
+        justify-items: start;
+      }
+
+      .tag {
+        font-size: 0.72rem;
+        letter-spacing: 0.12em;
+        text-transform: uppercase;
+        color: #8b949b;
+      }
+
+      .phone {
+        width: 380px;
+        height: 800px;
+        border-radius: 30px;
+        overflow: hidden;
+        background: var(--ground);
+        color: var(--ink);
+        display: flex;
+        flex-direction: column;
+        box-shadow: 0 20px 46px rgba(0, 0, 0, 0.45);
+      }
+
+      .topbar {
+        flex: none;
+        padding: 15px 20px 8px;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+      }
+
+      .topbar b {
+        font-size: 0.95rem;
+        font-weight: 600;
+      }
+
+      .topbar .dot {
+        width: 26px;
+        height: 26px;
+        border-radius: var(--r-pill);
+        background: var(--card-solid);
+        box-shadow: var(--soft-sm);
+      }
+
+      .body {
+        flex: 1;
+        overflow: hidden;
+        padding: 6px 18px 0;
+        display: grid;
+        gap: 16px;
+        align-content: start;
+      }
+
+      /* 页签条：白得几乎化掉，当前项落一枚淡彩小药丸 */
+      .nav {
+        flex: none;
+        display: grid;
+        grid-template-columns: repeat(4, 1fr);
+        gap: 4px;
+        padding: 8px 12px 14px;
+        background: rgba(255, 255, 255, 0.72);
+      }
+
+      .nav span {
+        padding: 8px 0 8px;
+        text-align: center;
+        font-size: 0.79rem;
+        border-radius: var(--r-pill);
+        color: var(--muted);
+      }
+
+      .nav span.on {
+        color: var(--accent);
+        font-weight: 600;
+        background: var(--apricot-bg);
+      }
+
+      h2.page {
+        margin: 0;
+        font-size: 1.7rem;
+        font-weight: 600;
+        letter-spacing: -0.025em;
+      }
+
+      .sub {
+        margin: 4px 0 0;
+        font-size: 0.85rem;
+        line-height: 1.6;
+        color: var(--muted);
+      }
+
+      .kicker {
+        font-size: 0.78rem;
+        font-weight: 500;
+        color: var(--muted);
+        padding-left: 3px;
+      }
+
+      /* ── 卡片：没有边框，只有一层白和一团柔影 ─────────────────── */
+      .card {
+        background: var(--card);
+        border-radius: var(--r-card);
+        box-shadow: var(--soft);
+      }
+
+      .pad {
+        padding: 16px 17px;
+      }
+
+      /* 名片：一块很淡的彩，把最闷的一页救活 */
+      .profile {
+        display: flex;
+        align-items: center;
+        gap: 14px;
+        padding: 18px 17px;
+        border-radius: var(--r-card);
+        background: linear-gradient(135deg, #e4efdf 0%, #dee9f2 54%, #f1e2e7 100%);
+        box-shadow: var(--soft);
+      }
+
+      .avatar {
+        width: 52px;
+        height: 52px;
+        flex: none;
+        border-radius: var(--r-pill);
+        display: grid;
+        place-items: center;
+        font-size: 1.25rem;
+        font-weight: 500;
+        color: var(--sage-ink);
+        background: rgba(255, 255, 255, 0.75);
+      }
+
+      .profile .who b {
+        display: block;
+        font-size: 1.14rem;
+        font-weight: 600;
+        letter-spacing: -0.01em;
+      }
+
+      .profile .who span {
+        display: block;
+        margin-top: 2px;
+        font-size: 0.81rem;
+        color: var(--ink-soft);
+      }
+
+      .mini {
+        margin-left: auto;
+        align-self: center;
+        font-size: 0.79rem;
+        padding: 7px 14px;
+        border-radius: var(--r-pill);
+        background: rgba(255, 255, 255, 0.85);
+        color: var(--ink-soft);
+        white-space: nowrap;
+      }
+
+      /* 配额：一条淡色细进度，比一行灰字有生气 */
+      .quota {
+        display: grid;
+        gap: 9px;
+        padding: 14px 17px 16px;
+      }
+
+      .quota .line {
+        display: flex;
+        justify-content: space-between;
+        font-size: 0.85rem;
+      }
+
+      .quota .line em {
+        font-style: normal;
+        color: var(--muted);
+      }
+
+      .quota .bar {
+        height: 6px;
+        border-radius: var(--r-pill);
+        background: var(--sky-bg);
+        overflow: hidden;
+      }
+
+      .quota .bar i {
+        display: block;
+        width: 12%;
+        height: 100%;
+        border-radius: var(--r-pill);
+        background: var(--sky-ink);
+        opacity: 0.55;
+      }
+
+      /* ── 设置行：淡彩图标块 + 大留白，分隔线细到快看不见 ───────── */
+      .rows {
+        padding: 5px 0;
+      }
+
+      .row {
+        display: flex;
+        align-items: center;
+        gap: 13px;
+        padding: 12px 17px;
+        position: relative;
+      }
+
+      .row + .row::before {
+        content: "";
+        position: absolute;
+        left: 60px;
+        right: 17px;
+        top: 0;
+        height: 1px;
+        background: var(--hair);
+      }
+
+      .ico {
+        width: 34px;
+        height: 34px;
+        flex: none;
+        border-radius: 11px;
+        display: grid;
+        place-items: center;
+      }
+
+      .ico svg {
+        width: 18px;
+        height: 18px;
+        fill: none;
+        stroke-width: 1.6;
+        stroke-linecap: round;
+        stroke-linejoin: round;
+      }
+
+      .row .lab {
+        flex: 1;
+        font-size: 0.95rem;
+      }
+
+      .row .val {
+        font-size: 0.84rem;
+        color: var(--muted);
+      }
+
+      .row .chev {
+        color: #b6bfc5;
+        font-size: 0.95rem;
+      }
+
+      /* ── 控件 ─────────────────────────────────────────────────── */
+      .field {
+        display: grid;
+        gap: 7px;
+      }
+
+      .field > label {
+        font-size: 0.81rem;
+        color: var(--muted);
+        padding-left: 3px;
+      }
+
+      .input {
+        background: var(--card-solid);
+        border-radius: var(--r-field);
+        padding: 12px 14px;
+        font-family: var(--sans);
+        font-size: 0.95rem;
+        color: var(--ink);
+        box-shadow: inset 0 0 0 1px var(--hair);
+      }
+
+      .input.ph {
+        color: #aeb7bd;
+      }
+
+      .input.focus {
+        box-shadow:
+          inset 0 0 0 1.5px rgba(217, 83, 30, 0.55),
+          0 0 0 4px rgba(217, 83, 30, 0.08);
+      }
+
+      /* 开关比方框勾选柔和得多，也更像这类应用该有的样子 */
+      .toggle {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        padding: 13px 17px;
+        font-size: 0.94rem;
+      }
+
+      .toggle .sw2 {
+        margin-left: auto;
+        width: 42px;
+        height: 25px;
+        flex: none;
+        border-radius: var(--r-pill);
+        background: #dde4e8;
+        position: relative;
+      }
+
+      .toggle .sw2::after {
+        content: "";
+        position: absolute;
+        top: 3px;
+        left: 3px;
+        width: 19px;
+        height: 19px;
+        border-radius: var(--r-pill);
+        background: #fff;
+        box-shadow: 0 1px 3px rgba(70, 90, 105, 0.28);
+      }
+
+      .toggle.on .sw2 {
+        background: var(--accent);
+      }
+
+      .toggle.on .sw2::after {
+        left: 20px;
+      }
+
+      .hint {
+        margin: 0;
+        padding: 0 17px 15px;
+        font-size: 0.82rem;
+        line-height: 1.6;
+        color: var(--muted);
+      }
+
+      /* ── 按钮：一律药丸，次按钮是一枚白药丸，不描边 ─────────────── */
+      .btn {
+        appearance: none;
+        border: 0;
+        background: var(--accent);
+        color: #fff;
+        font-family: var(--sans);
+        font-size: 0.9rem;
+        font-weight: 600;
+        padding: 11px 24px;
+        border-radius: var(--r-pill);
+        cursor: pointer;
+        box-shadow: 0 4px 12px rgba(217, 83, 30, 0.22);
+      }
+
+      /* 次按钮是一枚淡彩药丸。白药丸摆在白卡片上会直接消失 */
+      .btn.ghost {
+        background: var(--apricot-bg);
+        color: var(--accent);
+        box-shadow: none;
+      }
+
+      /* 中性次按钮：不属于主动作那一族的（退出、取消） */
+      .btn.plain {
+        background: var(--card-solid);
+        color: var(--ink-soft);
+        font-weight: 500;
+        box-shadow: var(--soft-sm);
+      }
+
+      .btn.wide {
+        width: 100%;
+      }
+
+      .btns {
+        display: flex;
+        gap: 10px;
+        flex-wrap: wrap;
+      }
+
+      /* ── 照片：示意里被认可的那一半，原样保留 ───────────────────
+         暖白边、微微歪、软阴影，边上一行小等宽字 */
+      .trips {
+        display: grid;
+        gap: 16px;
+      }
+
+      .trip {
+        background: var(--mount);
+        border-radius: 7px;
+        padding: 9px 9px 0;
+        box-shadow:
+          0 1px 2px rgba(70, 90, 105, 0.16),
+          0 10px 22px rgba(70, 90, 105, 0.13);
+      }
+
+      .trip img {
+        display: block;
+        width: 100%;
+        aspect-ratio: 16 / 10;
+        object-fit: cover;
+        border-radius: 3px;
+      }
+
+      /* 标题在卡纸下沿，压不到照片上 */
+      .trip .lip {
+        display: flex;
+        align-items: baseline;
+        gap: 9px;
+        padding: 9px 3px 11px;
+      }
+
+      .trip .lip b {
+        font-size: 1rem;
+        font-weight: 600;
+        letter-spacing: -0.01em;
+        color: #45403a;
+      }
+
+      .trip .lip span {
+        margin-left: auto;
+        font-family: var(--type);
+        font-size: 0.63rem;
+        letter-spacing: 0.05em;
+        color: var(--mount-ink);
+        opacity: 0.75;
+        white-space: nowrap;
+      }
+
+      .t1 {
+        transform: rotate(-0.4deg);
+      }
+      .t2 {
+        transform: rotate(0.45deg);
+      }
+
+      .note {
+        margin: 30px 0 0;
+        max-width: 900px;
+        font-size: 0.84rem;
+        line-height: 1.8;
+        color: #98a1a8;
+      }
+
+      .note b {
+        color: #d3dade;
+        font-weight: 600;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="doc">
+      <h1>清透 · 界面示意</h1>
+      <p class="lead">
+        原来那张示意里让你舒服的东西其实很朴素：<b>大照片、暖白边、微微歪、软阴影，底是很浅的冷白，UI 几乎不存在</b>。
+        跟「灯箱」那套设定没关系，所以名字和叙事一并扔掉，「上灯箱」那类改过的文案也退回原话。<br />
+        我前两版都在给界面找材质（搪瓷 → 白纸，阳极黑 → Steam）。这套风格里界面本来就不该有材质，
+        它该几乎消失：<b>圆角、柔影、大留白、几块很淡的彩</b>，等宽字只留在照片边上那行小标注。
+      </p>
+
+      <div class="swatches">
+        <span class="sw"><i style="background: linear-gradient(#fff, #eef3f6)"></i> 底</span>
+        <span class="sw"><i style="background: #fff; box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3)"></i> 卡片</span>
+        <span class="sw"><i style="background: #f3f0e9"></i> 照片边</span>
+        <span class="sw"><i style="background: #e9efe7"></i> 苔</span>
+        <span class="sw"><i style="background: #e5eef4"></i> 雾</span>
+        <span class="sw"><i style="background: #f9ece1"></i> 杏</span>
+        <span class="sw"><i style="background: #f5eaed"></i> 藕</span>
+        <span class="sw"><i style="background: #d9531e"></i> 主动作</span>
+      </div>
+
+      <div class="pair">
+        <!-- 我的 -->
+        <div class="col">
+          <span class="tag">我的</span>
+          <div class="phone">
+            <div class="topbar"><b>BioTrace</b><span class="dot"></span></div>
+            <div class="body">
+              <h2 class="page">我的</h2>
+
+              <div class="profile">
+                <span class="avatar">D</span>
+                <span class="who"><b>Dev</b><span>dev@local</span></span>
+                <span class="mini">编辑资料</span>
+              </div>
+
+              <div class="card quota">
+                <span class="line">今日平台识图 <em>12 / 100</em></span>
+                <span class="bar"><i></i></span>
+              </div>
+
+              <div class="card rows">
+                <div class="row">
+                  <span class="ico" style="background: var(--sage-bg); color: var(--sage-ink)">
+                    <svg viewBox="0 0 24 24" stroke="currentColor">
+                      <path d="M12 3l7 3v6c0 4-3 7.2-7 9-4-1.8-7-5-7-9V6l7-3z" />
+                    </svg>
+                  </span>
+                  <span class="lab">账号安全</span><span class="chev">›</span>
+                </div>
+                <div class="row">
+                  <span class="ico" style="background: var(--sky-bg); color: var(--sky-ink)">
+                    <svg viewBox="0 0 24 24" stroke="currentColor">
+                      <path d="M4 7h16M4 12h16M4 17h16" />
+                      <circle cx="9" cy="7" r="2.2" fill="#fff" />
+                      <circle cx="15" cy="12" r="2.2" fill="#fff" />
+                      <circle cx="8" cy="17" r="2.2" fill="#fff" />
+                    </svg>
+                  </span>
+                  <span class="lab">识图高级设置</span><span class="chev">›</span>
+                </div>
+                <div class="row">
+                  <span class="ico" style="background: var(--apricot-bg); color: var(--apricot-ink)">
+                    <svg viewBox="0 0 24 24" stroke="currentColor">
+                      <circle cx="12" cy="12" r="8.4" />
+                      <path d="M12 3.6a8.4 8.4 0 000 16.8z" fill="currentColor" stroke="none" />
+                    </svg>
+                  </span>
+                  <span class="lab">外观</span><span class="val">清透</span><span class="chev">›</span>
+                </div>
+                <div class="row">
+                  <span class="ico" style="background: var(--blush-bg); color: var(--blush-ink)">
+                    <svg viewBox="0 0 24 24" stroke="currentColor">
+                      <circle cx="12" cy="12" r="8.4" />
+                      <path d="M9.6 9.4a2.5 2.5 0 114 2.1c-.9.6-1.6 1.1-1.6 2.2" />
+                      <path d="M12 17.2v.01" />
+                    </svg>
+                  </span>
+                  <span class="lab">帮助</span><span class="chev">›</span>
+                </div>
+                <div class="row">
+                  <span class="ico" style="background: var(--sage-bg); color: var(--sage-ink)">
+                    <svg viewBox="0 0 24 24" stroke="currentColor">
+                      <circle cx="12" cy="12" r="8.4" />
+                      <path d="M12 11v5.2M12 7.9v.01" />
+                    </svg>
+                  </span>
+                  <span class="lab">关于</span><span class="val">v1.4.0</span><span class="chev">›</span>
+                </div>
+              </div>
+
+              <div class="btns"><button class="btn plain">退出登录</button></div>
+            </div>
+            <div class="nav">
+              <span>旅途</span><span>地图</span><span>图鉴</span><span class="on">我的</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- 旅途 -->
+        <div class="col">
+          <span class="tag">旅途</span>
+          <div class="phone">
+            <div class="topbar"><b>BioTrace</b><span class="dot"></span></div>
+            <div class="body">
+              <div>
+                <h2 class="page">旅途</h2>
+                <p class="sub">把这趟路上遇见的都收在一起。</p>
+              </div>
+
+              <div class="card pad" style="display: grid; gap: 11px">
+                <div class="field">
+                  <label>新建旅途</label>
+                  <div class="input ph">给这趟起个名字</div>
+                </div>
+                <div class="btns">
+                  <button class="btn">创建</button>
+                  <button class="btn ghost">用邀请码加入</button>
+                </div>
+              </div>
+
+              <div class="trips">
+                <div class="trip t1">
+                  <img src="/themes/_demo/demo-photo-trail.jpg" alt="" />
+                  <span class="lip"><b>林缘一日</b><span>14 AUG · 6 张</span></span>
+                </div>
+                <div class="trip t2">
+                  <img src="/themes/_demo/demo-photo-mushroom.jpg" alt="" />
+                  <span class="lip"><b>雨后的白云山</b><span>02 AUG · 11 张</span></span>
+                </div>
+              </div>
+            </div>
+            <div class="nav">
+              <span class="on">旅途</span><span>地图</span><span>图鉴</span><span>我的</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- 管理旅途 -->
+        <div class="col">
+          <span class="tag">管理旅途</span>
+          <div class="phone">
+            <div class="topbar"><b>← 林缘一日</b><span class="dot"></span></div>
+            <div class="body">
+              <h2 class="page">管理旅途</h2>
+
+              <div class="card pad" style="display: grid; gap: 12px">
+                <div class="field">
+                  <label>标题</label>
+                  <div class="input focus">林缘一日</div>
+                </div>
+                <div class="btns"><button class="btn">保存</button></div>
+              </div>
+
+              <span class="kicker">列表摘要</span>
+              <div class="card">
+                <div class="toggle on"><span>手填时间与地点</span><span class="sw2"></span></div>
+                <p class="hint">留空的那项仍用照片自动汇总，当前为 14 AUG · 白云山。</p>
+              </div>
+
+              <span class="kicker">共享旅途</span>
+              <div class="card">
+                <div class="toggle on"><span>允许持码加入</span><span class="sw2"></span></div>
+                <div style="padding: 0 17px 16px; display: grid; gap: 11px">
+                  <div class="field">
+                    <label>邀请码</label>
+                    <div class="input">SEEDCODE7378</div>
+                  </div>
+                  <div class="btns"><button class="btn ghost wide">复制邀请码</button></div>
+                </div>
+              </div>
+            </div>
+            <div class="nav">
+              <span class="on">旅途</span><span>地图</span><span>图鉴</span><span>我的</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <p class="note">
+        <b>照片那一半原样不动</b>——暖白边、微歪、软阴影、边上一行小等宽字，就是你说舒服的那个。
+        标题挪到卡纸下沿，不再压在照片上。<br />
+        <b>界面这一半不再有材质</b>：卡片是一层半透明的白 + 一团柔影，没有边框；分隔线只在图标右侧起，细到快看不见；
+        方框勾选换成开关；按钮一律药丸，次按钮是白药丸而不是描边。<br />
+        <b>淡彩只做小面积</b>：图标块、进度条、当前页签、名片底。橙只给主动作和当前页签。
+      </p>
+    </div>
+  </body>
+</html>

@@ -1,4 +1,3 @@
-import { lightboxVoice } from "./voices/lightbox.js";
 import { zh, type MessageKey } from "./zh.js";
 
 const catalogs = {
@@ -14,12 +13,14 @@ export const defaultLocale: Locale = "zh";
  * 包装用词（voice）：同一功能的不同叙事说法，由 Web 皮肤选定。
  * 覆盖表只写与基础文案不同的 key；当前仅 zh，加语言时按语言分表。
  * 服务端不调 setMessageVoice，恒为 default。
+ *
+ * 目前两套皮肤都用 default：清透换的是观感不是说法。机制留着，
+ * 将来真有一套自带叙事的皮肤（比如深海）再加覆盖表。
  */
-export type VoiceId = "default" | "lightbox";
+export type VoiceId = "default";
 
 const voices: Record<VoiceId, Partial<Record<MessageKey, string>>> = {
   default: {},
-  lightbox: lightboxVoice,
 };
 
 export const VOICE_IDS = Object.keys(voices) as VoiceId[];
