@@ -1,5 +1,6 @@
 import { useId } from "react";
 import type { Rarity } from "../api";
+import type { RaritySealProps } from "../themes/slots";
 
 /** 齿边圆章（中心挖空）。纯 SVG 填色，不用 CSS mask（真机易出方底）。 */
 const ROUND_PATH =
@@ -8,10 +9,11 @@ const ROUND_PATH =
 const XR_PATH =
   "M6 64 L9.87 32.75 L35 13.77 L64 1.5 L93 13.77 L118.13 32.75 L122 64 L118.13 95.25 L93 114.23 L64 126.5 L35 114.23 L9.87 95.25 Z M30 64 L47 34.56 L81 34.56 L98 64 L81 93.44 L47 93.44 Z";
 
-type Props = {
-  rarity: Rarity;
-};
-
+/**
+ * 后四档的金属渐变。这些色是这枚蜡章自己的材质，故意不做成 token——
+ * 皮肤要换稀有度的表现，走 themes/slots.ts 的 raritySeal 槽位整枚换掉。
+ * 理由与样式同在 SettleRaritySeal.css 的抬头。
+ */
 function FillGradient({ rarity, id }: { rarity: Rarity; id: string }) {
   if (rarity === "SSR") {
     return (
@@ -58,7 +60,7 @@ function FillGradient({ rarity, id }: { rarity: Rarity; id: string }) {
   return null;
 }
 
-export function SettleRaritySeal({ rarity }: Props) {
+export function SettleRaritySeal({ rarity }: RaritySealProps) {
   const uid = useId().replace(/:/g, "");
   const path = rarity === "XR" ? XR_PATH : ROUND_PATH;
   const fillId = `seal-fill-${uid}`;

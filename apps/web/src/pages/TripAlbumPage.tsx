@@ -28,8 +28,9 @@ import {
   type DeviceFix,
   type PickImageMode,
 } from "../pickImage";
-import { easeOutCubic, measureBox, nextPaint, prefersReducedMotion, tween } from "../motion";
+import { measureBox } from "../motion";
 import { playPhotoLift } from "../photoLift";
+import { playPhotoSlot } from "../photoSlot";
 import {
   clearPhotoLiftHandoff,
   liftBackgroundState,
@@ -252,40 +253,10 @@ export default function TripAlbumPage({ userId }: { userId: string }) {
   useEffect(() => {
     if (slottingIds.size === 0) return;
     let cancelled = false;
-    const reduce = prefersReducedMotion();
-    void (async () => {
-      await nextPaint();
-      if (cancelled) return;
-      const photos = [
-        ...document.querySelectorAll<HTMLElement>(".film-tile.is-slotting .film-tile-photo"),
-      ];
-      if (photos.length === 0) return;
-      await Promise.all(
-        photos.map((img) =>
-          img instanceof HTMLImageElement && img.decode
-            ? img.decode().catch(() => undefined)
-            : Promise.resolve(),
-        ),
-      );
-      await nextPaint();
-      if (cancelled) return;
-      if (reduce) {
-        for (const photo of photos) photo.style.transform = "translateY(0)";
-        setSlottingIds(new Set());
-        return;
-      }
-      await tween(
-        640,
-        (t) => {
-          const y = (1 - easeOutCubic(t)) * 108;
-          for (const photo of photos) photo.style.transform = `translateY(${y}%)`;
-        },
-        () => cancelled,
-      );
-      if (cancelled) return;
-      for (const photo of photos) photo.style.transform = "translateY(0)";
-      setSlottingIds(new Set());
-    })();
+    void playPhotoSlot({
+      cancelled: () => cancelled,
+      onSettled: () => setSlottingIds(new Set()),
+    });
     return () => {
       cancelled = true;
     };

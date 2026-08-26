@@ -37,6 +37,23 @@ export function measureBox(el: Element): MotionBox {
   return snapBox({ left: r.left, top: r.top, width: r.width, height: r.height });
 }
 
+/** 把盒子写进元素。飞行体是 fixed 定位的，所以直接写 left/top/宽高 */
+export function applyBox(el: HTMLElement, box: MotionBox) {
+  el.style.left = `${box.left}px`;
+  el.style.top = `${box.top}px`;
+  el.style.width = `${box.width}px`;
+  el.style.height = `${box.height}px`;
+}
+
+export function mixBox(a: MotionBox, b: MotionBox, t: number): MotionBox {
+  return {
+    left: lerp(a.left, b.left, t),
+    top: lerp(a.top, b.top, t),
+    width: lerp(a.width, b.width, t),
+    height: lerp(a.height, b.height, t),
+  };
+}
+
 export function tween(
   duration: number,
   onUpdate: (t: number) => void,

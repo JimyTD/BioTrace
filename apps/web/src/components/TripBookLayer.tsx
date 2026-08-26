@@ -12,7 +12,9 @@ import {
   type OpenBookBox,
   type OpenBookHandoff,
 } from "../openBookHandoff";
+import { easeOutCubic, tween } from "../motion";
 import { tripCoverFrameUrl } from "../themes";
+import { themeSlot } from "../themes/slots";
 
 export const OpenBookCloseContext = createContext<(() => void) | null>(null);
 
@@ -22,18 +24,6 @@ type Props = {
   tripId: string;
   children: ReactNode;
 };
-
-function lerp(a: number, b: number, t: number) {
-  return a + (b - a) * t;
-}
-
-function easeOutCubic(t: number) {
-  return 1 - (1 - t) ** 3;
-}
-
-function easeInOut(t: number) {
-  return t < 0.5 ? 2 * t * t : 1 - (-2 * t + 2) ** 2 / 2;
-}
 
 function localBox(src: OpenBookBox, dst: OpenBookBox): OpenBookBox {
   return {
@@ -63,23 +53,6 @@ function pinLayer(layer: HTMLElement) {
   layer.style.height = `${r.height}px`;
 }
 
-function applyBox(el: HTMLElement, box: OpenBookBox) {
-  el.style.left = `${box.left}px`;
-  el.style.top = `${box.top}px`;
-  el.style.width = `${box.width}px`;
-  el.style.height = `${box.height}px`;
-}
-
-function hingeCover(el: HTMLElement, opened: number) {
-  el.style.transform = `rotateY(${lerp(0, -95, opened)}deg)`;
-}
-
-function setBlur(el: HTMLElement, px: number) {
-  const value = px <= 0.5 ? "none" : `blur(${px}px)`;
-  el.style.filter = value;
-  el.style.webkitFilter = value;
-}
-
 function clearShelfLook(shelf: Element | null) {
   if (!(shelf instanceof HTMLElement)) return;
   shelf.classList.remove("is-book-back");
@@ -88,30 +61,10 @@ function clearShelfLook(shelf: Element | null) {
   shelf.style.transform = "";
 }
 
+/** 故意不走 motion.ts 的 measureBox：那个会对齐设备像素，这儿对齐了封面就跳一下 */
 function measure(el: Element): OpenBookBox {
   const r = el.getBoundingClientRect();
   return { left: r.left, top: r.top, width: r.width, height: r.height };
-}
-
-function tween(
-  duration: number,
-  onUpdate: (t: number) => void,
-  cancelled: () => boolean,
-): Promise<void> {
-  return new Promise((resolve) => {
-    const start = performance.now();
-    const step = (now: number) => {
-      if (cancelled()) {
-        resolve();
-        return;
-      }
-      const t = Math.min(1, (now - start) / duration);
-      onUpdate(t);
-      if (t < 1) requestAnimationFrame(step);
-      else resolve();
-    };
-    requestAnimationFrame(step);
-  });
 }
 
 function CoverClone({ coverUrl }: { coverUrl: string | null }) {
@@ -173,7 +126,8 @@ export default function TripBookLayer({ tripId, children }: Props) {
     const pages = pagesRef.current;
     const mat = matRef.current;
     const cover = coverRef.current;
-    const shelf = document.querySelector(".page-trips");
+    const shelfEl = document.querySelector(".page-trips");
+    const shelf = shelfEl instanceof HTMLElement ? shelfEl : null;
     if (!layer || !pages || !mat) {
       setPhase("open");
       return;
@@ -190,88 +144,26 @@ export default function TripBookLayer({ tripId, children }: Props) {
     let cancelled = false;
     const isCancelled = () => cancelled || gen !== generation.current;
 
+    // 摆法归皮肤，图层归这儿。没有封面克隆体（直接进的相册，没走列表）时
+    // 没得可演，退化成直接就位——这条退化路径是骨架的事，不交给皮肤
+    const playAlbum = themeSlot("album");
+    const beat =
+      cover && from && held
+        ? { cover, pages: pagesEl, scrim: matEl, shelf, from, held, cancelled: isCancelled }
+        : null;
+
     async function runOpen() {
-      if (!cover || !from || !held) {
+      if (!beat) {
         matEl.style.opacity = "1";
         pagesEl.style.opacity = "1";
-        setBlur(pagesEl, 0);
+        pagesEl.style.filter = "none";
+        pagesEl.style.webkitFilter = "none";
         clearOpenBookHandoff();
         setPhase("open");
         return;
       }
-
-      matEl.style.opacity = "0";
-      pagesEl.style.opacity = "0";
-      setBlur(pagesEl, 36);
-      applyBox(cover, from);
-      hingeCover(cover, 0);
-      cover.style.opacity = "1";
-      cover.style.visibility = "visible";
-      shelf?.classList.add("is-book-back");
-      if (shelf instanceof HTMLElement) {
-        setBlur(shelf, 0);
-        shelf.style.transform = "scale(1)";
-      }
-      await tween(
-        280,
-        (t) => {
-          const e = easeOutCubic(t);
-          matEl.style.opacity = String(e);
-          if (shelf instanceof HTMLElement) {
-            setBlur(shelf, e * 44);
-            shelf.style.transform = `scale(${lerp(1, 1.14, e)})`;
-          }
-        },
-        isCancelled,
-      );
+      await playAlbum({ ...beat, dir: "open" });
       if (isCancelled()) return;
-
-      const lifted = { ...from, top: from.top - 14 };
-      await tween(
-        160,
-        (t) => {
-          const e = easeOutCubic(t);
-          applyBox(cover, {
-            left: from.left,
-            top: lerp(from.top, lifted.top, e),
-            width: from.width,
-            height: from.height,
-          });
-        },
-        isCancelled,
-      );
-      if (isCancelled()) return;
-      await tween(
-        320,
-        (t) => {
-          const e = easeOutCubic(t);
-          applyBox(cover, {
-            left: lerp(lifted.left, held.left, e),
-            top: lerp(lifted.top, held.top, e),
-            width: from.width,
-            height: from.height,
-          });
-        },
-        isCancelled,
-      );
-      if (isCancelled()) return;
-      applyBox(cover, held);
-      await tween(
-        520,
-        (t) => {
-          const e = easeInOut(t);
-          hingeCover(cover, e);
-          pagesEl.style.opacity = String(e);
-          setBlur(pagesEl, (1 - e) * 36);
-        },
-        isCancelled,
-      );
-      if (isCancelled()) return;
-      hingeCover(cover, 1);
-      cover.style.visibility = "hidden";
-      pagesEl.style.opacity = "1";
-      setBlur(pagesEl, 0);
-      matEl.style.opacity = "1";
       clearOpenBookHandoff();
       setPhase("open");
     }
@@ -279,41 +171,8 @@ export default function TripBookLayer({ tripId, children }: Props) {
     async function runClose() {
       pagesEl.style.opacity = "1";
       matEl.style.opacity = "1";
-      if (cover && from && held) {
-        applyBox(cover, held);
-        cover.style.visibility = "visible";
-        hingeCover(cover, 1);
-        await tween(
-          380,
-          (t) => {
-            const e = easeInOut(t);
-            hingeCover(cover, 1 - e);
-            pagesEl.style.opacity = String(1 - e);
-            setBlur(pagesEl, e * 36);
-          },
-          isCancelled,
-        );
-        if (isCancelled()) return;
-        hingeCover(cover, 0);
-        pagesEl.style.opacity = "0";
-        await tween(
-          280,
-          (t) => {
-            const e = easeInOut(t);
-            applyBox(cover, {
-              left: lerp(held.left, from.left, e),
-              top: lerp(held.top, from.top, e),
-              width: from.width,
-              height: from.height,
-            });
-            matEl.style.opacity = String(1 - e);
-            if (shelf instanceof HTMLElement) {
-              setBlur(shelf, (1 - e) * 44);
-              shelf.style.transform = `scale(${lerp(1.14, 1, e)})`;
-            }
-          },
-          isCancelled,
-        );
+      if (beat) {
+        await playAlbum({ ...beat, dir: "close" });
       } else {
         await tween(
           220,

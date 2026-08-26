@@ -1,0 +1,169 @@
+/**
+ * 齿边封蜡章：默认皮肤表达稀有度的那个物件，也是 raritySeal 槽位的缺省实现。
+ *
+ * 这些色**故意不做成 token**。前三档跟着 --rarity-*-seal 走，后四档的金属渐变、
+ * 辉光、字牌是这枚蜡章自己的材质——换一套皮肤要的多半不是「换个金色的蜡章」，
+ * 而是另一个物件（灯箱那边该是灯打多亮）。要换就走 themes/slots.ts 的 raritySeal
+ * 槽位整枚换掉。SVG 里的渐变色同理，留在 SettleRaritySeal.tsx。
+ *
+ * 由 main.tsx 显式 import，不从组件里 import：这样它稳定排在 styles.css 之后，
+ * 皮肤要覆盖时层叠顺序才是确定的（同特异度时靠先后决胜负）。
+ */
+
+.settle-rarity-seal {
+  --seal-wax: var(--rarity-N-seal);
+  --seal-ink: var(--rarity-N-seal-ink);
+  display: none;
+  position: absolute;
+  z-index: 4;
+  right: 3%;
+  bottom: 5%;
+  width: min(30%, 8rem);
+  aspect-ratio: 1;
+  pointer-events: none;
+  color: var(--seal-wax);
+  background: transparent;
+}
+
+/* 只在展出时亮。用哪个阶段亮是舞台说了算，所以这条跟着舞台的类名走 */
+.settle-stage.is-open .settle-rarity-seal {
+  display: block;
+}
+
+.settle-rarity-seal-svg {
+  display: block;
+  width: 100%;
+  height: 100%;
+  overflow: visible;
+  /* 辉光挂在 path 的 SVG 上，避免滤镜缓冲矩形被看成「方底」 */
+  filter: drop-shadow(0 2px 4px rgba(42, 36, 28, 0.28));
+}
+
+.settle-rarity-seal.rarity-N {
+  --seal-wax: var(--rarity-N-seal);
+  --seal-ink: var(--rarity-N-seal-ink);
+}
+.settle-rarity-seal.rarity-R {
+  --seal-wax: var(--rarity-R-seal);
+  --seal-ink: var(--rarity-R-seal-ink);
+}
+.settle-rarity-seal.rarity-SR {
+  --seal-wax: var(--rarity-SR-seal);
+  --seal-ink: var(--rarity-SR-seal-ink);
+}
+.settle-rarity-seal.rarity-SSR {
+  --seal-wax: var(--rarity-SSR-seal);
+  --seal-ink: var(--rarity-SSR-seal-ink);
+}
+.settle-rarity-seal.rarity-UR {
+  --seal-wax: var(--rarity-UR-seal);
+  --seal-ink: var(--rarity-UR-seal-ink);
+}
+.settle-rarity-seal.rarity-LR {
+  --seal-wax: var(--rarity-LR-seal);
+  --seal-ink: var(--rarity-LR-seal-ink);
+}
+.settle-rarity-seal.rarity-XR {
+  --seal-wax: var(--rarity-XR-seal);
+  --seal-ink: var(--rarity-XR-seal-ink);
+}
+
+.settle-rarity-letter {
+  position: absolute;
+  inset: 0;
+  display: grid;
+  place-items: center;
+  font-family: var(--font-brand);
+  font-weight: 800;
+  font-size: clamp(1.15rem, 5.2vw, 1.7rem);
+  letter-spacing: 0.04em;
+  color: var(--seal-ink);
+  z-index: 1;
+  text-shadow:
+    0 0 0.5px var(--seal-ink),
+    0 1px 0 color-mix(in srgb, var(--seal-wax) 55%, #000);
+}
+
+.settle-rarity-letter::before {
+  content: "";
+  position: absolute;
+  width: 42%;
+  height: 42%;
+  border-radius: 50%;
+  background: color-mix(in srgb, var(--seal-wax) 88%, #1a1200);
+  box-shadow: inset 0 0 0 1px color-mix(in srgb, var(--seal-ink) 22%, transparent);
+  z-index: -1;
+}
+
+/*
+ * 辉光分档：N哑 → R轻 → SR中 → SSR金 → UR红 → LR彩 → XR霓虹
+ * 滤镜只挂 SVG，容器保持透明（避免缓冲矩形被看成方底）
+ */
+.settle-rarity-seal.rarity-N .settle-rarity-seal-svg {
+  filter: drop-shadow(0 1px 2px rgba(42, 36, 28, 0.22));
+}
+
+.settle-rarity-seal.rarity-R .settle-rarity-seal-svg {
+  filter:
+    drop-shadow(0 2px 3px rgba(42, 36, 28, 0.26))
+    drop-shadow(0 0 4px color-mix(in srgb, var(--seal-wax) 28%, transparent));
+}
+
+.settle-rarity-seal.rarity-SR .settle-rarity-seal-svg {
+  filter:
+    drop-shadow(0 2px 4px rgba(42, 36, 28, 0.3))
+    drop-shadow(0 0 8px color-mix(in srgb, var(--seal-wax) 48%, transparent));
+}
+.settle-rarity-seal.rarity-SR .settle-rarity-letter::before {
+  box-shadow:
+    inset 0 0 0 1px color-mix(in srgb, var(--seal-ink) 28%, transparent),
+    0 0 5px color-mix(in srgb, var(--seal-wax) 35%, transparent);
+}
+
+.settle-rarity-seal.rarity-SSR .settle-rarity-seal-svg {
+  filter:
+    drop-shadow(0 2px 5px rgba(90, 55, 0, 0.45))
+    drop-shadow(0 0 12px rgba(255, 196, 40, 0.65));
+}
+.settle-rarity-seal.rarity-SSR .settle-rarity-letter::before {
+  background: linear-gradient(160deg, #fff4c4, #e8b020 55%, #c48900);
+  box-shadow:
+    inset 0 0 0 1px rgba(90, 55, 0, 0.28),
+    0 0 8px rgba(255, 210, 80, 0.55);
+}
+
+.settle-rarity-seal.rarity-UR .settle-rarity-seal-svg {
+  filter:
+    drop-shadow(0 2px 5px rgba(120, 0, 20, 0.42))
+    drop-shadow(0 0 14px rgba(255, 40, 70, 0.58));
+}
+.settle-rarity-seal.rarity-UR .settle-rarity-letter::before {
+  box-shadow:
+    inset 0 0 0 1px rgba(255, 240, 240, 0.35),
+    0 0 7px rgba(255, 60, 80, 0.45);
+}
+
+.settle-rarity-seal.rarity-LR .settle-rarity-seal-svg {
+  filter:
+    drop-shadow(0 2px 6px rgba(60, 20, 80, 0.4))
+    drop-shadow(0 0 16px rgba(255, 160, 220, 0.5))
+    drop-shadow(0 0 22px rgba(120, 180, 255, 0.28));
+}
+.settle-rarity-seal.rarity-LR .settle-rarity-letter::before {
+  background: color-mix(in srgb, #fff8f0 82%, #e0c4ff);
+  box-shadow:
+    inset 0 0 0 1px rgba(90, 40, 120, 0.2),
+    0 0 8px rgba(255, 180, 230, 0.5);
+}
+
+.settle-rarity-seal.rarity-XR .settle-rarity-seal-svg {
+  filter:
+    drop-shadow(0 2px 6px rgba(120, 0, 80, 0.48))
+    drop-shadow(0 0 18px rgba(255, 0, 168, 0.72))
+    drop-shadow(0 0 28px rgba(255, 100, 220, 0.35));
+}
+.settle-rarity-seal.rarity-XR .settle-rarity-letter::before {
+  box-shadow:
+    inset 0 0 0 1px rgba(255, 245, 250, 0.45),
+    0 0 10px rgba(255, 0, 168, 0.65);
+}

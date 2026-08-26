@@ -1,11 +1,11 @@
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { Link, useLocation, useNavigate, useParams } from "react-router-dom";
 import { formatRank, hasMessage, t, type MessageKey } from "@biotrace/messages";
 import { acceptedScientificIfDifferent, api, type Observation, type Rarity, type SettleVolumesResult } from "../api";
 import { identifyByLine } from "../identifyLabel";
 import { useBackClose } from "../androidBack";
-import { SettlePackStage } from "../components/SettlePackStage";
 import { ListTagRow } from "../components/ListTagRow";
+import { themeSlot } from "../themes/slots";
 import { peekObservation, rememberObservation } from "../pageCache";
 import { peekLiftBackground } from "../photoLiftHandoff";
 import { volumeCeremonyBgUrl, volumeSealCompleteUrl } from "../themes";
@@ -97,10 +97,12 @@ export default function ObservationSettlePage() {
       .catch((e) => setError(e instanceof Error ? e.message : t("settle.failed")));
   }, [id, navigate, background]);
 
+  // 用户点了按钮才启封，这一步归页面；揭示演多久由舞台自己说了算（见槽位层 §2.4）
   function onOpen() {
     setPhase("revealing");
-    window.setTimeout(() => setPhase("open"), 700);
   }
+
+  const onRevealed = useCallback(() => setPhase("open"), []);
 
   async function onClaim() {
     if (!obs) return;
@@ -144,6 +146,7 @@ export default function ObservationSettlePage() {
   const acceptedSci = acceptedScientificIfDifferent(obs);
   const sealed = phase === "sealed";
   const stagePhase = phase === "claimed" ? "open" : phase;
+  const SettleStage = themeSlot("settleStage");
 
   return (
     <div className="stack settle-page">
@@ -154,11 +157,12 @@ export default function ObservationSettlePage() {
 
       <div className={`settle-card ${phase}`}>
         <div className="settle-card-inner">
-          <SettlePackStage
+          <SettleStage
             phase={stagePhase}
             photoUrl={obs.displayUrl}
             photoAlt={sealed ? "" : title}
             rarity={obs.rarity}
+            onRevealed={onRevealed}
           />
 
           {sealed ? (

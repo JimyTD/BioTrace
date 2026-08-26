@@ -1,0 +1,50 @@
+<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="utf-8" />
+    <title>dev login</title>
+  </head>
+  <body>
+    <script>
+      // 本地走查用：DEV_AUTH 开着时换一个会话，再跳到 ?to= 指定的页面。
+      // 源文件在 scripts/walkthrough/，由 shot.ps1 拷进 public/（那份已 gitignore，不入库不发版）。
+      const q = new URLSearchParams(location.search);
+      const to = q.get("to") || "/trips";
+      if (q.get("theme")) localStorage.setItem("bt_theme", q.get("theme"));
+      // ?lift=<obsId>&trip=<tripId> 预置照片飞行交接。
+      // 落到 /observations/<obsId> 就会自己演起来，不必点鼠标——截中间帧靠它
+      if (q.get("lift")) {
+        sessionStorage.setItem(
+          "bt_photo_lift",
+          JSON.stringify({
+            observationId: q.get("lift"),
+            photoUrl: "/api/files/" + q.get("lift") + "/display.jpg",
+            box: { left: 20, top: 300, width: 190, height: 190 },
+            dir: "open",
+            origin: { kind: "album", tripId: q.get("trip") },
+          }),
+        );
+      }
+      // ?book=<tripId> 预置开书交接，直接落在翻页动画里，好截中间帧
+      if (q.get("book")) {
+        sessionStorage.setItem(
+          "bt_open_book",
+          JSON.stringify({
+            tripId: q.get("book"),
+            coverUrl: q.get("cover") || null,
+            source: { left: 20, top: 291, width: 390, height: 260 },
+            at: Date.now(),
+          }),
+        );
+      }
+      fetch("/api/auth/dev-login", { method: "POST" })
+        .then((r) => r.json())
+        .then((d) => {
+          // 引导页是覆盖层，会挡住所有路由，走查时直接标记已看过
+          if (d && d.user) localStorage.setItem("bt_onboard_seen_v1:" + d.user.id, "1");
+        })
+        .catch(() => {})
+        .finally(() => location.replace(to));
+    </script>
+  </body>
+</html>

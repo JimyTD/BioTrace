@@ -1,9 +1,9 @@
-import { useState } from "react";
+import { useCallback, useState } from "react";
 import { Link, useSearchParams } from "react-router-dom";
 import { t, type MessageKey } from "@biotrace/messages";
 import type { Rarity } from "../api";
-import { SettlePackStage, type SettleStagePhase } from "../components/SettlePackStage";
 import { volumeCeremonyBgUrl, volumeSealCompleteUrl } from "../themes";
+import { themeSlot, type SettleStagePhase } from "../themes/slots";
 
 /** 中性样张，跟着皮肤走；勿写死某一皮肤目录。 */
 const SAMPLE_PHOTO = "/trips/_sample-photo.jpg";
@@ -22,6 +22,12 @@ export default function SettleArtPreviewPage() {
     const want = params.get("rarity") as Rarity | null;
     return want && RARITIES.includes(want) ? want : "SR";
   });
+  const SettleStage = themeSlot("settleStage");
+  // ?hold=1 让阶段停在原地不自己往下走。揭示只有几百毫秒，不冻住就截不到中间态
+  const hold = params.get("hold") === "1";
+  const onRevealed = useCallback(() => {
+    if (!hold) setPhase("open");
+  }, [hold]);
 
   return (
     <div className="stack settle-page settle-art-preview">
@@ -53,22 +59,16 @@ export default function SettleArtPreviewPage() {
 
       <div className="settle-card">
         <div className="settle-card-inner">
-          <SettlePackStage
+          <SettleStage
             phase={phase}
             photoUrl={SAMPLE_PHOTO}
             photoAlt={t("settle.preview.sampleName")}
             rarity={rarity}
+            onRevealed={onRevealed}
           />
           {phase === "sealed" ? (
             <div className="settle-actions">
-              <button
-                className="btn"
-                type="button"
-                onClick={() => {
-                  setPhase("revealing");
-                  window.setTimeout(() => setPhase("open"), 700);
-                }}
-              >
+              <button className="btn" type="button" onClick={() => setPhase("revealing")}>
                 {t("settle.open")}
               </button>
             </div>

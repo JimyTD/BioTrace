@@ -1,28 +1,42 @@
 import {
+  applyBox,
   easeOutCubic,
-  lerp,
+  mixBox,
   nextPaint,
   prefersReducedMotion,
   snapBox,
   tween,
   type MotionBox,
 } from "./motion";
+import { themeSlot, type LiftPlayer } from "./themes/slots";
 
-function applyBox(el: HTMLElement, box: MotionBox) {
-  el.style.left = `${box.left}px`;
-  el.style.top = `${box.top}px`;
-  el.style.width = `${box.width}px`;
-  el.style.height = `${box.height}px`;
-}
-
-function mix(a: MotionBox, b: MotionBox, t: number): MotionBox {
-  return {
-    left: lerp(a.left, b.left, t),
-    top: lerp(a.top, b.top, t),
-    width: lerp(a.width, b.width, t),
-    height: lerp(a.height, b.height, t),
-  };
-}
+/**
+ * 默认皮肤搬照片的走法：一段 easeOutCubic，落地页同时淡入或淡出。
+ *
+ * 这是 `lift` 槽位的缺省实现。皮肤要换成别的走法（弧线、多段、带别的东西一起动），
+ * 在 themes/slots.ts 里登记自己的 LiftPlayer 即可；杂务由下面的 playPhotoLift 包办，
+ * 换皮肤的人只需要管从起点到终点这段时间里怎么走。分工见 docs/features/皮肤主题.md §2.4。
+ */
+export const flyEaseOut: LiftPlayer = async ({
+  actor,
+  from,
+  to,
+  page,
+  pageFade,
+  duration,
+  cancelled,
+}) => {
+  await tween(
+    duration,
+    (t) => {
+      const e = easeOutCubic(t);
+      applyBox(actor, mixBox(from, to(), e));
+      if (page && pageFade === "in") page.style.opacity = String(e);
+      if (page && pageFade === "out") page.style.opacity = String(1 - e);
+    },
+    cancelled,
+  );
+};
 
 function makeFlyer(photoUrl: string) {
   const flyer = document.createElement("div");
@@ -40,6 +54,11 @@ function resolveTo(to: MotionBox | (() => MotionBox)): MotionBox {
   return snapBox(typeof to === "function" ? to() : to);
 }
 
+/**
+ * 搬一张照片的骨架。杂务全在这儿，且**不归皮肤管**：
+ * 建飞行体、藏源格子、减动偏好下直接落地、取消检查、收尾清理。
+ * 中间「怎么走」那一段交给 `lift` 槽位。
+ */
 export async function playPhotoLift(opts: {
   photoUrl: string;
   from: MotionBox;
@@ -73,16 +92,16 @@ export async function playPhotoLift(opts: {
     flyer.remove();
     return;
   }
-  await tween(
+  await themeSlot("lift")({
+    actor: flyer,
+    from: start,
+    // 终点每帧现取：落地页可能还在排版
+    to: () => resolveTo(to),
+    page,
+    pageFade,
     duration,
-    (t) => {
-      const e = easeOutCubic(t);
-      applyBox(flyer, mix(start, resolveTo(to), e));
-      if (pageFade === "in") page.style.opacity = String(e);
-      if (pageFade === "out") page.style.opacity = String(1 - e);
-    },
     cancelled,
-  );
+  });
   if (cancelled()) {
     flyer.remove();
     return;

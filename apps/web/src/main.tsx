@@ -9,6 +9,8 @@ import { initTheme } from "./themes";
 import "./themes/daylight.css";
 import "./themes/lightbox.css";
 import "./styles.css";
+// 槽位缺省实现自带的样式，排在结构表之后，皮肤才好覆盖。见 docs/features/皮肤主题.md §2.4
+import "./components/SettleRaritySeal.css";
 
 initTheme();
 
