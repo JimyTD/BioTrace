@@ -3,7 +3,7 @@
 > **本文件是功能真源**：已做 / 本期要做 / 明确后置。查「某能力做没做」以此为准。  
 > 部署与线上现状看 [`OPS.md`](./OPS.md)；专题手册在 [`features/`](./features/)；当初的取舍理由在 [`planning/`](./planning/)。  
 > 变更历史看 git log，本文不留手抄变更记录。  
-> 更新日期：2026-08-24
+> 更新日期：2026-08-26
 
 ## 0. 当前阶段
 
@@ -16,7 +16,7 @@
 | Cut 5 | 已上线 | 邮箱+密码主路径（取代魔法链接）；Resend 仅用于找回码；持久会话；见 §5 |
 | Cut 6 | 制品就绪 | Capacitor Android 侧载壳；手册 [`features/Android套壳.md`](./features/Android套壳.md) |
 | 套册成就 | 引擎+三本内容已通 | 配置驱动；拓展手册 [`features/旅行套册.md`](./features/旅行套册.md) |
-| 皮肤主题 | 已落地 | 默认 `daylight`；第二皮肤 `tide`（token + 资源槽）；手册 [`features/皮肤主题.md`](./features/皮肤主题.md) |
+| 皮肤主题 | 已落地 | 默认 `daylight`（日光图版），备选 `clear`（清透，无世界观）；手册 [`features/皮肤主题.md`](./features/皮肤主题.md) |
 | 管理后台 | 已落地 | 独立登录；总览/用户/观察/平台密钥/存储/审计；手册 [`features/管理后台.md`](./features/管理后台.md) |
 | 地图补标 | 已完成 | 详情准星补标；`PATCH …/location` 重算国别/引入/稀有度（见 §1.3） |
 | 旅途元数据 | 已完成 | 列表/相册时间·地点摘要；自动聚合 + 可选手填覆盖（见 §1.5） |
@@ -46,13 +46,15 @@ docs/        筹划 + 本实现规格
 
 数据对象：`User` / `Trip` / `TripMember` / `Observation` / `CollectionEntry` / `SharedCollectionCredit` / `rarity_cache`。
 
-**表现层三分离（加功能时勿搅在一起）：**
+**表现层五分离（加功能时勿搅在一起）：**
 
 | 层 | 职责 | 位置 |
 |----|------|------|
-| 文案 | 用户可见句子 / 术语 | `packages/messages` |
-| 皮肤 | 色、字、圆角、氛围底、稀有度徽章色 | `apps/web/src/themes/` |
-| 流程 UI | 路由、状态、上传/开包等交互结构 | `apps/web/src/pages/` + `styles.css` 的 class |
+| 文案 | 用户可见句子 / 术语 | `packages/messages`（皮肤换说法走 `voices/`） |
+| 配色 | 色、字、圆角、氛围底、稀有度徽章色 | `apps/web/src/themes/<id>.css` |
+| 结构摆放 | 零件一次渲全，位置由 CSS 决定 | `styles.css` + 各皮肤 `[data-theme]` |
+| 整块换实现 | 开包舞台、稀有度物件、动作 | `themes/slots.ts` |
+| 流程与数据 | 路由、状态机、请求 | `apps/web/src/pages/` |
 
 ---
 
@@ -423,7 +425,7 @@ GRIIS 全球主索引 + seed overlay 种级匹配与稀有度分通道、图鉴�
 - **主路径**：`POST /api/auth/register` / `POST /api/auth/login`（邮箱+密码）→ 设 `bt_session`；`/me` 滑动续期（约 90 天）。
 - **不强制验邮**：假邮箱可注册；收不到信则无法找回。
 - **找回**：`POST /api/auth/request-reset` → Resend 发 **6 位码** → `POST /api/auth/reset-password`（App 内填码，利 Android）。
-- **「我的」**：昵称、改密、退出；外观切换皮肤（`daylight` / `tide`）；**平台识图日额度与自备 OpenAI 兼容 Key**（见 §1.7 / [`features/识图护栏.md`](./features/识图护栏.md)；后台可查看/清除，见 [`features/管理后台.md`](./features/管理后台.md)）。
+- **「我的」**：昵称、改密、退出；外观切换皮肤（`daylight` / `clear`）；**平台识图日额度与自备 OpenAI 兼容 Key**（见 §1.7 / [`features/识图护栏.md`](./features/识图护栏.md)；后台可查看/清除，见 [`features/管理后台.md`](./features/管理后台.md)）。
 - **UI**：登录页默认只露登录；注册与找回切卡，不并排抢主按钮。
 - 本机可 `DEV_AUTH=1` 开发登录；生产 `DEV_AUTH=0`。测试库可清（密码模型不迁移旧魔法链接用户）。
 - 发信仍用 Resend（`RESEND_API_KEY` + `MAIL_FROM`）；日常登录不发信。
@@ -481,7 +483,7 @@ GRIIS 全球主索引 + seed overlay 种级匹配与稀有度分通道、图鉴�
 
 已拆为独立专题：**[`features/皮肤主题.md`](./features/皮肤主题.md)**（token 表、加皮肤清单、明确不做）。
 
-要点只留一句：色/字/圆角写在 `apps/web/src/themes/<id>.css`，结构样式只用语义 `var(--*)`，**流程页不写死品牌色**。
+要点：色/字/圆角写在 `themes/<id>.css`，结构只用 `var(--*)`，换物件或演法走槽位，**流程页不写死品牌色、不为换皮分叉页面**。加功能清单见 [`.cursor/rules/web-themes.mdc`](../.cursor/rules/web-themes.mdc)。
 
 ## 11. 管理后台
 
