@@ -31,10 +31,15 @@
 .lamp-stage {
   position: relative;
   width: 100%;
-  /* 见方而不是 4:3：片子上方要留出光晕漫开的地方，下方要放得下等级码 */
-  aspect-ratio: 1;
+  /* 比见方再高一点：上面摆邻片，下面放等级码 */
+  aspect-ratio: 5 / 6;
   display: grid;
-  place-items: center;
+  grid-template-rows: auto auto;
+  align-content: center;
+  justify-items: center;
+  gap: 4cqw;
+  /* 舞台宽当 cqw 用：邻片、间距都按台宽同比，换屏宽不走样 */
+  container-type: inline-size;
   /* 不画底、不切边：这一面的灯台就是页面本身（--bg-atmosphere 那张灯面），
      舞台再铺一层底就成了「灯台上摆着一块小灯台」。示意里也没有这个盒子 */
   background: none;
@@ -68,11 +73,12 @@
 .lamp-glow {
   position: absolute;
   z-index: 1;
-  /* 网格里的绝对定位元素靠静态位置摆，各引擎不一致，这儿钉死居中 */
-  top: 50%;
+  /* 网格里的绝对定位元素靠静态位置摆，各引擎不一致，这儿钉死。
+     纵向不是台子正中：主片让邻片挤到了下面，光要跟着片子走 */
+  top: 60%;
   left: 50%;
   transform: translate(-50%, -50%);
-  /* 得比卡纸（62%）宽出一大截，光才漫得到片子外面去 */
+  /* 得比卡纸（70cqw）宽出一大截，光才漫得到片子外面去 */
   width: 150%;
   aspect-ratio: 1;
   background: radial-gradient(
@@ -86,13 +92,64 @@
   pointer-events: none;
 }
 
+/* ── 邻片 ─────────────────────────────────────────────────────────
+   灯台边上还搁着的几张。永远是暗的：亮的只有推上灯箱那一张，
+   这排存在的意义就是给它一个对照（示意里的「周围的片子暗下去」）。 */
+.lamp-neighbors {
+  position: relative;
+  z-index: 2;
+  display: flex;
+  gap: 2.6cqw;
+  opacity: 0.42;
+  filter: saturate(0.25);
+}
+
+.lamp-neighbor {
+  width: 19cqw;
+  padding: 1.3cqw;
+  background: var(--trip-cover-plate);
+  box-shadow: 0 1px 2px rgba(40, 55, 65, 0.18);
+}
+
+/* 空窗：没上灯的片子就是这个样子，看得出是张片子，看不出拍了什么。
+   三张的深浅、角度都错开一点——一模一样三块灰会看成加载占位 */
+.lamp-neighbor::before {
+  content: "";
+  display: block;
+  aspect-ratio: 1;
+  background: linear-gradient(158deg, #6d7a84 0%, #414c55 100%);
+}
+
+.lamp-neighbor:nth-child(1) {
+  transform: rotate(-1.2deg);
+}
+.lamp-neighbor:nth-child(1)::before {
+  background: linear-gradient(196deg, #7c8892 0%, #4d5860 100%);
+}
+
+.lamp-neighbor:nth-child(2) {
+  transform: rotate(0.6deg);
+}
+
+.lamp-neighbor:nth-child(3) {
+  transform: rotate(1.4deg);
+}
+.lamp-neighbor:nth-child(3)::before {
+  background: linear-gradient(132deg, #5b666f 0%, #343d44 100%);
+}
+
+/* 灯全灭时它们和台面一样沉，不该比主角还显眼 */
+.lamp-stage.is-sealed .lamp-neighbors {
+  opacity: 0.22;
+}
+
 /* 卡纸片框。和相册格是同一种物件，所以用同一个卡纸色 */
 .lamp-slide {
   position: relative;
   z-index: 2;
   /* 示意里片子占屏宽 250/380 ≈ 66%，是这一屏的主角，不是一张缩略图 */
-  width: 74%;
-  padding: 5.2% 5.2% 0;
+  width: 70cqw;
+  padding: 4.9cqw 4.9cqw 0;
   background: var(--trip-cover-plate);
   box-shadow:
     0 2px 4px rgba(40, 55, 65, 0.2),
@@ -105,7 +162,7 @@
   align-items: center;
   justify-content: space-between;
   gap: 8px;
-  padding: 3.6% 0.6% 4.6%;
+  padding: 2.5cqw 0.4cqw 3.2cqw;
   font-family: var(--font-meta, var(--font-sans));
   font-size: 0.62rem;
   line-height: 1;
@@ -126,12 +183,21 @@
 }
 
 .lamp-stage.is-revealing .lamp-mark {
-  animation: lampInk var(--lamp-ms, 900ms) ease-out forwards;
+  animation: lampMarkInk var(--lamp-ms, 900ms) ease-out forwards;
+}
+
+@keyframes lampMarkInk {
+  from {
+    opacity: 0.25;
+  }
+  to {
+    opacity: 1;
+  }
 }
 
 @keyframes lampInk {
   from {
-    opacity: 0.25;
+    opacity: 0;
   }
   to {
     opacity: 1;
@@ -235,7 +301,9 @@
   .lamp-stage.is-revealing::before,
   .lamp-stage.is-revealing .lamp-glow,
   .lamp-stage.is-revealing .lamp-photo,
-  .lamp-stage.is-revealing .lamp-slide {
+  .lamp-stage.is-revealing .lamp-slide,
+  .lamp-stage.is-revealing .lamp-mark,
+  .lamp-stage.is-revealing .lamp-rank {
     animation-duration: 1ms;
   }
 }
@@ -245,7 +313,7 @@
 .lamp-rank {
   position: absolute;
   left: 50%;
-  bottom: 5%;
+  bottom: 4%;
   transform: translateX(-50%);
   z-index: 4;
   padding: 4px 11px 3px;
@@ -259,6 +327,15 @@
   background: var(--rarity-N-seal);
   color: var(--rarity-N-seal-ink);
   box-shadow: 0 1px 3px rgba(40, 55, 65, 0.3);
+}
+
+/* 等级是归档时才打上去的，灯还没开就先亮出来说不通 */
+.lamp-stage.is-sealed .lamp-rank {
+  opacity: 0;
+}
+
+.lamp-stage.is-revealing .lamp-rank {
+  animation: lampInk var(--lamp-ms, 900ms) ease-out forwards;
 }
 
 .lamp-rank.rarity-N {

@@ -45,6 +45,15 @@ export function LightboxLampStage({
       {/* 灯管透出来的那团光，在片子背后 */}
       <span className="lamp-glow" aria-hidden />
 
+      {/* 灯台上还搁着的几张片子。是道具，不是数据——空卡纸，不放照片：
+          既给「这一张被单独点亮」一个对照，又不假造别人拍了什么。
+          真要摆同旅途的邻片得让结算页多取一次兄弟照片，那是数据不是皮肤 */}
+      <span className="lamp-neighbors" aria-hidden>
+        <span className="lamp-neighbor" />
+        <span className="lamp-neighbor" />
+        <span className="lamp-neighbor" />
+      </span>
+
       <div className="lamp-slide">
         <span className="lamp-window">
           <img className="lamp-photo" src={photoUrl} alt={photoAlt} />
