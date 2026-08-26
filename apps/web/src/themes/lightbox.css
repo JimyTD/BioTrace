@@ -72,6 +72,7 @@
   --map-dot-selected: #d9531e;
   --map-dot-ring: rgba(217, 83, 30, 0.3);
   --map-dot-border: #ffffff;
+  --map-dot-shadow: 0 2px 8px rgba(20, 40, 55, 0.32);
 
   /* 稀有度＝灯亮到什么程度：灰→亮蓝→亮紫→亮金→刺红→彩虹→霓虹洋红(+XR异形章) */
   --rarity-N-bg: #e6ebee;
@@ -142,6 +143,9 @@
   --film-tile-shadow:
     0 1px 2px rgba(30, 50, 65, 0.22),
     0 7px 16px rgba(30, 50, 65, 0.13);
+  /* 空格是灯面上没放片的地方，底纹要冷一档；礼章压在卡纸上，影比日光收一点 */
+  --stamp-empty-hatch: rgba(34, 46, 56, 0.06);
+  --ceremony-seal-shadow: drop-shadow(0 2px 6px rgba(30, 50, 65, 0.26));
   --trip-create-bg: color-mix(in srgb, var(--card) 82%, var(--volume-cover-empty));
   --trip-share-badge-bg: var(--volume-complete-soft);
   --trip-share-badge-ink: var(--volume-complete-ink);

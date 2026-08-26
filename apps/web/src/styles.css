@@ -1742,7 +1742,7 @@ button.film-tile-link {
   border: 2px solid var(--map-dot-border);
   border-radius: 50%;
   background: var(--map-dot);
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.28);
+  box-shadow: var(--map-dot-shadow);
   cursor: pointer;
 }
 
@@ -2201,8 +2201,8 @@ button.stamp {
       -45deg,
       transparent,
       transparent 5px,
-      rgba(58, 50, 44, 0.05) 5px,
-      rgba(58, 50, 44, 0.05) 6px
+      var(--stamp-empty-hatch) 5px,
+      var(--stamp-empty-hatch) 6px
     );
 }
 
@@ -2448,7 +2448,7 @@ button.species-card-cover {
   max-width: 88px;
   height: auto;
   pointer-events: none;
-  filter: drop-shadow(0 2px 6px rgba(42, 36, 28, 0.3));
+  filter: var(--ceremony-seal-shadow);
   z-index: 1;
 }
 

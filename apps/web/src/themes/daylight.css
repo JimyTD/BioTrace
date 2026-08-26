@@ -66,6 +66,7 @@
   --map-dot-selected: #d3543c;
   --map-dot-ring: rgba(211, 84, 60, 0.3);
   --map-dot-border: #fffdf9;
+  --map-dot-shadow: 0 2px 8px rgba(0, 0, 0, 0.28);
 
   /* 稀有度：灰→亮蓝→亮紫→亮金→刺红→彩虹→霓虹洋红(+XR异形章) */
   --rarity-N-bg: #ebe9e3;
@@ -133,6 +134,9 @@
   --trip-cover-shadow-hover: 0 14px 32px rgba(42, 36, 28, 0.14);
   --trip-cover-plate: #efe6d6;
   --film-tile-shadow: 0 4px 14px rgba(42, 36, 28, 0.08);
+  /* 套册空格的斜线底纹，与开包礼章落在纸上的影 */
+  --stamp-empty-hatch: rgba(58, 50, 44, 0.05);
+  --ceremony-seal-shadow: drop-shadow(0 2px 6px rgba(42, 36, 28, 0.3));
   --trip-create-bg: color-mix(in srgb, var(--card) 82%, var(--volume-cover-empty));
   --trip-share-badge-bg: var(--volume-complete-soft);
   --trip-share-badge-ink: var(--volume-complete-ink);
