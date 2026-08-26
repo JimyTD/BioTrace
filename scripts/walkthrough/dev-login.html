@@ -37,14 +37,20 @@
           }),
         );
       }
-      fetch("/api/auth/dev-login", { method: "POST" })
-        .then((r) => r.json())
-        .then((d) => {
-          // 引导页是覆盖层，会挡住所有路由，走查时直接标记已看过
-          if (d && d.user) localStorage.setItem("bt_onboard_seen_v1:" + d.user.id, "1");
-        })
-        .catch(() => {})
-        .finally(() => location.replace(to));
+      // ?anon=1 只换皮肤不登录。登录页是「没有会话」时才出现的覆盖层，
+      // 想截它就不能先把会话建起来（配一个干净的 --user-data-dir 用）
+      if (q.get("anon")) {
+        location.replace(to);
+      } else {
+        fetch("/api/auth/dev-login", { method: "POST" })
+          .then((r) => r.json())
+          .then((d) => {
+            // 引导页是覆盖层，会挡住所有路由，走查时直接标记已看过
+            if (d && d.user) localStorage.setItem("bt_onboard_seen_v1:" + d.user.id, "1");
+          })
+          .catch(() => {})
+          .finally(() => location.replace(to));
+      }
     </script>
   </body>
 </html>

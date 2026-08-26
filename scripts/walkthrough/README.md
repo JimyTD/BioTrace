@@ -43,6 +43,9 @@ powershell -ExecutionPolicy Bypass -File scripts\walkthrough\shot.ps1 `
 
 # 落在照片飞行动画里：预置交接，进详情页就自己演，不必点鼠标
 ... -To "/observations/<obsId>" -Extra "lift=<obsId>&trip=<tripId>" -Wait 3000
+
+# 登录页：它是「没有会话」时才出现的覆盖层，得跳过 dev 登录
+... -To "/" -Extra "anon=1" -Theme clear -Out ".shot\login.png"
 ```
 
 产物统一放 `.shot/`（gitignore）。

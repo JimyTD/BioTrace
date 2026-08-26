@@ -26,9 +26,8 @@ if (-not (Test-Path $edge)) { throw "没找到 Edge，改 `$edge 指到本机浏
 # 跳转页得和应用同源才能带上会话，所以放 public/。那份是 gitignore 的，
 # 不入库也不会进构建产物（发版从 git 干净检出）
 $helper = Join-Path $repo "apps\web\public\dev-login.html"
-if (-not (Test-Path $helper)) {
-  Copy-Item (Join-Path $PSScriptRoot "dev-login.html") $helper
-}
+# 每次都覆盖：只在缺失时拷会让改过的跳转页永远生效不了
+Copy-Item (Join-Path $PSScriptRoot "dev-login.html") $helper -Force
 
 $url = "http://127.0.0.1:$Port/dev-login.html?to=" + [uri]::EscapeDataString($To)
 if ($Theme) { $url += "&theme=$Theme" }

@@ -148,6 +148,7 @@ export default function LoginPage({
       <div className="login-page" ref={pageRef}>
         <div className="login-page-front">
           <div className="login-mast">
+            <img className="brand-mark" src="/brand/icon-tile-framed.svg" alt="" width={76} height={76} />
             <h1 className="login-brand">{t("app.name")}</h1>
             <p className="lede">{lede}</p>
             <div className="login-rule" aria-hidden />
