@@ -1,0 +1,549 @@
+﻿<!doctype html>
+<!--
+  品牌探索期的叙事走查稿，不是产品页面。
+  原来放在 apps/web/public/ 下，会被整个拷进 dist（11MB，占产物四成），
+  所以移到 docs/。引用现有美术资源走 ../../apps/web/public/，
+  这样直接 file:// 打开、或从仓库根起静态服务都能看。
+-->
+<html lang="zh-CN">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>叙事走查 · 冲印与显影</title>
+    <style>
+      * { box-sizing: border-box; }
+      body {
+        margin: 0; padding: 20px 16px 80px;
+        font-family: "Segoe UI", "PingFang SC", "Microsoft YaHei", sans-serif;
+        color: #1f2a24;
+        background:
+          radial-gradient(ellipse 120% 70% at 8% -18%, rgba(212, 168, 120, 0.34), transparent 56%),
+          linear-gradient(168deg, #f6f1e8 0%, #efe8dc 46%, #e9e1d4 100%);
+        background-attachment: fixed;
+      }
+      h1.doc { margin: 0 0 6px; font-size: 1.25rem; }
+      .note { margin: 0 0 8px; color: #6b6258; font-size: 0.88rem; max-width: 72ch; line-height: 1.7; }
+      h2.sec {
+        margin: 40px 0 4px; font-size: 1.05rem;
+        padding-bottom: 6px; border-bottom: 1px solid rgba(42, 64, 51, 0.14);
+      }
+      h3.sub { margin: 26px 0 2px; font-size: 0.92rem; color: #4a463f; }
+      code { background: rgba(58, 50, 44, 0.08); padding: 1px 5px; border-radius: 5px; font-size: 0.88em; }
+
+      .switcher {
+        position: sticky; top: 0; z-index: 20; margin: 16px 0 8px;
+        padding: 12px 16px; border-radius: 14px;
+        background: rgba(250, 248, 243, 0.95); backdrop-filter: blur(8px);
+        border: 1px solid rgba(42, 64, 51, 0.16);
+        box-shadow: 0 6px 20px rgba(42, 36, 28, 0.09);
+        display: flex; align-items: center; gap: 14px; flex-wrap: wrap;
+      }
+      .switcher b { font-size: 0.9rem; }
+      .seg { display: flex; border-radius: 10px; overflow: hidden; border: 1px solid rgba(42, 64, 51, 0.2); }
+      .seg button {
+        border: 0; padding: 8px 16px; font: inherit; font-size: 0.85rem; font-weight: 700;
+        background: transparent; color: #6b6258; cursor: pointer;
+      }
+      .seg button.on { background: #7E2B2E; color: #f6ece2; }
+      .switcher .hint { font-size: 0.78rem; color: #8b8378; }
+
+      .diffnote {
+        margin: 10px 0 0; padding: 12px 15px; border-radius: 12px; max-width: 860px;
+        background: rgba(250, 248, 243, 0.8); border: 1px solid rgba(42, 64, 51, 0.14);
+        font-size: 0.83rem; line-height: 1.7; color: #6b6258;
+      }
+      .diffnote b { color: #7E2B2E; }
+      .diffnote ul { margin: 6px 0 0; padding-left: 20px; }
+
+      .screens { display: flex; flex-wrap: wrap; gap: 20px; margin-top: 18px; }
+      .phone {
+        width: 268px; border-radius: 20px; overflow: hidden;
+        display: grid; grid-template-rows: auto 1fr auto;
+        border: 1px solid rgba(42, 36, 28, 0.18);
+        box-shadow: 0 14px 34px rgba(42, 36, 28, 0.14);
+        background:
+          radial-gradient(ellipse 120% 70% at 8% -18%, rgba(212, 168, 120, 0.34), transparent 56%),
+          linear-gradient(168deg, #f6f1e8 0%, #efe8dc 46%, #e9e1d4 100%);
+      }
+      .phone.dark {
+        background: linear-gradient(170deg, #2b1a17 0%, #23130f 60%, #1b0f0d 100%);
+        color: #f0e2d4;
+      }
+      .phone.dark.legacy { background: linear-gradient(170deg, #2a241c 0%, #221d16 60%, #1a1611 100%); }
+      .caption { margin: 0 0 7px; font-size: 0.8rem; font-weight: 700; color: #6b6258; }
+
+      .bar {
+        padding: 10px 13px 9px; font-weight: 700; font-size: 0.88rem;
+        display: flex; align-items: center; gap: 7px; min-height: 40px;
+        background: #f3efe7; border-bottom: 1px solid rgba(42, 64, 51, 0.14);
+      }
+      .bar img { width: 20px; height: 20px; border-radius: 5px; }
+      .dark .bar { background: rgba(255, 255, 255, 0.05); border-bottom-color: rgba(255, 255, 255, 0.1); color: #f0e2d4; }
+      .back { font-size: 0.78rem; color: #6b6258; font-weight: 400; }
+      .dark .back { color: rgba(240, 226, 212, 0.6); }
+
+      .body { padding: 13px; display: grid; gap: 10px; align-content: start; }
+      .lede { margin: 0; font-size: 0.8rem; color: #6b6258; line-height: 1.55; }
+      .dark .lede { color: rgba(240, 226, 212, 0.68); }
+
+      .thumbs { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
+      .thumb {
+        aspect-ratio: 3/2; border-radius: 10px; position: relative; overflow: hidden;
+        background: #e6dbc7; border: 1px solid rgba(42, 64, 51, 0.12);
+      }
+      .thumb > img.photo { width: 100%; height: 100%; object-fit: cover; display: block; }
+      .thumb .veil {
+        position: absolute; inset: 0; display: grid; place-items: center; z-index: 3;
+        background: rgba(232, 222, 202, 0.92); color: #6b6258; font-size: 0.7rem; font-weight: 700;
+      }
+      .badge {
+        position: absolute; left: 6px; bottom: 6px; z-index: 4;
+        padding: 2px 8px; border-radius: 8px; font-size: 0.66rem; font-weight: 700;
+      }
+      .badge.wait { background: var(--waitbg); color: var(--waitink); }
+      .badge.done { background: #f0ddd4; color: #9a4030; }
+      .badge.settled { background: #ebe9e3; color: #4a4f48; }
+
+      .btn {
+        border: 0; border-radius: 10px; padding: 9px 14px; font: inherit;
+        font-size: 0.84rem; font-weight: 700; background: #d3543c; color: #fffaf7;
+        cursor: default; width: 100%;
+      }
+      .btn.ghost { background: transparent; color: #6b6258; border: 1px solid rgba(42, 64, 51, 0.22); }
+      .dark .btn.ghost { color: rgba(240, 226, 212, 0.75); border-color: rgba(240, 226, 212, 0.28); }
+
+      .stage { position: relative; border-radius: 12px; overflow: hidden; }
+      .stage img.full { width: 100%; display: block; }
+      .stage .mat {
+        position: relative; aspect-ratio: 3/2; background: #2a241c;
+        display: grid; place-items: center; overflow: hidden;
+      }
+      .stage .mat img.photo {
+        position: absolute; top: 6%; left: 6%; width: 88%; height: 88%; object-fit: cover; z-index: 1;
+      }
+      .stage .mat img.overlay {
+        position: absolute; inset: 0; width: 100%; height: 100%; object-fit: fill; z-index: 2;
+      }
+      .stage .mat img.seal { position: absolute; right: 7%; bottom: 7%; width: 22%; z-index: 3; }
+
+      .plate {
+        border-radius: 10px; padding: 11px 12px;
+        background: rgba(255, 252, 246, 0.9); border: 1px solid rgba(42, 64, 51, 0.14);
+      }
+      .dark .plate { background: rgba(255, 245, 232, 0.09); border-color: rgba(240, 226, 212, 0.18); }
+      .plate .sci { margin: 0; font-size: 0.95rem; font-weight: 700; font-style: italic; }
+      .plate .zh { margin: 2px 0 0; font-size: 0.78rem; color: #6b6258; }
+      .dark .plate .zh { color: rgba(240, 226, 212, 0.66); }
+      .plate .row { display: flex; gap: 6px; margin-top: 8px; flex-wrap: wrap; }
+      .chip { padding: 2px 8px; border-radius: 8px; font-size: 0.66rem; font-weight: 700; }
+
+      .wall { display: grid; grid-template-columns: repeat(3, 1fr); gap: 7px; }
+      .cell { aspect-ratio: 1; position: relative; overflow: hidden; }
+      .cell img.photo { width: 100%; height: 100%; object-fit: cover; display: block; }
+      .cell img.rim { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: fill; z-index: 2; }
+
+      .wall.stamp .cell { border-radius: 2px; background: #e7dfd2; }
+      .wall.stamp .cell.empty::after {
+        content: ""; position: absolute; inset: 8%; border: 1.5px dashed rgba(58, 50, 44, 0.28);
+      }
+      .wall.print .cell {
+        border-radius: 3px; background: #f7f2e6; padding: 7%;
+        box-shadow: 0 1px 3px rgba(42, 36, 28, 0.16);
+      }
+      .wall.print .cell.empty { background: #e9e0cd; }
+      .wall.print .cell.empty::after {
+        content: ""; position: absolute; inset: 7%;
+        border: 1.5px dashed rgba(58, 50, 44, 0.26); background: #ded3bc;
+      }
+
+      .nav {
+        display: grid; grid-template-columns: repeat(4, 1fr);
+        padding: 7px 8px; background: #f3efe7; border-top: 1px solid rgba(42, 64, 51, 0.14);
+      }
+      .nav span { text-align: center; font-size: 0.66rem; color: #6b6258; padding: 6px 3px; border-radius: 9px; }
+      .nav span.on { background: #f0ddd4; color: #9a4030; font-weight: 700; }
+
+      .opts { display: flex; flex-wrap: wrap; gap: 16px; margin-top: 14px; }
+      .opt {
+        width: 300px; padding: 14px; border-radius: 14px;
+        background: #faf8f3; border: 1px solid rgba(42, 64, 51, 0.14);
+      }
+      .opt img { width: 100%; border-radius: 10px; display: block; }
+      .opt b { display: block; margin-top: 10px; font-size: 0.92rem; }
+      .opt p { margin: 6px 0 0; font-size: 0.79rem; line-height: 1.6; color: #6b6258; }
+
+      .reveal {
+        position: relative; width: 460px; max-width: 100%; margin-top: 14px;
+        border-radius: 14px; overflow: hidden; cursor: pointer;
+        box-shadow: 0 10px 30px rgba(32, 22, 14, 0.28);
+      }
+      .reveal img { width: 100%; display: block; }
+      .reveal img[data-step] {
+        position: absolute; inset: 0; opacity: 0;
+        transition: opacity 1.1s ease;
+      }
+      .reveal img[data-step].on { opacity: 1; }
+      .reveal .hint {
+        position: absolute; left: 50%; bottom: 12px; transform: translateX(-50%);
+        font-size: 0.72rem; letter-spacing: 0.08em; color: #f0e4d2;
+        background: rgba(32, 22, 14, 0.55); padding: 5px 12px; border-radius: 999px;
+        pointer-events: none; transition: opacity 0.3s ease;
+      }
+      .reveal.playing .hint { opacity: 0; }
+
+      table.diff {
+        width: 100%; max-width: 900px; margin-top: 16px; border-collapse: collapse;
+        background: #faf8f3; border-radius: 14px; overflow: hidden;
+        border: 1px solid rgba(42, 64, 51, 0.14);
+      }
+      .diff th, .diff td {
+        text-align: left; padding: 9px 13px; font-size: 0.85rem;
+        border-bottom: 1px solid rgba(42, 64, 51, 0.12); vertical-align: top;
+      }
+      .diff th { font-size: 0.76rem; color: #6b6258; }
+      .diff tr:last-child td { border-bottom: 0; }
+      .diff td.k { font-family: ui-monospace, Consolas, monospace; font-size: 0.76rem; color: #8b8378; width: 24%; }
+      .diff td.old { color: #8b8378; width: 33%; }
+      .diff td.new { color: #7E2B2E; font-weight: 600; }
+      .diff td.new.keep { color: #6b6258; font-weight: 400; }
+
+      [data-only] { display: none; }
+    </style>
+  </head>
+  <body>
+    <h1 class="doc">叙事走查 · 冲印与显影</h1>
+    <p class="note">
+      全流程走查。切换开关会同时替换<b>用词、美术与配色</b>——现行侧用的是项目里真实在跑的资源
+      （<code>settle/daylight/pack-sealed.png</code> 火漆封缄、<code>volumes/daylight/stamp-frame.svg</code> 邮票齿孔框），
+      不是重绘的示意图。本页为静态演示，不接接口，不影响 <code>apps/web/src</code>。
+    </p>
+
+    <div class="switcher">
+      <b>整体切换</b>
+      <div class="seg">
+        <button id="btnOld" type="button">现行 · 专家鉴定 + 火漆</button>
+        <button id="btnNew" class="on" type="button">提案 · 冲印显影</button>
+      </div>
+      <span class="hint">状态码 analyzing / pending_settle / settled 不随之改变</span>
+    </div>
+
+    <div class="diffnote">
+      两侧的差异不止文字：
+      <ul>
+        <li><b>顶栏标识</b>：现行是纯文字 wordmark（<code>App.tsx</code> 现状），提案加蜗牛小标记</li>
+        <li><b>结算舞台</b>：现行是牛皮纸加麻绳加火漆封缄，揭示后盖火漆徽章；提案是一张相纸，影像从空白慢慢浮出</li>
+        <li><b>收藏墙</b>：现行是邮票齿孔框，空槽待盖章；提案是相纸白边，空槽待冲洗</li>
+        <li><b>等待态徽章色</b>：现行胶片橙系，提案暗房红系</li>
+      </ul>
+    </div>
+
+    <h2 class="sec">一 · 相册页：上传之后</h2>
+    <p class="note">同一屏的两个阶段。左：刚送出，右：已完成待取。</p>
+    <div class="screens">
+      <div>
+        <p class="caption">阶段一 · analyzing</p>
+        <div class="phone">
+          <div class="bar">
+            <img data-only="new" src="./drafts/film-b-snail.png" alt="" />
+            <span class="back">←</span> 潮间带下午
+          </div>
+          <div class="body">
+            <div class="thumbs">
+              <div class="thumb">
+                <div class="veil" data-t="专家鉴定中|显影中"></div>
+                <span class="badge wait" data-t="专家鉴定中|显影中"></span>
+              </div>
+              <div class="thumb">
+                <img class="photo" src="../../apps/web/public/trips/_sample-photo.jpg" alt="" />
+                <span class="badge settled">已收录</span>
+              </div>
+            </div>
+            <p class="lede">册页还空着。上传照片，开始记录。</p>
+            <button class="btn" type="button" data-t="上传并鉴定|上传并送冲"></button>
+          </div>
+          <nav class="nav"><span class="on">旅途</span><span>地图</span><span>图鉴</span><span>我的</span></nav>
+        </div>
+      </div>
+
+      <div>
+        <p class="caption">阶段二 · pending_settle</p>
+        <div class="phone">
+          <div class="bar">
+            <img data-only="new" src="./drafts/film-b-snail.png" alt="" />
+            <span class="back">←</span> 潮间带下午
+          </div>
+          <div class="body">
+            <div class="thumbs">
+              <div class="thumb">
+                <div class="veil" data-t="鉴定完成|已显影"></div>
+                <span class="badge done" data-t="鉴定完成|已显影"></span>
+              </div>
+              <div class="thumb">
+                <img class="photo" src="../../apps/web/public/trips/_sample-photo.jpg" alt="" />
+                <span class="badge settled">已收录</span>
+              </div>
+            </div>
+            <p class="lede" data-t="点开查看鉴定结果。|点开取片。"></p>
+            <button class="btn" type="button" data-t="查看鉴定证书|去取片"></button>
+          </div>
+          <nav class="nav"><span class="on">旅途</span><span>地图</span><span>图鉴</span><span>我的</span></nav>
+        </div>
+      </div>
+    </div>
+
+    <h2 class="sec">二 · 结算页：揭示的那一下</h2>
+    <p class="note">
+      产品高潮，也是两条叙事差别最大的地方。
+      现行是「拆封」——一个瞬间的、外来的动作；提案是「显影」——渐进的、从空白到浮现，天然适合做动画。
+    </p>
+    <div class="screens">
+      <div>
+        <p class="caption">阶段一 · 未揭示</p>
+        <div class="phone dark" data-cls="legacy|">
+          <div class="bar"><span class="back">←</span> <span data-t="鉴定证书|定名样片"></span></div>
+          <div class="body">
+            <p class="lede">这趟遇见的生命，现在有名字了。</p>
+            <div class="stage">
+              <div class="mat" data-only="old">
+                <img class="overlay" src="../../apps/web/public/settle/daylight/pack-sealed.png" alt="" />
+              </div>
+              <img class="full" data-only="new" src="./drafts/hang-blank.png" alt="" />
+            </div>
+            <button class="btn" type="button" data-t="请过目|取片"></button>
+          </div>
+        </div>
+      </div>
+
+      <div>
+        <p class="caption">阶段二 · 已揭示</p>
+        <div class="phone dark" data-cls="legacy|">
+          <div class="bar"><span class="back">←</span> <span data-t="鉴定证书|定名样片"></span></div>
+          <div class="body">
+            <div class="stage">
+              <div class="mat" data-only="old">
+                <img class="photo" src="../../apps/web/public/trips/_sample-photo.jpg" alt="" />
+                <img class="overlay" src="../../apps/web/public/settle/daylight/photo-frame.svg" alt="" />
+                <img class="seal" src="../../apps/web/public/settle/daylight/rarity-seal.svg" alt="" />
+              </div>
+              <img class="full" data-only="new" src="./drafts/hang-developed.png" alt="" />
+            </div>
+            <div class="plate">
+              <p class="sci">Helix pomatia</p>
+              <p class="zh">散大蜗牛</p>
+              <div class="row">
+                <span class="chip" style="background:#f0d8ff;color:#7a22c8">SR · 稀有</span>
+                <span class="chip" style="background:#f3e3c4;color:#9a6b24" data-t="引入警示|随片提示"></span>
+              </div>
+            </div>
+            <button class="btn" type="button">收下</button>
+          </div>
+        </div>
+      </div>
+
+      <div>
+        <p class="caption">失败态 · 梗句</p>
+        <div class="phone dark" data-cls="legacy|">
+          <div class="bar"><span class="back">←</span> <span data-t="鉴定证书|定名样片"></span></div>
+          <div class="body">
+            <div class="stage">
+              <div class="mat" data-only="old">
+                <img class="overlay" src="../../apps/web/public/settle/daylight/pack-sealed.png" alt="" />
+              </div>
+              <img class="full" data-only="new" src="./drafts/hang-blank.png" alt="" />
+            </div>
+            <div class="plate">
+              <p class="sci" style="font-style:normal;font-size:0.88rem" data-t="专家看了半天，一个字没写。|泡了半天，纸上什么都没有。"></p>
+              <p class="zh" data-t="专家不在。稍后到详情里重新识别。|暗房关着门。稍后到详情里再洗一张。"></p>
+            </div>
+            <button class="btn ghost" type="button" data-t="重新鉴定|再洗一张"></button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <h3 class="sub">揭示构图：晾片三态</h3>
+    <p class="note">
+      平铺相纸那版废弃了（就是一张纸糊在深色底上，没有场景）。现在统一走晾片：细绳、木夹、暖调暗角，有纵深也有「这张归你了」的收尾感。
+      三态同机位生成，绳子、夹子、纸边完全重合，所以显影可以在同一张纸上淡入，画面不跳。
+    </p>
+    <div class="opts">
+      <div class="opt">
+        <img src="./drafts/hang-blank.png" alt="空白" />
+        <b>空白</b>
+        <p>刚下药水。纸上只有一点几乎看不见的螺旋影子——暗示有东西要来，但认不出是什么。</p>
+      </div>
+      <div class="opt">
+        <img src="./drafts/hang-half.png" alt="显影中" />
+        <b>显影中</b>
+        <p>轮廓浮出来了，还很淡。这一帧是给动画中段用的，也是「快出来了」那口气。</p>
+      </div>
+      <div class="opt">
+        <img src="./drafts/hang-developed.png" alt="已显影" />
+        <b>已显影</b>
+        <p>定影完成，样片成立。稀有度、学名、随片提示都挂在这一帧之后。</p>
+      </div>
+    </div>
+
+    <h3 class="sub">显影动画预演</h3>
+    <p class="note">点画面看一遍三态的淡入，感受一下这个动作是不是比拆封更对。</p>
+    <div class="reveal" id="reveal">
+      <img src="./drafts/hang-blank.png" alt="" />
+      <img src="./drafts/hang-half.png" alt="" data-step="1" />
+      <img src="./drafts/hang-developed.png" alt="" data-step="2" />
+      <span class="hint" id="revealHint">点击显影</span>
+    </div>
+
+    <h2 class="sec">三 · 图鉴与套册：邮票墙 → 样片墙</h2>
+    <p class="note">
+      现行用 <code>stamp-frame.svg</code> 的齿孔框，空槽是待盖章的虚线方；
+      提案改成相纸白边，空槽是待冲洗的空格。都是带框矩形阵列，结构不变，美术替换成本低。
+    </p>
+    <div class="screens">
+      <div>
+        <p class="caption">图鉴首页</p>
+        <div class="phone">
+          <div class="bar">
+            <img data-only="new" src="./drafts/film-b-snail.png" alt="" />图鉴
+          </div>
+          <div class="body">
+            <p class="lede" data-t="收下的证书，都在这里。|洗出来的，都在这里。"></p>
+            <div class="wall stamp" data-only="old">
+              <div class="cell"><img class="photo" src="../../apps/web/public/trips/_sample-photo.jpg" alt="" /><img class="rim" src="../../apps/web/public/volumes/daylight/stamp-frame.svg" alt="" /></div>
+              <div class="cell"><img class="photo" src="../../apps/web/public/volumes/daylight/cover-intertidal.png" alt="" /><img class="rim" src="../../apps/web/public/volumes/daylight/stamp-frame.svg" alt="" /></div>
+              <div class="cell empty"></div>
+              <div class="cell"><img class="photo" src="../../apps/web/public/volumes/daylight/cover-woodland_edge.png" alt="" /><img class="rim" src="../../apps/web/public/volumes/daylight/stamp-frame.svg" alt="" /></div>
+              <div class="cell empty"></div>
+              <div class="cell empty"></div>
+            </div>
+            <div class="wall print" data-only="new">
+              <div class="cell"><img class="photo" src="../../apps/web/public/trips/_sample-photo.jpg" alt="" /></div>
+              <div class="cell"><img class="photo" src="../../apps/web/public/volumes/daylight/cover-intertidal.png" alt="" /></div>
+              <div class="cell empty"></div>
+              <div class="cell"><img class="photo" src="../../apps/web/public/volumes/daylight/cover-woodland_edge.png" alt="" /></div>
+              <div class="cell empty"></div>
+              <div class="cell empty"></div>
+            </div>
+            <p class="lede" data-t="点开一本，看邮票一点一点盖上。|点开一本，看格子一张张填满。"></p>
+          </div>
+          <nav class="nav"><span>旅途</span><span>地图</span><span class="on">图鉴</span><span>我的</span></nav>
+        </div>
+      </div>
+
+      <div>
+        <p class="caption">套册 · 潮间带</p>
+        <div class="phone">
+          <div class="bar"><span class="back">←</span> 潮间带</div>
+          <div class="body">
+            <p class="lede">赶一次礁石潮：从脚边的小螺，到石头下的惊喜。</p>
+            <p class="lede" style="font-weight:700" data-t="3 / 6 邮票|3 / 6 样片"></p>
+            <div class="wall stamp" data-only="old">
+              <div class="cell"><img class="photo" src="../../apps/web/public/volumes/daylight/cover-intertidal.png" alt="" /><img class="rim" src="../../apps/web/public/volumes/daylight/stamp-frame.svg" alt="" /></div>
+              <div class="cell empty"></div>
+              <div class="cell"><img class="photo" src="../../apps/web/public/trips/_sample-photo.jpg" alt="" /><img class="rim" src="../../apps/web/public/volumes/daylight/stamp-frame.svg" alt="" /></div>
+              <div class="cell empty"></div>
+              <div class="cell"><img class="photo" src="../../apps/web/public/volumes/daylight/cover-urban_wild.png" alt="" /><img class="rim" src="../../apps/web/public/volumes/daylight/stamp-frame.svg" alt="" /></div>
+              <div class="cell empty"></div>
+            </div>
+            <div class="wall print" data-only="new">
+              <div class="cell"><img class="photo" src="../../apps/web/public/volumes/daylight/cover-intertidal.png" alt="" /></div>
+              <div class="cell empty"></div>
+              <div class="cell"><img class="photo" src="../../apps/web/public/trips/_sample-photo.jpg" alt="" /></div>
+              <div class="cell empty"></div>
+              <div class="cell"><img class="photo" src="../../apps/web/public/volumes/daylight/cover-urban_wild.png" alt="" /></div>
+              <div class="cell empty"></div>
+            </div>
+          </div>
+          <nav class="nav"><span>旅途</span><span>地图</span><span class="on">图鉴</span><span>我的</span></nav>
+        </div>
+      </div>
+    </div>
+
+    <h2 class="sec">四 · 用词对照</h2>
+    <p class="note">
+      左列是 <code>packages/messages/src/zh.ts</code> 现值。标「保留」的不改——
+      相册与册页本就属于冲印世界（洗出来的照片就是贴进相册的），无冲突。
+    </p>
+    <table class="diff">
+      <tr><th>key</th><th>现行</th><th>提案</th></tr>
+      <tr><td class="k">status.analyzing</td><td class="old">专家鉴定中</td><td class="new">显影中</td></tr>
+      <tr><td class="k">status.pending_settle</td><td class="old">鉴定完成</td><td class="new">已显影</td></tr>
+      <tr><td class="k">status.settled</td><td class="old">已收录</td><td class="new keep">保留</td></tr>
+      <tr><td class="k">album.upload</td><td class="old">上传并鉴定</td><td class="new">上传并送冲</td></tr>
+      <tr><td class="k">detail.identify</td><td class="old">鉴定</td><td class="new">再洗一张</td></tr>
+      <tr><td class="k">settle.title</td><td class="old">鉴定证书</td><td class="new">定名样片（待拍板）</td></tr>
+      <tr><td class="k">settle.lede</td><td class="old">这趟遇见的生命，现在有名字了。</td><td class="new keep">保留</td></tr>
+      <tr><td class="k">settle.open</td><td class="old">请过目</td><td class="new">取片</td></tr>
+      <tr><td class="k">settle.claim</td><td class="old">收下</td><td class="new keep">保留</td></tr>
+      <tr><td class="k">collection.lede</td><td class="old">收下的证书，都在这里。</td><td class="new">洗出来的，都在这里。</td></tr>
+      <tr><td class="k">collection.volumesLede</td><td class="old">点开一本，看邮票一点一点盖上。</td><td class="new">点开一本，看格子一张张填满。</td></tr>
+      <tr><td class="k">collection.volumeStampsTitle</td><td class="old">邮票</td><td class="new">样片</td></tr>
+      <tr><td class="k">error.identifyUnavailable</td><td class="old">专家不在。稍后到详情里重新识别。</td><td class="new">暗房关着门。稍后到详情里再洗一张。</td></tr>
+      <tr><td class="k">error.identifyQuota</td><td class="old">今天看得太多，专家歇了。</td><td class="new">今天洗得太多，药水见底了。</td></tr>
+      <tr><td class="k">error.identifyGenericFailed</td><td class="old">专家看了半天，一个字没写。</td><td class="new">泡了半天，纸上什么都没有。</td></tr>
+      <tr><td class="k">error.identifyTooCoarse</td><td class="old">专家只敢认到大类。</td><td class="new">只显出个轮廓。</td></tr>
+      <tr><td class="k">trips.lede</td><td class="old">每一次出门，都是一本新相册。</td><td class="new keep">保留</td></tr>
+      <tr><td class="k">auth.lede</td><td class="old">翻开相册，记下路上遇见的。</td><td class="new keep">保留</td></tr>
+      <tr><td class="k">identify.by</td><td class="old">鉴定：{name}</td><td class="new keep">保留（指模型名）</td></tr>
+    </table>
+
+    <script>
+      const texts = document.querySelectorAll("[data-t]");
+      const onlys = document.querySelectorAll("[data-only]");
+      const clsNodes = document.querySelectorAll("[data-cls]");
+      const btnOld = document.getElementById("btnOld");
+      const btnNew = document.getElementById("btnNew");
+
+      const WAIT = {
+        old: { bg: "#f0ddd4", ink: "#9a4030" },
+        new: { bg: "#efdcd7", ink: "#7E2B2E" },
+      };
+
+      function render(mode) {
+        texts.forEach((el) => {
+          const [oldText, newText] = el.dataset.t.split("|");
+          el.textContent = mode === "old" ? oldText : newText;
+        });
+        onlys.forEach((el) => {
+          el.style.display = el.dataset.only === mode ? "" : "none";
+        });
+        clsNodes.forEach((el) => {
+          const [oldCls, newCls] = el.dataset.cls.split("|");
+          if (oldCls) el.classList.remove(oldCls);
+          if (newCls) el.classList.remove(newCls);
+          const active = mode === "old" ? oldCls : newCls;
+          if (active) el.classList.add(active);
+        });
+        document.documentElement.style.setProperty("--waitbg", WAIT[mode].bg);
+        document.documentElement.style.setProperty("--waitink", WAIT[mode].ink);
+        btnOld.classList.toggle("on", mode === "old");
+        btnNew.classList.toggle("on", mode === "new");
+      }
+
+      btnOld.addEventListener("click", () => render("old"));
+      btnNew.addEventListener("click", () => render("new"));
+      render("new");
+
+      const reveal = document.getElementById("reveal");
+      const revealHint = document.getElementById("revealHint");
+      const steps = reveal.querySelectorAll("img[data-step]");
+      let timers = [];
+
+      function playReveal() {
+        timers.forEach(clearTimeout);
+        timers = [];
+        steps.forEach((el) => el.classList.remove("on"));
+        reveal.classList.add("playing");
+        timers.push(setTimeout(() => steps[0].classList.add("on"), 350));
+        timers.push(setTimeout(() => steps[1].classList.add("on"), 1500));
+        timers.push(
+          setTimeout(() => {
+            reveal.classList.remove("playing");
+            revealHint.textContent = "再看一遍";
+          }, 2900)
+        );
+      }
+
+      reveal.addEventListener("click", playReveal);
+    </script>
+  </body>
+</html>

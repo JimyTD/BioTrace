@@ -1,0 +1,799 @@
+<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>品牌 · 色向抉择 / 图标梯度 / Slogan</title>
+    <style>
+      * { box-sizing: border-box; }
+      body {
+        margin: 0; padding: 20px 16px 64px;
+        font-family: "Segoe UI", "PingFang SC", "Microsoft YaHei", sans-serif;
+        color: #1f2a24;
+        background:
+          radial-gradient(ellipse 120% 70% at 8% -18%, rgba(212, 168, 120, 0.34), transparent 56%),
+          linear-gradient(168deg, #f6f1e8 0%, #efe8dc 46%, #e9e1d4 100%);
+        background-attachment: fixed;
+      }
+      h1.doc { margin: 0 0 6px; font-size: 1.25rem; }
+      .note { margin: 0 0 8px; color: #6b6258; font-size: 0.88rem; max-width: 70ch; line-height: 1.7; }
+      h2.sec {
+        margin: 42px 0 4px; font-size: 1.05rem;
+        padding-bottom: 6px; border-bottom: 1px solid rgba(42, 64, 51, 0.14);
+      }
+      h2.sec.archive { color: #8b8378; }
+      h3.sub { margin: 26px 0 2px; font-size: 0.92rem; color: #4a463f; }
+
+      .tag {
+        margin-left: 6px; padding: 1px 7px; border-radius: 8px; vertical-align: 2px;
+        font-size: 0.68rem; font-weight: 700; background: #f0ddd4; color: #9a4030;
+      }
+      .tag.no { background: #ebe9e3; color: #6b6258; }
+      .tag.cur { background: #e4e0d6; color: #6b6258; }
+
+      /* 色向卡 */
+      .hues { display: flex; flex-wrap: wrap; gap: 14px; margin-top: 16px; }
+      .hue {
+        width: 226px; padding: 14px; border-radius: 14px;
+        background: #faf8f3; border: 1px solid rgba(42, 64, 51, 0.14);
+        box-shadow: 0 8px 22px rgba(42, 36, 28, 0.07);
+      }
+      .hue.out { opacity: 0.66; }
+      .hue img { width: 100%; aspect-ratio: 1; border-radius: 12px; display: block; }
+      .hue h4 { margin: 10px 0 2px; font-size: 0.92rem; }
+      .hue .hex { font-size: 0.74rem; color: #6b6258; font-family: ui-monospace, Consolas, monospace; }
+      .hue .assoc { margin: 8px 0 0; font-size: 0.78rem; color: #6b6258; line-height: 1.6; }
+      .hue .mini { display: flex; gap: 8px; margin-top: 10px; align-items: center; }
+      .hue .mini img { width: 40px; height: 40px; border-radius: 50%; }
+      .hue .mini img.tiny { width: 22px; height: 22px; border-radius: 4px; }
+      .hue .mini span { font-size: 0.7rem; color: #8b8378; }
+
+      /* 启动器 */
+      .launcher {
+        margin-top: 14px; padding: 26px 22px; border-radius: 22px;
+        background: linear-gradient(160deg, #2f3b3f 0%, #1d2629 60%, #151c1f 100%);
+        display: grid; grid-template-columns: repeat(5, 1fr); gap: 22px 16px;
+        max-width: 520px;
+      }
+      .launcher figure { margin: 0; text-align: center; }
+      .launcher img { width: 56px; height: 56px; border-radius: 50%; display: block; margin: 0 auto; }
+      .launcher .fake {
+        width: 56px; height: 56px; border-radius: 50%; margin: 0 auto;
+        display: grid; place-items: center; font-size: 1.3rem;
+      }
+      .launcher figcaption { margin-top: 5px; color: rgba(255, 255, 255, 0.78); font-size: 0.66rem; }
+      .launcher.light {
+        background: linear-gradient(160deg, #dfe4e0 0%, #cfd6d2 55%, #c3ccc8 100%);
+      }
+      .launcher.light figcaption { color: rgba(31, 42, 36, 0.72); }
+
+      /* 日常页试算 */
+      .screens { display: flex; flex-wrap: wrap; gap: 14px; margin-top: 14px; }
+      .screen {
+        width: 230px; border-radius: 18px; overflow: hidden;
+        display: grid; grid-template-rows: auto 1fr auto;
+        border: 1px solid rgba(42, 36, 28, 0.18);
+        box-shadow: 0 12px 30px rgba(42, 36, 28, 0.12);
+        color: #1f2a24;
+        background:
+          radial-gradient(ellipse 120% 70% at 8% -18%, rgba(212, 168, 120, 0.34), transparent 56%),
+          linear-gradient(168deg, #f6f1e8 0%, #efe8dc 46%, #e9e1d4 100%);
+      }
+      .screen .bar {
+        padding: 10px 13px 9px; font-weight: 700; font-size: 0.88rem;
+        display: flex; align-items: center; gap: 7px;
+        background: #f3efe7; border-bottom: 1px solid rgba(42, 64, 51, 0.14);
+      }
+      .screen .bar img { width: 19px; height: 19px; border-radius: 5px; }
+      .screen .body { padding: 13px; display: grid; gap: 9px; align-content: start; }
+      .screen h5 { margin: 0; font-size: 1.15rem; }
+      .screen .lede { margin: 0; font-size: 0.8rem; color: #6b6258; }
+      .screen .slip {
+        display: grid; grid-template-columns: 1fr auto; gap: 6px; align-items: center;
+        padding: 3px 4px 3px 10px; border-radius: 9px;
+        background: #f3ebe0; border: 1px solid rgba(42, 64, 51, 0.14);
+      }
+      .screen .slip span { font-size: 0.76rem; color: #6b6258; }
+      .screen .btn {
+        border: 0; border-radius: 9px; padding: 6px 12px; font: inherit;
+        font-size: 0.78rem; font-weight: 700; background: var(--c); color: #fffaf7;
+      }
+      .screen .plate {
+        aspect-ratio: 3/2; border-radius: 11px; background: #efe6d6;
+        border: 1px solid rgba(42, 64, 51, 0.12);
+        display: grid; place-items: center; color: #a99a84; font-size: 0.74rem;
+      }
+      .screen .line {
+        height: 3px; border-radius: 2px; background: var(--c); width: 62%;
+      }
+      .screen .capt { margin: 0; font-size: 0.72rem; color: #6b6258; }
+      .screen .nav {
+        display: grid; grid-template-columns: repeat(4, 1fr);
+        padding: 7px 8px; background: #f3efe7; border-top: 1px solid rgba(42, 64, 51, 0.14);
+      }
+      .screen .nav span {
+        text-align: center; font-size: 0.66rem; color: #6b6258; padding: 6px 3px; border-radius: 9px;
+      }
+      .screen .nav span.on { background: var(--soft); color: var(--cink); font-weight: 700; }
+
+      /* 通用卡 */
+      .cards { display: flex; flex-wrap: wrap; gap: 18px; margin-top: 16px; }
+      .card {
+        width: 340px; padding: 16px; border-radius: 14px;
+        background: #faf8f3; border: 1px solid rgba(42, 64, 51, 0.14);
+        box-shadow: 0 8px 22px rgba(42, 36, 28, 0.07);
+      }
+      .card.pick { border-color: rgba(140, 47, 35, 0.5); box-shadow: 0 8px 26px rgba(140, 47, 35, 0.14); }
+      .card.dim { opacity: 0.7; }
+      .card h3 { margin: 0 0 2px; font-size: 1rem; }
+      .card .verdict { margin: 6px 0 12px; font-size: 0.82rem; color: #6b6258; line-height: 1.65; }
+      .hero { width: 100%; aspect-ratio: 1; border-radius: 12px; display: block; }
+      .masks { display: flex; gap: 12px; margin-top: 12px; align-items: flex-end; }
+      .masks figure { margin: 0; text-align: center; }
+      .masks img { width: 76px; height: 76px; display: block; }
+      .m-circle img { border-radius: 50%; }
+      .m-squircle img { border-radius: 24px; }
+      .m-square img { border-radius: 6px; }
+      figcaption { margin-top: 5px; font-size: 0.68rem; color: #6b6258; }
+      .ladder { display: flex; gap: 14px; margin-top: 14px; align-items: flex-end; }
+      .ladder figure { margin: 0; text-align: center; }
+      .ladder img { display: block; border-radius: 50%; }
+      .s96 { width: 96px; height: 96px; }
+      .s72 { width: 72px; height: 72px; }
+      .s48 { width: 48px; height: 48px; }
+      .s32 { width: 32px; height: 32px; }
+      .s16 { width: 16px; height: 16px; }
+
+      .slots { display: flex; flex-wrap: wrap; gap: 14px; margin-top: 16px; }
+      .slot {
+        width: 330px; padding: 14px 16px; border-radius: 14px;
+        background: #faf8f3; border: 1px solid rgba(42, 64, 51, 0.14);
+      }
+      .slot .head { display: flex; align-items: center; gap: 12px; }
+      .slot .head img { width: 54px; height: 54px; border-radius: 12px; flex: none; }
+      .slot .head b { display: block; font-size: 0.95rem; }
+      .slot .head span { font-size: 0.74rem; color: #6b6258; }
+      .slot ul { margin: 10px 0 0; padding-left: 20px; }
+      .slot li { margin: 5px 0; font-size: 0.82rem; line-height: 1.55; color: #4a463f; }
+
+      .slogans { display: flex; flex-wrap: wrap; gap: 16px; margin-top: 14px; }
+      .grp {
+        width: 330px; padding: 14px 16px; border-radius: 14px;
+        background: #faf8f3; border: 1px solid rgba(42, 64, 51, 0.14);
+      }
+      .grp h3 { margin: 0 0 2px; font-size: 0.95rem; }
+      .grp p.hint { margin: 0 0 10px; font-size: 0.76rem; color: #6b6258; }
+      .grp ol { margin: 0; padding-left: 22px; }
+      .grp li { margin: 7px 0; font-size: 0.95rem; line-height: 1.5; }
+      .grp li.rec { font-weight: 700; color: #8C2F23; }
+      .grp li.rec::after {
+        content: "推荐"; margin-left: 8px; padding: 1px 7px; border-radius: 8px; vertical-align: 1px;
+        font-size: 0.64rem; background: #efdcd7; color: #8C2F23;
+      }
+
+      /* 叙事骨架 */
+      .beats { width: 100%; max-width: 760px; margin-top: 16px; border-collapse: collapse; }
+      .beats th, .beats td {
+        text-align: left; padding: 10px 14px; font-size: 0.88rem;
+        border-bottom: 1px solid rgba(42, 64, 51, 0.14);
+      }
+      .beats th { font-size: 0.78rem; color: #6b6258; font-weight: 700; }
+      .beats tr:last-child td { border-bottom: 0; }
+      .beats td:first-child { color: #6b6258; width: 30%; }
+      .beats td b { color: #7E2B2E; }
+      .beats { background: #faf8f3; border-radius: 14px; overflow: hidden; border: 1px solid rgba(42, 64, 51, 0.14); }
+
+      .crafts { display: flex; flex-wrap: wrap; gap: 14px; margin-top: 16px; }
+      .craft {
+        width: 244px; padding: 14px 16px; border-radius: 14px;
+        background: #faf8f3; border: 1px solid rgba(42, 64, 51, 0.14);
+      }
+      .craft .band { height: 8px; border-radius: 4px; margin-bottom: 10px; }
+      .craft b { display: block; font-size: 0.92rem; }
+      .craft .en { font-size: 0.72rem; color: #8b8378; }
+      .craft p { margin: 8px 0 0; font-size: 0.79rem; line-height: 1.6; color: #6b6258; }
+
+      code { background: rgba(58, 50, 44, 0.08); padding: 1px 5px; border-radius: 5px; font-size: 0.88em; }
+      ul.gaps { margin: 12px 0 0; padding-left: 20px; max-width: 78ch; }
+      ul.gaps li { margin: 8px 0; font-size: 0.9rem; line-height: 1.65; }
+    </style>
+  </head>
+  <body>
+    <h1 class="doc">品牌 · 纸上的墨 / 图标梯度 / Slogan</h1>
+    <p class="note">
+      已定：符号内核是蜗牛，B 邮票转为页面 Logo，潮间带皮不再投入。
+      本轮转向：拿掉火漆容器。火漆讲的是「密封与授权」，而产品的物质语言是纸与墨——
+      册皮是纸上的雕版画，图鉴是一墙邮票，母皮叫日光胶片、底色是暖米纸。
+      火漆是这套语言里唯一不属于纸墨的元素，也是声音最大的那个。
+    </p>
+
+    <h2 class="sec">一 · 叙事骨架：冲印与显影</h2>
+    <p class="note">
+      诊断：现有隐喻是拼的——旅途是<b>相册</b>、识别是<b>专家鉴定</b>、结算是<b>证书</b>加<b>火漆</b>、收藏是<b>邮票册</b>、母皮叫<b>日光胶片</b>。
+      五个物来自五个世界：家庭生活、机构、欧洲书信、集邮、摄影。各自都不差，凑在一起就是拼贴感。
+      判断标准：一套叙事要能不打补丁地回答五个问题——出行是什么、交出照片是什么动作、等待时发生了什么、揭晓的那一下是什么、收藏放在哪儿。
+    </p>
+    <table class="beats">
+      <tr><th>产品环节</th><th>冲印叙事</th><th>为什么成立</th></tr>
+      <tr>
+        <td>一次旅途</td><td><b>一卷胶卷</b></td>
+        <td>有限的格数、一次出行拍完，天然是容器</td>
+      </tr>
+      <tr>
+        <td>上传照片</td><td><b>拍下这一格</b></td>
+        <td>就是用户真实在做的事，零转译</td>
+      </tr>
+      <tr>
+        <td>鉴定中</td><td><b>送冲、显影中</b></td>
+        <td>等待有了物理理由，不需要虚构一个「专家」</td>
+      </tr>
+      <tr>
+        <td>结算揭晓</td><td><b>影像在显影液里浮现</b></td>
+        <td>最天然的揭示动作，且是渐进的，适合做动画</td>
+      </tr>
+      <tr>
+        <td>收进图鉴</td><td><b>册页、样片墙</b></td>
+        <td>邮票墙平移为相片墙，都是带框矩形阵列，美术几乎不用推翻</td>
+      </tr>
+    </table>
+    <p class="note" style="margin-top: 14px">
+      关键在第四行。显影显的是<b>影像</b>，也是<b>身份</b>——遇见时不知道它叫什么，显影之后它有名字了。
+      这与 slogan「路上遇见的，都有名字」同构，不是硬凑。
+      稀有度是这一格的成色，极稀有档显影时银盐泛虹彩，接得上现有 LR 彩虹徽章；
+      引入警示是随片附的提示条；套册是样片墙上待填的空格。
+    </p>
+
+    <h3 class="sub">换皮：工艺即皮肤</h3>
+    <p class="note">
+      冲印工艺本身就是可替换体系，每种的显影方式天然不同——同一个骨架，四种开包动画与配色，且都是真实存在的工艺。
+    </p>
+    <div class="crafts">
+      <div class="craft">
+        <div class="band" style="background:linear-gradient(90deg,#7E2B2E,#d3543c,#EFE0C4)"></div>
+        <b>日光胶片</b><span class="en">彩色银盐 · 现行母皮</span>
+        <p>显影盘里影像浮现。暖米纸、暗房红、胶片橙。</p>
+      </div>
+      <div class="craft">
+        <div class="band" style="background:linear-gradient(90deg,#0f3057,#2e5f8a,#dfe8f0)"></div>
+        <b>蓝晒</b><span class="en">氰版 Cyanotype</span>
+        <p>把纸放到阳光下，慢慢变成普鲁士蓝。开包动作是晒，不是泡。</p>
+      </div>
+      <div class="craft">
+        <div class="band" style="background:linear-gradient(90deg,#1d1f1e,#5c6360,#c9cdc8)"></div>
+        <b>湿版火棉胶</b><span class="en">Collodion</span>
+        <p>玻璃板上显影，银灰冷调，边缘有流痕。最有年代重量。</p>
+      </div>
+      <div class="craft">
+        <div class="band" style="background:linear-gradient(90deg,#f2f0e9,#d8d3c4,#3a3733)"></div>
+        <b>即时片</b><span class="en">Polaroid</span>
+        <p>白边方框，摇一摇，影像自己浮上来。最轻快的一档。</p>
+      </div>
+    </div>
+
+    <h3 class="sub">颜色也从叙事里来：暗房红</h3>
+    <p class="note">
+      不是火漆红（借来的），是<b>暗房安全灯</b>的红 <code>#7E2B2E</code>：暗、低明度、带一点洋红倾向。
+      它是唯一一种在黑暗里也不会毁掉影像的光——与「安静地把遇见冲洗出来」同构。
+      与现行 CTA 橙同色系，迁移平滑，但它有出处。
+    </p>
+    <div class="hues">
+      <div class="hue">
+        <img src="./drafts/film-a-frame.png" alt="暗房红 · 胶片格" />
+        <h4>戊 · 胶片格容器</h4>
+        <div class="hex">底 #7E2B2E · 片 #EFE0C4</div>
+        <p class="assoc">一格 35mm 胶片，齿孔在上下缘。同时说了摄影、收集、生命三件事。风险：齿孔与内窗在 32px 会糊成一个方块。</p>
+        <div class="mini">
+          <img src="./drafts/film-a-frame.png" alt="" />
+          <img class="tiny" src="./drafts/film-a-frame.png" alt="" />
+          <span>40 / 22px</span>
+        </div>
+      </div>
+      <div class="hue">
+        <img src="./drafts/film-b-snail.png" alt="暗房红 · 纯蜗牛" />
+        <h4>己 · 暗房红纯蜗牛</h4>
+        <div class="hex">底 #7E2B2E · 形 #EFE0C4</div>
+        <p class="assoc">去掉容器，只验证颜色。比胶片橙沉得多、比木色暖调更有情绪，容器留给 App 内部去讲。</p>
+        <div class="mini">
+          <img src="./drafts/film-b-snail.png" alt="" />
+          <img class="tiny" src="./drafts/film-b-snail.png" alt="" />
+          <span>40 / 22px</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="launcher">
+      <figure><div class="fake" style="background:#1db954;color:#fff">♪</div><figcaption>音乐</figcaption></figure>
+      <figure><img src="./drafts/film-a-frame.png" alt="" /><figcaption>戊</figcaption></figure>
+      <figure><div class="fake" style="background:#1877f2;color:#fff">f</div><figcaption>社交</figcaption></figure>
+      <figure><img src="./drafts/film-b-snail.png" alt="" /><figcaption>己</figcaption></figure>
+      <figure><div class="fake" style="background:#ff0050;color:#fff">▶</div><figcaption>短视频</figcaption></figure>
+      <figure><div class="fake" style="background:#ffcc00;color:#3a2800">☀</div><figcaption>天气</figcaption></figure>
+      <figure><img src="./drafts/paper-a-ink.png" alt="" /><figcaption>甲 · 纸墨</figcaption></figure>
+      <figure><div class="fake" style="background:#7b2ff7;color:#fff">✦</div><figcaption>笔记</figcaption></figure>
+      <figure><div class="fake" style="background:#00b0ff;color:#fff">✈</div><figcaption>出行</figcaption></figure>
+      <figure><div class="fake" style="background:#2a7a78;color:#fff">◐</div><figcaption>相机</figcaption></figure>
+    </div>
+    <div class="ladder">
+      <figure><img class="s96" src="./drafts/film-a-frame.png" alt="" /><figcaption>戊 96</figcaption></figure>
+      <figure><img class="s48" src="./drafts/film-a-frame.png" alt="" /><figcaption>48</figcaption></figure>
+      <figure><img class="s32" src="./drafts/film-a-frame.png" alt="" /><figcaption>32</figcaption></figure>
+      <figure><img class="s16" src="./drafts/film-a-frame.png" alt="" /><figcaption>16</figcaption></figure>
+      <figure><img class="s96" src="./drafts/film-b-snail.png" alt="" /><figcaption>己 96</figcaption></figure>
+      <figure><img class="s48" src="./drafts/film-b-snail.png" alt="" /><figcaption>48</figcaption></figure>
+      <figure><img class="s32" src="./drafts/film-b-snail.png" alt="" /><figcaption>32</figcaption></figure>
+      <figure><img class="s16" src="./drafts/film-b-snail.png" alt="" /><figcaption>16</figcaption></figure>
+    </div>
+
+    <h2 class="sec">二 · 上一轮：纸上的墨</h2>
+    <p class="note">
+      没有容器、没有封缄，就是一只博物学插图的蜗牛印在暖米纸上，像从册页裁下的一方插图。
+      这同时解掉了配色难题：底是纸、形是墨，就不存在「一大块高饱和色」，科技感的来源被从根上移除；
+      品牌橙于是可以退回它擅长的位置——只做 CTA 按钮，小面积、高饱和。
+    </p>
+    <div class="hues">
+      <div class="hue">
+        <img src="./drafts/paper-a-ink.png" alt="纸上的墨 · 纯剪影" />
+        <h4>甲 · 纯剪影</h4>
+        <div class="hex">纸 #E9DCC2 · 墨 #4A3524</div>
+        <p class="assoc">最干净的一版。壳的螺旋收得紧、留白匀，缩到 32px 仍不粘连。安静、私人，符合「给自己看的旅行笔记」。</p>
+        <div class="mini">
+          <img src="./drafts/paper-a-ink.png" alt="" />
+          <img class="tiny" src="./drafts/paper-a-ink.png" alt="" />
+          <span>40 / 22px</span>
+        </div>
+      </div>
+      <div class="hue">
+        <img src="./drafts/paper-b-engraved.png" alt="纸上的墨 · 雕版感" />
+        <h4>乙 · 雕版感</h4>
+        <div class="hex">纸 #E9DCC2 · 墨 #4A3524</div>
+        <p class="assoc">壳纹用更粗的旋带表现，博物学味更足、更接近册皮。代价是螺旋圈数多一圈，小尺寸留白更吃紧。</p>
+        <div class="mini">
+          <img src="./drafts/paper-b-engraved.png" alt="" />
+          <img class="tiny" src="./drafts/paper-b-engraved.png" alt="" />
+          <span>40 / 22px</span>
+        </div>
+      </div>
+      <div class="hue">
+        <img src="./drafts/paper-c-accent.png" alt="纸墨 + 橙签名点" />
+        <h4>丙 · 墨形 + 橙签名点</h4>
+        <div class="hex">纸 · 墨 · 点 #d3543c</div>
+        <p class="assoc">橙只剩壳心一个小点，约占画面 6%。品牌色被保留但不再定调，同时与 CTA 按钮呼应。底部一条基线暗示标本台纸。</p>
+        <div class="mini">
+          <img src="./drafts/paper-c-accent.png" alt="" />
+          <img class="tiny" src="./drafts/paper-c-accent.png" alt="" />
+          <span>40 / 22px</span>
+        </div>
+      </div>
+      <div class="hue">
+        <img src="./drafts/paper-d-reverse.png" alt="墨底纸形" />
+        <h4>丁 · 墨底纸形</h4>
+        <div class="hex">墨 #3E2C1D · 纸 #EFE3CB</div>
+        <p class="assoc">反过来印。深底在浅色壁纸上最稳，形也最醒目；但少了「纸」的直觉，更像标牌而非册页。</p>
+        <div class="mini">
+          <img src="./drafts/paper-d-reverse.png" alt="" />
+          <img class="tiny" src="./drafts/paper-d-reverse.png" alt="" />
+          <span>40 / 22px</span>
+        </div>
+      </div>
+    </div>
+
+    <h3 class="sub">风险验证：深壁纸</h3>
+    <p class="note">浅色图标在深壁纸上反差极大，四版都很跳。</p>
+    <div class="launcher">
+      <figure><div class="fake" style="background:#1db954;color:#fff">♪</div><figcaption>音乐</figcaption></figure>
+      <figure><img src="./drafts/paper-a-ink.png" alt="" /><figcaption>甲</figcaption></figure>
+      <figure><div class="fake" style="background:#1877f2;color:#fff">f</div><figcaption>社交</figcaption></figure>
+      <figure><img src="./drafts/paper-b-engraved.png" alt="" /><figcaption>乙</figcaption></figure>
+      <figure><div class="fake" style="background:#ff0050;color:#fff">▶</div><figcaption>短视频</figcaption></figure>
+
+      <figure><img src="./drafts/paper-c-accent.png" alt="" /><figcaption>丙</figcaption></figure>
+      <figure><div class="fake" style="background:#ffcc00;color:#3a2800">☀</div><figcaption>天气</figcaption></figure>
+      <figure><img src="./drafts/paper-d-reverse.png" alt="" /><figcaption>丁</figcaption></figure>
+      <figure><div class="fake" style="background:#7b2ff7;color:#fff">✦</div><figcaption>笔记</figcaption></figure>
+      <figure><div class="fake" style="background:#00b0ff;color:#fff">✈</div><figcaption>出行</figcaption></figure>
+    </div>
+
+    <h3 class="sub">风险验证：浅壁纸（关键）</h3>
+    <p class="note">
+      这是纸底方案唯一的真实风险。纸色若接近白，图标会和浅壁纸糊在一起。
+      #E9DCC2 是刻意选的中调暖米，不是米白——在这里看它是否还立得住。
+    </p>
+    <div class="launcher light">
+      <figure><div class="fake" style="background:#1db954;color:#fff">♪</div><figcaption>音乐</figcaption></figure>
+      <figure><img src="./drafts/paper-a-ink.png" alt="" /><figcaption>甲</figcaption></figure>
+      <figure><div class="fake" style="background:#1877f2;color:#fff">f</div><figcaption>社交</figcaption></figure>
+      <figure><img src="./drafts/paper-b-engraved.png" alt="" /><figcaption>乙</figcaption></figure>
+      <figure><div class="fake" style="background:#ff0050;color:#fff">▶</div><figcaption>短视频</figcaption></figure>
+
+      <figure><img src="./drafts/paper-c-accent.png" alt="" /><figcaption>丙</figcaption></figure>
+      <figure><div class="fake" style="background:#ffcc00;color:#3a2800">☀</div><figcaption>天气</figcaption></figure>
+      <figure><img src="./drafts/paper-d-reverse.png" alt="" /><figcaption>丁</figcaption></figure>
+      <figure><div class="fake" style="background:#7b2ff7;color:#fff">✦</div><figcaption>笔记</figcaption></figure>
+      <figure><div class="fake" style="background:#e8e6e1;color:#3a322c">✉</div><figcaption>邮件</figcaption></figure>
+    </div>
+
+    <h3 class="sub">缩放梯队</h3>
+    <p class="note">从 96 到 16px。重点看壳的螺旋在哪一档开始粘连。</p>
+    <div class="ladder">
+      <figure><img class="s96" src="./drafts/paper-a-ink.png" alt="" /><figcaption>甲 96</figcaption></figure>
+      <figure><img class="s48" src="./drafts/paper-a-ink.png" alt="" /><figcaption>48</figcaption></figure>
+      <figure><img class="s32" src="./drafts/paper-a-ink.png" alt="" /><figcaption>32</figcaption></figure>
+      <figure><img class="s16" src="./drafts/paper-a-ink.png" alt="" /><figcaption>16</figcaption></figure>
+      <figure><img class="s96" src="./drafts/paper-b-engraved.png" alt="" /><figcaption>乙 96</figcaption></figure>
+      <figure><img class="s48" src="./drafts/paper-b-engraved.png" alt="" /><figcaption>48</figcaption></figure>
+      <figure><img class="s32" src="./drafts/paper-b-engraved.png" alt="" /><figcaption>32</figcaption></figure>
+      <figure><img class="s16" src="./drafts/paper-b-engraved.png" alt="" /><figcaption>16</figcaption></figure>
+    </div>
+    <div class="ladder">
+      <figure><img class="s96" src="./drafts/paper-c-accent.png" alt="" /><figcaption>丙 96</figcaption></figure>
+      <figure><img class="s48" src="./drafts/paper-c-accent.png" alt="" /><figcaption>48</figcaption></figure>
+      <figure><img class="s32" src="./drafts/paper-c-accent.png" alt="" /><figcaption>32</figcaption></figure>
+      <figure><img class="s16" src="./drafts/paper-c-accent.png" alt="" /><figcaption>16</figcaption></figure>
+      <figure><img class="s96" src="./drafts/paper-d-reverse.png" alt="" /><figcaption>丁 96</figcaption></figure>
+      <figure><img class="s48" src="./drafts/paper-d-reverse.png" alt="" /><figcaption>48</figcaption></figure>
+      <figure><img class="s32" src="./drafts/paper-d-reverse.png" alt="" /><figcaption>32</figcaption></figure>
+      <figure><img class="s16" src="./drafts/paper-d-reverse.png" alt="" /><figcaption>16</figcaption></figure>
+    </div>
+
+    <h3 class="sub">回灌到 App：顶栏与按钮</h3>
+    <p class="note">纸墨图标的好处是它不参与 UI 配色决策——CTA 橙原样保留，一个 token 都不用改。</p>
+    <div class="screens">
+      <div class="screen" style="--c:#d3543c; --soft:#f0ddd4; --cink:#9a4030">
+        <div class="bar"><img src="./drafts/paper-a-ink.png" alt="" />BioTrace</div>
+        <div class="body">
+          <h5>旅途</h5>
+          <p class="lede">路上遇见的，记在这一本里。</p>
+          <div class="slip"><span>新旅途标题</span><button class="btn" type="button">创建</button></div>
+          <div class="plate">册页照片</div>
+          <div class="line"></div>
+          <p class="capt">潮间带下午 · 12 张</p>
+        </div>
+        <nav class="nav"><span class="on">旅途</span><span>地图</span><span>图鉴</span><span>我的</span></nav>
+      </div>
+      <div class="screen" style="--c:#d3543c; --soft:#f0ddd4; --cink:#9a4030">
+        <div class="bar"><img src="./drafts/paper-c-accent.png" alt="" />BioTrace</div>
+        <div class="body">
+          <h5>旅途</h5>
+          <p class="lede">路上遇见的，记在这一本里。</p>
+          <div class="slip"><span>新旅途标题</span><button class="btn" type="button">创建</button></div>
+          <div class="plate">册页照片</div>
+          <div class="line"></div>
+          <p class="capt">潮间带下午 · 12 张</p>
+        </div>
+        <nav class="nav"><span class="on">旅途</span><span>地图</span><span>图鉴</span><span>我的</span></nav>
+      </div>
+      <div class="screen" style="--c:#d3543c; --soft:#f0ddd4; --cink:#9a4030">
+        <div class="bar"><img src="./drafts/paper-d-reverse.png" alt="" />BioTrace</div>
+        <div class="body">
+          <h5>旅途</h5>
+          <p class="lede">路上遇见的，记在这一本里。</p>
+          <div class="slip"><span>新旅途标题</span><button class="btn" type="button">创建</button></div>
+          <div class="plate">册页照片</div>
+          <div class="line"></div>
+          <p class="capt">潮间带下午 · 12 张</p>
+        </div>
+        <nav class="nav"><span class="on">旅途</span><span>地图</span><span>图鉴</span><span>我的</span></nav>
+      </div>
+    </div>
+
+    <h2 class="sec archive">备选 · 火漆路线的色向比对</h2>
+    <p class="note">
+      若最终仍选择保留火漆容器，下面是四个替代色向的实景比对，结论仍有效。
+      但注意：走火漆就必须在「图标色」与「CTA 色」之间做取舍，而纸墨方案不必。
+    </p>
+    <p class="note">
+      同一只蜗牛，只换底色。问题不在「橙」而在饱和度与明度：高饱和加纯平涂是科技品牌的标准配方。
+      真实封蜡是氧化后的深绛红，老相册书脊是墨绿或深靛，雕版油墨是乌贼棕——这四个方向都落在深色低饱和区间。
+    </p>
+    <div class="hues">
+      <div class="hue out">
+        <img src="./drafts/icon-d2-solid.png" alt="现行胶片橙" />
+        <h4>现行 · 胶片橙<span class="tag cur">在用</span></h4>
+        <div class="hex">#d3543c</div>
+        <p class="assoc">高饱和暖橙红。活力足、启动器最跳，但与 Cloudflare 同色区，读作 SaaS 而非博物学。</p>
+      </div>
+      <div class="hue">
+        <img src="./drafts/hue-1-oxblood.png" alt="绛红封蜡" />
+        <h4>一 · 绛红封蜡</h4>
+        <div class="hex">#8C2F23</div>
+        <p class="assoc">真实火漆氧化后的颜色。保住「盖印收下」的仪式叙事，同时彻底脱离科技感。与现行橙同色相，迁移最平滑。</p>
+        <div class="mini">
+          <img src="./drafts/hue-1-oxblood.png" alt="" />
+          <img class="tiny" src="./drafts/hue-1-oxblood.png" alt="" />
+          <span>56 / 22px</span>
+        </div>
+      </div>
+      <div class="hue">
+        <img src="./drafts/hue-2-album-green.png" alt="相册墨绿" />
+        <h4>二 · 相册墨绿</h4>
+        <div class="hex">#2F4A3C</div>
+        <p class="assoc">老式精装相册的布面书脊色。生物感与相册感同时成立，是四个里最贴产品双主题的。但与潮间带皮的青绿有近似风险。</p>
+        <div class="mini">
+          <img src="./drafts/hue-2-album-green.png" alt="" />
+          <img class="tiny" src="./drafts/hue-2-album-green.png" alt="" />
+          <span>56 / 22px</span>
+        </div>
+      </div>
+      <div class="hue">
+        <img src="./drafts/hue-3-sepia.png" alt="雕版乌贼墨" />
+        <h4>三 · 雕版乌贼墨</h4>
+        <div class="hex">#4A3524</div>
+        <p class="assoc">19 世纪铜版画油墨色，与现有套册册皮完全同源，一致性最高。风险是过于低调，在启动器一屏彩色里最容易被忽略。</p>
+        <div class="mini">
+          <img src="./drafts/hue-3-sepia.png" alt="" />
+          <img class="tiny" src="./drafts/hue-3-sepia.png" alt="" />
+          <span>56 / 22px</span>
+        </div>
+      </div>
+      <div class="hue">
+        <img src="./drafts/hue-4-indigo.png" alt="标本深靛" />
+        <h4>四 · 标本深靛</h4>
+        <div class="hex">#2B3A55</div>
+        <p class="assoc">旧标本标签与古地图衬页的靛蓝。冷静克制、辨识度高，但偏「档案馆」而非「旅途」，暖意最弱。</p>
+        <div class="mini">
+          <img src="./drafts/hue-4-indigo.png" alt="" />
+          <img class="tiny" src="./drafts/hue-4-indigo.png" alt="" />
+          <span>56 / 22px</span>
+        </div>
+      </div>
+    </div>
+
+    <h3 class="sub">放进启动器：五色同屏</h3>
+    <p class="note">深色壁纸下，看哪个既不像科技产品、又不至于沉没。</p>
+    <div class="launcher">
+      <figure><div class="fake" style="background:#1db954;color:#fff">♪</div><figcaption>音乐</figcaption></figure>
+      <figure><img src="./drafts/icon-d2-solid.png" alt="" /><figcaption>现行橙</figcaption></figure>
+      <figure><div class="fake" style="background:#1877f2;color:#fff">f</div><figcaption>社交</figcaption></figure>
+      <figure><img src="./drafts/hue-1-oxblood.png" alt="" /><figcaption>绛红</figcaption></figure>
+      <figure><div class="fake" style="background:#ff0050;color:#fff">▶</div><figcaption>短视频</figcaption></figure>
+
+      <figure><img src="./drafts/hue-2-album-green.png" alt="" /><figcaption>墨绿</figcaption></figure>
+      <figure><div class="fake" style="background:#ffcc00;color:#3a2800">☀</div><figcaption>天气</figcaption></figure>
+      <figure><img src="./drafts/hue-3-sepia.png" alt="" /><figcaption>乌贼墨</figcaption></figure>
+      <figure><div class="fake" style="background:#7b2ff7;color:#fff">✦</div><figcaption>笔记</figcaption></figure>
+      <figure><img src="./drafts/hue-4-indigo.png" alt="" /><figcaption>深靛</figcaption></figure>
+
+      <figure><div class="fake" style="background:#00b0ff;color:#fff">✈</div><figcaption>出行</figcaption></figure>
+      <figure><div class="fake" style="background:#e8e6e1;color:#3a322c">✉</div><figcaption>邮件</figcaption></figure>
+      <figure><div class="fake" style="background:#2a7a78;color:#fff">◐</div><figcaption>相机</figcaption></figure>
+      <figure><div class="fake" style="background:#34495e;color:#fff">▦</div><figcaption>文件</figcaption></figure>
+      <figure><div class="fake" style="background:#c0392b;color:#fff">◆</div><figcaption>购物</figcaption></figure>
+    </div>
+
+    <h3 class="sub">回灌到 App：日常页试算</h3>
+    <p class="note">
+      品牌色一旦改动，<code>--cta</code> 按钮、<code>--nav-active-*</code> 激活态、<code>--volume-complete-line</code> 成册线都会跟着变。
+      代码侧改的是 token 值，位图美术里的橙火漆（<code>settle/daylight/pack-sealed.png</code> 等）需要重出。
+    </p>
+    <div class="screens">
+      <div class="screen" style="--c:#d3543c; --soft:#f0ddd4; --cink:#9a4030">
+        <div class="bar"><img src="./drafts/icon-d2-solid.png" alt="" />BioTrace</div>
+        <div class="body">
+          <h5>旅途</h5>
+          <p class="lede">路上遇见的，记在这一本里。</p>
+          <div class="slip"><span>新旅途标题</span><button class="btn" type="button">创建</button></div>
+          <div class="plate">册页照片</div>
+          <div class="line"></div>
+          <p class="capt">潮间带下午 · 12 张</p>
+        </div>
+        <nav class="nav"><span class="on">旅途</span><span>地图</span><span>图鉴</span><span>我的</span></nav>
+      </div>
+
+      <div class="screen" style="--c:#8C2F23; --soft:#efdcd7; --cink:#7a2a20">
+        <div class="bar"><img src="./drafts/hue-1-oxblood.png" alt="" />BioTrace</div>
+        <div class="body">
+          <h5>旅途</h5>
+          <p class="lede">路上遇见的，记在这一本里。</p>
+          <div class="slip"><span>新旅途标题</span><button class="btn" type="button">创建</button></div>
+          <div class="plate">册页照片</div>
+          <div class="line"></div>
+          <p class="capt">潮间带下午 · 12 张</p>
+        </div>
+        <nav class="nav"><span class="on">旅途</span><span>地图</span><span>图鉴</span><span>我的</span></nav>
+      </div>
+
+      <div class="screen" style="--c:#2F4A3C; --soft:#dbe5de; --cink:#294a39">
+        <div class="bar"><img src="./drafts/hue-2-album-green.png" alt="" />BioTrace</div>
+        <div class="body">
+          <h5>旅途</h5>
+          <p class="lede">路上遇见的，记在这一本里。</p>
+          <div class="slip"><span>新旅途标题</span><button class="btn" type="button">创建</button></div>
+          <div class="plate">册页照片</div>
+          <div class="line"></div>
+          <p class="capt">潮间带下午 · 12 张</p>
+        </div>
+        <nav class="nav"><span class="on">旅途</span><span>地图</span><span>图鉴</span><span>我的</span></nav>
+      </div>
+
+      <div class="screen" style="--c:#4A3524; --soft:#e8ded0; --cink:#4a3524">
+        <div class="bar"><img src="./drafts/hue-3-sepia.png" alt="" />BioTrace</div>
+        <div class="body">
+          <h5>旅途</h5>
+          <p class="lede">路上遇见的，记在这一本里。</p>
+          <div class="slip"><span>新旅途标题</span><button class="btn" type="button">创建</button></div>
+          <div class="plate">册页照片</div>
+          <div class="line"></div>
+          <p class="capt">潮间带下午 · 12 张</p>
+        </div>
+        <nav class="nav"><span class="on">旅途</span><span>地图</span><span>图鉴</span><span>我的</span></nav>
+      </div>
+
+      <div class="screen" style="--c:#2B3A55; --soft:#dbe0e9; --cink:#2b3a55">
+        <div class="bar"><img src="./drafts/hue-4-indigo.png" alt="" />BioTrace</div>
+        <div class="body">
+          <h5>旅途</h5>
+          <p class="lede">路上遇见的，记在这一本里。</p>
+          <div class="slip"><span>新旅途标题</span><button class="btn" type="button">创建</button></div>
+          <div class="plate">册页照片</div>
+          <div class="line"></div>
+          <p class="capt">潮间带下午 · 12 张</p>
+        </div>
+        <nav class="nav"><span class="on">旅途</span><span>地图</span><span>图鉴</span><span>我的</span></nav>
+      </div>
+    </div>
+
+    <h2 class="sec">二 · 造型定稿</h2>
+    <p class="note">造型已定，只待套上最终色。以下用现行橙展示遮罩与尺寸表现，结论对任何底色通用。</p>
+    <div class="cards">
+      <div class="card pick">
+        <h3>满版实心底 + 奶油蜗牛剪影<span class="tag">主图标</span></h3>
+        <p class="verdict">
+          完整蜗牛剪影——壳的螺旋、身体、两根触角——一眼认得出，48px 不糊。
+          工程上最干净：Android 自适应图标本就是背景层加前景层，背景直接给一个纯色，
+          前景只放奶油蜗牛，天然契合，无需改结构。
+          待修：壳内圈的缝隙偏细，32px 以下会粘连，需加粗留白。
+        </p>
+        <img class="hero" src="./drafts/icon-d2-solid.png" alt="主图标造型" />
+        <div class="masks">
+          <figure class="m-circle"><img src="./drafts/hue-1-oxblood.png" alt="" /><figcaption>圆形遮罩</figcaption></figure>
+          <figure class="m-squircle"><img src="./drafts/hue-1-oxblood.png" alt="" /><figcaption>圆角方</figcaption></figure>
+          <figure class="m-square"><img src="./drafts/hue-1-oxblood.png" alt="" /><figcaption>方形</figcaption></figure>
+        </div>
+        <div class="ladder">
+          <figure><img class="s96" src="./drafts/hue-1-oxblood.png" alt="" /><figcaption>96</figcaption></figure>
+          <figure><img class="s72" src="./drafts/hue-1-oxblood.png" alt="" /><figcaption>72</figcaption></figure>
+          <figure><img class="s48" src="./drafts/hue-1-oxblood.png" alt="" /><figcaption>48</figcaption></figure>
+          <figure><img class="s32" src="./drafts/hue-1-oxblood.png" alt="" /><figcaption>32</figcaption></figure>
+          <figure><img class="s16" src="./drafts/hue-1-oxblood.png" alt="" /><figcaption>16</figcaption></figure>
+        </div>
+      </div>
+
+      <div class="card dim">
+        <h3>牛皮纸底 + 火漆<span class="tag no">不采纳</span></h3>
+        <p class="verdict">
+          正负形改对了，火漆的不规则边也破了纯圆。但螺旋只有壳、没有身体和触角，读不出蜗牛，更像漩涡；
+          底部麻绳收短后变成一根棍，整体像一支棒棒糖。纸底还要求把背景层从纯色换成位图 drawable，成本更高。
+        </p>
+        <img class="hero" src="./drafts/icon-d2-kraft.png" alt="牛皮纸底版" />
+      </div>
+
+      <div class="card dim">
+        <h3>最简档 · 纯螺旋<span class="tag no">要重做</span></h3>
+        <p class="verdict">
+          16px 确实清晰，但走过头了：只剩螺旋、丢了蜗牛，像漩涡或催眠图，尾巴那一勾还像个逗号。
+          最简一档的正确做法不是「只留壳」，而是拿完整蜗牛去掉触角、加粗留白，保住剪影辨识、只降精细度。
+        </p>
+        <img class="hero" src="./drafts/icon-mini-spiral.png" alt="纯螺旋版" />
+      </div>
+    </div>
+
+    <h2 class="sec">三 · 繁简梯度与槽位分配</h2>
+    <p class="note">同一只蜗牛，三个精细度，覆盖 16px favicon 到 1024px 商店图。不存在一个方案通吃所有尺寸。</p>
+    <div class="slots">
+      <div class="slot">
+        <div class="head">
+          <img src="./drafts/icon-b-stamp.png" alt="" />
+          <div><b>繁 · 雕版邮票</b><span>大画布，无遮罩，可含细排线</span></div>
+        </div>
+        <ul>
+          <li><code>/download</code> 侧载页 hero</li>
+          <li>关于页 <code>MeAboutPage</code> 品牌区</li>
+          <li>未来 Play Store 截图与横幅</li>
+          <li>社交分享图 / 对外物料</li>
+        </ul>
+      </div>
+      <div class="slot">
+        <div class="head">
+          <img src="./drafts/hue-1-oxblood.png" alt="" />
+          <div><b>中 · 火漆蜗牛</b><span>主身份，48px 起步，要过遮罩</span></div>
+        </div>
+        <ul>
+          <li>Android 自适应图标 <code>ic_launcher</code> / <code>ic_launcher_round</code></li>
+          <li>各密度 legacy mipmap PNG</li>
+          <li>启动图 <code>@drawable/splash</code></li>
+          <li>PWA manifest 192 / 512 与 maskable</li>
+        </ul>
+      </div>
+      <div class="slot">
+        <div class="head">
+          <img src="./drafts/icon-mini-spiral.png" alt="" />
+          <div><b>简 · 单色剪影</b><span>16–32px，只剩形与色（待重做）</span></div>
+        </div>
+        <ul>
+          <li>浏览器 favicon 16 / 32</li>
+          <li>Web 顶栏 wordmark 前的小标记</li>
+          <li>最小密度 legacy 图标</li>
+          <li>备用：日后接推送时的通知栏纯白剪影</li>
+        </ul>
+      </div>
+    </div>
+
+    <h2 class="sec">四 · Slogan 长名单</h2>
+    <p class="note">
+      分三层用：品牌句（下载页大标）、商店副标题（30 字内说清是什么）、关于页 tagline（现为「旅行自然观察」）。报编号即可。
+    </p>
+    <div class="slogans">
+      <div class="grp">
+        <h3>命名组</h3>
+        <p class="hint">落点在「有名字了」，最贴结算高潮</p>
+        <ol>
+          <li class="rec">路上遇见的，都有名字。</li>
+          <li>遇见，然后收下。</li>
+          <li>每一次遇见，都值得一个名字。</li>
+          <li>先遇见，再认识。</li>
+          <li>把陌生的，变成认识的。</li>
+        </ol>
+      </div>
+      <div class="grp">
+        <h3>相册组</h3>
+        <p class="hint">落点在旅行叙事，与 trips.lede 同源</p>
+        <ol start="6">
+          <li>每一次出门，都是一本新相册。</li>
+          <li>旅途会结束，相册不会。</li>
+          <li>一次旅行，一册遇见。</li>
+          <li>把路上的生命，收进一本册子。</li>
+          <li>走过的地方，都留在册页里。</li>
+        </ol>
+      </div>
+      <div class="grp">
+        <h3>痕迹组</h3>
+        <p class="hint">落点在英文名词义，配蜗牛叙事最顺</p>
+        <ol start="11">
+          <li>生命的痕迹，一路收集。</li>
+          <li class="rec">万物留痕，旅途成册。</li>
+          <li>你走过的地方，都有生命签过名。</li>
+          <li>慢慢走，把痕迹带回来。</li>
+          <li>一路走，一路留痕。</li>
+        </ol>
+      </div>
+    </div>
+
+    <h2 class="sec">五 · 待补的品牌资产</h2>
+    <ul class="gaps">
+      <li>Android 自适应图标仍是 Capacitor 默认绿机器人：<code>drawable-v24/ic_launcher_foreground.xml</code> 是机器人头，<code>values/ic_launcher_background.xml</code> 是 <code>&lt;color&gt;#FFFFFF&lt;/color&gt;</code>。满版方案下这里直接改成最终品牌色。</li>
+      <li><code>apps/web/index.html</code> 没有 <code>&lt;link rel="icon"&gt;</code>，浏览器标签页是空白图标。</li>
+      <li>没有 PWA manifest，缺 <code>name</code> / <code>short_name</code> / <code>description</code> / <code>theme_color</code>。</li>
+      <li>没有矢量 wordmark，顶栏目前是纯文字 <code>BioTrace</code>。</li>
+      <li>各 <code>package.json</code> 均无 <code>description</code> 字段。</li>
+      <li>纸纹资源闲置：<code>shell/daylight/page-texture.jpg</code> 有文件，但 <code>--page-texture</code> / <code>--nav-texture</code> 两皮都是 <code>none</code>。</li>
+      <li>冷启动跳色：<code>capacitor.config.js</code> 的 splash 背景 <code>#f4f1ea</code> 与 daylight <code>--bg0 #f3efe7</code> 不一致。</li>
+      <li>换色波及的位图美术：<code>settle/daylight/pack-sealed.png</code> 的橙火漆、<code>volumes/daylight/</code> 的成册相关资源需重出。</li>
+      <li>推送未启用（无 <code>google-services.json</code>），通知栏纯白剪影图标暂不需要。</li>
+    </ul>
+
+    <h2 class="sec archive">存档 · 第一轮四版</h2>
+    <p class="note">保留供对照。C 已排除：它不在纸／火漆／雕版这套语汇里，是另起的符号体系。</p>
+    <div class="cards">
+      <div class="card dim">
+        <h3>A · 火漆封缄</h3>
+        <p class="verdict">小尺寸最稳，但叶子太通用；圆压方底，圆形遮罩后外圈纸只剩一道边。</p>
+        <img class="hero" src="./drafts/icon-a-seal.png" alt="A" />
+      </div>
+      <div class="card dim">
+        <h3>B · 博物学邮票<span class="tag">转页面 Logo</span></h3>
+        <p class="verdict">气质最足，与雕版册皮同源。齿孔会被遮罩切掉，不适合做图标，转为繁档页面 Logo。</p>
+        <img class="hero" src="./drafts/icon-b-stamp.png" alt="B" />
+      </div>
+      <div class="card dim">
+        <h3>C · 足迹落点<span class="tag no">排除</span></h3>
+        <p class="verdict">等高线 48px 消失，等于标准地图图钉；且与这套语汇无共同基因。</p>
+        <img class="hero" src="./drafts/icon-c-trace.png" alt="C" />
+      </div>
+      <div class="card dim">
+        <h3>D · 混合初版</h3>
+        <p class="verdict">方向对但正负形反了，火漆退化成细橙环，麻绳出血到画布角会被裁。</p>
+        <img class="hero" src="./drafts/icon-d-hybrid.png" alt="D" />
+      </div>
+    </div>
+  </body>
+</html>
