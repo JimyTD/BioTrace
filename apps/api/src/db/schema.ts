@@ -13,6 +13,8 @@ export const users = sqliteTable("users", {
   identifyUserKeyHint: text("identify_user_key_hint"),
   identifyUserBaseUrl: text("identify_user_base_url"),
   identifyUserModel: text("identify_user_model"),
+  /** 外观皮肤 id（`clear` / `daylight`）。空 = 从未存过，客户端用本机缓存或默认再回写。 */
+  theme: text("theme"),
 });
 
 export const trips = sqliteTable("trips", {

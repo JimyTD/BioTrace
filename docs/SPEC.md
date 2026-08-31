@@ -425,7 +425,7 @@ GRIIS 全球主索引 + seed overlay 种级匹配与稀有度分通道、图鉴�
 - **主路径**：`POST /api/auth/register` / `POST /api/auth/login`（邮箱+密码）→ 设 `bt_session`；`/me` 滑动续期（约 90 天）。
 - **不强制验邮**：假邮箱可注册；收不到信则无法找回。
 - **找回**：`POST /api/auth/request-reset` → Resend 发 **6 位码** → `POST /api/auth/reset-password`（App 内填码，利 Android）。
-- **「我的」**：昵称、改密、退出；外观切换皮肤（`daylight` / `clear`）；**平台识图日额度与自备 OpenAI 兼容 Key**（见 §1.7 / [`features/识图护栏.md`](./features/识图护栏.md)；后台可查看/清除，见 [`features/管理后台.md`](./features/管理后台.md)）。
+- **「我的」**：昵称、改密、退出；外观切换皮肤（`daylight` / `clear`），写入账号 `users.theme`，换端跟着走（本机 `bt_theme` 只作首屏缓存）；**平台识图日额度与自备 OpenAI 兼容 Key**（见 §1.7 / [`features/识图护栏.md`](./features/识图护栏.md)；后台可查看/清除，见 [`features/管理后台.md`](./features/管理后台.md)）。
 - **UI**：登录页默认只露登录；注册与找回切卡，不并排抢主按钮。
 - 本机可 `DEV_AUTH=1` 开发登录；生产 `DEV_AUTH=0`。测试库可清（密码模型不迁移旧魔法链接用户）。
 - 发信仍用 Resend（`RESEND_API_KEY` + `MAIL_FROM`）；日常登录不发信。

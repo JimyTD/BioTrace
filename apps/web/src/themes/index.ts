@@ -16,6 +16,7 @@ export {
   getActiveTheme,
   initTheme,
   isThemeId,
+  resolveStoredTheme,
   THEME_IDS,
   THEME_META,
   themeAssetBase,

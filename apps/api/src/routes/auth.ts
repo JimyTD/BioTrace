@@ -21,6 +21,7 @@ import {
   updateUserIdentify,
 } from "../services/user-identify.js";
 import { serializeUser } from "../serialize.js";
+import { canonicalizeUserTheme } from "../theme-id.js";
 import { t } from "@biotrace/messages";
 
 export const authRoutes = new Hono<{ Variables: Variables }>();
@@ -92,6 +93,7 @@ authRoutes.post("/register", async (c) => {
     identifyUserKeyHint: null as string | null,
     identifyUserBaseUrl: null as string | null,
     identifyUserModel: null as string | null,
+    theme: "clear" as string | null,
   };
   await db.insert(users).values(user);
   setSessionCookie(c, user.id);
@@ -289,18 +291,46 @@ authRoutes.patch("/me/identify-key", requireUser, async (c) => {
 authRoutes.patch("/me", requireUser, async (c) => {
   const body = z
     .object({
-      displayName: z.union([z.string().trim().max(40), z.literal("")]),
+      displayName: z.union([z.string().trim().max(40), z.literal("")]).optional(),
+      theme: z.string().trim().min(1).max(32).optional(),
+      /** 仅当账号还没存过皮肤时写入，避免登录回填盖掉另一端刚选的。 */
+      themeIfUnset: z.boolean().optional(),
     })
     .safeParse(await c.req.json().catch(() => ({})));
 
-  if (!body.success) {
+  if (!body.success || (body.data.displayName === undefined && body.data.theme === undefined)) {
     return c.json({ error: t("auth.invalidProfile"), code: "invalid_profile" }, 400);
   }
 
   const user = c.get("user");
-  const displayName = body.data.displayName.trim() || null;
-  await db.update(users).set({ displayName }).where(eq(users.id, user.id));
-  const updated = { ...user, displayName };
+
+  if (body.data.theme !== undefined && body.data.themeIfUnset) {
+    const theme = canonicalizeUserTheme(body.data.theme);
+    if (!theme) {
+      return c.json({ error: t("auth.invalidTheme"), code: "invalid_theme" }, 400);
+    }
+    await db
+      .update(users)
+      .set({ theme })
+      .where(and(eq(users.id, user.id), isNull(users.theme)));
+    const latest = await db.query.users.findFirst({ where: eq(users.id, user.id) });
+    return c.json({ user: serializeUser(latest ?? { ...user, theme }) });
+  }
+
+  const patch: { displayName?: string | null; theme?: string } = {};
+  if (body.data.displayName !== undefined) {
+    patch.displayName = body.data.displayName.trim() || null;
+  }
+  if (body.data.theme !== undefined) {
+    const theme = canonicalizeUserTheme(body.data.theme);
+    if (!theme) {
+      return c.json({ error: t("auth.invalidTheme"), code: "invalid_theme" }, 400);
+    }
+    patch.theme = theme;
+  }
+
+  await db.update(users).set(patch).where(eq(users.id, user.id));
+  const updated = { ...user, ...patch };
   return c.json({ user: serializeUser(updated) });
 });
 

@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { hasMessage, t, type MessageKey } from "@biotrace/messages";
+import { api, type User } from "../api";
 import { MeSubHead } from "../components/MeSubHead";
 import { applyTheme, getActiveTheme, THEME_IDS, type ThemeId } from "../themes";
 
@@ -13,12 +14,27 @@ function themeHint(id: ThemeId) {
   return hasMessage(key) ? t(key) : null;
 }
 
-export default function MeAppearancePage() {
+export default function MeAppearancePage({
+  user,
+  onUserUpdated,
+}: {
+  user: User;
+  onUserUpdated: (user: User) => void;
+}) {
   const [current, setCurrent] = useState<ThemeId>(getActiveTheme);
+  const [err, setErr] = useState<string | null>(null);
 
-  function pick(id: ThemeId) {
+  async function pick(id: ThemeId) {
     applyTheme(id);
     setCurrent(id);
+    setErr(null);
+    onUserUpdated({ ...user, theme: id });
+    try {
+      const { user: next } = await api.updateMe({ theme: id });
+      onUserUpdated(next);
+    } catch (error) {
+      setErr(error instanceof Error ? error.message : t("me.appearanceSaveFailed"));
+    }
   }
 
   return (
@@ -48,6 +64,7 @@ export default function MeAppearancePage() {
           );
         })}
       </div>
+      {err ? <p className="error">{err}</p> : null}
     </div>
   );
 }

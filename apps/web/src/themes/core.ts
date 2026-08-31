@@ -89,6 +89,13 @@ export function applyTheme(id: ThemeId = DEFAULT_THEME): void {
   }
 }
 
+/** 解析账号或本机存过的皮肤 id（含退役映射）。认不出则 null。 */
+export function resolveStoredTheme(value: string | null | undefined): ThemeId | null {
+  if (!value) return null;
+  if (isThemeId(value)) return value;
+  return LEGACY_THEME_IDS[value] ?? null;
+}
+
 /** 当前生效皮肤（读 DOM，缺省则默认）。 */
 export function getActiveTheme(): ThemeId {
   if (typeof document === "undefined") return DEFAULT_THEME;
@@ -97,13 +104,12 @@ export function getActiveTheme(): ThemeId {
   return DEFAULT_THEME;
 }
 
-/** 启动时调用：读本地偏好，否则用默认皮肤。 */
+/** 启动时调用：读本机缓存，否则用默认皮肤。账号上的选择由会话层盖过来。 */
 export function initTheme(): ThemeId {
   let id = DEFAULT_THEME;
   try {
-    const saved = localStorage.getItem(STORAGE_KEY);
-    if (isThemeId(saved)) id = saved;
-    else if (saved && LEGACY_THEME_IDS[saved]) id = LEGACY_THEME_IDS[saved];
+    const saved = resolveStoredTheme(localStorage.getItem(STORAGE_KEY));
+    if (saved) id = saved;
   } catch {
     /* ignore */
   }

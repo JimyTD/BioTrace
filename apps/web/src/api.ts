@@ -11,7 +11,14 @@ export type Taxonomy = {
   species: TaxonomyName;
 };
 
-export type User = { id: string; email: string; displayName: string | null; createdAt: string };
+export type User = {
+  id: string;
+  email: string;
+  displayName: string | null;
+  createdAt: string;
+  /** 账号皮肤。null = 从未存过，登录后由本机缓存回写。 */
+  theme: string | null;
+};
 export type Trip = {
   id: string;
   userId: string;
@@ -241,11 +248,11 @@ export const api = {
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ email, code, password }),
     }),
-  updateMe: (displayName: string) =>
+  updateMe: (body: { displayName?: string; theme?: string; themeIfUnset?: boolean }) =>
     request<{ user: User }>("/api/auth/me", {
       method: "PATCH",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ displayName }),
+      body: JSON.stringify(body),
     }),
   changePassword: (currentPassword: string, newPassword: string) =>
     request<{ ok: boolean; message: string }>("/api/auth/change-password", {

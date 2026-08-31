@@ -7,7 +7,7 @@ alwaysApply: true
 
 表现层五分离：**文案** `packages/messages` · **配色** `apps/web/src/themes/` · **结构摆放** `styles.css` · **整块换实现** `themes/slots.ts` · **流程与数据** `pages/`。
 
-细则与 token 表见 [`docs/features/皮肤主题.md`](docs/features/皮肤主题.md)。当前皮肤：默认 `clear`（清透，无世界观，只有观感），备选 `daylight`（日光图版）。`/admin`、地图在线瓦片不换皮；引导插页尚未主题化。
+细则与 token 表见 [`docs/features/皮肤主题.md`](docs/features/皮肤主题.md)。当前皮肤：默认 `clear`（清透，无世界观，只有观感），备选 `daylight`（日光图版）。账号皮肤存在 `users.theme`；`applyTheme` 仍写本机缓存作首屏。`/admin`、地图在线瓦片不换皮；引导插页尚未主题化。
 
 ## 加功能时过一遍
 
@@ -19,7 +19,7 @@ alwaysApply: true
 4. 新的主题化图片 → `public/<域>/<themeId>/`，只经 `themes/*Assets` helper。不要写死某个皮肤的路径。
 5. 新的动作，或新的「概念的表现方式」（等级、仪式、状态章）→ 先判断要不要开 `themes/slots.ts` 槽位。换的是物件或演法，不是颜色，才开槽。
 
-切换皮肤用 `applyTheme`。新皮肤：CSS → 资源包 → 登记 `ThemeId` / `THEME_IDS` / `THEME_META` → `main.tsx` import → `theme.<id>` / `theme.<id>Hint`。
+切换皮肤用 `applyTheme`（本机缓存）。登录后以账号 `users.theme` 为准，外观页写入账号。新皮肤：CSS → 资源包 → 登记 `ThemeId` / `THEME_IDS` / `THEME_META` → API `theme-id.ts` 一并登记 → `main.tsx` import → `theme.<id>` / `theme.<id>Hint`。
 
 ## 禁止
 

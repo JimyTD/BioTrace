@@ -255,6 +255,9 @@ export async function migrate() {
   await ensureColumn("users", "identify_user_key_hint", "identify_user_key_hint TEXT");
   await ensureColumn("users", "identify_user_base_url", "identify_user_base_url TEXT");
   await ensureColumn("users", "identify_user_model", "identify_user_model TEXT");
+  await ensureColumn("users", "theme", "theme TEXT");
+  // 已有账号从未存过皮肤：写成清透。否则本机还停在日光图版的人登录后对不上新默认。
+  await client.execute(`UPDATE users SET theme = 'clear' WHERE theme IS NULL`);
 
   // Cut 2: grandfather ready → settled
   await client.execute(`

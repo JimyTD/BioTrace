@@ -1,6 +1,7 @@
 import { normalizeTaxonomy, type Taxonomy } from "./identify/types.js";
 import type { CollectionEntry, Observation, Trip, User } from "./db/schema.js";
 import { lookupListed, statusTagsFrom, type StatusTag } from "./rarity/cn-status.js";
+import { canonicalizeUserTheme } from "./theme-id.js";
 import type { TripSummaryResolved } from "./trips/summary.js";
 
 function tagsForNames(
@@ -27,6 +28,7 @@ export function serializeUser(user: User) {
     email: user.email,
     displayName: user.displayName ?? null,
     createdAt: user.createdAt.toISOString(),
+    theme: canonicalizeUserTheme(user.theme),
   };
 }
 

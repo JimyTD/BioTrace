@@ -25,7 +25,7 @@ export default function MeProfilePage({
     setErr(null);
     setMsg(null);
     try {
-      const { user: next } = await api.updateMe(displayName.trim());
+      const { user: next } = await api.updateMe({ displayName: displayName.trim() });
       onUserUpdated(next);
       setMsg(t("me.profileSaved"));
     } catch (error) {

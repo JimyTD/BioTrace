@@ -104,6 +104,7 @@ export async function ensureDevUser(): Promise<User> {
     identifyUserKeyHint: null,
     identifyUserBaseUrl: null,
     identifyUserModel: null,
+    theme: "clear",
   };
   await db.insert(users).values(user);
   return user;

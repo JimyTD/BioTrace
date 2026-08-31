@@ -39,6 +39,7 @@ import TripManagePage from "./pages/TripManagePage";
 import TripsPage from "./pages/TripsPage";
 import { peekLiftBackground } from "./photoLiftHandoff";
 import { RealLocationContext } from "./realLocation";
+import { applyUserTheme, mergePersistedTheme, persistThemeIfUnset } from "./themeAccount";
 
 function TripsShelf({ userId }: { userId: string }) {
   const { id } = useParams();
@@ -146,7 +147,7 @@ function AppShell({
             />
             <Route path="/me/security" element={<MeSecurityPage />} />
             <Route path="/me/identify" element={<MeIdentifyPage />} />
-            <Route path="/me/appearance" element={<MeAppearancePage />} />
+            <Route path="/me/appearance" element={<MeAppearancePage user={user} onUserUpdated={setUser} />} />
             <Route path="/me/about" element={<MeAboutPage />} />
             <Route path="*" element={<Navigate to="/" replace />} />
           </Routes>
@@ -183,14 +184,22 @@ export default function App() {
   const [flyleaf, setFlyleaf] = useState(false);
   const [onboardReplay, setOnboardReplay] = useState(false);
 
+  function takeSessionUser(next: User) {
+    applyUserTheme(next);
+    setUser(next);
+    void persistThemeIfUnset(next).then((u) => {
+      setUser((cur) => mergePersistedTheme(cur, u));
+    });
+  }
+
   useEffect(() => listenAndroidBack(), []);
 
   useEffect(() => {
     api
       .me()
       .then((r) => {
-        setUser(r.user);
-        setFlyleaf(!r.user);
+        takeSessionUser(r.user);
+        setFlyleaf(false);
       })
       .catch(() => {
         setUser(null);
@@ -240,7 +249,7 @@ export default function App() {
       ) : null}
       {flyleaf ? (
         <LoginPage
-          onLoggedIn={setUser}
+          onLoggedIn={takeSessionUser}
           onOpened={() => setFlyleaf(false)}
         />
       ) : null}
