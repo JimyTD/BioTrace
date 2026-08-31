@@ -1,7 +1,7 @@
 /**
  * 套册主题资源包路径（换皮肤 = 换 /volumes/<theme>/ 目录）。
  * 页面只调 helper，禁止写死 /volumes/daylight/...。
- * 皮肤未自备 volumes 资源时由 themeAssetBase 回退默认皮肤。
+ * 皮肤未自备 volumes 资源时由 themeAssetBase 回退资源齐的那套（日光）。
  * 分层约定见 docs/features/套册美术分层.md。
  */
 import { getActiveTheme, themeAssetBase, themeAssetUrl, type ThemeId } from "./core";

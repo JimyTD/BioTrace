@@ -3,12 +3,19 @@
  */
 import { setMessageVoice, type VoiceId } from "@biotrace/messages";
 
-export type ThemeId = "daylight" | "clear";
+export type ThemeId = "clear" | "daylight";
 
-/** 已实现的皮肤。走同一套页面，只换 token、资源槽与包装用词。 */
-export const THEME_IDS = ["daylight", "clear"] as const satisfies readonly ThemeId[];
+/** 已实现的皮肤。走同一套页面，只换 token、资源槽与包装用词。外观页按这个顺序排。 */
+export const THEME_IDS = ["clear", "daylight"] as const satisfies readonly ThemeId[];
 
-export const DEFAULT_THEME: ThemeId = "daylight";
+/** 新用户、没有本地偏好时用的皮肤。 */
+export const DEFAULT_THEME: ThemeId = "clear";
+
+/**
+ * 某皮肤没声明的资源域回退到这里。必须是资源齐的那套，不能跟用户默认绑死——
+ * 清透故意不备 settle / shell，回退到它自己会 404。
+ */
+export const ASSET_FALLBACK_THEME: ThemeId = "daylight";
 
 /**
  * 退役 id → 现 id。改名后本地存的旧偏好不认识就会静默掉回默认皮肤，
@@ -29,7 +36,7 @@ export type ColorScheme = "light" | "dark";
 export type ThemeMeta = {
   scheme: ColorScheme;
   /**
-   * 该皮肤自备资源的域。未列出的域回退到 DEFAULT_THEME，
+   * 该皮肤自备资源的域。未列出的域回退到 ASSET_FALLBACK_THEME，
    * 所以新皮肤可以先只出一部分图，不会满屏破图。
    */
   assets: readonly AssetDomain[];
@@ -55,9 +62,9 @@ export function themeMeta(id: ThemeId = getActiveTheme()): ThemeMeta {
   return THEME_META[id] ?? THEME_META[DEFAULT_THEME];
 }
 
-/** 资源目录前缀。该皮肤没有这个域的资源包时回退默认皮肤。 */
+/** 资源目录前缀。该皮肤没有这个域的资源包时回退资源齐的那套，不是用户默认。 */
 export function themeAssetBase(domain: AssetDomain, id: ThemeId = getActiveTheme()): string {
-  const owner = themeMeta(id).assets.includes(domain) ? id : DEFAULT_THEME;
+  const owner = themeMeta(id).assets.includes(domain) ? id : ASSET_FALLBACK_THEME;
   return `/${domain}/${owner}`;
 }
 
@@ -90,7 +97,7 @@ export function getActiveTheme(): ThemeId {
   return DEFAULT_THEME;
 }
 
-/** 启动时调用：读本地偏好，否则用默认旅游皮肤。 */
+/** 启动时调用：读本地偏好，否则用默认皮肤。 */
 export function initTheme(): ThemeId {
   let id = DEFAULT_THEME;
   try {

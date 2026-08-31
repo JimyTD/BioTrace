@@ -64,7 +64,7 @@ HTTPS_PROXY=http://127.0.0.1:7890
 ```text
 apps/api             Node + Hono + SQLite(libsql) + Gemini/GLM
 apps/web             Vite + React + MapLibre
-  src/themes/        皮肤主题（默认 daylight，备选 clear）
+  src/themes/        皮肤主题（默认 clear，备选 daylight）
 packages/messages    统一界面/术语文案（默认 zh）
 deploy/              生产 env / Nginx 模板
 Dockerfile           API 镜像

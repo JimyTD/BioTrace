@@ -7,7 +7,7 @@ alwaysApply: true
 
 表现层五分离：**文案** `packages/messages` · **配色** `apps/web/src/themes/` · **结构摆放** `styles.css` · **整块换实现** `themes/slots.ts` · **流程与数据** `pages/`。
 
-细则与 token 表见 [`docs/features/皮肤主题.md`](docs/features/皮肤主题.md)。当前皮肤：默认 `daylight`，备选 `clear`（无世界观，只有观感）。`/admin`、地图在线瓦片不换皮；引导插页尚未主题化。
+细则与 token 表见 [`docs/features/皮肤主题.md`](docs/features/皮肤主题.md)。当前皮肤：默认 `clear`（清透，无世界观，只有观感），备选 `daylight`（日光图版）。`/admin`、地图在线瓦片不换皮；引导插页尚未主题化。
 
 ## 加功能时过一遍
 

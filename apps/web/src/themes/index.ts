@@ -11,6 +11,7 @@
 export {
   applyTheme,
   ASSET_DOMAINS,
+  ASSET_FALLBACK_THEME,
   DEFAULT_THEME,
   getActiveTheme,
   initTheme,

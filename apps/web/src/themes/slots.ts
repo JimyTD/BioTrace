@@ -27,7 +27,7 @@ import { TreeDeck, type TreeLayerViewProps } from "../components/TreeDeck";
 import { flipBook } from "../bookFlip";
 import { flyEaseOut } from "../photoLift";
 import { slideUpFromPocket } from "../photoSlot";
-import { DEFAULT_THEME, getActiveTheme, type ThemeId } from "./core";
+import { getActiveTheme, type ThemeId } from "./core";
 
 // ── 动作槽位的入参 ─────────────────────────────────────────────
 // 一个槽位一种形状，不强行并成一个万能类型：这三下的演员数量本来就不一样。
@@ -142,7 +142,7 @@ export type SlotName = keyof ThemeSlots;
  */
 type SlotTable = { [K in SlotName]?: () => ThemeSlots[K] };
 
-/** 缺省实现＝默认皮肤的实现。必须全，别的皮肤都靠它兜底。 */
+/** 缺省实现＝日光那套物件。必须全，别的皮肤都靠它兜底。用户默认是清透，覆盖写在 THEME_SLOTS 里。 */
 const DEFAULT_SLOTS: Required<SlotTable> = {
   raritySeal: () => SettleRaritySeal,
   settleStage: () => SettlePackStage,
@@ -166,7 +166,8 @@ const THEME_SLOTS: Partial<Record<ThemeId, SlotTable>> = {
 };
 
 /**
- * 取当前皮肤的槽位实现，没登记就回退默认皮肤。
+ * 取当前皮肤的槽位实现，没登记就回退 DEFAULT_SLOTS（日光那套物件）。
+ * 用户默认皮肤是清透，但它覆盖的槽位只对清透自己生效，不能拿去给没登记的皮肤兜底。
  *
  * 和资源 helper 一样在渲染时现取，所以切皮肤后要整棵树重渲才会变——
  * 现在切皮肤走的是「我的 → 外观」再返回，天然会重渲。
@@ -175,7 +176,7 @@ export function themeSlot<K extends SlotName>(
   name: K,
   id: ThemeId = getActiveTheme(),
 ): ThemeSlots[K] {
-  const pick = THEME_SLOTS[id]?.[name] ?? THEME_SLOTS[DEFAULT_THEME]?.[name] ?? DEFAULT_SLOTS[name];
+  const pick = THEME_SLOTS[id]?.[name] ?? DEFAULT_SLOTS[name];
   return pick();
 }
 
