@@ -401,6 +401,86 @@
   display: grid;
 }
 
+/* 图鉴两行门：标题仍在上，种脸 / 树门在下。图标在这一页关掉。 */
+[data-theme="clear"] .page-collection .me-row {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  grid-template-areas:
+    "title side"
+    "art art";
+  align-items: center;
+  gap: 10px 12px;
+  padding: 14px 16px 16px;
+}
+
+[data-theme="clear"] .page-collection .me-row-icon {
+  display: none;
+}
+
+[data-theme="clear"] .page-collection .me-row > span:not([class]) {
+  grid-area: title;
+  flex: unset;
+}
+
+[data-theme="clear"] .page-collection .me-row-side {
+  grid-area: side;
+}
+
+[data-theme="clear"] .page-collection .me-row + .me-row::before {
+  left: 16px;
+}
+
+[data-theme="clear"] .page-collection .collection-faces {
+  grid-area: art;
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 6px;
+}
+
+[data-theme="clear"] .page-collection .collection-faces:empty {
+  display: none;
+}
+
+[data-theme="clear"] .page-collection .collection-faces img {
+  display: block;
+  width: 100%;
+  aspect-ratio: 1;
+  object-fit: cover;
+  border-radius: var(--radius-sm);
+  border: 2px solid var(--photo-mat);
+  box-shadow: var(--shadow-sm);
+}
+
+[data-theme="clear"] .page-collection .collection-tree-door {
+  grid-area: art;
+  display: block;
+  height: 176px;
+  border-radius: var(--radius-md);
+  overflow: hidden;
+  background: var(--bg1);
+}
+
+[data-theme="clear"] .page-collection .collection-tree-door:empty {
+  display: none;
+}
+
+[data-theme="clear"] .page-collection .collection-tree-door img {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: 50% 55%;
+}
+
+/* 仰视收集树不飞封面，把头图占位收掉，免得空出 72px */
+[data-theme="clear"] .tree-head-cover {
+  display: none;
+}
+
+[data-theme="clear"] .tree-head-row.has-cover {
+  grid-template-columns: minmax(0, 1fr);
+}
+
 /* 行内文字要占满中间，把值和 › 顶到右边 */
 [data-theme="clear"] .me-row > span:not([class]),
 [data-theme="clear"] .me-row .theme-row-main {

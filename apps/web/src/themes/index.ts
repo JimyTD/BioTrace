@@ -5,6 +5,7 @@
  * - 套册资源包：public/volumes/<themeId>/，经 volumeAssets helper 引用
  * - 旅途资源包：public/trips/<themeId>/，经 tripAssets helper 引用
  * - 壳资源包：public/shell/<themeId>/，经 shellAssets helper 引用（纸纹可空）
+ * - 图鉴资源包：public/collection/<themeId>/，经 collectionAssets helper 引用（仅声明了该域的皮肤）
  * - 结构 class：styles.css 只用 var(--*)
  */
 export {
@@ -57,3 +58,5 @@ export {
   themeShellAsset,
   themeShellBase,
 } from "./shellAssets";
+
+export { collectionTreeDoorUrl, collectionTreeSceneUrl } from "./collectionAssets";

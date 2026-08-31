@@ -1,12 +1,13 @@
-import { useEffect, useLayoutEffect, useRef, useState, type CSSProperties } from "react";
+import { useEffect, useLayoutEffect, useMemo, useRef, useState, type CSSProperties } from "react";
 import { flushSync } from "react-dom";
 import { Link, useMatch, useNavigate } from "react-router-dom";
 import { hasMessage, t } from "@biotrace/messages";
-import { api, type VolumeListItem } from "../api";
+import { api, type CollectionEntry, type VolumeListItem } from "../api";
+import { pickCollectionFaces } from "../collectionFaces";
 import { MeRowIcon } from "../components/MeRowIcon";
 import { measureBox } from "../motion";
 import { playPhotoLift } from "../photoLift";
-import { volumeCoverUrl, volumeSealCompleteUrl } from "../themes";
+import { collectionTreeDoorUrl, volumeCoverUrl, volumeSealCompleteUrl } from "../themes";
 import { peekCollection, rememberCollection } from "../pageCache";
 import { countTreeKingdoms } from "../treeBuild";
 import { restoreContentScroll, saveContentScroll } from "../scrollMemory";
@@ -35,6 +36,7 @@ export default function CollectionPage() {
   const navigate = useNavigate();
   const [entryCount, setEntryCount] = useState(() => peekCollection()?.entryCount ?? 0);
   const [kingdomCount, setKingdomCount] = useState(() => peekCollection()?.kingdomCount ?? 0);
+  const [entries, setEntries] = useState<CollectionEntry[]>(() => peekCollection()?.entries ?? []);
   const [volumes, setVolumes] = useState<VolumeListItem[]>(() => peekCollection()?.volumes ?? []);
   const [error, setError] = useState<string | null>(null);
   const [loading, setLoading] = useState(() => !peekCollection());
@@ -48,6 +50,7 @@ export default function CollectionPage() {
       .then(([col, vol]) => {
         setEntryCount(col.entries.length);
         setKingdomCount(countTreeKingdoms(col.entries));
+        setEntries(col.entries);
         setVolumes(vol.volumes);
         rememberCollection({
           entryCount: col.entries.length,
@@ -113,6 +116,9 @@ export default function CollectionPage() {
     }
     navigate(`/collection/volumes/${vol.id}`);
   }
+
+  const faces = useMemo(() => pickCollectionFaces(entries), [entries]);
+  const treeDoorUrl = collectionTreeDoorUrl();
 
   return (
     <div
@@ -218,6 +224,12 @@ export default function CollectionPage() {
                 ›
               </span>
             </span>
+            {/* 种的照片门面。零件常在、日光关着；没有封面就不占格子 */}
+            <div className="collection-faces" aria-hidden>
+              {faces.map((entry) => (
+                <img key={entry.id} src={entry.coverDisplayUrl ?? ""} alt="" loading="lazy" />
+              ))}
+            </div>
           </Link>
           <Link
             className="me-row"
@@ -234,6 +246,10 @@ export default function CollectionPage() {
                 ›
               </span>
             </span>
+            {/* 收集树门。零件常在、日光关着；src 只在声明了 collection 域的皮肤上才有 */}
+            <div className="collection-tree-door" aria-hidden>
+              {treeDoorUrl ? <img src={treeDoorUrl} alt="" loading="lazy" /> : null}
+            </div>
           </Link>
         </div>
       ) : null}

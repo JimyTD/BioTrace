@@ -677,6 +677,12 @@ button.trip-cover {
   gap: 8px;
 }
 
+/* 图鉴门上的种脸与收集树门。零件常在、默认不显示，皮肤要就在自己的 [data-theme] 下打开。 */
+.collection-faces,
+.collection-tree-door {
+  display: none;
+}
+
 button.me-row {
   width: 100%;
   font: inherit;

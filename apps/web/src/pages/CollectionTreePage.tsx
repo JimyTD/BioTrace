@@ -1,12 +1,13 @@
 import { useEffect, useLayoutEffect, useMemo, useRef, useState } from "react";
 import { flushSync } from "react-dom";
 import { useLocation, useNavigate, useParams } from "react-router-dom";
-import { hasMessage, t, type MessageKey } from "@biotrace/messages";
-import { api, type CollectionEntry, type Rarity } from "../api";
+import { t } from "@biotrace/messages";
+import { api, type CollectionEntry } from "../api";
 import { useBackClose } from "../androidBack";
 import { measureBox } from "../motion";
 import { playPhotoLift } from "../photoLift";
 import { peekCollection, rememberCollection } from "../pageCache";
+import { themeSlot } from "../themes/slots";
 import {
   buildTreeLayer,
   countTreeKingdoms,
@@ -18,21 +19,14 @@ import {
   type TreeFolder,
   type TreeLayer,
 } from "../treeBuild";
-import { speciesEntryName } from "../speciesSearch";
 import {
   clearTreeOpenHandoff,
   peekTreeOpenHandoff,
   setTreeOpenHandoff,
 } from "../treeOpenHandoff";
 
-function rarityLabel(r: Rarity) {
-  const key = `rarity.${r}`;
-  return hasMessage(key) ? t(key as MessageKey) : r;
-}
-
-function folderName(folder: TreeFolder) {
-  if (folder.rank === "unplaced") return t("collection.treeUnplaced");
-  return folder.name;
+function isLaidOut(el: HTMLElement | null): el is HTMLElement {
+  return Boolean(el && el.getClientRects().length > 0);
 }
 
 function layerTitle(layer: TreeLayer, path: string[]) {
@@ -100,7 +94,7 @@ export default function CollectionTreePage() {
     if (treePathUrl(found.destPath) !== location.pathname) return;
     const cover = coverRef.current;
     const page = pageRef.current;
-    if (!cover || !page || !found.coverUrl) {
+    if (!isLaidOut(cover) || !page || !found.coverUrl) {
       clearTreeOpenHandoff();
       return;
     }
@@ -189,7 +183,7 @@ export default function CollectionTreePage() {
     }
     const destPath = path.slice(0, -1);
     const cover = coverRef.current;
-    if (cover && layer.coverUrl) {
+    if (isLaidOut(cover) && layer.coverUrl) {
       setTreeOpenHandoff({
         destPath,
         plateLatin: path[path.length - 1] ?? "",
@@ -215,6 +209,7 @@ export default function CollectionTreePage() {
   const title = layerTitle(layer, path);
   const lede = layerLede(layer, path);
   const showCover = Boolean(layer.coverUrl && path.length > 0);
+  const TreeLayerView = themeSlot("collectionTreeLayer");
 
   return (
     <div className="stack page-collection-tree" ref={pageRef}>
@@ -244,70 +239,17 @@ export default function CollectionTreePage() {
       ) : null}
 
       {!loading && layer.items.length > 0 ? (
-        <div className={`tree-deck${layer.split ? " is-split" : ""}`}>
-          {layer.items.map((item) => {
-            if (item.kind === "folder") {
-              const name = folderName(item);
-              const skipLift = folderIsUnaryGenus(item, entries, path);
-              return (
-                <button
-                  key={`f-${item.latin}`}
-                  type="button"
-                  className={`tree-plate${sourceLatin === item.latin ? " is-source" : ""}`}
-                  data-latin={item.latin}
-                  onPointerDown={(e) => {
-                    if (skipLift || !item.coverUrl) return;
-                    const art = e.currentTarget.querySelector(".tree-plate-art");
-                    if (art instanceof HTMLElement) {
-                      setTreeOpenHandoff({
-                        destPath: [...path, item.latin],
-                        plateLatin: item.latin,
-                        coverUrl: item.coverUrl,
-                        box: measureBox(art),
-                        dir: "open",
-                      });
-                    }
-                  }}
-                  onClick={(e) => {
-                    const art = e.currentTarget.querySelector(".tree-plate-art");
-                    openFolder(item, art instanceof HTMLElement ? art : null);
-                  }}
-                >
-                  <div className="tree-plate-art">
-                    {item.coverUrl ? <img src={item.coverUrl} alt="" /> : <span aria-hidden />}
-                  </div>
-                  <strong>{name}</strong>
-                  <span className="muted">
-                    {item.caption ? `${item.caption} · ` : ""}
-                    {t("collection.speciesCount", { count: item.count })}
-                  </span>
-                </button>
-              );
-            }
-            const entry = item.entry;
-            return (
-              <button
-                key={`l-${entry.id}`}
-                type="button"
-                className="tree-tile"
-                onClick={() =>
-                  navigate(`/collection/species/${entry.id}`, { state: { from: location.pathname } })
-                }
-              >
-                {entry.coverDisplayUrl ? (
-                  <img className="tree-tile-photo" src={entry.coverDisplayUrl} alt="" />
-                ) : (
-                  <span className="tree-tile-photo is-empty" aria-hidden />
-                )}
-                <strong>{speciesEntryName(entry, t("detail.unnamed"))}</strong>
-                {entry.scientificName && entry.commonName ? (
-                  <span className="muted">{entry.scientificName}</span>
-                ) : null}
-                <span className={`rarity-badge rarity-${entry.rarity}`}>{rarityLabel(entry.rarity)}</span>
-              </button>
-            );
-          })}
-        </div>
+        <TreeLayerView
+          items={layer.items}
+          path={path}
+          entries={entries}
+          sourceLatin={sourceLatin}
+          split={layer.split}
+          onOpenFolder={openFolder}
+          onOpenLeaf={(entry) =>
+            navigate(`/collection/species/${entry.id}`, { state: { from: location.pathname } })
+          }
+        />
       ) : null}
     </div>
   );
