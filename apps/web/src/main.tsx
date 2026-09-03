@@ -4,6 +4,7 @@ import { BrowserRouter, useLocation } from "react-router-dom";
 import AdminApp from "./admin/AdminApp";
 import App from "./App";
 import { isNativeAndroidShell } from "./androidUpdate";
+import DevTreePage from "./pages/DevTreePage";
 import DownloadPage from "./pages/DownloadPage";
 import { initTheme } from "./themes";
 import "./themes/daylight.css";
@@ -26,6 +27,12 @@ function Root() {
   }
   if (loc.pathname === "/download" || loc.pathname === "/download/") {
     return <DownloadPage />;
+  }
+  /* 物种树的 dev 预览：走独立分流以**绕过登录与 API**。
+     树的渲染问题和数据链路无关，混在一起排查很慢；而且冷启动态
+     （一条收集都没有）恰恰最该反复看 —— 新用户看到的就是它。 */
+  if (loc.pathname === "/dev/tree" || loc.pathname === "/dev/tree/") {
+    return <DevTreePage />;
   }
   return <App />;
 }

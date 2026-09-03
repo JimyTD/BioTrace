@@ -1,0 +1,1321 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover"/>
+<title>清透 · 物种树</title>
+<link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600&family=Courier+Prime&display=swap" rel="stylesheet"/>
+<style>
+:root{
+  --bg:#eef2f6;
+  --surface:rgba(255,255,255,.92);
+  --ink:#252d35;--ink2:#5a6774;--muted:#9aa3ad;
+  --acc:#c74e18;--apricot:#fae5d5;
+  --r:999px;
+  --sh:0 1px 3px rgba(50,70,90,.06),0 10px 28px rgba(50,70,90,.10);
+  --sh2:0 2px 6px rgba(50,70,90,.09),0 16px 40px rgba(50,70,90,.15);
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html,body{height:100%;background:var(--bg);
+  font-family:"Outfit","PingFang SC","Microsoft YaHei",system-ui,sans-serif;
+  color:var(--ink);-webkit-font-smoothing:antialiased;overflow:hidden}
+#root{position:fixed;inset:0}
+
+canvas#gl{position:absolute;inset:0;width:100%;height:100%;display:block;touch-action:none}
+
+/* ── HUD ── */
+.hud{position:absolute;left:0;right:0;top:0;z-index:10;pointer-events:none;
+  padding:calc(13px + env(safe-area-inset-top)) 16px 14px;
+  display:flex;align-items:flex-start;justify-content:space-between;gap:10px;
+  background:linear-gradient(180deg,rgba(238,242,246,.92),rgba(238,242,246,0))}
+.hud-l{display:grid;gap:6px}
+.title{font-size:.9rem;font-weight:600;letter-spacing:-.01em;opacity:.72}
+.crumb{display:flex;flex-wrap:wrap;gap:5px;max-width:70vw;pointer-events:auto}
+.crumb button{appearance:none;border:0;cursor:pointer;font-family:inherit;
+  font-size:.68rem;font-weight:500;padding:4px 10px;border-radius:var(--r);
+  background:var(--surface);color:var(--ink2);box-shadow:var(--sh);
+  transition:background .2s;-webkit-tap-highlight-color:transparent}
+.crumb button:hover{background:#fff}
+.crumb button.home{background:var(--apricot);color:var(--acc);font-weight:600}
+.crumb button.cur{background:#fff;color:var(--ink);font-weight:600}
+.depth-label{font-size:.72rem;font-weight:600;letter-spacing:.07em;
+  padding:5px 14px;border-radius:var(--r);flex:none;
+  background:var(--surface);color:var(--ink2);box-shadow:var(--sh)}
+
+/* ── 节点标签 ── */
+.labels{position:absolute;inset:0;z-index:6;pointer-events:none;overflow:hidden}
+.nb{position:absolute;transform:translate(-50%,-50%);pointer-events:auto;
+  cursor:pointer;display:flex;flex-direction:column;align-items:center;gap:3px;
+  background:none;border:0;padding:7px 4px;font-family:inherit;color:var(--ink);
+  will-change:left,top,opacity;-webkit-tap-highlight-color:transparent;
+  transition:opacity .22s}
+.nb .pill{font-size:.76rem;font-weight:600;padding:5px 13px;border-radius:var(--r);
+  background:rgba(255,255,255,.96);color:var(--ink);box-shadow:var(--sh2);
+  white-space:nowrap;max-width:44vw;overflow:hidden;text-overflow:ellipsis;
+  border-left:3px solid var(--kc,#bbb);
+  transition:transform .16s cubic-bezier(.2,.85,.2,1)}
+.nb:hover .pill{transform:translateY(-2px) scale(1.04)}
+.nb .pill::after{content:" ›";color:var(--acc);font-weight:700}
+.nb.leaf .pill{background:rgba(248,244,238,.96)}
+.nb.leaf .pill::after{content:""}
+.nb .sub{font-size:.56rem;color:var(--ink2);font-family:"Courier Prime",monospace;
+  letter-spacing:.02em;padding:1px 7px;border-radius:var(--r);
+  background:rgba(255,255,255,.78);backdrop-filter:blur(3px)}
+
+/* 焦点自身的标题（大字） */
+.focus-title{position:absolute;z-index:5;pointer-events:none;
+  transform:translate(-50%,-50%);text-align:center;opacity:0;transition:opacity .3s}
+.focus-title b{display:block;font-size:1.42rem;font-weight:600;letter-spacing:-.02em;
+  text-shadow:0 2px 12px rgba(238,242,246,.95),0 1px 2px rgba(238,242,246,1)}
+.focus-title span{font-size:.62rem;color:var(--muted);
+  font-family:"Courier Prime",monospace}
+
+/* ── 底部 ── */
+.bar{position:absolute;left:0;right:0;bottom:0;z-index:10;pointer-events:none;
+  padding:10px 16px calc(9px + env(safe-area-inset-bottom));
+  display:flex;align-items:center;justify-content:space-between;gap:8px;
+  font-size:.61rem;color:var(--muted);letter-spacing:.03em;
+  font-family:"Courier Prime",monospace;
+  background:linear-gradient(0deg,rgba(238,242,246,.9),rgba(238,242,246,0))}
+.back{pointer-events:auto;appearance:none;border:0;cursor:pointer;font-family:inherit;
+  font-size:.66rem;font-weight:600;padding:6px 14px;border-radius:var(--r);
+  background:var(--surface);color:var(--ink2);box-shadow:var(--sh);
+  opacity:0;transform:translateY(6px);transition:all .25s;pointer-events:none}
+.back.on{opacity:1;transform:none;pointer-events:auto}
+
+/* ── loading / error ── */
+.boot{position:absolute;inset:0;z-index:30;display:grid;place-items:center;
+  background:var(--bg);font-size:.8rem;color:var(--ink2);letter-spacing:.06em;
+  transition:opacity .45s}
+.boot.gone{opacity:0;pointer-events:none}
+.err{position:absolute;left:12px;right:12px;top:12px;z-index:40;display:none;
+  padding:14px 16px;border-radius:14px;background:#fff5f2;color:#8c2d0c;
+  box-shadow:var(--sh2);font-size:.72rem;line-height:1.6;
+  font-family:"Courier Prime",monospace;white-space:pre-wrap;max-height:60vh;overflow:auto}
+</style>
+</head>
+<body>
+<div id="root">
+  <canvas id="gl"></canvas>
+
+  <div class="labels" id="labels">
+    <div class="focus-title" id="ftitle"><b></b><span></span></div>
+  </div>
+
+  <div class="hud">
+    <div class="hud-l">
+      <span class="title">物种树</span>
+      <div class="crumb" id="crumb"></div>
+    </div>
+    <span class="depth-label" id="dlbl">全树</span>
+  </div>
+
+  <div class="bar">
+    <button class="back" id="back">← 退回</button>
+    <span id="sbar">—</span>
+  </div>
+
+  <div class="boot" id="boot">正在生长这棵树…</div>
+  <div class="err" id="err"></div>
+</div>
+<script>
+"use strict";
+const ERR=document.getElementById("err");
+function fatal(e){
+  ERR.style.display="block";
+  ERR.textContent="渲染失败：\n"+(e&&e.stack?e.stack:e);
+  document.getElementById("boot").classList.add("gone");
+  console.error(e);
+}
+try{
+/* ═══════════════════════════════════════════════════════════
+   0. 数学
+   ═══════════════════════════════════════════════════════════ */
+const V=(x,y,z)=>[x,y,z];
+const add=(a,b)=>[a[0]+b[0],a[1]+b[1],a[2]+b[2]];
+const sub=(a,b)=>[a[0]-b[0],a[1]-b[1],a[2]-b[2]];
+const scl=(a,s)=>[a[0]*s,a[1]*s,a[2]*s];
+const dot=(a,b)=>a[0]*b[0]+a[1]*b[1]+a[2]*b[2];
+const crs=(a,b)=>[a[1]*b[2]-a[2]*b[1],a[2]*b[0]-a[0]*b[2],a[0]*b[1]-a[1]*b[0]];
+const len3=a=>Math.hypot(a[0],a[1],a[2]);
+function nrm(a){const l=len3(a)||1;return [a[0]/l,a[1]/l,a[2]/l];}
+function ortho(d){ // 与 d 正交的一组基
+  const t=Math.abs(d[1])<0.92?[0,1,0]:[1,0,0];
+  const u=nrm(crs(d,t));return [u,nrm(crs(d,u))];}
+function m4mul(a,b){const o=new Float32Array(16);
+  for(let i=0;i<4;i++)for(let j=0;j<4;j++){let s=0;
+    for(let k=0;k<4;k++)s+=a[k*4+j]*b[i*4+k];o[i*4+j]=s;}return o;}
+function persp(fov,asp,n,f){const t=1/Math.tan(fov/2),o=new Float32Array(16);
+  o[0]=t/asp;o[5]=t;o[10]=(f+n)/(n-f);o[11]=-1;o[14]=2*f*n/(n-f);return o;}
+function lookAt(e,c,up){
+  const z=nrm(sub(e,c)),x=nrm(crs(up,z)),y=crs(z,x),o=new Float32Array(16);
+  o[0]=x[0];o[1]=y[0];o[2]=z[0];o[4]=x[1];o[5]=y[1];o[6]=z[1];
+  o[8]=x[2];o[9]=y[2];o[10]=z[2];
+  o[12]=-dot(x,e);o[13]=-dot(y,e);o[14]=-dot(z,e);o[15]=1;return o;}
+
+/* ═══════════════════════════════════════════════════════════
+   1. 分类数据（mock，但量级真实）
+   ═══════════════════════════════════════════════════════════ */
+const RANKS=["界","门","纲","目","科","属","种"];
+const FANOUT=[6,5,4,4,4,8];   // 界→门→纲→目→科→属
+const SPP=12;                  // 每属种数
+const SEGS=[10,8,8,6,6,4,2];   // 按 lvl+1 索引：主干/界/门/纲/目/科/属
+
+const K=[
+ {zh:"动物界",la:"Animalia",c:[0.29,0.56,0.71]},
+ {zh:"植物界",la:"Plantae",  c:[0.35,0.62,0.42]},
+ {zh:"真菌界",la:"Fungi",    c:[0.77,0.49,0.27]},
+ {zh:"原生生物界",la:"Protista",c:[0.60,0.42,0.58]},
+ {zh:"细菌界",la:"Bacteria", c:[0.33,0.53,0.66]},
+ {zh:"古菌界",la:"Archaea",  c:[0.54,0.49,0.31]}];
+const hex=c=>"#"+c.map(v=>Math.round(255-(255-v*255)*0.42).toString(16).padStart(2,"0")).join("");
+const KC_LIGHT=K.map(k=>hex(k.c));
+
+/* 每界独立的真实分类名池：TAXA[king] = [门, 纲, 目, 科, 属, 种加词] */
+const TAXA=[
+/* 0 动物界 */[
+ [["脊索动物门","Chordata"],["节肢动物门","Arthropoda"],["软体动物门","Mollusca"],["环节动物门","Annelida"],["棘皮动物门","Echinodermata"],["刺胞动物门","Cnidaria"]],
+ [["哺乳纲","Mammalia"],["鸟纲","Aves"],["爬行纲","Reptilia"],["两栖纲","Amphibia"],["硬骨鱼纲","Osteichthyes"],["昆虫纲","Insecta"],["蛛形纲","Arachnida"],["甲壳纲","Crustacea"]],
+ [["食肉目","Carnivora"],["偶蹄目","Artiodactyla"],["灵长目","Primates"],["啮齿目","Rodentia"],["翼手目","Chiroptera"],["雀形目","Passeriformes"],["鳞翅目","Lepidoptera"],["鞘翅目","Coleoptera"]],
+ [["猫科","Felidae"],["犬科","Canidae"],["熊科","Ursidae"],["鹿科","Cervidae"],["牛科","Bovidae"],["鸦科","Corvidae"],["雉科","Phasianidae"],["凤蝶科","Papilionidae"]],
+ [["豹属","Panthera"],["猫属","Felis"],["猞猁属","Lynx"],["犬属","Canis"],["狐属","Vulpes"],["熊属","Ursus"],["鹿属","Cervus"],["鸦属","Corvus"]],
+ [["虎","tigris"],["狮","leo"],["豹","pardus"],["雪豹","uncia"],["美洲豹","onca"],["云豹","nebulosa"],["家猫","catus"],["狼","lupus"],["赤狐","vulpes"],["棕熊","arctos"],["马鹿","elaphus"],["渡鸦","corax"]]],
+/* 1 植物界 */[
+ [["被子植物门","Angiospermae"],["裸子植物门","Gymnospermae"],["蕨类植物门","Pteridophyta"],["苔藓植物门","Bryophyta"],["石松门","Lycopodiophyta"],["轮藻门","Charophyta"]],
+ [["木兰纲","Magnoliopsida"],["百合纲","Liliopsida"],["松柏纲","Pinopsida"],["苏铁纲","Cycadopsida"],["蕨纲","Polypodiopsida"],["藓纲","Bryopsida"],["银杏纲","Ginkgoopsida"],["买麻藤纲","Gnetopsida"]],
+ [["蔷薇目","Rosales"],["菊目","Asterales"],["禾本目","Poales"],["天门冬目","Asparagales"],["豆目","Fabales"],["壳斗目","Fagales"],["松柏目","Pinales"],["唇形目","Lamiales"]],
+ [["蔷薇科","Rosaceae"],["菊科","Asteraceae"],["禾本科","Poaceae"],["兰科","Orchidaceae"],["豆科","Fabaceae"],["壳斗科","Fagaceae"],["松科","Pinaceae"],["唇形科","Lamiaceae"]],
+ [["蔷薇属","Rosa"],["菊属","Chrysanthemum"],["竹属","Bambusa"],["石斛属","Dendrobium"],["大豆属","Glycine"],["栎属","Quercus"],["松属","Pinus"],["薰衣草属","Lavandula"]],
+ [["月季","chinensis"],["野蔷薇","multiflora"],["玫瑰","rugosa"],["野菊","indicum"],["毛竹","pubescens"],["紫竹","nigra"],["大豆","max"],["麻栎","acutissima"],["白栎","fabri"],["华山松","armandii"],["油松","tabuliformis"],["薰衣草","angustifolia"]]],
+/* 2 真菌界 */[
+ [["担子菌门","Basidiomycota"],["子囊菌门","Ascomycota"],["接合菌门","Zygomycota"],["球囊菌门","Glomeromycota"],["壶菌门","Chytridiomycota"],["微孢子虫门","Microsporidia"]],
+ [["伞菌纲","Agaricomycetes"],["盘菌纲","Pezizomycetes"],["酵母纲","Saccharomycetes"],["座囊菌纲","Dothideomycetes"],["锈菌纲","Pucciniomycetes"],["黑粉菌纲","Ustilaginomycetes"],["虫霉纲","Entomophthoromycetes"],["毛霉纲","Mucoromycetes"]],
+ [["伞菌目","Agaricales"],["多孔菌目","Polyporales"],["牛肝菌目","Boletales"],["红菇目","Russulales"],["盘菌目","Pezizales"],["酵母目","Saccharomycetales"],["锈菌目","Pucciniales"],["毛霉目","Mucorales"]],
+ [["鹅膏科","Amanitaceae"],["蘑菇科","Agaricaceae"],["多孔菌科","Polyporaceae"],["牛肝菌科","Boletaceae"],["红菇科","Russulaceae"],["羊肚菌科","Morchellaceae"],["酵母科","Saccharomycetaceae"],["毛霉科","Mucoraceae"]],
+ [["鹅膏属","Amanita"],["蘑菇属","Agaricus"],["多孔菌属","Polyporus"],["牛肝菌属","Boletus"],["红菇属","Russula"],["羊肚菌属","Morchella"],["酵母属","Saccharomyces"],["毛霉属","Mucor"]],
+ [["毒蝇鹅膏","muscaria"],["死帽菇","phalloides"],["灰花纹鹅膏","fuliginea"],["双孢蘑菇","bisporus"],["野蘑菇","arvensis"],["猪苓","umbellatus"],["美味牛肝菌","edulis"],["大红菇","alutacea"],["羊肚菌","esculenta"],["酿酒酵母","cerevisiae"],["高卢毛霉","circinelloides"],["总状毛霉","racemosus"]]],
+/* 3 原生生物界 */[
+ [["纤毛门","Ciliophora"],["顶复门","Apicomplexa"],["眼虫门","Euglenozoa"],["变形虫门","Amoebozoa"],["有孔虫门","Foraminifera"],["硅藻门","Bacillariophyta"]],
+ [["寡膜纲","Oligohymenophorea"],["疟原虫纲","Aconoidasida"],["动基体纲","Kinetoplastea"],["叶足纲","Lobosa"],["放射虫纲","Radiolaria"],["中心硅藻纲","Coscinodiscophyceae"],["双鞭甲藻纲","Dinophyceae"],["领鞭虫纲","Choanoflagellatea"]],
+ [["膜口目","Hymenostomatida"],["血孢子虫目","Haemosporida"],["锥体虫目","Trypanosomatida"],["变形虫目","Amoebida"],["抱球虫目","Rotaliida"],["圆筛藻目","Coscinodiscales"],["膝沟藻目","Gonyaulacales"],["团藻目","Volvocales"]],
+ [["草履虫科","Parameciidae"],["疟原虫科","Plasmodiidae"],["锥体虫科","Trypanosomatidae"],["变形虫科","Amoebidae"],["抱球虫科","Globigerinidae"],["圆筛藻科","Coscinodiscaceae"],["亚历山大藻科","Alexandriaceae"],["团藻科","Volvocaceae"]],
+ [["草履虫属","Paramecium"],["疟原虫属","Plasmodium"],["锥体虫属","Trypanosoma"],["变形虫属","Amoeba"],["抱球虫属","Globigerina"],["圆筛藻属","Coscinodiscus"],["亚历山大藻属","Alexandrium"],["团藻属","Volvox"]],
+ [["大草履虫","caudatum"],["尾草履虫","aurelia"],["恶性疟原虫","falciparum"],["间日疟原虫","vivax"],["布氏锥体虫","brucei"],["克氏锥体虫","cruzi"],["大变形虫","proteus"],["泡抱球虫","bulloides"],["星脐圆筛藻","asteromphalus"],["链状亚历山大藻","catenella"],["绿团藻","aureus"],["球团藻","globator"]]],
+/* 4 细菌界 */[
+ [["变形菌门","Proteobacteria"],["厚壁菌门","Firmicutes"],["拟杆菌门","Bacteroidetes"],["蓝细菌门","Cyanobacteria"],["放线菌门","Actinobacteria"],["螺旋体门","Spirochaetes"]],
+ [["γ-变形菌纲","Gammaproteobacteria"],["α-变形菌纲","Alphaproteobacteria"],["芽孢杆菌纲","Bacilli"],["梭菌纲","Clostridia"],["拟杆菌纲","Bacteroidia"],["蓝藻纲","Cyanophyceae"],["放线菌纲","Actinomycetia"],["螺旋体纲","Spirochaetia"]],
+ [["肠杆菌目","Enterobacterales"],["假单胞菌目","Pseudomonadales"],["芽孢杆菌目","Bacillales"],["乳杆菌目","Lactobacillales"],["梭菌目","Clostridiales"],["念珠藻目","Nostocales"],["放线菌目","Actinomycetales"],["分枝杆菌目","Mycobacteriales"]],
+ [["肠杆菌科","Enterobacteriaceae"],["假单胞菌科","Pseudomonadaceae"],["芽孢杆菌科","Bacillaceae"],["乳杆菌科","Lactobacillaceae"],["链霉菌科","Streptomycetaceae"],["念珠藻科","Nostocaceae"],["分枝杆菌科","Mycobacteriaceae"],["弧菌科","Vibrionaceae"]],
+ [["埃希菌属","Escherichia"],["沙门菌属","Salmonella"],["假单胞菌属","Pseudomonas"],["芽孢杆菌属","Bacillus"],["乳杆菌属","Lactobacillus"],["链霉菌属","Streptomyces"],["分枝杆菌属","Mycobacterium"],["弧菌属","Vibrio"]],
+ [["大肠杆菌","coli"],["蟑螂埃希菌","blattae"],["鼠伤寒沙门菌","typhimurium"],["肠炎沙门菌","enterica"],["铜绿假单胞菌","aeruginosa"],["荧光假单胞菌","fluorescens"],["枯草芽孢杆菌","subtilis"],["炭疽芽孢杆菌","anthracis"],["嗜酸乳杆菌","acidophilus"],["灰色链霉菌","griseus"],["结核分枝杆菌","tuberculosis"],["霍乱弧菌","cholerae"]]],
+/* 5 古菌界 */[
+ [["广古菌门","Euryarchaeota"],["泉古菌门","Crenarchaeota"],["奇古菌门","Thaumarchaeota"],["纳古菌门","Nanoarchaeota"],["初古菌门","Korarchaeota"],["深古菌门","Bathyarchaeota"]],
+ [["甲烷杆菌纲","Methanobacteria"],["甲烷球菌纲","Methanococci"],["盐杆菌纲","Halobacteria"],["热原体纲","Thermoplasmata"],["热变形菌纲","Thermoprotei"],["硫化叶菌纲","Sulfolobia"],["亚硝化侏儒菌纲","Nitrososphaeria"],["甲烷微菌纲","Methanomicrobia"]],
+ [["甲烷杆菌目","Methanobacteriales"],["甲烷球菌目","Methanococcales"],["盐杆菌目","Halobacteriales"],["热原体目","Thermoplasmatales"],["硫化叶菌目","Sulfolobales"],["热变形菌目","Thermoproteales"],["亚硝化侏儒菌目","Nitrososphaerales"],["甲烷微菌目","Methanomicrobiales"]],
+ [["甲烷杆菌科","Methanobacteriaceae"],["甲烷球菌科","Methanococcaceae"],["盐杆菌科","Halobacteriaceae"],["热原体科","Thermoplasmataceae"],["硫化叶菌科","Sulfolobaceae"],["热变形菌科","Thermoproteaceae"],["亚硝化侏儒菌科","Nitrososphaeraceae"],["甲烷囊菌科","Methanoculleaceae"]],
+ [["甲烷杆菌属","Methanobacterium"],["甲烷球菌属","Methanococcus"],["盐杆菌属","Halobacterium"],["热原体属","Thermoplasma"],["硫化叶菌属","Sulfolobus"],["热变形菌属","Thermoproteus"],["亚硝化侏儒菌属","Nitrososphaera"],["甲烷囊菌属","Methanoculleus"]],
+ [["嗜热自养甲烷杆菌","thermautotrophicus"],["甲酸甲烷杆菌","formicicum"],["詹氏甲烷球菌","jannaschii"],["活泼甲烷球菌","vannielii"],["盐生盐杆菌","salinarum"],["红皮盐杆菌","cutirubrum"],["嗜酸热原体","acidophilum"],["嗜酸硫化叶菌","acidocaldarius"],["硫磺硫化叶菌","solfataricus"],["顽强热变形菌","tenax"],["加尔加地亚硝化侏儒菌","gargensis"],["马氏甲烷囊菌","marisnigri"]]]];
+
+function nameFor(lvl,king,sib,seed){
+  if(lvl===0)return[K[king].zh,K[king].la];
+  const p=TAXA[king][lvl-1];
+  if(p)return p[(sib+seed)%p.length];
+  return [RANKS[lvl]+(sib+1),"Taxon"];}
+
+let nid=0,specTotal=0,branchCount=0,leafCount=0,segTotal=0;
+/** 确定性 hash → [0,1)，用于让分支数不等（真实分类是极不均衡的）
+    必须用 Math.imul：普通 * 在超过 2^53 时会丢低位，导致 hash 退化 */
+function h01(a,b,c,d){
+  let x=(Math.imul(a,374761393)+Math.imul(b,668265263)+
+         Math.imul(c,2246822519)+Math.imul(d,3266489917))|0;
+  x=Math.imul(x^(x>>>15),2246822519);
+  x=Math.imul(x^(x>>>13),3266489917);
+  return ((x^(x>>>16))>>>0)/4294967296;}
+
+/* 两套 seed 各管一件事：
+   - nseed（取名）：同父下的兄弟共用，配合递增的 sib 保证同父内不重名
+   - sseed（结构）：每个节点唯一，决定分支数/种数
+   若两者合一，则「分支数相同的兄弟」会生出完全同构的子树（种数一模一样） */
+function mkNode(lvl,king,sib,par,nseed,sseed){
+  const nm=nameFor(lvl,king,sib,nseed);
+  const nd={id:nid++,lvl,king,zh:nm[0],la:nm[1],par,ch:[],cnt:0,leaf:false,sib};
+  branchCount++;segTotal+=SEGS[lvl+1];
+  if(lvl===5){
+    const sp=TAXA[king][5];
+    // 每属种数不等
+    const ns=Math.max(4,Math.min(sp.length,
+      Math.round(SPP*(0.42+0.98*h01(king,lvl,sib,sseed)))));
+    nd.cnt=ns;specTotal+=ns;
+    for(let i=0;i<ns;i++){
+      const s=sp[(i+sib)%sp.length];
+      nd.ch.push({id:nid++,lvl:6,king,zh:s[0],la:nm[1]+" "+s[1],
+                  par:nd,ch:[],cnt:1,leaf:true,sib:i});
+      leafCount++;}
+    return nd;}
+  // 分支数不等：真实分类树极不均衡（脊索动物门 ≫ 棘皮动物门）
+  const base=FANOUT[lvl+1], cap=TAXA[king][lvl].length;
+  const cn=Math.max(2,Math.min(cap,
+    Math.round(base*(0.52+1.02*h01(king,lvl,sib,sseed)))));
+  const childNSeed=(nseed*31+sib*131+lvl*7+11)%9973;
+  for(let j=0;j<cn;j++){
+    const c=mkNode(lvl+1,king,j,nd,childNSeed,
+                   (Math.imul(sseed,1103515245)+Math.imul(j,12345)+lvl*7919)|0);
+    nd.cnt+=c.cnt;nd.ch.push(c);}
+  return nd;}
+
+// 主干（虚拟 lvl=-1）
+const TRUNK={id:-1,lvl:-1,king:0,zh:"生命",la:"Vita",par:null,ch:[],cnt:0,leaf:false,sib:0};
+branchCount++;segTotal+=SEGS[0];
+for(let j=0;j<FANOUT[0];j++){const c=mkNode(0,j,j,TRUNK,j+1,(j+1)*7717);TRUNK.cnt+=c.cnt;TRUNK.ch.push(c);}
+document.getElementById("sbar").textContent=
+  specTotal.toLocaleString()+" 种 · "+branchCount.toLocaleString()+" 分支 · "+
+  leafCount.toLocaleString()+" 叶";
+
+/* ═══════════════════════════════════════════════════════════
+   2. 3D 生长 → 顶点数据
+   ═══════════════════════════════════════════════════════════ */
+const NV=segTotal*4, NI=segTotal*6;
+const aP0=new Float32Array(NV*3), aP1=new Float32Array(NV*3);
+const aF0=new Float32Array(NV*3), aF1=new Float32Array(NV*3);
+const aST=new Float32Array(NV*2);
+const aW =new Float32Array(NV*2), aWF=new Float32Array(NV*2);
+const aCol=new Float32Array(NV*3);
+const aFoc=new Float32Array(NV);
+const idx =new Uint32Array(NI);
+
+const lP=new Float32Array(leafCount*3), lF=new Float32Array(leafCount*3);
+const lCol=new Float32Array(leafCount*3), lSz=new Float32Array(leafCount);
+const lFoc=new Float32Array(leafCount);
+
+let vc=0, ic=0, lc=0;
+const GOLD=2.399963;
+const UP=[0,1,0];
+
+/** 把一条枝写进目标数组（tree 或 fan 共用） */
+function writeBranch(nd,A,dir,L,bend,w0,w1,D0,D1,W0,W1){
+  const segs=SEGS[nd.lvl+1];
+  const C=add(A,scl(dir,L));
+  const B=add(add(A,scl(dir,L*0.5)),scl(bend,L));
+  // 存下曲线控制点：子级要沿这条枝错落分出，不能全挤在末端
+  nd._bA=A;nd._bB=B;nd._bC=C;
+  const bz=t=>{const u=1-t;
+    return [u*u*A[0]+2*u*t*B[0]+t*t*C[0],
+            u*u*A[1]+2*u*t*B[1]+t*t*C[1],
+            u*u*A[2]+2*u*t*B[2]+t*t*C[2]];};
+  let v=nd.selfVs;
+  for(let i=0;i<segs;i++){
+    const t0=i/segs,t1=(i+1)/segs;
+    const p=bz(t0),q=bz(t1);
+    const s0=w0+(w1-w0)*t0, s1=w0+(w1-w0)*t1;
+    for(let k=0;k<4;k++){
+      const o=(v+k)*3;
+      D0[o]=p[0];D0[o+1]=p[1];D0[o+2]=p[2];
+      D1[o]=q[0];D1[o+1]=q[1];D1[o+2]=q[2];
+      const o2=(v+k)*2;
+      W0[o2]=s0;W0[o2+1]=s1;
+    }
+    v+=4;
+  }
+  return C;
+}
+
+/** 首次生长：分配索引 + 写 tree 几何 + 静态属性 */
+function grow(nd,A,dir,L,w0,w1,depth){
+  nd.vs=vc; nd.ls=lc; nd.selfVs=vc;
+  const segs=SEGS[nd.lvl+1];
+  // 静态：side/t、颜色、索引
+  for(let i=0;i<segs;i++){
+    const b=vc+i*4;
+    aST[b*2]=-1;aST[b*2+1]=0;
+    aST[(b+1)*2]=1;aST[(b+1)*2+1]=0;
+    aST[(b+2)*2]=-1;aST[(b+2)*2+1]=1;
+    aST[(b+3)*2]=1;aST[(b+3)*2+1]=1;
+    idx[ic++]=b;idx[ic++]=b+1;idx[ic++]=b+2;
+    idx[ic++]=b+2;idx[ic++]=b+1;idx[ic++]=b+3;
+  }
+  const kc=K[nd.king].c;
+  // 越深越亮（末梢发白发暖），但不过曝成粉色
+  const bright=Math.min(0.42,depth*0.070);
+  const cr=kc[0]+(0.99-kc[0])*bright, cg=kc[1]+(0.96-kc[1])*bright, cb=kc[2]+(0.86-kc[2])*bright;
+  // 主干偏木色
+  const isTrunk=nd.lvl<0;
+  for(let k=0;k<segs*4;k++){
+    const o=(vc+k)*3;
+    aCol[o]  =isTrunk?0.38:cr;
+    aCol[o+1]=isTrunk?0.33:cg;
+    aCol[o+2]=isTrunk?0.28:cb;
+  }
+  vc+=segs*4;
+
+  // bend：浅层向外上扬，深层下垂
+  const axialOut=nrm([A[0]||(Math.cos(nd.sib*1.7)*0.3),0,A[2]||(Math.sin(nd.sib*1.7)*0.3)]);
+  const droop=depth<=2?0.10:-0.055-depth*0.012;
+  const bend=add(scl(axialOut,0.10+depth*0.012),scl(UP,droop));
+
+  const end=writeBranch(nd,A,dir,L,bend,w0,w1,aP0,aP1,aW,aW);
+  // fan 初始 = tree
+  aF0.set(aP0.subarray(nd.selfVs*3,vc*3),nd.selfVs*3);
+  aF1.set(aP1.subarray(nd.selfVs*3,vc*3),nd.selfVs*3);
+  aWF.set(aW.subarray(nd.selfVs*2,vc*2),nd.selfVs*2);
+  // 单独存一份 tree 控制点：展开时 _b* 会被 fan 覆盖，
+  // 但高分辨率展开缓冲仍需要按 tree 曲线采样起始形态
+  nd._tA=nd._bA;nd._tB=nd._bB;nd._tC=nd._bC;
+
+  nd.p0=A;nd.p1=end;nd.dir=dir;nd.L=L;nd.w0=w0;nd.w1=w1;nd.depth=depth;
+
+  if(nd.lvl===5){
+    // 叶（种）：绕枝端小簇
+    const [u,v2]=ortho(dir);
+    for(let i=0;i<nd.ch.length;i++){
+      const lf=nd.ch[i];
+      const a=GOLD*i+nd.sib, rr=L*(0.26+0.30*((i*7%5)/5));
+      const el=(i%3)*0.22;
+      const p=add(add(end,scl(dir,L*(0.10+el))),
+                  add(scl(u,Math.cos(a)*rr),scl(v2,Math.sin(a)*rr)));
+      const o=lc*3;
+      lP[o]=p[0];lP[o+1]=p[1];lP[o+2]=p[2];
+      lF[o]=p[0];lF[o+1]=p[1];lF[o+2]=p[2];
+      lCol[o]  =kc[0]+(1.0-kc[0])*0.30;
+      lCol[o+1]=kc[1]+(1.0-kc[1])*0.32;
+      lCol[o+2]=kc[2]+(0.92-kc[2])*0.30;
+      lSz[lc]=L*0.115;
+      lf.li=lc; lf.p=p;
+      lc++;
+    }
+    nd.ve=vc;nd.le=lc;return;
+  }
+
+  // 子级方向
+  const [u,v2]=ortho(dir);
+  const n=nd.ch.length;
+  const spread=(depth===0?0.62:0.86-depth*0.085);
+  const photo=Math.max(0,0.30-depth*0.045);
+  const phase=nd.sib*1.31+depth*0.7;
+  for(let j=0;j<n;j++){
+    const a=GOLD*j+phase;
+    const sp=spread*(0.72+0.36*(((j*5)%4)/3));
+    const perp=add(scl(u,Math.cos(a)),scl(v2,Math.sin(a)));
+    let nd2=add(scl(dir,Math.cos(sp)),scl(perp,Math.sin(sp)));
+    nd2=nrm(add(nd2,scl(UP,photo)));
+    const cl=L*(depth===0?0.72:0.68)*(0.86+0.28*(((j*3)%4)/3));
+    grow(nd.ch[j],end,nd2,cl,w1,w1*0.60,depth+1);
+  }
+  nd.ve=vc;nd.le=lc;
+}
+
+const T0=performance.now();
+grow(TRUNK,[0,0,0],[0,1,0],132,7.2,4.6,0);
+const GROW_MS=Math.round(performance.now()-T0);
+
+// 树的包围盒（用于总览取景）
+let bbMinY=1e9,bbMaxY=-1e9,bbR=0;
+for(let i=0;i<NV;i++){
+  const y=aP1[i*3+1];if(y<bbMinY)bbMinY=y;if(y>bbMaxY)bbMaxY=y;
+  const r=Math.hypot(aP1[i*3],aP1[i*3+2]);if(r>bbR)bbR=r;}
+const TREE_CY=(bbMinY+bbMaxY)/2, TREE_H=bbMaxY-bbMinY;
+
+/* ═══════════════════════════════════════════════════════════
+   3. WebGL2
+   ═══════════════════════════════════════════════════════════ */
+const cv=document.getElementById("gl");
+const gl=cv.getContext("webgl2",{antialias:true,alpha:false,
+  preserveDrawingBuffer:true,powerPreference:"high-performance"});
+if(!gl)throw new Error("此设备/浏览器不支持 WebGL2");
+
+function sh(type,src){
+  const s=gl.createShader(type);gl.shaderSource(s,src);gl.compileShader(s);
+  if(!gl.getShaderParameter(s,gl.COMPILE_STATUS))
+    throw new Error("shader:\n"+gl.getShaderInfoLog(s)+"\n---\n"+src);
+  return s;}
+function prog(vs,fs){
+  const p=gl.createProgram();
+  gl.attachShader(p,sh(gl.VERTEX_SHADER,vs));
+  gl.attachShader(p,sh(gl.FRAGMENT_SHADER,fs));
+  gl.linkProgram(p);
+  if(!gl.getProgramParameter(p,gl.LINK_STATUS))
+    throw new Error("link:\n"+gl.getProgramInfoLog(p));
+  return p;}
+function U(p,names){const o={};for(const n of names)o[n]=gl.getUniformLocation(p,n);return o;}
+
+const BG=[0.933,0.949,0.965];
+
+/* ── 枝 ── */
+const VS_BRANCH=`#version 300 es
+layout(location=0) in vec3 aP0;
+layout(location=1) in vec3 aP1;
+layout(location=2) in vec3 aF0;
+layout(location=3) in vec3 aF1;
+layout(location=4) in vec2 aST;
+layout(location=5) in vec2 aW;
+layout(location=6) in vec2 aWF;
+layout(location=7) in vec3 aCol;
+layout(location=8) in float aFoc;
+uniform mat4 uVP; uniform mat4 uV;
+uniform float uMorph, uOnly, uPx, uFogN, uFogF, uWK;
+uniform vec2 uRes;
+out vec3 vCol; out float vFog; out float vSide;
+void main(){
+  // aFoc<0 = 彻底隐藏（该枝已改由高分辨率展开缓冲绘制）
+  float keep = (aFoc<-0.5) ? 0.0
+             : ((uOnly>1.5) ? 1.0 : ((uOnly>0.5) ? aFoc : 1.0-aFoc));
+  vec3 p0 = mix(aP0,aF0,uMorph);
+  vec3 p1 = mix(aP1,aF1,uMorph);
+  float t = aST.y;
+  vec3 p  = mix(p0,p1,t);
+  float w = mix(mix(aW.x,aW.y,t), mix(aWF.x,aWF.y,t), uMorph) * uWK;
+  vec4 c0=uVP*vec4(p0,1.0), c1=uVP*vec4(p1,1.0), c=uVP*vec4(p,1.0);
+  vec2 s0=c0.xy/max(abs(c0.w),1e-3)*uRes;
+  vec2 s1=c1.xy/max(abs(c1.w),1e-3)*uRes;
+  vec2 d=s1-s0;
+  d = (dot(d,d)<1e-8)? vec2(1.0,0.0) : normalize(d);
+  vec2 nn=vec2(-d.y,d.x);
+  float wpx=max(w*uPx/max(abs(c.w),1e-3), 1.15);
+  c.xy += nn*aST.x*wpx/uRes*c.w;
+  float vz=-(uV*vec4(p,1.0)).z;
+  vFog=clamp((vz-uFogN)/max(uFogF-uFogN,1.0),0.0,1.0);
+  vCol=aCol; vSide=aST.x;
+  gl_Position = c*keep + vec4(0.0,0.0,2.0,1.0)*(1.0-keep);
+}`;
+const FS_BRANCH=`#version 300 es
+precision highp float;
+in vec3 vCol; in float vFog; in float vSide;
+uniform highp vec3 uFog;
+uniform highp float uFogK, uDesat;
+out vec4 o;
+void main(){
+  /* 侧向明暗：给枝圆柱体积感，给叶片一条中脉。
+     |vSide| 是到中轴的归一化距离。 */
+  float m=abs(vSide);
+  float sh = 0.74 + 0.20*(1.0-m) + 0.10*smoothstep(0.34,0.0,m);
+  vec3 c = vCol*sh;
+  float g = dot(c, vec3(0.34,0.5,0.16));
+  c = mix(c, vec3(g), uDesat);
+  o = vec4(mix(c, uFog, vFog*uFogK), 1.0);
+}`;
+const pB=prog(VS_BRANCH,FS_BRANCH);
+const uB=U(pB,["uVP","uV","uMorph","uOnly","uPx","uRes","uFog","uFogK","uFogN","uFogF","uWK","uDesat"]);
+
+/* ── 叶（点精灵） ── */
+const VS_LEAF=`#version 300 es
+layout(location=0) in vec3 aP;
+layout(location=1) in vec3 aF;
+layout(location=2) in vec3 aCol;
+layout(location=3) in float aSz;
+layout(location=4) in float aFoc;
+uniform mat4 uVP, uV;
+uniform float uMorph, uOnly, uPx, uFogN, uFogF, uSzK;
+out vec3 vCol; out float vFog;
+void main(){
+  float keep=(aFoc<-0.5) ? 0.0
+           : ((uOnly>1.5)?1.0:((uOnly>0.5)?aFoc:1.0-aFoc));
+  vec3 p=mix(aP,aF,uMorph);
+  vec4 c=uVP*vec4(p,1.0);
+  float vz=-(uV*vec4(p,1.0)).z;
+  vFog=clamp((vz-uFogN)/max(uFogF-uFogN,1.0),0.0,1.0);
+  vCol=aCol;
+  gl_PointSize=clamp(aSz*uSzK*uPx/max(abs(c.w),1e-3),1.0,40.0);
+  gl_Position=c*keep+vec4(0.0,0.0,2.0,1.0)*(1.0-keep);
+}`;
+const FS_LEAF=`#version 300 es
+precision highp float;
+in vec3 vCol; in float vFog;
+uniform highp vec3 uFog;
+uniform highp float uFogK, uDesat, uAlpha, uDeep, uBlade;
+out vec4 o;
+void main(){
+  vec2 q=gl_PointCoord-0.5;
+  float a;
+  if(uBlade>0.5){
+    /* 叶片：沿一轴拉长 + 两端收尖（|x|^0.62 的轮廓），
+       比圆点更像一片叶。属级展开时用。 */
+    vec2 e=vec2(q.x*1.95, q.y*0.92);
+    float taper=pow(max(0.0,1.0-abs(e.y)*2.0),0.62);
+    float d=abs(e.x)*2.0/max(taper,0.06);
+    a=(1.0-smoothstep(0.72,1.0,d))*(1.0-smoothstep(0.42,0.5,abs(e.y)));
+  }else{
+    float r=length(q);
+    if(r>0.5) discard;
+    a=smoothstep(0.5,0.28,r);
+  }
+  a*=uAlpha;
+  if(a<0.01) discard;
+  // 展开态把叶压深，否则浅色点在浅底上会消失；总览态保持轻透（雾状树冠）
+  vec3 c=vCol*mix(1.0,0.58,uDeep);
+  float g=dot(c,vec3(0.34,0.5,0.16));
+  c=mix(c,vec3(g),uDesat);
+  o=vec4(mix(c,uFog,vFog*uFogK), a);
+}`;
+const pL=prog(VS_LEAF,FS_LEAF);
+const uL=U(pL,["uVP","uV","uMorph","uOnly","uPx","uFog","uFogK","uFogN","uFogF","uSzK","uDesat","uAlpha","uDeep","uBlade"]);
+
+/* ── 全屏 quad：blur / blit ── */
+const VS_FS=`#version 300 es
+layout(location=0) in vec2 aQ;
+out vec2 vUv;
+void main(){vUv=aQ*0.5+0.5;gl_Position=vec4(aQ,0.0,1.0);}`;
+const FS_BLUR=`#version 300 es
+precision highp float;
+in vec2 vUv;
+uniform highp sampler2D uT;
+uniform highp vec2 uDir;
+out vec4 o;
+void main(){
+  vec4 s=texture(uT,vUv)*0.227027;
+  s+=texture(uT,vUv+uDir*1.3846)*0.316216;
+  s+=texture(uT,vUv-uDir*1.3846)*0.316216;
+  s+=texture(uT,vUv+uDir*3.2308)*0.070270;
+  s+=texture(uT,vUv-uDir*3.2308)*0.070270;
+  o=s;
+}`;
+const FS_BLIT=`#version 300 es
+precision highp float;
+in vec2 vUv;
+uniform highp sampler2D uT;
+uniform highp float uAmt, uKeep;
+uniform highp vec3 uBg;
+out vec4 o;
+void main(){
+  vec3 c=texture(uT,vUv).rgb;
+  c=mix(uBg,c,uKeep);
+  o=vec4(mix(uBg,c,uAmt),1.0);
+}`;
+const pBlur=prog(VS_FS,FS_BLUR), uBlur=U(pBlur,["uT","uDir"]);
+const pBlit=prog(VS_FS,FS_BLIT), uBlit=U(pBlit,["uT","uAmt","uBg","uKeep"]);
+
+/* ── VAO ── */
+function buf(data,usage){const b=gl.createBuffer();
+  gl.bindBuffer(gl.ARRAY_BUFFER,b);gl.bufferData(gl.ARRAY_BUFFER,data,usage||gl.STATIC_DRAW);return b;}
+function attr(loc,b,n){gl.bindBuffer(gl.ARRAY_BUFFER,b);
+  gl.enableVertexAttribArray(loc);gl.vertexAttribPointer(loc,n,gl.FLOAT,false,0,0);}
+
+const vaoB=gl.createVertexArray();gl.bindVertexArray(vaoB);
+const bP0=buf(aP0),bP1=buf(aP1),
+      bF0=buf(aF0,gl.DYNAMIC_DRAW),bF1=buf(aF1,gl.DYNAMIC_DRAW),
+      bST=buf(aST),bW=buf(aW),bWF=buf(aWF,gl.DYNAMIC_DRAW),
+      bCol=buf(aCol),bFoc=buf(aFoc,gl.DYNAMIC_DRAW);
+attr(0,bP0,3);attr(1,bP1,3);attr(2,bF0,3);attr(3,bF1,3);
+attr(4,bST,2);attr(5,bW,2);attr(6,bWF,2);attr(7,bCol,3);attr(8,bFoc,1);
+const eb=gl.createBuffer();
+gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER,eb);
+gl.bufferData(gl.ELEMENT_ARRAY_BUFFER,idx,gl.STATIC_DRAW);
+
+const vaoL=gl.createVertexArray();gl.bindVertexArray(vaoL);
+const blP=buf(lP),blF=buf(lF,gl.DYNAMIC_DRAW),blC=buf(lCol),
+      blS=buf(lSz),blFoc=buf(lFoc,gl.DYNAMIC_DRAW);
+attr(0,blP,3);attr(1,blF,3);attr(2,blC,3);attr(3,blS,1);attr(4,blFoc,1);
+
+/* ── 展开层专用高分辨率缓冲 ──
+   大树缓冲为省内存给深层枝只分了 2~4 段（总览时它们只占几像素）。
+   可展开后同一根枝会放大到半个屏幕，2 段就是两条直线 —— 折线感的根因。
+   全局提高段数要 59MB；而展开时可见的枝最多约 600 根，
+   所以给展开层单独一套 10 段缓冲，只要 4MB。
+   「种」也走这里：它在总览中只是点，展开时要长出真的叶柄与叶片。 */
+const MAXEX=1400, EX_SEGS=10;
+const SNV=MAXEX*EX_SEGS*4, SNI=MAXEX*EX_SEGS*6;
+const sP0=new Float32Array(SNV*3), sP1=new Float32Array(SNV*3);
+const sF0=new Float32Array(SNV*3), sF1=new Float32Array(SNV*3);
+const sST=new Float32Array(SNV*2);
+const sW =new Float32Array(SNV*2), sWF=new Float32Array(SNV*2);
+const sCol=new Float32Array(SNV*3);
+const sFoc=new Float32Array(SNV).fill(1);
+const sIdx=new Uint32Array(SNI);
+let exCount=0;
+for(let s=0;s<MAXEX;s++)for(let i=0;i<EX_SEGS;i++){
+  const b=(s*EX_SEGS+i)*4, e=(s*EX_SEGS+i)*6;
+  sST[b*2]=-1;sST[b*2+1]=0;      sST[(b+1)*2]=1;sST[(b+1)*2+1]=0;
+  sST[(b+2)*2]=-1;sST[(b+2)*2+1]=1;sST[(b+3)*2]=1;sST[(b+3)*2+1]=1;
+  sIdx[e]=b;sIdx[e+1]=b+1;sIdx[e+2]=b+2;
+  sIdx[e+3]=b+2;sIdx[e+4]=b+1;sIdx[e+5]=b+3;}
+
+const vaoS=gl.createVertexArray();gl.bindVertexArray(vaoS);
+const bsP0=buf(sP0,gl.DYNAMIC_DRAW),bsP1=buf(sP1,gl.DYNAMIC_DRAW),
+      bsF0=buf(sF0,gl.DYNAMIC_DRAW),bsF1=buf(sF1,gl.DYNAMIC_DRAW),
+      bsST=buf(sST),bsW=buf(sW,gl.DYNAMIC_DRAW),bsWF=buf(sWF,gl.DYNAMIC_DRAW),
+      bsCol=buf(sCol,gl.DYNAMIC_DRAW),bsFoc=buf(sFoc);
+attr(0,bsP0,3);attr(1,bsP1,3);attr(2,bsF0,3);attr(3,bsF1,3);
+attr(4,bsST,2);attr(5,bsW,2);attr(6,bsWF,2);attr(7,bsCol,3);attr(8,bsFoc,1);
+const ebS=gl.createBuffer();
+gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER,ebS);
+gl.bufferData(gl.ELEMENT_ARRAY_BUFFER,sIdx,gl.STATIC_DRAW);
+
+const vaoQ=gl.createVertexArray();gl.bindVertexArray(vaoQ);
+attr(0,buf(new Float32Array([-1,-1,3,-1,-1,3])),2);
+gl.bindVertexArray(null);
+
+/* ── FBO ── */
+function mkTex(w,h){const t=gl.createTexture();
+  gl.bindTexture(gl.TEXTURE_2D,t);
+  gl.texImage2D(gl.TEXTURE_2D,0,gl.RGBA8,w,h,0,gl.RGBA,gl.UNSIGNED_BYTE,null);
+  gl.texParameteri(gl.TEXTURE_2D,gl.TEXTURE_MIN_FILTER,gl.LINEAR);
+  gl.texParameteri(gl.TEXTURE_2D,gl.TEXTURE_MAG_FILTER,gl.LINEAR);
+  gl.texParameteri(gl.TEXTURE_2D,gl.TEXTURE_WRAP_S,gl.CLAMP_TO_EDGE);
+  gl.texParameteri(gl.TEXTURE_2D,gl.TEXTURE_WRAP_T,gl.CLAMP_TO_EDGE);
+  return t;}
+let fboA,fboB,texA,texB,rbA,FW=0,FH=0;
+function mkFBO(w,h){
+  if(fboA){gl.deleteFramebuffer(fboA);gl.deleteFramebuffer(fboB);
+    gl.deleteTexture(texA);gl.deleteTexture(texB);gl.deleteRenderbuffer(rbA);}
+  FW=w;FH=h;
+  texA=mkTex(w,h);texB=mkTex(w,h);
+  rbA=gl.createRenderbuffer();
+  gl.bindRenderbuffer(gl.RENDERBUFFER,rbA);
+  gl.renderbufferStorage(gl.RENDERBUFFER,gl.DEPTH_COMPONENT16,w,h);
+  fboA=gl.createFramebuffer();
+  gl.bindFramebuffer(gl.FRAMEBUFFER,fboA);
+  gl.framebufferTexture2D(gl.FRAMEBUFFER,gl.COLOR_ATTACHMENT0,gl.TEXTURE_2D,texA,0);
+  gl.framebufferRenderbuffer(gl.FRAMEBUFFER,gl.DEPTH_ATTACHMENT,gl.RENDERBUFFER,rbA);
+  fboB=gl.createFramebuffer();
+  gl.bindFramebuffer(gl.FRAMEBUFFER,fboB);
+  gl.framebufferTexture2D(gl.FRAMEBUFFER,gl.COLOR_ATTACHMENT0,gl.TEXTURE_2D,texB,0);
+  gl.bindFramebuffer(gl.FRAMEBUFFER,null);}
+
+let W=0,H=0,DPR=1,PX=1;
+const FOV=Math.PI/4;
+function resize(){
+  DPR=Math.min(devicePixelRatio||1,2);
+  W=cv.clientWidth||innerWidth;H=cv.clientHeight||innerHeight;
+  cv.width=Math.round(W*DPR);cv.height=Math.round(H*DPR);
+  PX=cv.height/(2*Math.tan(FOV/2));
+  // 1/3 分辨率：既省，也让高斯等效核更大（背景更"化"得开）
+  mkFBO(Math.max(2,Math.round(cv.width/3)),Math.max(2,Math.round(cv.height/3)));}
+resize();
+addEventListener("resize",resize);
+
+/* ═══════════════════════════════════════════════════════════
+   4. 展开布局（fan）—— 深入时把这一支扳到镜头正面
+   ═══════════════════════════════════════════════════════════ */
+const S=62;                       // 扇形世界尺度
+// 多展开一层（到 rel=4），分形结构更完整 → 立体感来自结构而非贴图
+const FAN_LEN=[0,S*0.50,S*0.255,S*0.150,S*0.088];
+const FAN_SPREAD=[0,1.00,0.72,0.58,0.50];
+const MAXREL=4;
+const FUZZ=S*0.032;               // 绒毛半径，依附枝端不飘散
+const ZOFF=S*0.30;                // 直接子级沿视线方向的深度错开幅度
+
+/** 沿视线的深度错开量：屏幕角度不变，但前后拉开 → 透视/视差回来 */
+function zStagger(i,n){
+  if(n<=1)return 0;
+  const t=i/(n-1)*2-1;
+  return (Math.sin(i*2.399963)*0.62 + t*t*0.30 - 0.28);}
+
+/** 把节点 nd（含子树）写入展开缓冲。tree/fan 两态都写，GPU 里插值 */
+function fanNode(nd,A,dir,L,w0,w1,rel,basis){
+  const [RB,UB,FB]=basis;
+  if(rel>MAXREL||L<=0.001){ // 太深：收拢成绒毛
+    collapse(nd,A,FUZZ,dir);return;}
+  /* 3D 弯曲。横向分量必须「沿离心方向外凸」而不是用 cos(phase)——
+     后者会让某些枝的横向弯曲正好归零，变成直棍。
+     真实枝条是向自己偏出的那一侧继续外凸，同时略下垂。 */
+  const amp=(rel===0)?2.6:2.0;
+  const dr=dot(dir,RB);
+  const sgn=(rel===0)?(Math.sin(nd.sib*2.3+1.1)>=0?1:-1)
+                     :(dr>=0?1:-1);
+  const bend=add(add(scl(RB,0.075*amp*sgn),scl(FB,0.085+rel*0.03)),
+                 scl(UB,-0.055-rel*0.014));
+  // fan 曲线控制点
+  const fC=add(A,scl(dir,L));
+  const fB=add(add(A,scl(dir,L*0.5)),scl(bend,L));
+  // 推进高分辨率展开缓冲（tree 态取自 grow 时存下的曲线）
+  const cs=nd.selfVs*3;
+  pushExpand(nd._tA||A,nd._tB||A,nd._tC||A,nd.w0||0,nd.w1||0,
+             A,fB,fC,w0,w1,
+             [aCol[cs],aCol[cs+1],aCol[cs+2]],false);
+  // 供子级沿本枝错落分出
+  nd._bA=A;nd._bB=fB;nd._bC=fC;
+  const end=fC;
+  nd._fp=end;nd._fdir=dir;nd._fL=L;
+  // 柄不参与取景（rel=0 的起点）——让它自然伸出画面下方，而不是占掉 1/3 屏
+  if(rel>0)bbAdd(A);
+  bbAdd(end);
+
+  if(nd.lvl===5){
+    const n=nd.ch.length;
+    /* 焦点就是「属」：这一屏的主角是种。做成「一根长主枝 + 两侧互生短叶柄」，
+       这才是真实枝条的样子；若让叶柄比主枝还长，就成了一把叉子。
+       附带好处：标签沿主枝自然分成左右两列，天然不重叠。 */
+    if(rel===0){
+      const kc=K[nd.king].c;
+      const lcol=[kc[0]+(0.99-kc[0])*0.30,kc[1]+(0.97-kc[1])*0.26,
+                  kc[2]+(0.86-kc[2])*0.30];
+      for(let i=0;i<n;i++){
+        const lf=nd.ch[i], o=lf.li*3;
+        const t=(n<=1)?0.62:(0.17+0.80*i/(n-1));
+        const base=bzAt(nd,t), bdir=bzTan(nd,t);
+        const side=(i%2)?1:-1;
+        const a=side*(0.72+0.30*(((i*5)%3)/2));     // 与主枝的夹角
+        // 叶柄留在镜头平面附近（可读），但带一点前后错开做视差
+        const inPlane=nrm(add(scl(RB,Math.sin(a)),scl(bdir,Math.cos(a))));
+        const pd=nrm(add(inPlane,scl(FB,0.16*Math.sin(i*1.9))));
+        const petiole=L*(0.155+0.055*(((i*7)%4)/3));
+        const p=add(base,scl(pd,petiole));
+        // 叶柄侧向拱起，互不平行
+        const lb=add(add(scl(RB,0.14*side),scl(FB,0.05)),scl(UB,-0.06));
+        const mid=add(add(scl(add(base,p),0.5),scl(lb,petiole)),[0,0,0]);
+        // tree 态：种在总览里只是点，所以塌缩到属枝末端、宽度 0 → 展开时"长"出来
+        const tp=lf.p||nd.p1;
+        // 柄细、叶片细长（半宽 ≈ 叶长的 1/4）
+        pushExpand(tp,tp,tp,0,0,
+                   base,mid,p,petiole*0.030,petiole*0.105,lcol,true);
+        lF[o]=p[0];lF[o+1]=p[1];lF[o+2]=p[2];
+        lf._fp=p;lf._fbase=base;bbAdd(p);bbAdd(base);}
+      // 主枝梢也计入取景，避免顶端被切平
+      bbAdd(end);
+      return;}
+    // 非焦点的属：种紧贴枝端聚成叶簇，避免枝与点之间出现空白（"秃枝"）
+    const nl=FAN_LEN[Math.min(rel+1,MAXREL)]*0.17;
+    const spAdj=FAN_SPREAD[Math.min(rel+1,MAXREL)];
+    for(let i=0;i<n;i++){
+      const lf=nd.ch[i];const o=lf.li*3;
+      if(rel+1>MAXREL||nl<=0.001){
+        const p=fuzzPt(end,FUZZ,lf.li,dir);
+        lF[o]=p[0];lF[o+1]=p[1];lF[o+2]=p[2];lf._fp=p;continue;}
+      const a=fanAngle(i,n,spAdj);
+      const ring=(n>7)?(i%2):0;
+      // 叶沿枝端错落，不是全挂在一点
+      const t=0.80+0.20*(((i*3)%4)/3);
+      const base=bzAt(nd,t), bdir=bzTan(nd,t);
+      const pd=nrm(add(add(scl(bdir,Math.cos(a)),scl(RB,Math.sin(a))),scl(UB,0.05)));
+      // 深度错开必须相对当层枝长，否则会把叶推飞出画面
+      const p=add(add(base,scl(pd,nl*(ring?1.0:0.60))),
+                  scl(FB,zStagger(i,n)*nl*0.42));
+      lF[o]=p[0];lF[o+1]=p[1];lF[o+2]=p[2];lf._fp=p;lf._fbase=base;bbAdd(p);}
+    return;}
+
+  const n=nd.ch.length;
+  const nl=FAN_LEN[Math.min(rel+1,MAXREL)];
+  const sp=FAN_SPREAD[Math.min(rel+1,MAXREL)];
+  const sibMax=Math.max.apply(null,nd.ch.map(c=>c.cnt||1));
+  for(let j=0;j<n;j++){
+    if(rel+1>MAXREL||nl<=0.001){collapse(nd.ch[j],end,FUZZ,dir);continue;}
+    let d2,ln,base,bdir;
+    if(rel===0){
+      /* 直接子级：屏幕上仍是扇形均分（保证标签不重叠、可读），
+         但沿视线方向前后错开。必须「先定平面方向再加深度」——
+         若把 FB 混进方向再归一化，扇形会被压窄。
+         FB 在屏幕上投影为 0 → 屏幕角度不变，只产生透视与视差。 */
+      const a=fanAngle(j,n,sp)+Math.sin(j*4.7+nd.sib)*0.055;
+      // 沿柄错落分出：外侧的从更低处分岔 → 伞形，而非张开的五指
+      const t=forkT(a,sp);
+      base=bzAt(nd,t);bdir=bzTan(nd,t);
+      const pd=nrm(add(scl(bdir,Math.cos(a)),scl(RB,Math.sin(a))));
+      // 枝长体现真实体量：含种越多的支越长越壮
+      const bulk=0.80+0.34*Math.pow((nd.ch[j].cnt||1)/sibMax,0.5);
+      const tv=add(scl(pd,nl*bulk),scl(FB,zStagger(j,n)*ZOFF));
+      ln=len3(tv);d2=scl(tv,1/ln);
+    }else{
+      /* 更深层：真正的 3D 径向散开（绕父枝旋转），恢复体积 */
+      const s2=sp*(0.68+0.44*(((j*5)%4)/3));
+      // 同样沿父枝错落，且互生（左右交替）→ 自然的枝序
+      const t=(n<=1)?1:(0.46+0.54*(j+1)/n);
+      base=bzAt(nd,t);bdir=bzTan(nd,t);
+      const [u,v]=ortho(bdir);
+      const g=2.399963*j+rel*1.7+nd.sib*0.9;
+      const perp=add(scl(u,Math.cos(g)),scl(v,Math.sin(g)));
+      d2=nrm(add(add(scl(bdir,Math.cos(s2)),scl(perp,Math.sin(s2))),
+                 scl(FB,0.08)));
+      ln=nl*(0.76+0.36*(((j*3)%4)/3));
+    }
+    /* 末端收尖：若子级已到最深一层（其后代会被收拢成绒毛），
+       枝梢要收到近 0，否则每根枝都像被平切的水管。 */
+    const c=nd.ch[j];
+    const isTip=(rel+1>=MAXREL)||(c.lvl===5&&rel+1>=MAXREL-1);
+    fanNode(c,base,d2,ln,w1,w1*(isTip?0.10:0.48),rel+1,basis);}
+}
+function fanAngle(i,n,sp){
+  if(n<=1)return 0;
+  return -sp+(i/(n-1))*sp*2;}
+
+/* 沿父枝求点／切线。子级从枝的不同高度分出，才像树；
+   全部从末端一点发散，每个节点都会变成一只张开的手。
+   （枝的贝塞尔控制点由 writeBranch 存在 _bA/_bB/_bC） */
+function bzAt(nd,t){const A=nd._bA,B=nd._bB,C=nd._bC,u=1-t;
+  return [u*u*A[0]+2*u*t*B[0]+t*t*C[0],
+          u*u*A[1]+2*u*t*B[1]+t*t*C[1],
+          u*u*A[2]+2*u*t*B[2]+t*t*C[2]];}
+function bzTan(nd,t){const A=nd._bA,B=nd._bB,C=nd._bC,u=1-t;
+  return nrm([2*(u*(B[0]-A[0])+t*(C[0]-B[0])),
+              2*(u*(B[1]-A[1])+t*(C[1]-B[1])),
+              2*(u*(B[2]-A[2])+t*(C[2]-B[2]))]);}
+/** 张角越大的子枝从越靠下分出（伞形／互生叶序），中间的从枝梢出。
+    跨度要足够大，否则所有子枝仍像从一点发散的五指。 */
+function forkT(a,sp){
+  return 0.30+0.70*(1-Math.min(1,Math.abs(a)/Math.max(sp,1e-4)));}
+
+/* 展开内容的包围盒（投影到镜头平面基）。各阶元展开层数不同，
+   尺寸差好几倍，必须据此自适应取景，否则属级只占屏幕一小块。 */
+let fanBB=null, fanBBRef=null, fanBBBasis=null;
+function bbInit(P,basis){fanBB={r0:1e9,r1:-1e9,u0:1e9,u1:-1e9};
+  fanBBRef=P;fanBBBasis=basis;}
+function bbAdd(p){
+  if(!fanBB)return;
+  const d=sub(p,fanBBRef);
+  const r=dot(d,fanBBBasis[0]), u=dot(d,fanBBBasis[1]);
+  if(r<fanBB.r0)fanBB.r0=r; if(r>fanBB.r1)fanBB.r1=r;
+  if(u<fanBB.u0)fanBB.u0=u; if(u>fanBB.u1)fanBB.u1=u;}
+/** 绒毛点：沿枝方向拉长的椭球，中心密外围疏（边缘自然衰减，不是硬球） */
+function fuzzPt(P,r,k,dir){
+  const h=v=>{const s=Math.sin(v)*43758.5453;return s-Math.floor(s);};
+  const u1=h(k*12.9898),u2=h(k*78.233),u3=h(k*39.4257);
+  const ct=u1*2-1, st=Math.sqrt(Math.max(0,1-ct*ct)), ph=u2*6.28318;
+  const rad=r*Math.pow(u3,0.62);          // 中心密
+  const d=dir||[0,1,0];
+  const [a1,a2]=ortho(d);
+  const el=1.25;                          // 沿枝方向轻微拉长（针叶感，不飘散）
+  return [P[0]+(a1[0]*st*Math.cos(ph)+a2[0]*st*Math.sin(ph)+d[0]*ct*el)*rad,
+          P[1]+(a1[1]*st*Math.cos(ph)+a2[1]*st*Math.sin(ph)+d[1]*ct*el)*rad,
+          P[2]+(a1[2]*st*Math.cos(ph)+a2[2]*st*Math.sin(ph)+d[2]*ct*el)*rad];}
+/** 子树收拢：枝塌到一点，叶散成绒毛 */
+function collapse(nd,P,rad,dir){
+  bbAdd(P);
+  for(let v=nd.vs;v<nd.ve;v++){
+    const o=v*3;
+    aF0[o]=P[0];aF0[o+1]=P[1];aF0[o+2]=P[2];
+    aF1[o]=P[0];aF1[o+1]=P[1];aF1[o+2]=P[2];
+    aWF[v*2]=0;aWF[v*2+1]=0;}
+  for(let l=nd.ls;l<nd.le;l++){
+    const p=fuzzPt(P,rad||0,l,dir),o=l*3;
+    lF[o]=p[0];lF[o+1]=p[1];lF[o+2]=p[2];}}
+
+/** fan 复位（=tree） */
+function fanReset(nd){
+  aF0.set(aP0.subarray(nd.vs*3,nd.ve*3),nd.vs*3);
+  aF1.set(aP1.subarray(nd.vs*3,nd.ve*3),nd.vs*3);
+  aWF.set(aW.subarray(nd.vs*2,nd.ve*2),nd.vs*2);
+  lF.set(lP.subarray(nd.ls*3,nd.le*3),nd.ls*3);}
+
+/* ═══════════════════════════════════════════════════════════
+   5. 相机
+   ═══════════════════════════════════════════════════════════ */
+const cam={yaw:0.6,pitch:0.20,dist:TREE_H*1.28,tgt:[0,TREE_CY,0],
+           spin:0.055,drag:false,px:0,py:0};
+const camGoal={yaw:0.6,pitch:0.20,dist:TREE_H*1.28,tgt:[0,TREE_CY,0]};
+function camDir(yaw,pitch){
+  const cp=Math.cos(pitch);
+  return nrm([Math.sin(yaw)*cp,Math.sin(pitch),Math.cos(yaw)*cp]);}
+function camEye(yaw,pitch){return add(cam.tgt,scl(camDir(yaw,pitch),cam.dist));}
+/** 镜头三向基：右、上、朝向观察者 */
+function camBasis(yaw,pitch){
+  const FB=camDir(yaw,pitch);                  // target → eye
+  const R=nrm(crs([0,1,0],FB));
+  const Uu=nrm(crs(FB,R));
+  return [R,Uu,FB];}
+
+cv.addEventListener("pointerdown",e=>{cam.drag=true;cam.px=e.clientX;cam.py=e.clientY;
+  cam.moved=false;cv.setPointerCapture(e.pointerId);});
+cv.addEventListener("pointermove",e=>{
+  if(!cam.drag)return;
+  const dx=e.clientX-cam.px,dy=e.clientY-cam.py;
+  cam.px=e.clientX;cam.py=e.clientY;
+  if(Math.abs(dx)+Math.abs(dy)>3)cam.moved=true;
+  camGoal.yaw-=dx*0.005;
+  camGoal.pitch=Math.max(-0.5,Math.min(1.05,camGoal.pitch+dy*0.004));
+  cam.spin=0;});
+cv.addEventListener("pointerup",e=>{
+  cam.drag=false;
+  if(!cam.moved)onBlank();});
+cv.addEventListener("wheel",e=>{e.preventDefault();
+  camGoal.dist=Math.max(S*0.75,Math.min(TREE_H*2.2,camGoal.dist*(1+Math.sign(e.deltaY)*0.10)));},
+  {passive:false});
+
+/* ═══════════════════════════════════════════════════════════
+   6. 焦点状态机
+   ═══════════════════════════════════════════════════════════ */
+let focus=TRUNK, pending=null, phase="idle", morph=0, morphGoal=0;
+let blurAmt=0, blurGoal=0;
+let swayT=0, swayK=0;
+let focusBasis=camBasis(cam.yaw,cam.pitch);
+
+function setFocusFlags(nd){
+  aFoc.fill(nd===TRUNK?1:0);
+  lFoc.fill(nd===TRUNK?1:0);
+  if(nd!==TRUNK){
+    /* 焦点子树的枝改由高分辨率展开缓冲绘制，所以在大树缓冲里必须
+       彻底隐藏（-1），否则会和展开后的枝重影。
+       祖先链留在背景层虚化：它们不参与 morph，若标成清晰层
+       会在原地留下一根乱入的粗棍。「来路」由扇心下方那截柄表达。 */
+    aFoc.fill(-1,nd.vs,nd.ve);
+    // 属级的「种」也由展开缓冲画成叶片，点精灵同样要隐藏
+    lFoc.fill(nd.lvl===5?-1:1,nd.ls,nd.le);
+  }
+  gl.bindBuffer(gl.ARRAY_BUFFER,bFoc);gl.bufferData(gl.ARRAY_BUFFER,aFoc,gl.DYNAMIC_DRAW);
+  gl.bindBuffer(gl.ARRAY_BUFFER,blFoc);gl.bufferData(gl.ARRAY_BUFFER,lFoc,gl.DYNAMIC_DRAW);}
+
+function applyFocus(nd){
+  focus=nd;
+  exCount=0;
+  if(nd===TRUNK){
+    fanReset(TRUNK);
+    morphGoal=0;blurGoal=0;
+    camGoal.tgt=[0,TREE_CY,0];camGoal.dist=TREE_H*1.28;
+    camGoal.pitch=0.20;cam.spin=0.055;
+    setFocusFlags(TRUNK);
+    uploadFan();uploadExpand();
+    return;}
+  // 展开：以「当前镜头朝向」为平面基
+  focusBasis=camBasis(camGoal.yaw,camGoal.pitch);
+  const [RB,UB]=focusBasis;
+  const P=nd.p1;                       // 焦点枝的末端 = 扇心
+  /* 柄 = 承载所有子级的那根母枝。必须足够长，子枝才能沿它错落分出；
+     太短的话所有子枝挤在一点，就成了张开的五指而不是树。
+     柄的下端不计入取景，会自然伸出画面下方。 */
+  const atGenus=(nd.lvl===5);
+  const stalk=FAN_LEN[1]*(atGenus?1.95:1.15);
+  const A=sub(P,scl(UB,stalk));
+  fanReset(nd);                        // 先清成 tree，再覆盖
+  bbInit(P,focusBasis);
+  fanNode(nd,A,UB,stalk,stalk*(atGenus?0.013:0.021),
+          stalk*(atGenus?0.004:0.010),0,focusBasis);
+  morphGoal=1;blurGoal=1;
+
+  /* 自适应取景：展开层数随阶元变化（门有 4 层、属只有 1 层），
+     尺寸差数倍。按实际包围盒定距，才能每层都恰好填满画面。 */
+  const aspect=Math.max(0.35,W/Math.max(H,1));
+  const padR=1.34, padU=1.30;          // 留给标签的边距
+  const halfR=Math.max(1,(fanBB.r1-fanBB.r0)/2)*padR;
+  const halfU=Math.max(1,(fanBB.u1-fanBB.u0)/2)*padU;
+  const need=Math.max(halfU,halfR/aspect);
+  camGoal.dist=Math.max(S*0.55,need/Math.tan(FOV/2));
+  camGoal.tgt=add(add(P,scl(RB,(fanBB.r0+fanBB.r1)/2)),
+                    scl(UB,(fanBB.u0+fanBB.u1)/2));
+  cam.spin=0;
+  setFocusFlags(nd);
+  uploadFan();uploadExpand();}
+
+function uploadFan(){
+  gl.bindBuffer(gl.ARRAY_BUFFER,bF0);gl.bufferData(gl.ARRAY_BUFFER,aF0,gl.DYNAMIC_DRAW);
+  gl.bindBuffer(gl.ARRAY_BUFFER,bF1);gl.bufferData(gl.ARRAY_BUFFER,aF1,gl.DYNAMIC_DRAW);
+  gl.bindBuffer(gl.ARRAY_BUFFER,bWF);gl.bufferData(gl.ARRAY_BUFFER,aWF,gl.DYNAMIC_DRAW);
+  gl.bindBuffer(gl.ARRAY_BUFFER,blF);gl.bufferData(gl.ARRAY_BUFFER,lF,gl.DYNAMIC_DRAW);}
+
+/** 二次贝塞尔取点 */
+function bez3(A,B,C,t){const u=1-t;
+  return [u*u*A[0]+2*u*t*B[0]+t*t*C[0],
+          u*u*A[1]+2*u*t*B[1]+t*t*C[1],
+          u*u*A[2]+2*u*t*B[2]+t*t*C[2]];}
+
+/** 往展开缓冲推一根枝。
+    同时写 tree 态（morph=0，按大树曲线）与 fan 态（morph=1，按展开曲线），
+    GPU 里插值。blade=true 时末端膨大成纺锤叶（用于「种」）。
+    叶用真几何而非点精灵：点精灵屏幕对齐、无法绕柄旋转，
+    做成叶片形只会得到一堆朝向混乱的箭头。 */
+function pushExpand(tA,tB,tC,tw0,tw1,fA,fB,fC,fw0,fw1,col,blade){
+  if(exCount>=MAXEX)return;
+  const slot=exCount++;
+  const LEAF_T=0.42;          // 前 42% 是叶柄，其余是叶片
+  const wF=t=>{
+    if(!blade){
+      // 非线性收细：末端收尖。线性会让枝像截断的水管
+      return fw1+(fw0-fw1)*Math.pow(1-t,0.72);}
+    if(t<LEAF_T)return fw0;
+    const u=(t-LEAF_T)/(1-LEAF_T);
+    /* 叶片轮廓：基部略钝、中前段最宽、叶尖收拢为 0。
+       半宽必须远小于叶长（约 1:4），否则会变成棒棒糖。 */
+    return fw1*Math.sin(Math.PI*Math.pow(u,0.72))+fw0*(1-u);};
+  let v=slot*EX_SEGS*4;
+  for(let i=0;i<EX_SEGS;i++){
+    const t0=i/EX_SEGS,t1=(i+1)/EX_SEGS;
+    const tp=bez3(tA,tB,tC,t0), tq=bez3(tA,tB,tC,t1);
+    const fp=bez3(fA,fB,fC,t0), fq=bez3(fA,fB,fC,t1);
+    const a0=tw0+(tw1-tw0)*t0, a1=tw0+(tw1-tw0)*t1;
+    const b0=wF(t0), b1=wF(t1);
+    for(let k=0;k<4;k++){
+      const o=(v+k)*3, o2=(v+k)*2;
+      sP0[o]=tp[0];sP0[o+1]=tp[1];sP0[o+2]=tp[2];
+      sP1[o]=tq[0];sP1[o+1]=tq[1];sP1[o+2]=tq[2];
+      sF0[o]=fp[0];sF0[o+1]=fp[1];sF0[o+2]=fp[2];
+      sF1[o]=fq[0];sF1[o+1]=fq[1];sF1[o+2]=fq[2];
+      sW[o2]=a0;sW[o2+1]=a1;
+      sWF[o2]=b0;sWF[o2+1]=b1;
+      sCol[o]=col[0];sCol[o+1]=col[1];sCol[o+2]=col[2];}
+    v+=4;}}
+
+function uploadExpand(){
+  gl.bindBuffer(gl.ARRAY_BUFFER,bsP0);gl.bufferData(gl.ARRAY_BUFFER,sP0,gl.DYNAMIC_DRAW);
+  gl.bindBuffer(gl.ARRAY_BUFFER,bsP1);gl.bufferData(gl.ARRAY_BUFFER,sP1,gl.DYNAMIC_DRAW);
+  gl.bindBuffer(gl.ARRAY_BUFFER,bsF0);gl.bufferData(gl.ARRAY_BUFFER,sF0,gl.DYNAMIC_DRAW);
+  gl.bindBuffer(gl.ARRAY_BUFFER,bsF1);gl.bufferData(gl.ARRAY_BUFFER,sF1,gl.DYNAMIC_DRAW);
+  gl.bindBuffer(gl.ARRAY_BUFFER,bsW);gl.bufferData(gl.ARRAY_BUFFER,sW,gl.DYNAMIC_DRAW);
+  gl.bindBuffer(gl.ARRAY_BUFFER,bsWF);gl.bufferData(gl.ARRAY_BUFFER,sWF,gl.DYNAMIC_DRAW);
+  gl.bindBuffer(gl.ARRAY_BUFFER,bsCol);gl.bufferData(gl.ARRAY_BUFFER,sCol,gl.DYNAMIC_DRAW);}
+
+function goTo(nd){
+  if(nd===focus&&phase==="idle")return;
+  pending=nd;
+  if(morph>0.02){phase="out";}
+  else{applyFocus(nd);phase="in";pending=null;}
+  buildCrumb(nd);updateDepthLabel(nd);
+  document.getElementById("back").classList.toggle("on",nd!==TRUNK);}
+
+function onBlank(){
+  if(focus===TRUNK)return;
+  goTo(focus.par||TRUNK);}
+document.getElementById("back").addEventListener("click",()=>onBlank());
+
+/* ═══════════════════════════════════════════════════════════
+   7. HUD
+   ═══════════════════════════════════════════════════════════ */
+function updateDepthLabel(nd){
+  const el=document.getElementById("dlbl");
+  const t=nd.lvl+1;
+  el.textContent=(nd===TRUNK)?"全树":(t<=6?RANKS[t]:"种");}
+function buildCrumb(nd){
+  const el=document.getElementById("crumb");el.innerHTML="";
+  const home=document.createElement("button");
+  home.type="button";home.className="home";home.textContent="全树";
+  home.onclick=()=>goTo(TRUNK);el.appendChild(home);
+  if(nd===TRUNK)return;
+  const chain=[];let c=nd;
+  while(c&&c!==TRUNK){chain.unshift(c);c=c.par;}
+  const show=chain.length>4?chain.slice(-4):chain;
+  if(chain.length>4){
+    const e=document.createElement("button");e.type="button";e.textContent="…";
+    e.onclick=()=>goTo(chain[chain.length-5]);el.appendChild(e);}
+  for(const n of show){
+    const b=document.createElement("button");b.type="button";
+    b.className=(n===nd)?"cur":"";b.textContent=n.zh;
+    b.onclick=()=>goTo(n);el.appendChild(b);}}
+
+/* ── 标签池 ── */
+const labsEl=document.getElementById("labels");
+const ftitle=document.getElementById("ftitle");
+const POOLN=16, lab=[];
+for(let i=0;i<POOLN;i++){
+  const b=document.createElement("button");
+  b.type="button";b.className="nb";b.style.display="none";
+  b.innerHTML='<span class="pill"></span><span class="sub"></span>';
+  b.onclick=ev=>{ev.stopPropagation();if(b._n&&b._n.ch.length)goTo(b._n);};
+  labsEl.appendChild(b);lab.push(b);}
+
+function project(p,VP){
+  const x=VP[0]*p[0]+VP[4]*p[1]+VP[8]*p[2]+VP[12];
+  const y=VP[1]*p[0]+VP[5]*p[1]+VP[9]*p[2]+VP[13];
+  const w=VP[3]*p[0]+VP[7]*p[1]+VP[11]*p[2]+VP[15];
+  if(w<=0.001)return null;
+  return [(x/w*0.5+0.5)*W,(0.5-y/w*0.5)*H];}
+
+function updateLabels(VP){
+  const kids=focus.ch;
+  const op=focus===TRUNK?1:Math.max(0,(morph-0.5)/0.5);
+  const placed=[];
+  const items=[];
+  for(let i=0;i<POOLN;i++){
+    const el=lab[i],nd=kids[i];
+    if(!nd){if(el.style.display!=="none")el.style.display="none";continue;}
+    let tp=nd.leaf?nd.p:nd.p1;
+    // 总览：把界标签推到各自树冠的外缘，避免全挤在主干分叉处
+    if(focus===TRUNK){
+      const o=nrm(sub(tp,TRUNK.p1));
+      tp=add(tp,scl(o,nd.L*0.55));
+    }
+    const fp=nd.leaf?(nd._fp||nd.p):(nd._fp||nd.p1);
+    const p=[tp[0]+(fp[0]-tp[0])*morph,
+             tp[1]+(fp[1]-tp[1])*morph,
+             tp[2]+(fp[2]-tp[2])*morph];
+    const s=project(p,VP);
+    if(!s||s[0]<-160||s[0]>W+160||s[1]<-80||s[1]>H+80){
+      if(el.style.display!=="none")el.style.display="none";continue;}
+    // 标签外移，露出枝端那个节点（否则 pill 会把它完全盖住）
+    if(morph>0.5){
+      let dx,dy;
+      if(focus.lvl===5&&nd._fbase){
+        // 属级：叶沿主枝互生，沿「叶柄方向」外推 → 自然分成左右两列
+        const b=project(nd._fbase,VP);
+        dx=b?(s[0]-b[0]):(s[0]-W/2); dy=b?(s[1]-b[1]):0;
+      }else{
+        dx=s[0]-W/2; dy=s[1]-H*0.56;}
+      const dl=Math.hypot(dx,dy)||1;
+      const off=nd.leaf?30:20;
+      s[0]+=dx/dl*off; s[1]+=dy/dl*off;}
+    items.push({el,nd,s});
+  }
+  // 屏幕空间防重叠：同一横带内相互推开
+  items.sort((a,b)=>a.s[1]-b.s[1]);
+  for(const it of items){
+    let y=it.s[1];
+    for(let guard=0;guard<12;guard++){
+      let hit=false;
+      for(const q of placed)
+        if(Math.abs(q[0]-it.s[0])<128&&Math.abs(q[1]-y)<36){y=q[1]+36;hit=true;}
+      if(!hit)break;}
+    placed.push([it.s[0],y]);
+    const {el,nd}=it;
+    el.style.display="flex";el._n=nd;
+    el.style.left=it.s[0].toFixed(1)+"px";
+    el.style.top =y.toFixed(1)+"px";
+    el.style.opacity=op;
+    const cls="nb"+(nd.leaf?" leaf":"");
+    if(el.className!==cls)el.className=cls;
+    el.style.setProperty("--kc",KC_LIGHT[nd.king]);
+    const pill=el.children[0],sub=el.children[1];
+    if(pill.textContent!==nd.zh)pill.textContent=nd.zh;
+    const s2=nd.leaf?nd.la:(nd.cnt>=1000?(nd.cnt/1000).toFixed(1)+"k 种":nd.cnt+" 种");
+    if(sub.textContent!==s2)sub.textContent=s2;}
+  // 焦点自身大标题：钉在柄的下端（各阶元柄长不同，用实测的 fan 起点）
+  if(focus!==TRUNK&&morph>0.3&&focus._bA){
+    const s=project(focus._bA,VP);
+    if(s){
+      // 夹在画面内；属级的柄是主枝，标题要让到它旁边而不是压在上面
+      const shift=(focus.lvl===5)?-84:0;
+      const x=Math.max(78,Math.min(W-78,s[0]+shift));
+      const y=Math.max(52,Math.min(H-64,s[1]+16));
+      ftitle.style.left=x+"px";ftitle.style.top=y+"px";
+      ftitle.style.opacity=Math.max(0,(morph-0.3)/0.7)*0.95;
+      ftitle.children[0].textContent=focus.zh;
+      ftitle.children[1].textContent=focus.la+" · "+RANKS[focus.lvl];}
+  }else ftitle.style.opacity=0;}
+
+/* ═══════════════════════════════════════════════════════════
+   8. 渲染
+   ═══════════════════════════════════════════════════════════ */
+function drawScene(VP,V,only,fogN,fogF,fogK,szK,wk,desat,lalpha,ldeep,blade){
+  gl.useProgram(pB);
+  gl.uniformMatrix4fv(uB.uVP,false,VP);
+  gl.uniformMatrix4fv(uB.uV,false,V);
+  gl.uniform1f(uB.uMorph,morph);
+  gl.uniform1f(uB.uOnly,only);
+  gl.uniform1f(uB.uPx,PX);
+  gl.uniform2f(uB.uRes,gl.drawingBufferWidth,gl.drawingBufferHeight);
+  gl.uniform3fv(uB.uFog,BG);
+  gl.uniform1f(uB.uFogK,fogK);
+  gl.uniform1f(uB.uFogN,fogN);
+  gl.uniform1f(uB.uFogF,fogF);
+  gl.uniform1f(uB.uWK,wk);
+  gl.uniform1f(uB.uDesat,desat);
+  gl.bindVertexArray(vaoB);
+  gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER,eb);
+  gl.drawElements(gl.TRIANGLES,NI,gl.UNSIGNED_INT,0);
+
+  // 展开层的高分辨率枝。sFoc 恒为 1 → shader 自动只在清晰层出现
+  if(exCount>0){
+    gl.bindVertexArray(vaoS);
+    gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER,ebS);
+    gl.drawElements(gl.TRIANGLES,exCount*EX_SEGS*6,gl.UNSIGNED_INT,0);}
+
+  gl.useProgram(pL);
+  gl.uniformMatrix4fv(uL.uVP,false,VP);
+  gl.uniformMatrix4fv(uL.uV,false,V);
+  gl.uniform1f(uL.uMorph,morph);
+  gl.uniform1f(uL.uOnly,only);
+  gl.uniform1f(uL.uPx,PX);
+  gl.uniform3fv(uL.uFog,BG);
+  gl.uniform1f(uL.uFogK,fogK);
+  gl.uniform1f(uL.uFogN,fogN);
+  gl.uniform1f(uL.uFogF,fogF);
+  gl.uniform1f(uL.uSzK,szK);
+  gl.uniform1f(uL.uDesat,desat);
+  gl.uniform1f(uL.uAlpha,lalpha);
+  gl.uniform1f(uL.uDeep,ldeep||0);
+  gl.uniform1f(uL.uBlade,blade||0);
+  gl.enable(gl.BLEND);
+  gl.blendFuncSeparate(gl.SRC_ALPHA,gl.ONE_MINUS_SRC_ALPHA,gl.ONE,gl.ONE_MINUS_SRC_ALPHA);
+  gl.bindVertexArray(vaoL);
+  gl.drawArrays(gl.POINTS,0,leafCount);
+  gl.disable(gl.BLEND);
+  gl.bindVertexArray(null);}
+
+function blitFS(p,setup){
+  gl.useProgram(p);setup();
+  gl.bindVertexArray(vaoQ);
+  gl.disable(gl.DEPTH_TEST);
+  gl.drawArrays(gl.TRIANGLES,0,3);
+  gl.bindVertexArray(null);}
+
+let last=performance.now();
+function frame(now){
+  const dt=Math.min(0.05,(now-last)/1000);last=now;
+
+  // ── 状态机 ──
+  if(phase==="out"){
+    morph-=dt/0.26;
+    if(morph<=0){morph=0;applyFocus(pending||TRUNK);pending=null;phase="in";}
+  }else if(phase==="in"){
+    if(morphGoal>0){morph=Math.min(1,morph+dt/0.62);if(morph>=1)phase="idle";}
+    else{morph=Math.max(0,morph-dt/0.4);if(morph<=0)phase="idle";}
+  }
+  blurAmt+=(blurGoal-blurAmt)*Math.min(1,dt*4.5);
+
+  // ── 相机 ──
+  if(cam.spin)camGoal.yaw+=cam.spin*dt;
+  const k=Math.min(1,dt*4.2);
+  cam.yaw+=(camGoal.yaw-cam.yaw)*k;
+  cam.pitch+=(camGoal.pitch-cam.pitch)*k;
+  cam.dist+=(camGoal.dist-cam.dist)*k;
+  for(let i=0;i<3;i++)cam.tgt[i]+=(camGoal.tgt[i]-cam.tgt[i])*k;
+
+  // 展开态：极缓的呼吸式视差摆动。立体感一半来自运动视差，
+  // 静止的透视图看着仍像平面图。幅度小到不影响点击。
+  swayK+=(((focus!==TRUNK&&!cam.drag)?1:0)-swayK)*Math.min(1,dt*1.6);
+  swayT+=dt;
+  const swY=Math.sin(swayT*0.314)*0.052*swayK;
+  const swP=Math.sin(swayT*0.221+1.1)*0.026*swayK;
+
+  const asp=Math.max(0.2,cv.width/cv.height);
+  const vYaw=cam.yaw+swY, vPitch=cam.pitch+swP;
+  const eye=camEye(vYaw,vPitch);
+  const V=lookAt(eye,cam.tgt,[0,1,0]);
+  const P=persp(FOV,asp,Math.max(0.6,cam.dist*0.012),cam.dist*4.5+TREE_H*3);
+  const VP=m4mul(P,V);
+
+  const fogN=cam.dist*0.55, fogF=cam.dist*2.6+TREE_H*0.8;
+  const anyBg=(focus!==TRUNK)||blurAmt>0.02;
+
+  // ── pass A：背景层（非焦点）→ 低分辨率 → 多趟高斯 ──
+  if(anyBg){
+    gl.bindFramebuffer(gl.FRAMEBUFFER,fboA);
+    gl.viewport(0,0,FW,FH);
+    gl.clearColor(BG[0],BG[1],BG[2],1);
+    gl.clear(gl.COLOR_BUFFER_BIT|gl.DEPTH_BUFFER_BIT);
+    gl.enable(gl.DEPTH_TEST);
+    // 背景层：枝略粗（虚化后才不消失）+ 强去饱和 + 重雾 → 隐约的树影。
+    // fogN 取得较小，让贴近镜头的粗枝也一起退淡，不至于糊成深块
+    drawScene(VP,V,0,cam.dist*0.16,fogF*1.05,0.95,0.62,1.15,0.90,0.30);
+
+    // 2 趟递增半径高斯：在 1/3 分辨率上等效很大的核，但仍留住枝的形状
+    for(let r=0;r<2;r++){
+      const rad=1.35+r*2.4;
+      gl.bindFramebuffer(gl.FRAMEBUFFER,fboB);gl.viewport(0,0,FW,FH);
+      blitFS(pBlur,()=>{gl.activeTexture(gl.TEXTURE0);gl.bindTexture(gl.TEXTURE_2D,texA);
+        gl.uniform1i(uBlur.uT,0);gl.uniform2f(uBlur.uDir,rad/FW,0);});
+      gl.bindFramebuffer(gl.FRAMEBUFFER,fboA);gl.viewport(0,0,FW,FH);
+      blitFS(pBlur,()=>{gl.activeTexture(gl.TEXTURE0);gl.bindTexture(gl.TEXTURE_2D,texB);
+        gl.uniform1i(uBlur.uT,0);gl.uniform2f(uBlur.uDir,0,rad/FH);});}
+  }
+
+  // ── 主帧 ──
+  gl.bindFramebuffer(gl.FRAMEBUFFER,null);
+  gl.viewport(0,0,cv.width,cv.height);
+  gl.clearColor(BG[0],BG[1],BG[2],1);
+  gl.clear(gl.COLOR_BUFFER_BIT|gl.DEPTH_BUFFER_BIT);
+  if(anyBg){
+    // uKeep：背景层保留多少「可见度」。0.22 = 隐隐约约看得见别的树枝，
+    // 再高的话贴近镜头的粗枝会糊成一大块深色，抢掉焦点
+    blitFS(pBlit,()=>{gl.activeTexture(gl.TEXTURE0);gl.bindTexture(gl.TEXTURE_2D,texA);
+      gl.uniform1i(uBlit.uT,0);gl.uniform1f(uBlit.uAmt,1.0);
+      gl.uniform1f(uBlit.uKeep,0.22);gl.uniform3fv(uBlit.uBg,BG);});}
+  gl.enable(gl.DEPTH_TEST);
+  const ov=(focus===TRUNK);
+  // 展开态用「近景雾」：近处枝叶清晰、稍远即退淡 → 厚度感／立体分层
+  const fN=ov?fogN:cam.dist*0.70, fF=ov?fogF:cam.dist*1.62;
+  drawScene(VP,V,1,fN,fF,ov?0.68:0.62,ov?0.78:1.35,
+            1.0,0.0,ov?0.85:0.80,ov?0:1,0);
+
+  updateLabels(VP);
+  requestAnimationFrame(frame);}
+
+/* ═══════════════════════════════════════════════════════════
+   9. 起飞
+   ═══════════════════════════════════════════════════════════ */
+setFocusFlags(TRUNK);
+uploadFan();
+buildCrumb(TRUNK);
+updateDepthLabel(TRUNK);
+gl.enable(gl.DEPTH_TEST);
+gl.depthFunc(gl.LEQUAL);
+requestAnimationFrame(t=>{last=t;frame(t);});
+setTimeout(()=>document.getElementById("boot").classList.add("gone"),120);
+console.log("[tree] grow",GROW_MS+"ms","verts",NV,"tris",NI/3,"leaves",leafCount);
+
+}catch(e){fatal(e);}
+</script>
+</body>
+</html>

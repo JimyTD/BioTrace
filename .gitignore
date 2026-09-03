@@ -48,6 +48,9 @@ model-bakeoff/images/*.heic
 
 # 本地走查截图（无头浏览器出的图，不入库）
 .shot/
+# 走查工具自己的运行目录 / 图片生成工具的落地目录
+.playwright-cli/
+generated-images/
 
 # 本地走查用的两张辅助页：换会话、跳过引导、量零件盒子。
 # 放在 public/ 才同源，但不该跟着构建产物发出去

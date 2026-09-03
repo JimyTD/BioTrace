@@ -20,10 +20,8 @@ import type { Rarity } from "../api";
 import type { MotionBox } from "../motion";
 import { ClearRankChip } from "../components/ClearRankChip";
 import { ClearRevealStage } from "../components/ClearRevealStage";
-import { ClearTreeClimb } from "../components/ClearTreeClimb";
 import { SettlePackStage } from "../components/SettlePackStage";
 import { SettleRaritySeal } from "../components/SettleRaritySeal";
-import { TreeDeck, type TreeLayerViewProps } from "../components/TreeDeck";
 import { flipBook } from "../bookFlip";
 import { flyEaseOut } from "../photoLift";
 import { slideUpFromPocket } from "../photoSlot";
@@ -121,11 +119,13 @@ export type SettleStageProps = {
  * 已经接上的槽位。**只列真接了的**——声明了却没人调用，跟声明不存在的资源域一样是空头支票。
  * 加新槽位：在这儿加一行、在 DEFAULT_SLOTS 里补上缺省实现、更新 §2.4 那张清单表。
  *
+ * 曾有过 `collectionTreeLayer`（宫格 TreeDeck / 攀树 ClearTreeClimb）。
+ * 已随物种树改为 3D 场景一并移除 —— 3D 树不是"一层的排版"，
+ * 它自己就是整个页面，用槽位包不住。见 src/components/SpeciesTree3D.tsx。
  */
 export type ThemeSlots = {
   raritySeal: ComponentType<RaritySealProps>;
   settleStage: ComponentType<SettleStageProps>;
-  collectionTreeLayer: ComponentType<TreeLayerViewProps>;
   lift: LiftPlayer;
   slot: SlotPlayer;
   album: AlbumPlayer;
@@ -146,7 +146,6 @@ type SlotTable = { [K in SlotName]?: () => ThemeSlots[K] };
 const DEFAULT_SLOTS: Required<SlotTable> = {
   raritySeal: () => SettleRaritySeal,
   settleStage: () => SettlePackStage,
-  collectionTreeLayer: () => TreeDeck,
   lift: () => flyEaseOut,
   slot: () => slideUpFromPocket,
   album: () => flipBook,
@@ -156,12 +155,10 @@ const DEFAULT_SLOTS: Required<SlotTable> = {
 const THEME_SLOTS: Partial<Record<ThemeId, SlotTable>> = {
   // daylight 就是缺省实现，不必登记
   // 清透里没有可撕的壳：开包是「照片由糊到清地显出来」，稀有度是一枚淡彩药丸，
-  // 不是封蜡章。收集树换掉文件夹宫格，改成这一层几个孩子仰视长成哪一档。
-  // 这几块换的是物件本身，不是颜色，所以走槽位而不是 token。
+  // 不是封蜡章。这几块换的是物件本身，不是颜色，所以走槽位而不是 token。
   clear: {
     settleStage: () => ClearRevealStage,
     raritySeal: () => ClearRankChip,
-    collectionTreeLayer: () => ClearTreeClimb,
   },
 };
 

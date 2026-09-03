@@ -1,0 +1,215 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1"/>
+<title>设备预览 · 物种树</title>
+<link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600&family=Courier+Prime&display=swap" rel="stylesheet"/>
+<style>
+:root{
+  --ink:#e9edf2;--ink2:#98a4b2;--muted:#6b7684;
+  --panel:rgba(255,255,255,.065);
+  --line:rgba(255,255,255,.085);
+  --acc:#ff8b4d;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html,body{height:100%;background:#13161b;color:var(--ink);overflow:hidden;
+  font-family:"Outfit","PingFang SC","Microsoft YaHei",system-ui,sans-serif;
+  -webkit-font-smoothing:antialiased}
+#app{position:fixed;inset:0;display:grid;grid-template-rows:auto 1fr auto}
+
+/* ── 控制条 ── */
+.bar{display:flex;align-items:center;gap:9px;flex-wrap:wrap;
+  padding:10px 14px;border-bottom:1px solid var(--line);
+  background:rgba(255,255,255,.02)}
+.bar h1{font-size:.82rem;font-weight:600;letter-spacing:-.01em;opacity:.9;
+  margin-right:4px;flex:none}
+.seg{display:flex;gap:2px;padding:3px;border-radius:10px;background:var(--panel);flex:none}
+.seg button,.act{appearance:none;border:0;cursor:pointer;font-family:inherit;
+  font-size:.68rem;font-weight:500;padding:5px 11px;border-radius:8px;
+  background:none;color:var(--ink2);white-space:nowrap;
+  transition:background .16s,color .16s}
+.seg button:hover,.act:hover{background:rgba(255,255,255,.07);color:var(--ink)}
+.seg button.on{background:#fff;color:#13161b;font-weight:600}
+.act{background:var(--panel)}
+.act.on{background:var(--acc);color:#1a0e06;font-weight:600}
+.spacer{flex:1}
+select.act{padding-right:8px}
+select.act option{background:#22262d;color:var(--ink)}
+
+/* ── 舞台 ── */
+.stage{position:relative;overflow:hidden;display:grid;place-items:center}
+.rack{display:flex;gap:40px;align-items:center;
+  transform:scale(var(--s,1));transition:transform .28s cubic-bezier(.2,.85,.2,1)}
+.slot{display:grid;gap:12px;justify-items:center;flex:none}
+.slot.off{display:none}
+.cap{font-size:.74rem;color:var(--ink2);font-family:"Courier Prime",monospace;
+  letter-spacing:.03em;white-space:nowrap}
+.cap b{color:var(--ink);font-weight:600}
+
+/* 手机外框 */
+.dev{position:relative;flex:none;border-radius:48px;padding:13px;
+  background:linear-gradient(160deg,#2b3038,#1b1f25);
+  box-shadow:0 0 0 1px rgba(255,255,255,.10),
+             0 2px 0 rgba(255,255,255,.05) inset,
+             0 34px 80px rgba(0,0,0,.6)}
+.dev iframe{display:block;width:var(--w);height:var(--h);border:0;
+  border-radius:36px;background:#eef2f6}
+/* 刘海／灵动岛：真机会挡住顶部 HUD，示意里必须画出来 */
+.island{position:absolute;left:50%;top:24px;transform:translateX(-50%);
+  width:100px;height:29px;border-radius:99px;background:#0a0c0f;
+  pointer-events:none;box-shadow:0 0 0 1px rgba(255,255,255,.05)}
+.hi{position:absolute;left:50%;bottom:21px;transform:translateX(-50%);
+  width:34%;height:5px;border-radius:99px;background:rgba(20,23,28,.30);
+  pointer-events:none}
+
+/* 横屏时刘海转到左侧 */
+.dev.land{border-radius:44px}
+.dev.land .island{left:24px;top:50%;transform:translateY(-50%);
+  width:29px;height:100px}
+.dev.land .hi{left:auto;right:21px;bottom:50%;transform:translateY(50%);
+  width:5px;height:34%}
+
+/* 桌面外框（对比用） */
+.dev.pc{border-radius:14px;padding:11px 11px 13px;
+  background:linear-gradient(160deg,#2b3038,#1b1f25)}
+.dev.pc iframe{border-radius:5px}
+.dev.pc .island,.dev.pc .hi{display:none}
+
+/* ── 脚注 ── */
+.foot{padding:8px 14px 10px;border-top:1px solid var(--line);
+  font-size:.62rem;color:var(--muted);line-height:1.65;
+  font-family:"Courier Prime",monospace}
+.foot em{font-style:normal;color:var(--ink2)}
+</style>
+</head>
+<body>
+<div id="app">
+
+  <div class="bar">
+    <h1>设备预览</h1>
+    <div class="seg" id="devseg"></div>
+    <button class="act" id="rot" title="旋转">⟲ 横屏</button>
+    <button class="act" id="cmp" title="并排显示桌面尺寸">⇹ 对比桌面</button>
+    <div class="spacer"></div>
+    <select class="act" id="src" title="选择原型">
+      <option value="v2-roots.html">v2 · 三段式（当前）</option>
+      <option value="v1-canopy.html">v1 · 纯树冠</option>
+      <option value="index.html">index · 旧版</option>
+    </select>
+    <button class="act" id="reload" title="重新加载">↻ 重载</button>
+  </div>
+
+  <div class="stage" id="stage">
+    <div class="rack" id="rack">
+      <div class="slot" id="slotPhone">
+        <div class="dev" id="phone">
+          <iframe id="f1" title="手机预览"></iframe>
+          <div class="island"></div><div class="hi"></div>
+        </div>
+        <span class="cap" id="capPhone"></span>
+      </div>
+      <div class="slot off" id="slotPC">
+        <div class="dev pc" id="pc">
+          <iframe id="f2" title="桌面预览"></iframe>
+        </div>
+        <span class="cap" id="capPC"></span>
+      </div>
+    </div>
+  </div>
+
+  <div class="foot">
+    这里只示意<em>视口尺寸与布局</em>：页面拿到的 innerWidth/innerHeight 就是框内的真实数值（用整体缩放贴合窗口，不影响页面自己的计算），
+    所以水平压缩 SQ、标签防重叠、断点都能如实反映。<br/>
+    不能反映的：<em>触摸手势</em>（这里是鼠标）、<em>像素密度</em>（用的是本机 DPR）、<em>真机 GPU 性能</em>；
+    还有 <em>env(safe-area-inset-*) 在 iframe 里恒为 0</em> —— 所以框里看到的"内容贴着刘海／底部横条"，真机上会被安全区顶开，不必照此判断。
+  </div>
+</div>
+
+<script>
+"use strict";
+/* 设备列表。宽度是 CSS 像素（= 页面 innerWidth），不是物理像素。
+   选型覆盖三档：极窄的老机、主流、大屏 —— 布局问题通常只在两端暴露。 */
+const DEVICES=[
+  {id:"mini", n:"极窄",         m:"320×568",  w:320, h:568},
+  {id:"se",   n:"iPhone SE",    m:"375×667",  w:375, h:667},
+  {id:"p15",  n:"iPhone 15",    m:"393×852",  w:393, h:852},
+  {id:"pmax", n:"15 Pro Max",   m:"430×932",  w:430, h:932},
+  {id:"px8",  n:"Pixel 8",      m:"412×915",  w:412, h:915},
+  {id:"ipad", n:"iPad mini",    m:"744×1133", w:744, h:1133},
+];
+const PC={w:1440,h:900};
+
+const $=id=>document.getElementById(id);
+const rack=$("rack"), stage=$("stage");
+const phone=$("phone"), pcBox=$("pc");
+const f1=$("f1"), f2=$("f2");
+let cur="p15", land=false, cmp=false, loadedPC=false;
+
+/* 设备切换按钮 */
+const seg=$("devseg");
+for(const d of DEVICES){
+  const b=document.createElement("button");
+  b.type="button";b.textContent=d.n;b.dataset.id=d.id;
+  b.onclick=()=>{cur=d.id;apply();};
+  seg.appendChild(b);}
+
+function dev(){return DEVICES.find(d=>d.id===cur)||DEVICES[2];}
+
+function apply(){
+  const d=dev();
+  const w=land?d.h:d.w, h=land?d.w:d.h;
+  phone.style.setProperty("--w",w+"px");
+  phone.style.setProperty("--h",h+"px");
+  phone.classList.toggle("land",land);
+  $("capPhone").innerHTML="<b>"+d.n+"</b> · "+w+"×"+h;
+  pcBox.style.setProperty("--w",PC.w+"px");
+  pcBox.style.setProperty("--h",PC.h+"px");
+  $("capPC").innerHTML="<b>桌面</b> · "+PC.w+"×"+PC.h;
+  $("slotPC").classList.toggle("off",!cmp);
+  for(const b of seg.children)b.classList.toggle("on",b.dataset.id===cur);
+  $("rot").classList.toggle("on",land);
+  $("rot").textContent=land?"⟲ 竖屏":"⟲ 横屏";
+  $("cmp").classList.toggle("on",cmp);
+  // 尺寸写进 CSS 后要等一帧布局稳定，再算缩放
+  requestAnimationFrame(fit);
+}
+
+/* 整体缩放贴合窗口。
+   关键：缩放作用在外层 rack 上，iframe 自身仍是真实像素尺寸 ——
+   所以页面拿到的 innerWidth 是 393 而不是被缩后的值，
+   它的响应式计算（SQ、断点）才是真的。 */
+function fit(){
+  const availW=stage.clientWidth-32, availH=stage.clientHeight-32;
+  // transform 不影响 offsetWidth，这里拿到的是未缩放的原始布局尺寸
+  const rw=rack.offsetWidth, rh=rack.offsetHeight;
+  if(rw<2||rh<2)return;
+  const s=Math.min(1,availW/rw,availH/rh);
+  rack.style.setProperty("--s",s.toFixed(4));
+}
+
+/* iframe 一律带时间戳加载：原型改得很频繁，浏览器缓存会让人看到旧版本 */
+const bust=u=>u+(u.includes("?")?"&":"?")+"t="+Date.now();
+
+$("rot").onclick=()=>{land=!land;apply();};
+$("cmp").onclick=()=>{
+  cmp=!cmp;
+  // 桌面 iframe 懒加载：不开对比就不白跑一个 WebGL 上下文
+  if(cmp&&!loadedPC){f2.src=bust($("src").value);loadedPC=true;}
+  apply();};
+$("src").onchange=()=>{
+  f1.src=bust($("src").value);
+  if(loadedPC)f2.src=bust($("src").value);};
+$("reload").onclick=()=>{
+  f1.src=bust($("src").value);
+  if(loadedPC)f2.src=bust($("src").value);};
+
+addEventListener("resize",fit);
+// 控制条换行会改变舞台高度，宽度却没变 → resize 事件不足以覆盖
+if(window.ResizeObserver)new ResizeObserver(fit).observe(stage);
+
+f1.src=bust($("src").value);
+apply();
+</script>
+</body>
+</html>
