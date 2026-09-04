@@ -22,3 +22,10 @@ alwaysApply: true
 
 - 模型 Prompt、开发者日志、纯技术错误原文（落库前应尽量映射为 code）
 - 用户自己输入的内容（旅途标题、描述等）
+
+## voice（皮肤说法）边界
+
+文案分固定区 / 可文案区，机制见 [`docs/features/文案分区.md`](../../docs/features/文案分区.md)。
+voice 覆盖表**只能写可文案区**（`zhFlavor`，类型 `ThemedMessageKey`）；固定区 key（稀有度、
+状态名、阶元词、名录定义、错误码、admin、套册内容、确认语）永不可覆盖。成套组（nav 四词、
+点亮词族）要换全换。改覆盖表后跑 `python scripts/check-voice.py`。

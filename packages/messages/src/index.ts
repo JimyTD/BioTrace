@@ -1,11 +1,11 @@
-import { zh, type MessageKey } from "./zh.js";
+import { zh, zhFlavor, type MessageKey, type ThemedMessageKey } from "./zh.js";
 
 const catalogs = {
   zh,
 } as const;
 
 export type Locale = keyof typeof catalogs;
-export type { MessageKey };
+export type { MessageKey, ThemedMessageKey };
 
 export const defaultLocale: Locale = "zh";
 
@@ -19,7 +19,10 @@ export const defaultLocale: Locale = "zh";
  */
 export type VoiceId = "default";
 
-const voices: Record<VoiceId, Partial<Record<MessageKey, string>>> = {
+/** 固定区 key 全集：运行时守卫用。覆盖表漏进固定 key 时，t() 不认。 */
+const themedKeys: ReadonlySet<ThemedMessageKey> = new Set<string>(Object.keys(zhFlavor)) as ReadonlySet<ThemedMessageKey>;
+
+const voices: Record<VoiceId, Partial<Record<ThemedMessageKey, string>>> = {
   default: {},
 };
 
@@ -45,7 +48,8 @@ type Vars = Record<string, string | number>;
 
 export function t(key: MessageKey, vars?: Vars, locale: Locale = defaultLocale): string {
   const table = catalogs[locale] ?? catalogs.zh;
-  const spoken = locale === "zh" ? voices[activeVoice][key] : undefined;
+  // 运行时闸：只有可文案区 key 才允许走 voice 覆盖，固定区一律走基础表。
+  const spoken = locale === "zh" && themedKeys.has(key as ThemedMessageKey) ? voices[activeVoice][key as ThemedMessageKey] : undefined;
   let text: string = spoken ?? table[key] ?? catalogs.zh[key] ?? String(key);
   if (vars) {
     for (const [k, v] of Object.entries(vars)) {

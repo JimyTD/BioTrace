@@ -1,13 +1,15 @@
-/** 默认中文术语与界面文案。key 稳定后勿随意改名，只改正文。 */
-export const zh = {
+/**
+ * 界面文案主表，物理拆成两区：
+ * - zhCore：固定区（纯功能文案）。稀有度档位、状态名、阶元词、名录定义、
+ *   错误码译文、admin、套册内容、确认语、模板与占位 key——皮肤 voice 永不可覆盖。
+ * - zhFlavor：可文案区（叙事包装）。品牌句、导语、空态、仪式用语——voice 可换说法。
+ *
+ * 两区末尾合并为 zh。key 全体不变、不增不减，调用方零改动。
+ * 判定准则见 docs/features/文案分区.md。
+ */
+const zhCore = {
   "app.name": "BioTrace",
-  "app.tagline": "路上遇见的，都有名字",
   "app.loading": "加载中…",
-
-  "nav.trips": "旅途",
-  "nav.map": "地图",
-  "nav.collection": "图鉴",
-  "nav.me": "我的",
 
   "auth.devLogin": "开发登录",
   "auth.devHint": "仅本机/调试可用。生产请使用邮箱与密码登录。",
@@ -17,8 +19,6 @@ export const zh = {
   "auth.passwordLabel": "密码",
   "auth.displayNameLabel": "昵称（可选）",
   "auth.login": "登录",
-  "auth.lede": "翻开相册，记下路上遇见的。",
-  "auth.registerLede": "填写邮箱与密码，创建账号。",
   "auth.register": "注册",
   "auth.registerAction": "创建账号",
   "auth.loggingIn": "登录中…",
@@ -66,15 +66,8 @@ export const zh = {
   "onboard.skip": "跳过",
   "onboard.turn": "继续",
   "onboard.done": "开始",
-  "onboard.tripLede": "出门一趟，就攒下一本新相册。",
-  "onboard.mapLede": "地图上，留着你走过的每一个点。",
-  "onboard.collectionLede": "认出一种生命，图鉴就为它点亮一格。",
-
-  "trips.title": "旅途",
-  "trips.lede": "每一次出门，都是一本新相册。",
   "trips.createLabel": "新建旅途",
   "trips.createAction": "创建",
-  "trips.empty": "还没有旅途。写下名字，翻开第一页。",
   "trips.photoCount": "{count} 张照片",
   "trips.noPhotosYet": "还没有照片",
   "trips.loading": "加载旅途…",
@@ -153,18 +146,14 @@ export const zh = {
   "album.uploadAllDuplicates": "这些照片都已经上传过了，没有新照片加入。",
   "album.pickFailed": "无法打开相册或相机，请重试",
   "album.picking": "选择中…",
-  "album.empty": "册页还空着。上传照片，开始记录。",
   "album.duplicatePhoto": "这张照片与已有记录重复，不能再传。",
   "album.fileTooLarge": "照片太大，请压缩到 {maxMb}MB 以内再传。",
-  "album.pendingHint": "结论已经落笔。",
   "album.reliableTo": "可靠到：{rank}",
   "album.uploadedBy": "{name}",
   "album.delete": "删除",
   "album.deleting": "删除中…",
   "album.deleteConfirm": "确定删除这张观察照片？删除后相册与地图都会同步消失。",
   "album.deleteFailed": "删除失败",
-  "album.readyToast": "刚拍的，有名字了。",
-
   "status.analyzing": "专家鉴定中",
   "status.pending_settle": "鉴定完成",
   "status.settled": "已收录",
@@ -172,11 +161,7 @@ export const zh = {
   "status.tooCoarse": "结论偏粗",
   "status.notCollectible": "不可收集",
 
-  "settle.title": "鉴定证书",
-  "settle.lede": "这趟遇见的生命，现在有名字了。",
-  "settle.open": "请过目",
   "settle.opening": "请稍候…",
-  "settle.claim": "收下",
   "settle.claiming": "收录中…",
   "settle.failed": "这次没成",
   "settle.notPending": "这条没有结论可看。",
@@ -186,14 +171,6 @@ export const zh = {
   "settle.alertIntroduced": "当地引入/关注种",
   "settle.alertHint": "依据该国公开名录判定",
   "settle.backAlbum": "返回旅途相册",
-  "settle.volumeSlotLit": "{volume} · {slot} 已点亮",
-  "settle.volumeSlotLitMore": "{volume} · {slot} 已点亮，另有 {count} 个槽",
-  "settle.volumeCompleted": "「{volume}」整册点亮",
-  "settle.volumeCompletedMore": "「{volume}」等 {count} 本整册点亮",
-  "settle.volumeToCollection": "去图鉴看看",
-  "settle.volumeCeremonyTitle": "套册进展",
-  "settle.volumeCeremonyCompleteTitle": "整册点亮",
-  "settle.volumeContinue": "继续旅途",
   "settle.preview.title": "开包美术预览",
   "settle.preview.lede": "只看叠层效果，不走鉴定接口。点阶段切换封缄 / 揭示 / 展出。",
   "settle.preview.phases": "开包阶段",
@@ -227,19 +204,12 @@ export const zh = {
   "identify.provider.user": "自备 Key",
   "identify.provider.mock": "本地模拟",
 
-  "collection.title": "图鉴",
-  "collection.lede": "收下的证书，都在这里。",
-  "collection.empty": "还没有遇见。去旅途里拍点什么。",
   "collection.loadFailed": "加载图鉴失败",
-  "collection.volumesLede": "翻开一本，把遇见的生命一格格点亮。",
   "collection.volumesEmpty": "还没有套册。",
   "collection.volumesLoadFailed": "加载套册失败",
   "collection.volumeProgress": "{lit}/{total}",
-  "collection.volumeDone": "整册点亮",
   "collection.volumeOpen": "打开套册",
   "collection.volumeBack": "图鉴",
-  "collection.volumeStampEmpty": "未点亮",
-  "collection.stampLift": "拿起细看",
   "collection.volumeStampsTitle": "收录格",
   "collection.speciesTitle": "已收录",
   "collection.speciesCount": "{count} 种",
@@ -250,7 +220,6 @@ export const zh = {
   "collection.speciesSortRarity": "稀有度",
   "collection.speciesSortName": "名字",
   "collection.speciesFirstCollected": "首次收录 {date}",
-  "collection.speciesSightings": "历次遇见",
   "collection.speciesLoadFailed": "加载这种失败",
   "collection.treeTitle": "物种树",
   "collection.treeCount": "已点亮 {count} 界",
@@ -261,13 +230,9 @@ export const zh = {
   "tree3d.kingdomArchaea": "古菌界",
   "tree3d.kingdomViruses": "病毒界",
   "tree3d.statGot": "已收集 {count} 项",
-  "tree3d.statEmpty": "等待第一次相遇",
   "tree3d.viewCollection": "查看收集",
   "tree3d.gotCount": "{count} 项",
   "tree3d.gotCountGo": "{count} 项 ›",
-  "tree3d.noFootprint": "尚无足迹",
-  "tree3d.notCollectedSpecies": "还没拍到过",
-  "tree3d.notCollectedBranch": "这一支还没去过",
   "tree3d.notCollectible": "不可收录",
   "tree3d.notCollectibleHint": "病毒不进入图鉴",
   "tree3d.noFurtherRank": "尚未细分到更下一级",
@@ -278,7 +243,6 @@ export const zh = {
   "tree3d.sheetCap": "（显示前 {shown} 项）",
   "tree3d.unnamed": "未命名",
   "tree3d.close": "关闭",
-  "tree3d.growing": "正在生长这棵树…",
   "tree3d.webgl2": "此设备不支持 WebGL2",
   "tree3d.buildFailed": "建树失败",
   "tree3d.webglFailed": "WebGL 初始化失败",
@@ -323,7 +287,6 @@ export const zh = {
   "volume.woodland_edge.slot.cicada": "蝉",
   "volume.woodland_edge.slot.small_carnivoran": "中小型食肉",
 
-  "map.empty": "还没有落点。在照片里补标位置后，会出现在这里。",
   "map.openTrip": "打开所属旅途",
   "map.openDetail": "查看详情",
   "map.loadFailed": "地图加载失败",
@@ -341,7 +304,6 @@ export const zh = {
   "me.about": "关于",
   "me.help": "帮助",
   "me.appearance": "外观",
-  "me.appearanceLede": "换一套皮肤，就是换一个看这些照片的地方。选过的记在账号里，换手机也对得上。",
   "me.appearanceOn": "使用中",
   "me.appearanceSaveFailed": "没能同步到账号，换一台设备可能对不上。",
   "theme.clear": "清透",
@@ -402,7 +364,6 @@ export const zh = {
   "detail.reidentifying": "重新识别中…",
   "detail.reidentifyConfirm": "确定重新识别？将覆盖当前分类与简介，且不可撤销。",
   "detail.reidentifyGuide": "请写明修正信息（例如更可能的类群、拍摄环境、可见特征）。以照片为准，文字仅作辅助；将覆盖当前识别结果，仍是同一条观察，不会另存一张。",
-  "detail.reidentifyPlaceholder": "说说他的特征、地点和其他线索吧",
   "detail.reidentifyNeedText": "请先填写修正说明，再重新识别。",
   "detail.reidentifyConfirmAction": "确认重新识别",
   "detail.reidentifyFailed": "重新识别失败",
@@ -785,4 +746,61 @@ export const zh = {
   "admin.secrets.slot.identifyConcurrency": "识图并发数",
 } as const;
 
+/** 可文案区（叙事包装）：voice 覆盖表只能写这里的 key（ThemedMessageKey）。 */
+export const zhFlavor = {
+  "app.tagline": "路上遇见的，都有名字",
+  "nav.trips": "旅途",
+  "nav.map": "地图",
+  "nav.collection": "图鉴",
+  "nav.me": "我的",
+
+  "auth.lede": "翻开相册，记下路上遇见的。",
+  "auth.registerLede": "填写邮箱与密码，创建账号。",
+  "onboard.tripLede": "出门一趟，就攒下一本新相册。",
+  "onboard.mapLede": "地图上，留着你走过的每一个点。",
+  "onboard.collectionLede": "认出一种生命，图鉴就为它点亮一格。",
+
+  "trips.title": "旅途",
+  "trips.lede": "每一次出门，都是一本新相册。",
+  "trips.empty": "还没有旅途。写下名字，翻开第一页。",
+  "album.empty": "册页还空着。上传照片，开始记录。",
+  "album.pendingHint": "结论已经落笔。",
+  "album.readyToast": "刚拍的，有名字了。",
+
+  "settle.title": "鉴定证书",
+  "settle.lede": "这趟遇见的生命，现在有名字了。",
+  "settle.open": "请过目",
+  "settle.claim": "收下",
+  "settle.volumeSlotLit": "{volume} · {slot} 已点亮",
+  "settle.volumeSlotLitMore": "{volume} · {slot} 已点亮，另有 {count} 个槽",
+  "settle.volumeCompleted": "「{volume}」整册点亮",
+  "settle.volumeCompletedMore": "「{volume}」等 {count} 本整册点亮",
+  "settle.volumeToCollection": "去图鉴看看",
+  "settle.volumeCeremonyTitle": "套册进展",
+  "settle.volumeCeremonyCompleteTitle": "整册点亮",
+  "settle.volumeContinue": "继续旅途",
+  "collection.title": "图鉴",
+  "collection.lede": "收下的证书，都在这里。",
+  "collection.empty": "还没有遇见。去旅途里拍点什么。",
+  "collection.volumesLede": "翻开一本，把遇见的生命一格格点亮。",
+  "collection.volumeDone": "整册点亮",
+  "collection.volumeStampEmpty": "未点亮",
+  "collection.stampLift": "拿起细看",
+  "collection.speciesSightings": "历次遇见",
+  "tree3d.statEmpty": "等待第一次相遇",
+  "tree3d.noFootprint": "尚无足迹",
+  "tree3d.notCollectedSpecies": "还没拍到过",
+  "tree3d.notCollectedBranch": "这一支还没去过",
+  "tree3d.growing": "正在生长这棵树…",
+  "map.empty": "还没有落点。在照片里补标位置后，会出现在这里。",
+  "me.appearanceLede": "换一套皮肤，就是换一个看这些照片的地方。选过的记在账号里，换手机也对得上。",
+  "detail.reidentifyPlaceholder": "说说他的特征、地点和其他线索吧",
+} as const;
+
+/** 合并主表：key 全体不变、不增不减，调用方照旧用 t()。 */
+export const zh = { ...zhCore, ...zhFlavor };
+
 export type MessageKey = keyof typeof zh;
+
+/** voice（皮肤说法）允许覆盖的 key：固定区 key 在类型层即被排除。 */
+export type ThemedMessageKey = keyof typeof zhFlavor;
