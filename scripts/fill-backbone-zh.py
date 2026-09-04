@@ -4,9 +4,11 @@
 已有 backboneZh.ts 条目不覆盖。
 
 跑法：python scripts/fill-backbone-zh.py
-  --wd-only    只跑 Wikidata
-  --inat-only  只跑 iNat（读缓存里 Wikidata 没填上的）
-  --merge      查完后写回 backboneZh.ts
+  --wd-only     只跑 Wikidata
+  --inat-only   只跑 iNat
+  --merge-only  把缓存写进 backboneZh.ts（保留已有离线块，只追加新条）
+
+常见类群 iNat 已经覆盖；Wikidata 补的是 iNat 没有通行名的长尾（色藻/原生动物/化石等）。
 
 中间结果：scripts/_cache/backbone-zh-fill.json（可续跑，不入库）
 """
@@ -32,7 +34,7 @@ DOC_PATH = ROOT / "apps/web/src/data/backbone.json"
 TS_PATH = ROOT / "apps/web/src/data/backboneZh.ts"
 CACHE_PATH = ROOT / "scripts/_cache/backbone-zh-fill.json"
 
-UA = "BioTrace/1.0 (offline taxonomy zh fill; non-profit)"
+UA = "BioTrace/1.0 (https://github.com/JimyTD/BioTrace; taxonomy zh fill)"
 CTX = ssl.create_default_context()
 
 INAT_KINGDOM = {
@@ -306,35 +308,77 @@ def fill_inat(missing: list[dict], cache: dict) -> None:
     print(f"iNat 补上 {len(cache['inat'])}", flush=True)
 
 
+OFFLINE_BLOCK = re.compile(
+    r"\n  // ── 离线配表开始[\s\S]*?// ── 离线配表结束 ──\n"
+)
+
+# Wikidata 中文标签不等于通行阶元名：写成科/亚纲、和常用名撞车、机翻。
+WD_SKIP_ZH = frozenset({"硬骨纲", "寡毛纲", "红藻纲", "战俘菌目"})
+
+
+def wiki_zh_ok(nid: str, zh: str) -> bool:
+    rank = int(nid.split(":")[0])
+    if zh in WD_SKIP_ZH:
+        return False
+    if zh.endswith("科") or zh.endswith("属") or zh.endswith("种"):
+        return False
+    if rank == 2:
+        if zh.endswith("亚纲") or zh.endswith("门"):
+            return False
+        if not (zh.endswith("纲") or zh.endswith("类")):
+            return False
+    if rank == 3 and not zh.endswith("目"):
+        return False
+    return True
+
+
+def parse_offline_block(text: str) -> list[tuple[str, str, str]]:
+    m = OFFLINE_BLOCK.search(text)
+    if not m:
+        return []
+    out: list[tuple[str, str, str]] = []
+    for line in m.group(0).splitlines():
+        mm = re.match(r'\s*"(\d+:[^"]+)":\s*"([^"]+)",?(?:\s*//\s*(\S+))?', line)
+        if not mm:
+            continue
+        src = "inat" if (mm.group(3) or "").lower() == "inat" else "wikidata"
+        out.append((mm.group(1), mm.group(2), src))
+    return out
+
+
 def merge_ts(cache: dict) -> int:
+    text = TS_PATH.read_text("utf-8")
     existing = load_existing()
+    offline = parse_offline_block(text)
+    have_ids = {nid for nid, _, _ in offline}
+    have_zh = set(existing.values()) | {zh for _, zh, _ in offline}
+    hand = set(existing) - have_ids
+
     added: list[tuple[str, str, str]] = []
     for src in ("wd", "inat"):
         for nid, rec in cache.get(src, {}).items():
-            if nid in existing:
+            if nid in have_ids or nid in hand:
                 continue
             zh = rec["zh"]
             if not zh or not has_cjk(zh):
                 continue
-            if zh in existing.values():
+            if zh in have_zh:
                 continue
-            existing[nid] = zh
+            if src == "wd" and not wiki_zh_ok(nid, zh):
+                continue
+            have_ids.add(nid)
+            have_zh.add(zh)
             added.append((nid, zh, rec["src"]))
+
     if not added:
         print("没有新条目可写", flush=True)
         return 0
 
-    text = TS_PATH.read_text("utf-8")
-    text = re.sub(
-        r"\n  // ── 离线配表开始[\s\S]*?// ── 离线配表结束 ──\n",
-        "\n",
-        text,
-        count=1,
-    )
-    added.sort(key=lambda x: (int(x[0].split(":")[0]), x[0]))
+    rows = offline + added
+    rows.sort(key=lambda x: (int(x[0].split(":")[0]), x[0]))
     lines = ["  // ── 离线配表开始（Wikidata 主源，iNat 补洞；不覆盖上手填）──"]
     last_rank = None
-    for nid, zh, src in added:
+    for nid, zh, src in rows:
         r = int(nid.split(":")[0])
         if r != last_rank:
             lines.append(f"  // rank {r} · {'纲' if r == 2 else '目'}")
@@ -342,13 +386,21 @@ def merge_ts(cache: dict) -> int:
         note = "" if src == "wikidata" else "  // iNat"
         lines.append(f'  "{nid}": {json.dumps(zh, ensure_ascii=False)},{note}')
     lines.append("  // ── 离线配表结束 ──")
-    block = "\n".join(lines) + "\n"
-    m = re.search(r"\};\r?\n\r?\n/\*\* 取骨架节点的显示名", text)
-    if not m:
-        raise SystemExit("找不到 BACKBONE_ZH 结束位置，拒绝改写")
-    new = text[: m.start()] + block + text[m.start() :]
+    block = "\n" + "\n".join(lines) + "\n"
+
+    if OFFLINE_BLOCK.search(text):
+        new = OFFLINE_BLOCK.sub(block, text, count=1)
+    else:
+        m = re.search(r"\};\r?\n\r?\n/\*\* 取骨架节点的显示名", text)
+        if not m:
+            raise SystemExit("找不到 BACKBONE_ZH 结束位置，拒绝改写")
+        new = text[: m.start()] + block + text[m.start() :]
     TS_PATH.write_text(new, "utf-8")
-    print(f"写入 {len(added)} 条（Wikidata {sum(1 for x in added if x[2]=='wikidata')}，iNat {sum(1 for x in added if x[2]=='inat')}）", flush=True)
+    print(
+        f"追加 {len(added)} 条（Wikidata {sum(1 for x in added if x[2]=='wikidata')}，"
+        f"iNat {sum(1 for x in added if x[2]=='inat')}），离线块共 {len(rows)}",
+        flush=True,
+    )
     return len(added)
 
 
