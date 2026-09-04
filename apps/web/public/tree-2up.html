@@ -1,0 +1,121 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>物种树 · 界级枝布局 vs V1</title>
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    height: 100vh; display: flex; flex-direction: column; overflow: hidden;
+    background: #20262f; color: #e8edf4;
+    font: 14px/1.5 "Microsoft YaHei", "PingFang SC", system-ui, sans-serif;
+  }
+  header {
+    flex: none; display: flex; align-items: center; gap: 18px;
+    padding: 10px 16px; background: #171c24; border-bottom: 1px solid #2c343f;
+  }
+  h1 { font-size: 15px; font-weight: 700; letter-spacing: .3px; }
+  h1 span { color: #8b97a8; font-weight: 400; margin-left: 8px; font-size: 12.5px; }
+  .grp { display: flex; align-items: center; gap: 7px; margin-left: auto; }
+  .grp b { font-size: 12px; color: #8b97a8; font-weight: 400; }
+  button {
+    background: #2a323d; color: #cfd8e4; border: 1px solid #3a4450;
+    border-radius: 6px; padding: 5px 12px; font-size: 12.5px; cursor: pointer;
+    font-family: inherit;
+  }
+  button:hover { background: #333d4a; }
+  button.on { background: #c46a3a; border-color: #c46a3a; color: #fff; font-weight: 700; }
+  main {
+    flex: 1; min-height: 0; overflow: hidden; display: flex;
+    justify-content: center; align-items: center; padding: 10px;
+  }
+  /* 竖屏是这个应用的真实形态：两栏各锁 390×844，整体等比缩放去适配窗口，
+     而不是把每栏压扁成窗口的形状 —— 压扁后看到的树高宽比是假的。 */
+  #stage {
+    flex: none; display: flex; gap: 14px; transform-origin: center center;
+  }
+  .pane { display: flex; flex-direction: column; width: 390px; flex: none; }
+  .pane > .tag {
+    flex: none; padding: 6px 12px; font-size: 12.5px; font-weight: 700;
+    border-radius: 7px 7px 0 0; display: flex; align-items: baseline; gap: 8px;
+  }
+  .pane > .tag i { font-style: normal; font-weight: 400; font-size: 11.5px; opacity: .75; }
+  .now > .tag { background: #23422f; color: #96e3b4; }
+  .ref > .tag { background: #4a3a26; color: #f0c78d; }
+  .frame {
+    flex: none; height: 844px; background: #eef1f5; border-radius: 0 0 7px 7px;
+    overflow: hidden; position: relative;
+  }
+  iframe { width: 390px; height: 844px; border: 0; display: block; }
+  .hint {
+    flex: none; padding: 7px 16px; background: #171c24; border-top: 1px solid #2c343f;
+    font-size: 12px; color: #8b97a8;
+  }
+  .hint code { background: #2a323d; padding: 1px 5px; border-radius: 3px; color: #cfd8e4; }
+</style>
+</head>
+<body>
+  <header>
+    <h1>物种树 · 界级枝布局 vs V1<span>左屏是活的，可旋转、点击、展开</span></h1>
+    <div class="grp">
+      <b>收集量</b>
+      <span id="bK"></span>
+      <button id="bR" style="margin-left:10px">同时重载</button>
+    </div>
+  </header>
+
+  <main><div id="stage">
+    <div class="pane now">
+      <div class="tag">当前<i>三个界各拆两支、等长 · 六杈 60° 等分、外倾 32° · 同界两支分处对面 · 色藻原生动物在主干腰</i></div>
+      <div class="frame"><iframe id="f1" src="/dev/tree"></iframe></div>
+    </div>
+    <div class="pane ref">
+      <div class="tag">V1 参照<i>prototypes/clear-tree/v1-canopy.html · 六杈六色</i></div>
+      <div class="frame"><iframe id="f2" src="http://127.0.0.1:8099/clear-tree/v1-canopy.html"></iframe></div>
+    </div>
+  </div></main>
+
+  <div class="hint">
+    收集量只作用于左屏。第一屏的形态与收集量无关，切收集量只该看到颜色变化。
+    V1 参照是原型自带的满树 mock，它需要 <code>python -m http.server 8099</code> 起在
+    <code>prototypes/</code> 目录。本页是临时脚手架，定稿后删。
+  </div>
+
+<script>
+  const MOCKS = [0, 6, 21, 60, 140];
+  let mock = 0;
+
+  const bK = document.getElementById("bK");
+  MOCKS.forEach((m) => {
+    const b = document.createElement("button");
+    b.textContent = m === 0 ? "空" : m + " 项";
+    b.className = m === mock ? "on" : "";
+    b.style.marginRight = "6px";
+    b.onclick = () => {
+      mock = m;
+      [...bK.children].forEach((c, i) => c.classList.toggle("on", MOCKS[i] === m));
+      reload();
+    };
+    bK.appendChild(b);
+  });
+
+  function reload() {
+    const t = Date.now();
+    document.getElementById("f1").src = `/dev/tree?mock=${mock}&t=${t}`;
+    document.getElementById("f2").src =
+      `http://127.0.0.1:8099/clear-tree/v1-canopy.html?t=${t}`;
+  }
+  const stage = document.getElementById("stage");
+  const main = document.querySelector("main");
+  function fit() {
+    const w = stage.scrollWidth, h = stage.scrollHeight;
+    const s = Math.min(1, (main.clientWidth - 20) / w, (main.clientHeight - 20) / h);
+    stage.style.transform = `scale(${s})`;
+  }
+  addEventListener("resize", fit);
+  fit();
+  document.getElementById("bR").onclick = reload;
+</script>
+</body>
+</html>
