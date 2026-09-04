@@ -79,6 +79,34 @@
 .tree3d-nb.term .pill::after {
   content: "";
 }
+/* 顶芽：比普通路标略大，轻轻呼吸，梢上那个「还能再长」的按钮。
+   › 沿用普通药丸，表示可以点。 */
+.tree3d-nb.bud .pill {
+  font-size: 0.82rem;
+  padding: 6px 16px;
+}
+.tree3d-nb.bud .sub {
+  display: none;
+}
+.tree3d-nb.bud.next .pill {
+  animation: tree3d-bud-pulse 2.2s ease-in-out infinite;
+}
+.tree3d-nb.bud.prev .pill::after {
+  content: "";
+}
+.tree3d-nb.bud.prev .pill::before {
+  content: "‹ ";
+  color: #c74e18;
+  font-weight: 700;
+}
+.tree3d-nb.bud:hover .pill {
+  animation: none;
+  transform: translateY(-2px) scale(1.08);
+}
+@keyframes tree3d-bud-pulse {
+  0%, 100% { transform: scale(1); }
+  50% { transform: scale(1.07); }
+}
 /* 这一支下有我的足迹 —— 否则用户无从判断该点哪一支 */
 .tree3d-nb.has .pill::before {
   content: "";

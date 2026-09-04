@@ -4,7 +4,8 @@ import type { IdentifyResult, SubjectKind } from "./types.js";
 export type EligibilityErrorCode =
   | "identify_not_organism"
   | "identify_human"
-  | "identify_not_living";
+  | "identify_not_living"
+  | "identify_no_kingdom";
 
 export type EligibilityDecision =
   | { ok: true }
@@ -57,6 +58,17 @@ export function evaluateEligibility(result: IdentifyResult): EligibilityDecision
   }
 
   const collectible = eligibility === "collectible" && kind === "living_organism";
+  const kingdomLa = result.taxonomy.kingdom?.name_la?.trim() ?? "";
+
+  /* 已拍板：没界不进图鉴。树上本来就挂不住；识图这一关也要拦。 */
+  if (collectible && !kingdomLa) {
+    return {
+      ok: false,
+      code: "identify_no_kingdom",
+      kind,
+      reasonZh: result.ineligibility_reason_zh.trim() || t("error.identifyNoKingdomReason"),
+    };
+  }
 
   if (collectible) return { ok: true };
 
@@ -80,6 +92,7 @@ export function isEligibilityErrorCode(code: string | null | undefined): code is
   return (
     code === "identify_not_organism" ||
     code === "identify_human" ||
-    code === "identify_not_living"
+    code === "identify_not_living" ||
+    code === "identify_no_kingdom"
   );
 }

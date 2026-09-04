@@ -31,6 +31,9 @@ apps/api/scripts/out/
 # introduced-index build cache (GRIIS Compendium CSV ~24MB)
 apps/api/data/_cache/
 
+# 骨架中文配表中间缓存（可续跑，不入库）
+scripts/_cache/
+
 # 名录原始件（公开政府文件，合计约 9MB）。list.json 与 SOURCE.md 照常入库；
 # 下载地址写在各目录 SOURCE.md，要重跑解析脚本时再取回。
 apps/api/data/cn-*/*.pdf

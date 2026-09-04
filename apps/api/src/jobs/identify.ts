@@ -19,6 +19,7 @@ const STORED_CODES = new Set([
   "identify_not_organism",
   "identify_human",
   "identify_not_living",
+  "identify_no_kingdom",
 ]);
 
 type IdentifyOpts = {

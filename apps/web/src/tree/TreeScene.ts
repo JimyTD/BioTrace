@@ -13,8 +13,8 @@
  * 展开后同一根枝会放大到半个屏幕，2 段就是两条直线 —— 折线感的根因。
  * 全局提高段数太贵；展开时可见的枝最多几百根，单独给它们 10 段即可。
  */
-import type { TreeNode } from "./treeModel";
-import { labelOf, RANK_ZH } from "./treeModel";
+import { formatRank, t } from "@biotrace/messages";
+import { batchKids, FAN_BATCH, labelOf, orderKids, RANKS, type TreeNode } from "./treeModel";
 import {
   type V3,
   add, bez3, dot, h01, kingdomHex, kvis, len3, lookAt, m4mul, nrm, ortho, persp, scl, sub, UP,
@@ -35,6 +35,46 @@ const ZOFF = S * 0.3;
 const MAXEX = 1600;
 const EX_SEGS = 10;
 const TRUNK_H = 132;
+/** 目科属种未收集时往灰里收多少。界门纲不走这条。 */
+const COLLECT_UNLIT = 0.52;
+/** 总览每节点最多几根外沿子枝。其余缩在冠内。大概画，不跟真扇出走。 */
+const OV_VIS_KIDS = 9;
+
+/**
+ * 树冠布局表（拍板 2026-09-04）。
+ *
+ * 取消了原来的「中枝」—— 色藻/原生动物贴在主干腰上像瘤子，语义上它们也
+ * 不是「介于地上地下之间」，就是不起眼的真核生物。改成树冠里的矮枝。
+ *
+ * tier：0=高枝 1=中高枝 2=矮枝（从主干 3/4 高处分出）
+ * split：几何上拆成几支。**只影响形态，数据结构不变** —— 动物界 34 个门
+ *   全挂一根枝上会粗得像根柱子，拆两支才有大枝杈的体量感。
+ */
+const CANOPY: Record<string, { tier: 0 | 1 | 2; split: number }> = {
+  Animalia: { tier: 0, split: 2 },
+  Plantae: { tier: 0, split: 2 },
+  Fungi: { tier: 1, split: 1 },
+  Chromista: { tier: 2, split: 1 },
+  Protozoa: { tier: 2, split: 1 },
+};
+const CANOPY_DEF = { tier: 1 as const, split: 1 };
+/** 三档枝长（主干高的倍数）。写死 —— 不随子级数量浮动，否则数据一变形态就乱。 */
+const TIER_LEN = [0.72, 0.62, 0.20];
+/** 档内 ±8% 的稳定扰动，避免同档几根一模一样长。 */
+const TIER_JIT = 0.08;
+/** 矮枝在主干上的分叉高度 */
+const TIER2_AT = 0.70;
+/** 拆枝：每根次主枝的分段数 */
+const FORK_SEGS = 6;
+
+type Fork = { A: V3; B: V3; C: V3 };
+
+/**
+ * 布局版本开关，仅用于 A/B 对比：`?layout=old` 走改造前的三段式。
+ * 默认走新版，正式行为不受影响。对比看完即可删除本开关与 `growTrunkOld`。
+ */
+const LAYOUT_OLD = typeof location !== "undefined"
+  && new URLSearchParams(location.search).get("layout") === "old";
 
 type Geo = {
   vs: number; ve: number; ls: number; le: number; selfVs: number;
@@ -122,11 +162,13 @@ layout(location=2) in vec3 aCol; layout(location=3) in float aSz;
 layout(location=4) in float aFoc;
 uniform mat4 uVP, uV;
 uniform float uMorph, uOnly, uPx, uFogN, uFogF, uSzK;
+uniform float uBudOn, uBudT;
+uniform vec3 uBud;
 out vec3 vCol; out float vFog; out float vLY; out float vPx; out float vSeed;
 void main(){
   float keep=(aFoc<-0.5) ? 0.0
            : ((uOnly>1.5)?1.0:((uOnly>0.5)?aFoc:1.0-aFoc));
-  vec3 p=mix(aP,aF,uMorph);
+  vec3 p = (uBudOn>0.5) ? mix(uBud, aF, uBudT) : mix(aP, aF, uMorph);
   vec4 c=uVP*vec4(p,1.0);
   float vz=-(uV*vec4(p,1.0)).z;
   vFog=clamp((vz-uFogN)/max(uFogF-uFogN,1.0),0.0,1.0);
@@ -261,6 +303,15 @@ export class TreeScene {
   private pending: TreeNode | null = null;
   private phase: "idle" | "in" | "out" = "idle";
   private morph = 0; private morphGoal = 0;
+  /** 换茬时只驱动展开缓冲，不动全局 morph（否则镜头里整棵树会跟着缩回去）。 */
+  private bloom = 1;
+  private bloomClock = 1;
+  private batchAnim: "idle" | "out" | "in" = "idle";
+  private pendingPage = 0;
+  private exMode: "open" | "retract" | "grow" = "open";
+  private budOrigin: V3 | null = null;
+  /** 展开态真正要画的叶点。其余子树叶一律藏，避免收成梢上那一坨。 */
+  private fanLeaf: number[] = [];
   private blurAmt = 0; private blurGoal = 0;
   private swayT = 0; private swayK = 0;
   private focusBasis: [V3, V3, V3] = [[1, 0, 0], [0, 1, 0], [0, 0, 1]];
@@ -269,6 +320,15 @@ export class TreeScene {
   private POOLN = 96;
   private lab: HTMLButtonElement[] = [];
   private ftitle!: HTMLDivElement;
+  private budBtn!: HTMLButtonElement;
+  private prevBtn!: HTMLButtonElement;
+  private nextBudP: V3 | null = null;
+  private nextBudBase: V3 | null = null;
+  private prevBudP: V3 | null = null;
+  private prevBudBase: V3 | null = null;
+  private batchPage = 0;
+  private batchFocusId = "";
+  private batchPages = 1;
   private cardOpen = false;
   private vc = 0; private ic = 0; private lc = 0;
   /** 叶点世界尺寸。和树高挂钩，与所在层级的枝长脱钩（见 growLeaves 说明）。 */
@@ -290,7 +350,7 @@ export class TreeScene {
       antialias: true, alpha: false, preserveDrawingBuffer: true,
       powerPreference: "high-performance",
     });
-    if (!gl) throw new Error("此设备不支持 WebGL2");
+    if (!gl) throw new Error(t("tree3d.webgl2"));
     this.gl = gl;
 
     const t0 = performance.now();
@@ -323,7 +383,10 @@ export class TreeScene {
 
   /** 外部（URL 变化 / 面包屑）驱动焦点。 */
   goTo(node: TreeNode) {
-    if (node === this.focus && this.phase === "idle") return;
+    if (node === this.focus) return;
+    this.batchAnim = "idle";
+    this.bloom = 1;
+    this.bloomClock = 1;
     this.pending = node;
     if (this.morph > 0.02) this.phase = "out";
     else { this.applyFocus(node); this.phase = "in"; this.pending = null; }
@@ -363,6 +426,11 @@ export class TreeScene {
       for (const c of n.ch) walk(c);
     };
     walk(this.root);
+    /* 次主枝（拆枝）不属于任何节点，但同样占缓冲。见 growTrunk。 */
+    if (!LAYOUT_OLD) for (const c of this.kidsOf(this.root)) {
+      const sp = (CANOPY[c.kingdom] ?? CANOPY_DEF).split;
+      if (sp > 1) segs += sp * FORK_SEGS;
+    }
 
     this.NV = segs * 4; this.NI = segs * 6; this.leafCount = Math.max(1, leaves);
     this.stats.branches = branches; this.stats.leaves = leaves;
@@ -391,28 +459,89 @@ export class TreeScene {
     this.makeGround();
   }
 
-  /** 主干 + 三段式：crown 撑树冠、basal 在主干 1/3 高、root 从基部水平铺开。 */
+  /**
+   * 主干 + 树冠 + 根系。
+   *
+   * 树冠不再按「界的子级数量」定长短，而是按 CANOPY 表写死三档高度：
+   * 数据一变形态就跟着乱是原来最大的毛病。同时动物/植物各拆两支，
+   * 且两支相邻 —— 同色成簇才读得出「这是一个界」。
+   */
   private growTrunk() {
+    if (LAYOUT_OLD) { this.growTrunkOld(); return; }
+    const nd = this.root;
+    const g = this.G(nd);
+    this.growSelf(nd, [0, 0, 0], [0, 1, 0], TRUNK_H, 7.2, 4.6, 0);
+
+    const canopy: TreeNode[] = [], roots: TreeNode[] = [];
+    for (const c of this.kidsOf(nd)) (c.zone === "root" ? roots : canopy).push(c);
+    const cf = (c: TreeNode) => CANOPY[c.kingdom] ?? CANOPY_DEF;
+    /* 排序决定枝位顺序。同档按 CANOPY 表里的书写顺序 —— 表里动物、植物挨着，
+       它们的两支枝位就自然相邻，同色成簇才读得出「这是一个界」。 */
+    const order = Object.keys(CANOPY);
+    const rank = (c: TreeNode) => { const i = order.indexOf(c.kingdom); return i < 0 ? 99 : i; };
+    canopy.sort((a, b) => cf(a).tier - cf(b).tier || rank(a) - rank(b));
+
+    const upper = canopy.filter((c) => cf(c).tier < 2);
+    const lower = canopy.filter((c) => cf(c).tier === 2);
+    /* 枝位是全树共用的角度刻度：拆枝的每一支各占一位，所以动物的两支
+       和真菌的一支在圆周上是等距的。若只按「界」分角度，两支会挤在一起，
+       另外半边全空 —— 树整个偏向一侧。 */
+    const slots = upper.reduce((s, c) => s + cf(c).split, 0);
+    const gap = (Math.PI * 2) / Math.max(1, slots);
+    const slotDir = (k: number): V3 => {
+      const a = gap * (k + 0.5) - Math.PI / 2;
+      return nrm([Math.cos(a) * 0.62, 1.0, Math.sin(a) * 0.62]);
+    };
+    const TOP = g.p1, BASE = g.p0;
+
+    let slot = 0;
+    for (const c of upper) {
+      const { tier, split } = cf(c);
+      const L = TRUNK_H * TIER_LEN[tier]!
+        * (1 + TIER_JIT * (h01(strId(c.id), 1, 2, 3) * 2 - 1));
+      const arms: V3[] = [];
+      for (let i = 0; i < split; i++) arms.push(slotDir(slot + i));
+      // 柄朝本界所占扇区的中心
+      const ac = gap * (slot + split / 2) - Math.PI / 2;
+      const stem = nrm([Math.cos(ac) * 0.62, 1.0, Math.sin(ac) * 0.62]);
+      if (split > 1) this.growForked(c, TOP, stem, arms, L, 4.6, 2.8);
+      else this.grow(c, TOP, arms[0]!, L, 4.6, 2.8, 1);
+      slot += split;
+    }
+
+    /* 矮枝：从主干 3/4 高处分出，短、细、外倾。它要读作「树冠下缘够不着的
+       小枝」，不是第二层树冠 —— 所以角度插在上层枝位的空隙里（枝位在
+       (k+0.5)·gap，空隙就在 k·gap），才不会被大枝正面盖住。 */
+    const lowAt = this.bzAtTree(nd, TIER2_AT);
+    lower.forEach((c, j) => {
+      const a = -Math.PI / 2 + gap * Math.round((j * slots) / Math.max(1, lower.length));
+      const L = TRUNK_H * TIER_LEN[2]!
+        * (1 + TIER_JIT * (h01(strId(c.id), 4, 5, 6) * 2 - 1));
+      this.grow(c, lowAt, nrm([Math.cos(a) * 1.5, 0.5, Math.sin(a) * 1.5]), L, 2.2, 1.2, 1);
+    });
+
+    const rn = roots.length;
+    roots.forEach((c, j) => {
+      const a = (Math.PI * 2 * j) / Math.max(1, rn) + 2.1;
+      this.grow(c, BASE, nrm([Math.cos(a) * 1.5, -0.3, Math.sin(a) * 1.5]), TRUNK_H * 0.42, 3.4, 1.8, 1);
+    });
+    g.ve = this.vc; g.le = this.lc;
+  }
+
+  /** 改造前的三段式布局。仅供 `?layout=old` 对比，看完删。 */
+  private growTrunkOld() {
     const nd = this.root;
     const g = this.G(nd);
     this.growSelf(nd, [0, 0, 0], [0, 1, 0], TRUNK_H, 7.2, 4.6, 0);
     const groups: Record<string, TreeNode[]> = { crown: [], basal: [], root: [] };
     for (const c of this.kidsOf(nd)) (groups[c.zone] ?? groups.crown!).push(c);
-
     const TOP = g.p1, BASE = g.p0;
-    /* 中枝分叉高度。根系铺宽后会在视觉上盖住贴地的中枝，
-       所以中枝要抬到主干约 1/3 高处，「地上／地下」才分得清。 */
     const basalAt = this.bzAtTree(nd, 0.34);
-
     const cn = groups.crown!.length;
     groups.crown!.forEach((c, j) => {
       const a = (Math.PI * 2 * j) / Math.max(1, cn) - Math.PI / 2;
       this.grow(c, TOP, nrm([Math.cos(a) * 0.62, 1.0, Math.sin(a) * 0.62]), TRUNK_H * 0.72, 4.6, 2.8, 1);
     });
-    /* 近地侧枝必须明显矮小 —— 它的语义是「低矮丛」。
-       别照抄原型的 0.30：原型 mock 里每界节点数相近，
-       而真实骨架色藻界有 344 节点（接近植物界 307），
-       给同样的枝长它就长成了和树冠一样大的球，像另一棵树。 */
     const bn = groups.basal!.length;
     groups.basal!.forEach((c, j) => {
       const a = (Math.PI * 2 * j) / Math.max(1, bn) + 0.7;
@@ -425,6 +554,94 @@ export class TreeScene {
     });
     g.ve = this.vc; g.le = this.lc;
   }
+
+  /**
+   * 拆枝：一个界画成一短柄 + N 根次主枝，子级平分到各支上。
+   *
+   * 次主枝纯粹是几何，没有对应节点 —— 顶点写在本界的 [vs, ve) 区间内，
+   * collapse / fanReset / 焦点隐藏都会连带处理，不需要额外分支。
+   */
+  private growForked(
+    nd: TreeNode, A: V3, stem: V3, arms: V3[], L: number, w0: number, w1: number,
+  ) {
+    const g = this.G(nd);
+    const n = arms.length;
+    const stemL = L * 0.30;
+    this.growSelf(nd, A, stem, stemL, w0, w0 * 0.88, 1);
+    this.growLeaves(nd, stemL);
+
+    const fp = g.p1;
+    const col = this.branchColor(nd, 1);
+    const armL = L * 0.76;
+    const forks: Fork[] = arms.map((d) => {
+      // 外凸：弯离柄的方向，两支才是「张开的杈」而不是两根平行棍
+      const out = nrm(sub(d, scl(stem, dot(d, stem))));
+      return this.writeFork(
+        fp, d, armL, add(scl(out, 0.1), scl(UP, 0.04)), w0 * 0.86, w1, col,
+      );
+    });
+
+    const kids = this.kidsOf(nd);
+    const sid = strId(nd.id);
+    const per = Math.ceil(kids.length / n);
+    kids.forEach((c, j) => {
+      const f = forks[j % n]!;
+      const k = Math.floor(j / n);
+      const ft = per <= 1 ? 0.72 : 0.3 + 0.68 * (k / Math.max(1, per - 1));
+      const base = bez3(f.A, f.B, f.C, ft);
+      const u = 1 - ft;
+      const bdir = nrm([
+        2 * (u * (f.B[0] - f.A[0]) + ft * (f.C[0] - f.B[0])),
+        2 * (u * (f.B[1] - f.A[1]) + ft * (f.C[1] - f.B[1])),
+        2 * (u * (f.B[2] - f.A[2]) + ft * (f.C[2] - f.B[2])),
+      ]);
+      const [bu, bv] = ortho(bdir);
+      const a = (Math.PI * 2 * k) / Math.max(1, per) + nd.sib * 1.31 + 0.7
+        + 0.42 * (h01(sid, 1, j, 7) - 0.5);
+      const outer = k % Math.max(1, Math.ceil(per / OV_VIS_KIDS)) === 0;
+      const sp = 0.98 * (1.34 - 0.62 * ft) * (outer ? 1 : 0.42);
+      const perp = add(scl(bu, Math.cos(a)), scl(bv, Math.sin(a)));
+      const d2 = nrm(add(add(scl(bdir, Math.cos(sp)), scl(perp, Math.sin(sp))), scl(UP, 0.225)));
+      const visK = outer ? 1 : 0.28;
+      const cl = armL * 0.72 * (0.86 + 0.28 * (((j * 3) % 4) / 3)) * visK;
+      this.grow(c, base, d2, cl, w1 * visK, w1 * 0.6 * visK, 2);
+    });
+    g.ve = this.vc; g.le = this.lc;
+  }
+
+  /** 写一段不挂在节点上的枝几何（次主枝）。返回控制点，供子级沿枝错落分出。 */
+  private writeFork(
+    A: V3, dir: V3, L: number, bend: V3, w0: number, w1: number, col: V3,
+  ): Fork {
+    const C = add(A, scl(dir, L));
+    const B = add(add(A, scl(dir, L * 0.5)), scl(bend, L));
+    const v0 = this.vc;
+    for (let i = 0; i < FORK_SEGS; i++) {
+      const b = v0 + i * 4;
+      this.aST[b * 2] = -1; this.aST[b * 2 + 1] = 0;
+      this.aST[(b + 1) * 2] = 1; this.aST[(b + 1) * 2 + 1] = 0;
+      this.aST[(b + 2) * 2] = -1; this.aST[(b + 2) * 2 + 1] = 1;
+      this.aST[(b + 3) * 2] = 1; this.aST[(b + 3) * 2 + 1] = 1;
+      this.idx[this.ic++] = b; this.idx[this.ic++] = b + 1; this.idx[this.ic++] = b + 2;
+      this.idx[this.ic++] = b + 2; this.idx[this.ic++] = b + 1; this.idx[this.ic++] = b + 3;
+      const t0 = i / FORK_SEGS, t1 = (i + 1) / FORK_SEGS;
+      const p = bez3(A, B, C, t0), q = bez3(A, B, C, t1);
+      const s0 = w0 + (w1 - w0) * t0, s1 = w0 + (w1 - w0) * t1;
+      for (let k = 0; k < 4; k++) {
+        const o = (b + k) * 3, o2 = (b + k) * 2;
+        this.aP0[o] = p[0]; this.aP0[o + 1] = p[1]; this.aP0[o + 2] = p[2];
+        this.aP1[o] = q[0]; this.aP1[o + 1] = q[1]; this.aP1[o + 2] = q[2];
+        this.aW[o2] = s0; this.aW[o2 + 1] = s1;
+        this.aCol[o] = col[0]; this.aCol[o + 1] = col[1]; this.aCol[o + 2] = col[2];
+      }
+    }
+    this.vc += FORK_SEGS * 4;
+    this.aF0.set(this.aP0.subarray(v0 * 3, this.vc * 3), v0 * 3);
+    this.aF1.set(this.aP1.subarray(v0 * 3, this.vc * 3), v0 * 3);
+    this.aWF.set(this.aW.subarray(v0 * 2, this.vc * 2), v0 * 2);
+    return { A, B, C };
+  }
+
 
   private growSelf(nd: TreeNode, A: V3, dir: V3, L: number, w0: number, w1: number, depth: number): V3 {
     const g = this.G(nd);
@@ -484,6 +701,14 @@ export class TreeScene {
       const lift = isRoot ? (v.dead ? 0.12 : 0) + dd * 0.16 : 0.06;
       cr += (gy - cr) * desat; cg += (gy - cg) * desat; cb += (gy - cb) * desat;
       cr += (1 - cr) * lift; cg += (1 - cg) * lift; cb += (1 - cb) * lift;
+    }
+    /* 点亮：界门纲不因收集变灰；目科属种没走过才收一层饱和度。
+       拍板 2026-09-03，见 docs/wip/物种树-结构议题.md §4.6。 */
+    if (nd.lvl >= 3 && nd.got === 0) {
+      const gy = cr * 0.34 + cg * 0.5 + cb * 0.16;
+      cr += (gy - cr) * COLLECT_UNLIT;
+      cg += (gy - cg) * COLLECT_UNLIT;
+      cb += (gy - cb) * COLLECT_UNLIT;
     }
     return [cr, cg, cb];
   }
@@ -546,14 +771,24 @@ export class TreeScene {
     const n = kids.length;
     if (n === 0) { g.ve = this.vc; g.le = this.lc; return; }
 
-    const isRoot = nd.zone === "root", isBasal = nd.zone === "basal";
+    const isRoot = nd.zone === "root";
     const spread = depth === 0 ? 0.62 : 0.98;
+    /* isBasal 是改造前的几何特例（近地矮丛专用），新版已删除。
+       这里保留仅为 `?layout=old` 能还原旧形态。 */
+    const isBasal = LAYOUT_OLD && nd.zone === "basal";
     /* 树冠的 photo 必须由正转负：内层上举、外缘下垂，冠才是圆的。
        若全程为正，所有枝互相平行 → 冠顶压平、下半空掉。 */
     const photo = isRoot ? -0.06 : isBasal ? 0.12 - depth * 0.03 : 0.34 - depth * 0.115;
     const spreadK = isRoot ? 1.6 : isBasal ? 1.45 : 1.0;
     const phase = nd.sib * 1.31 + depth * 0.7;
     const sid = strId(nd.id);
+    const primary = new Set<number>();
+    const visN = Math.min(n, OV_VIS_KIDS);
+    if (n <= OV_VIS_KIDS) {
+      for (let i = 0; i < n; i++) primary.add(i);
+    } else {
+      for (let i = 0; i < visN; i++) primary.add(Math.round(i * (n - 1) / Math.max(visN - 1, 1)));
+    }
 
     for (let j = 0; j < n; j++) {
       /* 沿父枝全长错落分出。若都从末端一点爆开，每个节点会长成独立的球，
@@ -565,13 +800,17 @@ export class TreeScene {
       /* 均匀分布 + 小扰动。纯黄金角螺旋只在数量多时才均匀；
          每节点 3~5 个子级时螺旋会把它们堆在一侧，逐层放大后整树偏心。 */
       const a = (Math.PI * 2 * j) / n + phase + 0.42 * (h01(sid, depth, j, 7) - 0.5);
-      const sp = spread * spreadK * (1.34 - 0.62 * ft);
+      const outer = isRoot || isBasal || primary.has(j);
+      const sp = spread * spreadK * (1.34 - 0.62 * ft) * (outer ? 1 : 0.42);
       const perp = add(scl(bu, Math.cos(a)), scl(bv, Math.sin(a)));
       let d2 = nrm(add(add(scl(bdir, Math.cos(sp)), scl(perp, Math.sin(sp))), scl(UP, photo)));
       // 根系「压扁」：竖直分量按比例压掉，长度全部转化为水平延展
       if (isRoot) d2 = nrm([d2[0], d2[1] * 0.3, d2[2]]);
-      const cl = L * 0.72 * (0.86 + 0.28 * (((j * 3) % 4) / 3));
-      this.grow(kids[j]!, base, d2, cl, w1, w1 * 0.6, depth + 1);
+      /* 同阶平等（§4.3）：总览大概画。外沿最多 OV_VIS_KIDS 根，
+         多出来的缩在冠里，不跟 34 门 vs 9 门这种真数据走。改长度同比改宽度（§5）。 */
+      const visK = outer ? 1 : 0.28;
+      const cl = L * 0.72 * (0.86 + 0.28 * (((j * 3) % 4) / 3)) * visK;
+      this.grow(kids[j]!, base, d2, cl, w1 * visK, w1 * 0.6 * visK, depth + 1);
     }
     g.ve = this.vc; g.le = this.lc;
   }
@@ -616,6 +855,11 @@ export class TreeScene {
       if (dim < 1) {
         cr += (gy - cr) * (1 - dim); cg += (gy - cg) * (1 - dim); cb += (gy - cb) * (1 - dim);
       }
+      if (nd.lvl >= 3 && nd.got === 0) {
+        cr += (gy - cr) * COLLECT_UNLIT;
+        cg += (gy - cg) * COLLECT_UNLIT;
+        cb += (gy - cb) * COLLECT_UNLIT;
+      }
       this.lCol[o] = cr; this.lCol[o + 1] = cg; this.lCol[o + 2] = cb;
       this.lSz[this.lc] = this.leafSize;
       const sp = species[i];
@@ -640,9 +884,9 @@ export class TreeScene {
     this.TREE_H = Math.max(1, maxY - minY);
     this.bbX0 = x0; this.bbX1 = x1; this.bbZ0 = z0; this.bbZ1 = z1;
     this.bbCX = (x0 + x1) / 2; this.bbCZ = (z0 + z1) / 2;
-    this.OV_TGT = [this.bbCX, this.TREE_CY + this.TREE_H * 0.01, this.bbCZ];
 
     // 界标签挂在各自树冠的质心，否则全挤在主干分叉处
+    let cx = 0, cz = 0, cn = 0;
     for (const c of this.kidsOf(this.root)) {
       const g = this.G(c);
       let sx = 0, sy = 0, sz = 0, n = 0;
@@ -650,7 +894,17 @@ export class TreeScene {
         sx += this.lP[i * 3]!; sy += this.lP[i * 3 + 1]!; sz += this.lP[i * 3 + 2]!; n++;
       }
       g.centroid = n > 0 ? [sx / n, sy / n, sz / n] : g.p1;
+      if (c.zone === "crown") {
+        // 三界各一票，不被叶最多的那一蓬把镜头拖走
+        cx += g.p1[0]; cz += g.p1[2]; cn++;
+      }
     }
+    // 取景对准三界主枝端的平均，不对准整棵 AABB / 叶团质心
+    this.OV_TGT = [
+      cn ? cx / cn : this.bbCX,
+      this.TREE_CY + this.TREE_H * 0.06,
+      cn ? cz / cn : this.bbCZ,
+    ];
   }
 
   private makeGround() {
@@ -731,7 +985,7 @@ export class TreeScene {
     this.pB = this.prog(VS_BRANCH, FS_BRANCH);
     this.uB = this.U(this.pB, ["uVP", "uV", "uMorph", "uOnly", "uPx", "uRes", "uFog", "uFogK", "uFogN", "uFogF", "uWK", "uDesat", "uHorizon"]);
     this.pL = this.prog(VS_LEAF, FS_LEAF);
-    this.uL = this.U(this.pL, ["uVP", "uV", "uMorph", "uOnly", "uPx", "uFog", "uFogK", "uFogN", "uFogF", "uSzK", "uDesat", "uAlpha", "uDeep", "uHorizon", "uLeaf"]);
+    this.uL = this.U(this.pL, ["uVP", "uV", "uMorph", "uOnly", "uPx", "uFog", "uFogK", "uFogN", "uFogF", "uSzK", "uDesat", "uAlpha", "uDeep", "uHorizon", "uLeaf", "uBudOn", "uBudT", "uBud"]);
     this.pBlur = this.prog(VS_FS, FS_BLUR);
     this.uBlur = this.U(this.pBlur, ["uT", "uDir"]);
     this.pBlit = this.prog(VS_FS, FS_BLIT);
@@ -915,8 +1169,8 @@ export class TreeScene {
     ];
   }
 
-  /** 子树收拢：枝塌到一点，叶散成绒毛 */
-  private collapse(nd: TreeNode, P: V3, rad: number, dir: V3) {
+  /** 子树收拢：枝塌到一点。show=true 时叶作为这根枝梢的叶簇留下，并进 fanLeaf。 */
+  private collapse(nd: TreeNode, P: V3, rad: number, dir: V3, show = false) {
     this.bbAdd(P);
     const g = this.G(nd);
     for (let v = g.vs; v < g.ve; v++) {
@@ -926,9 +1180,15 @@ export class TreeScene {
       this.aWF[v * 2] = 0; this.aWF[v * 2 + 1] = 0;
     }
     for (let l = g.ls; l < g.le; l++) {
-      const p = this.fuzzPt(P, rad, l, dir), o = l * 3;
-      this.lF[o] = p[0]; this.lF[o + 1] = p[1]; this.lF[o + 2] = p[2];
+      const p = this.fuzzPt(P, rad, l, dir);
+      this.placeFanLeaf(l, p, show);
     }
+  }
+
+  private placeFanLeaf(i: number, p: V3, show = true) {
+    const o = i * 3;
+    this.lF[o] = p[0]; this.lF[o + 1] = p[1]; this.lF[o + 2] = p[2];
+    if (show) this.fanLeaf.push(i);
   }
 
   private fanReset(nd: TreeNode) {
@@ -1009,10 +1269,41 @@ export class TreeScene {
     }
   }
 
+  /** 换茬：柄冻住；子枝从顶芽点长出 / 收回。点进去仍从总览树形展开。 */
+  private pushExBranch(g: Geo, A: V3, fB: V3, fC: V3, w0: number, w1: number, col: V3, rel: number) {
+    if (this.exMode !== "open" && rel === 0) {
+      this.pushExpand(A, fB, fC, w0, w1, A, fB, fC, w0, w1, col, false);
+      return;
+    }
+    const o = this.budOrigin;
+    if (this.exMode === "grow" && rel > 0 && o) {
+      this.pushExpand(o, o, o, 0, 0, A, fB, fC, w0, w1, col, false);
+      return;
+    }
+    if (this.exMode === "retract" && rel > 0 && o) {
+      this.pushExpand(A, fB, fC, w0, w1, o, o, o, 0, 0, col, false);
+      return;
+    }
+    this.pushExpand(g.tA, g.tB, g.tC, g.w0, g.w1, A, fB, fC, w0, w1, col, false);
+  }
+
+  private pushExBlade(tp: V3, base: V3, mid: V3, p: V3, w0: number, w1: number, col: V3) {
+    const o = this.budOrigin;
+    if (this.exMode === "grow" && o) {
+      this.pushExpand(o, o, o, 0, 0, base, mid, p, w0, w1, col, true);
+      return;
+    }
+    if (this.exMode === "retract" && o) {
+      this.pushExpand(base, mid, p, w0, w1, o, o, o, 0, 0, col, true);
+      return;
+    }
+    this.pushExpand(tp, tp, tp, 0, 0, base, mid, p, w0, w1, col, true);
+  }
+
   /** 把节点（含子树）写入展开缓冲。 */
   private fanNode(nd: TreeNode, A: V3, dir: V3, L: number, w0: number, w1: number, rel: number) {
     const [RB, UB, FB] = this.focusBasis;
-    if (rel > MAXREL || L <= 0.001) { this.collapse(nd, A, FUZZ, dir); return; }
+    if (rel > MAXREL || L <= 0.001) { this.collapse(nd, A, FUZZ, dir, true); return; }
     const g = this.G(nd);
     /* 3D 弯曲。横向分量必须沿离心方向外凸而不是用 cos(phase) ——
        后者会让某些枝的横向弯曲正好归零，变成直棍。 */
@@ -1027,21 +1318,27 @@ export class TreeScene {
     const fB = add(add(A, scl(dir, L * 0.5)), scl(bend, L));
     const cs = g.selfVs * 3;
     const col: V3 = [this.aCol[cs]!, this.aCol[cs + 1]!, this.aCol[cs + 2]!];
-    this.pushExpand(g.tA, g.tB, g.tC, g.w0, g.w1, A, fB, fC, w0, w1, col, false);
+    this.pushExBranch(g, A, fB, fC, w0, w1, col, rel);
     g.bA = A; g.bB = fB; g.bC = fC;
     const end = fC;
     g.fp = end;
-    // 柄不参与取景 —— 让它自然伸出画面下方，而不是占掉 1/3 屏
-    if (rel > 0) this.bbAdd(A);
+    if (rel === 0) this.budOrigin = end;
+    // 柄进取景。原先故意不进，扇形贴在上半屏、下面空一截。
+    this.bbAdd(A);
     this.bbAdd(end);
 
-    const species = nd.ch.filter((c) => c.lvl >= 6);
-    const kids = this.kidsOf(nd);
+    const speciesAll = orderKids(nd.ch.filter((c) => c.lvl >= 6));
+    const kidsAll = this.kidsOf(nd);
+    const speciesBat = rel === 0
+      ? batchKids(speciesAll, this.batchPage)
+      : { shown: speciesAll.slice(0, FAN_BATCH), ordered: speciesAll, pages: 1, page: 0 };
+    const species = speciesBat.shown;
 
     // ── 焦点自身有「种」：做成一根长主枝 + 两侧互生短叶柄 ──
-    if (species.length > 0 && kids.length === 0) {
+    if (speciesAll.length > 0 && kidsAll.length === 0) {
       const n = species.length;
       if (rel === 0) {
+        this.batchPages = speciesBat.pages;
         const v = kvis(nd.kingdom);
         const lcol: V3 = [
           v.c[0] + (0.99 - v.c[0]) * 0.3,
@@ -1062,17 +1359,16 @@ export class TreeScene {
           const p = add(base, scl(pd, petiole));
           const lb = add(add(scl(RB, 0.14 * side), scl(FB, 0.05)), scl(UB, -0.06));
           const mid = add(scl(add(base, p), 0.5), scl(lb, petiole));
-          // tree 态：种在总览里只是点 → 塌缩到属枝末端、宽度 0，展开时"长"出来
           const tp: V3 = li != null
             ? [this.lP[li * 3]!, this.lP[li * 3 + 1]!, this.lP[li * 3 + 2]!]
             : g.p1;
-          this.pushExpand(tp, tp, tp, 0, 0, base, mid, p, petiole * 0.03, petiole * 0.105, lcol, true);
-          if (li != null) {
-            const o = li * 3;
-            this.lF[o] = p[0]; this.lF[o + 1] = p[1]; this.lF[o + 2] = p[2];
-          }
+          this.pushExBlade(tp, base, mid, p, petiole * 0.03, petiole * 0.105, lcol);
+          if (li != null) this.placeFanLeaf(li, p);
           lg.fp = p; lg.fbase = base;
           this.bbAdd(p); this.bbAdd(base);
+        }
+        if (this.exMode !== "retract" && speciesBat.pages > 1) {
+          this.placeBatchBuds(end, dir, L, w1, col, RB, UB, speciesBat.page, speciesBat.pages);
         }
         this.bbAdd(end);
         return;
@@ -1085,10 +1381,9 @@ export class TreeScene {
         const lg = this.G(lf);
         const li = lg.leafIdx[0];
         if (li == null) continue;
-        const o = li * 3;
         if (rel + 1 > MAXREL || nl <= 0.001) {
           const p = this.fuzzPt(end, FUZZ, li, dir);
-          this.lF[o] = p[0]; this.lF[o + 1] = p[1]; this.lF[o + 2] = p[2];
+          this.placeFanLeaf(li, p);
           lg.fp = p; continue;
         }
         const a = this.fanAngle(i, n, spAdj);
@@ -1100,35 +1395,42 @@ export class TreeScene {
           add(base, scl(pd, nl * (ring ? 1.0 : 0.6))),
           scl(FB, this.zStagger(i, n) * nl * 0.42),
         );
-        this.lF[o] = p[0]; this.lF[o + 1] = p[1]; this.lF[o + 2] = p[2];
+        this.placeFanLeaf(li, p);
         lg.fp = p; lg.fbase = base; this.bbAdd(p);
+      }
+      const shownSp = new Set(species);
+      for (const lf of speciesAll) {
+        if (!shownSp.has(lf)) this.collapse(lf, end, FUZZ, dir, true);
       }
       return;
     }
 
     // ── 装饰叶：跟着本枝末端走（它们没有对应节点，不需要标签）──
-    if (g.leafIdx.length > 0 && kids.length === 0) {
+    if (g.leafIdx.length > 0 && kidsAll.length === 0) {
       for (const li of g.leafIdx) {
         const p = this.fuzzPt(end, FUZZ * (rel === 0 ? 2.2 : 1), li, dir);
-        const o = li * 3;
-        this.lF[o] = p[0]; this.lF[o + 1] = p[1]; this.lF[o + 2] = p[2];
+        this.placeFanLeaf(li, p);
         this.bbAdd(p);
       }
       return;
     }
 
-    const n = kids.length;
+    const kidBat = rel === 0
+      ? batchKids(kidsAll, this.batchPage)
+      : { shown: orderKids(kidsAll).slice(0, FAN_BATCH), ordered: orderKids(kidsAll), pages: 1, page: 0 };
+    const shownKids = kidBat.shown;
+    const n = shownKids.length;
     if (n === 0) return;
+    if (rel === 0) this.batchPages = kidBat.pages;
     const nl = FAN_LEN[Math.min(rel + 1, MAXREL)]!;
     // 竖屏收窄张角（见 spreadK），并让子级枝更长 —— 补回收窄损失的铺开感
     const sk = this.spreadK();
     const sp = FAN_SPREAD[Math.min(rel + 1, MAXREL)]! * sk;
     const lenK = 1 + (1 - sk) * 0.55;
-    const sibMax = Math.max(1, ...kids.map((c) => Math.max(1, c.got + c.ch.length)));
 
     for (let j = 0; j < n; j++) {
-      const c = kids[j]!;
-      if (rel + 1 > MAXREL || nl <= 0.001) { this.collapse(c, end, FUZZ, dir); continue; }
+      const c = shownKids[j]!;
+      if (rel + 1 > MAXREL || nl <= 0.001) { this.collapse(c, end, FUZZ, dir, true); continue; }
       let d2: V3, ln: number, base: V3;
       if (rel === 0) {
         /* 直接子级：屏幕上仍是扇形均分（保证标签不重叠、可读），
@@ -1139,8 +1441,8 @@ export class TreeScene {
         base = this.bzAt(nd, t);
         const bdir = this.bzTan(nd, t);
         const pd = nrm(add(scl(bdir, Math.cos(a)), scl(RB, Math.sin(a))));
-        const bulk = 0.8 + 0.34 * Math.pow(Math.max(1, c.got + c.ch.length) / sibMax, 0.5);
-        const tv = add(scl(pd, nl * bulk * lenK), scl(FB, this.zStagger(j, n) * ZOFF));
+        const jitter = 0.86 + 0.28 * h01(strId(c.id), 3, 5, 7);
+        const tv = add(scl(pd, nl * jitter * lenK), scl(FB, this.zStagger(j, n) * ZOFF));
         ln = len3(tv); d2 = scl(tv, 1 / ln);
       } else {
         // 更深层：真正的 3D 径向散开（绕父枝旋转），恢复体积
@@ -1158,6 +1460,15 @@ export class TreeScene {
          否则每根枝都像被平切的水管。 */
       const isTip = rel + 1 >= MAXREL;
       this.fanNode(c, base, d2, ln, w1, w1 * (isTip ? 0.1 : 0.48), rel + 1);
+    }
+    const shownSet = new Set(shownKids);
+    for (const c of kidBat.ordered) {
+      if (shownSet.has(c)) continue;
+      /* 焦点这一茬之外：藏。更深一层预览的溢出仍收成那根枝梢的叶簇。 */
+      if (rel > 0) this.collapse(c, end, FUZZ, dir, true);
+    }
+    if (this.exMode !== "retract" && rel === 0 && kidBat.pages > 1) {
+      this.placeBatchBuds(end, dir, L, w1, col, RB, UB, kidBat.page, kidBat.pages);
     }
   }
 
@@ -1186,9 +1497,12 @@ export class TreeScene {
          否则会和展开后的枝重影。祖先链留在背景层虚化：它们不参与 morph，
          若标成清晰层会在原地留下一根乱入的粗棍。「来路」由扇心下方那截柄表达。 */
       this.aFoc.fill(-1, g.vs, g.ve);
-      // 若焦点自身直接挂着「种」，这些点也由展开缓冲画成叶片，点精灵要隐藏
-      const hasSpecies = nd.ch.some((c) => c.lvl >= 6);
-      this.lFoc.fill(hasSpecies ? -1 : 1, g.ls, g.le);
+      /* 子树叶默认全藏。展开态只露出 fanNode 明确放到扇形上的那些；
+         否则没上场的几十根子树会被 collapse 堆成梢上那一坨灰点。 */
+      this.lFoc.fill(-1, g.ls, g.le);
+      for (const i of this.fanLeaf) {
+        if (i >= 0 && i < this.lFoc.length) this.lFoc[i] = 1;
+      }
     }
     gl.bindBuffer(gl.ARRAY_BUFFER, this.bFoc);
     gl.bufferData(gl.ARRAY_BUFFER, this.aFoc, gl.DYNAMIC_DRAW);
@@ -1196,10 +1510,27 @@ export class TreeScene {
     gl.bufferData(gl.ARRAY_BUFFER, this.lFoc, gl.DYNAMIC_DRAW);
   }
 
-  private applyFocus(nd: TreeNode) {
+  private applyFocus(nd: TreeNode, keepView = false, exMode: "open" | "retract" | "grow" = "open") {
     this.focus = nd;
     this.exCount = 0;
+    this.nextBudP = null;
+    this.nextBudBase = null;
+    this.prevBudP = null;
+    this.prevBudBase = null;
+    this.budOrigin = null;
+    this.fanLeaf = [];
+    this.exMode = keepView ? exMode : "open";
+    if (!keepView) {
+      this.batchAnim = "idle";
+      this.bloom = 1;
+      this.bloomClock = 1;
+    }
+    if (nd.id !== this.batchFocusId) {
+      this.batchPage = 0;
+      this.batchFocusId = nd.id;
+    }
     if (nd === this.root) {
+      this.batchPages = 1;
       this.fanReset(this.root);
       this.morphGoal = 0; this.blurGoal = 0;
       this.camGoal.tgt = this.sqz(this.OV_TGT);
@@ -1209,7 +1540,12 @@ export class TreeScene {
       this.upload();
       return;
     }
-    this.focusBasis = this.camBasis(this.camGoal.yaw, this.camGoal.pitch);
+    /* 换茬必须停在同一支上：镜头、morph、扇形坐标系都不动。
+       若按当前 cam 重算 basis，枝会跟着微晃的镜头整扇跳一下。 */
+    if (!keepView) {
+      this.camGoal.pitch = 0.06;
+      this.focusBasis = this.camBasis(this.camGoal.yaw, 0.06);
+    }
     const [RB, UB] = this.focusBasis;
     const g = this.G(nd);
     const P = g.p1;
@@ -1226,23 +1562,91 @@ export class TreeScene {
       stalk * (atLeafParent ? 0.004 : 0.01), 0,
     );
     this.morphGoal = 1; this.blurGoal = 1;
+    if (keepView) {
+      this.morph = 1;
+      this.phase = "idle";
+      this.cam.spin = 0;
+      this.setFocusFlags(nd);
+      this.upload();
+      return;
+    }
 
     /* 自适应取景：展开层数随阶元变化（门有 4 层、属只有 1 层），尺寸差数倍。
        按实际包围盒定距，才能每层都恰好填满画面。
        展开态不受水平压缩 —— 它是「凑近看一支」，再压只会让扇形变窄变空。 */
     const bb = this.fanBB!;
     const aspect = Math.max(0.35, this.W / Math.max(this.H, 1));
-    const halfR = Math.max(1, (bb.r1 - bb.r0) / 2) * 1.34;
-    const halfU = Math.max(1, (bb.u1 - bb.u0) / 2) * 1.3;
-    const need = Math.max(halfU, halfR / aspect);
+    const halfR = Math.max(1, (bb.r1 - bb.r0) / 2) * 1.18;
+    const halfU = Math.max(1, (bb.u1 - bb.u0) / 2) * 1.22;
+    const widthNeed = halfR / aspect;
+    /* 竖屏宽扇：若完全按宽度定距，内容只剩上半屏一小撮。
+       允许两侧略微出画，换竖向把扇形落到画面中部。 */
+    const need = aspect < 0.72
+      ? Math.max(halfU, Math.min(widthNeed, halfU * 1.4))
+      : Math.max(halfU, widthNeed);
     this.camGoal.dist = Math.max(S * 0.55, need / Math.tan(FOV / 2));
+    const uMid = (bb.u0 + bb.u1) / 2;
+    const uSpan = Math.max(1, bb.u1 - bb.u0);
     this.camGoal.tgt = add(
       add(P, scl(RB, (bb.r0 + bb.r1) / 2)),
-      scl(UB, (bb.u0 + bb.u1) / 2),
+      scl(UB, uMid - uSpan * 0.16),
     );
     this.cam.spin = 0;
     this.setFocusFlags(nd);
     this.upload();
+  }
+
+  private turnBatch(delta: number) {
+    if (this.batchAnim !== "idle" || this.phase !== "idle") return;
+    const next = this.batchPage + delta;
+    if (next < 0 || next >= this.batchPages) return;
+    this.pendingPage = next;
+    this.batchAnim = "out";
+    this.bloomClock = 0;
+    this.bloom = 0;
+    this.applyFocus(this.focus, true, "retract");
+  }
+
+  private drawBudAt(
+    from: V3, dir: V3, L: number, w: number, col: V3, RB: V3, UB: V3,
+    slot: "next" | "prev",
+  ) {
+    /* 合着的鳞片，体量和枝梢叶簇同类，不是一根带棱的粗纺锤。 */
+    const n = slot === "next" ? 5 : 4;
+    const len = L * (slot === "next" ? 0.075 : 0.06);
+    let tip: V3 = from;
+    for (let i = 0; i < n; i++) {
+      const a = (i / n) * Math.PI * 2 + (slot === "prev" ? 0.5 : 0);
+      const side = nrm(add(scl(RB, Math.cos(a)), scl(UB, Math.sin(a))));
+      const d = nrm(add(dir, scl(side, 0.52)));
+      const C = add(from, scl(d, len * (0.82 + 0.18 * (i % 2))));
+      const B = add(add(from, scl(d, len * 0.38)), scl(side, len * 0.16));
+      this.pushExpand(from, from, from, 0, 0, from, B, C, w * 0.9, w * 2.1, col, true);
+      tip = C;
+    }
+    const label = add(from, scl(dir, len * 1.15));
+    if (slot === "next") {
+      this.nextBudP = label; this.nextBudBase = from;
+    } else {
+      this.prevBudP = label; this.prevBudBase = from;
+    }
+    this.bbAdd(tip);
+    this.bbAdd(from);
+  }
+
+  private placeBatchBuds(
+    end: V3, dir: V3, L: number, w: number, col: V3, RB: V3, UB: V3, page: number, pages: number,
+  ) {
+    if (pages <= 1) return;
+    /* 两颗芽都从同一簇顶梢长出：顶芽向前，侧芽略回。不要在柄根另造一截悬空桩。 */
+    if (page < pages - 1) {
+      const ndir = nrm(add(dir, scl(UB, 0.18)));
+      this.drawBudAt(end, ndir, L, w, col, RB, UB, "next");
+    }
+    if (page > 0) {
+      const pdir = nrm(add(add(scl(dir, -0.12), scl(RB, -0.72)), scl(UB, -0.22)));
+      this.drawBudAt(end, pdir, L, w, col, RB, UB, "prev");
+    }
   }
 
   private upload() {
@@ -1293,17 +1697,37 @@ export class TreeScene {
 
   // ═══════════════════════ 标签 ═══════════════════════
 
+  private mkBudBtn(slot: "next" | "prev") {
+    const b = document.createElement("button");
+    b.type = "button";
+    b.className = "tree3d-nb bud " + slot;
+    b.style.display = "none";
+    b.innerHTML = '<span class="pill"></span><span class="sub"></span>';
+    const next = slot === "next";
+    b.setAttribute("aria-label", t(next ? "tree3d.budNext" : "tree3d.budPrev"));
+    b.addEventListener("click", (ev) => {
+      ev.stopPropagation();
+      this.turnBatch(next ? 1 : -1);
+    });
+    this.labelHost.appendChild(b);
+    if (next) this.budBtn = b;
+    else this.prevBtn = b;
+  }
+
   private buildLabels() {
     this.ftitle = document.createElement("div");
     this.ftitle.className = "tree3d-ftitle";
     this.ftitle.innerHTML = "<b></b><span></span>";
     this.labelHost.appendChild(this.ftitle);
+    this.mkBudBtn("next");
+    this.mkBudBtn("prev");
     for (let i = 0; i < this.POOLN; i++) {
       const b = document.createElement("button");
       b.type = "button"; b.className = "tree3d-nb"; b.style.display = "none";
       b.innerHTML = '<span class="pill"></span><span class="sub"></span><i class="dot"></i>';
       b.addEventListener("click", (ev) => {
         ev.stopPropagation();
+        if (this.batchAnim !== "idle") return;
         const n = (b as HTMLButtonElement & { _n?: TreeNode })._n;
         if (!n) return;
         this.ev.onPick(n, this.kidsOf(n).length > 0 || n.ch.length > 0);
@@ -1322,8 +1746,20 @@ export class TreeScene {
   }
 
   private updateLabels(VP: Float32Array) {
-    const kids = this.focus.ch;
-    const op = this.focus === this.root ? 1 : Math.max(0, (this.morph - 0.5) / 0.5);
+    const isLeafParent = this.focus.ch.length > 0 && this.focus.ch.every((c) => c.lvl >= 6);
+    const rawKids = this.focus === this.root
+      ? this.kidsOf(this.focus)
+      : isLeafParent
+        ? this.focus.ch.filter((c) => c.lvl >= 6)
+        : this.kidsOf(this.focus);
+    const kids = this.focus === this.root
+      ? rawKids
+      : batchKids(rawKids, this.batchPage).shown;
+    let op: number;
+    if (this.focus === this.root) op = 1;
+    else if (this.batchAnim === "out") op = Math.max(0, 1 - this.bloom / 0.5);
+    else if (this.batchAnim === "in") op = Math.max(0, (this.bloom - 0.42) / 0.58);
+    else op = Math.max(0, (this.morph - 0.5) / 0.5);
     const items: { el: HTMLButtonElement; nd: TreeNode; s: [number, number] }[] = [];
     const N = Math.min(this.POOLN, kids.length);
 
@@ -1344,10 +1780,20 @@ export class TreeScene {
         : g.p1;
       if (this.focus === this.root && g.centroid) tp = g.centroid;
       const fp = g.fp ?? tp;
+      const bud = this.budOrigin;
+      let k = this.morph;
+      let from = tp;
+      if (this.batchAnim === "out" && bud) {
+        from = fp; k = this.bloom;
+      }
+      if (this.batchAnim === "in" && bud) {
+        from = bud; k = this.bloom;
+      }
+      const to = this.batchAnim === "out" && bud ? bud : fp;
       const p: V3 = [
-        tp[0] + (fp[0] - tp[0]) * this.morph,
-        tp[1] + (fp[1] - tp[1]) * this.morph,
-        tp[2] + (fp[2] - tp[2]) * this.morph,
+        from[0] + (to[0] - from[0]) * k,
+        from[1] + (to[1] - from[1]) * k,
+        from[2] + (to[2] - from[2]) * k,
       ];
       const s = this.project(p, VP);
       if (!s || s[0] < -160 || s[0] > this.W + 160 || s[1] < -80 || s[1] > this.H + 80) {
@@ -1355,7 +1801,7 @@ export class TreeScene {
         continue;
       }
       // 标签外移，露出枝端那个节点（否则 pill 会把它完全盖住）
-      if (this.morph > 0.5) {
+      if (this.morph > 0.5 || this.batchAnim === "in") {
         let dx: number, dy: number;
         if (g.fbase) {
           const b = this.project(g.fbase, VP);
@@ -1445,9 +1891,12 @@ export class TreeScene {
          不要写阶元名 —— 中文名本身已带阶元后缀（动物界／脊索动物门／鸟纲／
          雀形目），旁边再标一个「界」「门」是纯冗余。
          没有收集时留空，让画面安静。 */
-      const s2 = nd.got > 0 ? `${nd.got} 项` : nd.lvl >= 6 ? nd.la : "";
+      const s2 = nd.got > 0 ? t("tree3d.gotCount", { count: nd.got }) : nd.lvl >= 6 ? nd.la : "";
       if (sub.textContent !== s2) sub.textContent = s2;
     }
+
+    this.pinBud(this.budBtn, this.nextBudP, this.nextBudBase, VP, op, t("tree3d.budNext"));
+    this.pinBud(this.prevBtn, this.prevBudP, this.prevBudBase, VP, op, t("tree3d.budPrev"));
 
     // 焦点自身大标题：钉在柄的下端。概要卡开着时让位（卡里已有同样的名字）
     if (this.focus !== this.root && this.morph > 0.3 && !this.cardOpen) {
@@ -1460,10 +1909,61 @@ export class TreeScene {
         this.ftitle.style.top = y + "px";
         this.ftitle.style.opacity = String(Math.max(0, (this.morph - 0.3) / 0.7) * 0.95);
         (this.ftitle.children[0] as HTMLElement).textContent = labelOf(this.focus);
-        (this.ftitle.children[1] as HTMLElement).textContent =
-          `${this.focus.la} · ${RANK_ZH[this.focus.lvl] ?? ""}`;
+        const rank = formatRank(RANKS[this.focus.lvl] ?? "");
+        (this.ftitle.children[1] as HTMLElement).textContent = this.batchPages > 1
+          ? t("tree3d.focusMetaPage", {
+            la: this.focus.la,
+            rank,
+            cur: this.batchPage + 1,
+            total: this.batchPages,
+          })
+          : t("tree3d.focusMeta", { la: this.focus.la, rank });
       }
     } else this.ftitle.style.opacity = "0";
+  }
+
+  private pinBud(
+    el: HTMLButtonElement,
+    tip: V3 | null,
+    base: V3 | null,
+    VP: Float32Array,
+    op: number,
+    text: string,
+  ) {
+    if (!tip || this.focus === this.root || this.batchAnim === "out") {
+      if (el.style.display !== "none") el.style.display = "none";
+      return;
+    }
+    const vis = this.batchAnim === "in" ? this.bloom : this.morph;
+    if (vis <= 0.5) {
+      if (el.style.display !== "none") el.style.display = "none";
+      return;
+    }
+    const s = this.project(tip, VP);
+    if (!s) {
+      if (el.style.display !== "none") el.style.display = "none";
+      return;
+    }
+    if (base) {
+      const b = this.project(base, VP);
+      if (b) {
+        const dx = s[0] - b[0], dy = s[1] - b[1];
+        const dl = Math.hypot(dx, dy) || 1;
+        s[0] += (dx / dl) * 28;
+        s[1] += (dy / dl) * 28;
+      }
+    }
+    s[0] = Math.max(78, Math.min(this.W - 78, s[0]));
+    s[1] = Math.max(52, Math.min(this.H - 52, s[1]));
+    el.style.display = "flex";
+    el.style.left = s[0].toFixed(1) + "px";
+    el.style.top = s[1].toFixed(1) + "px";
+    el.style.opacity = String(op);
+    el.style.setProperty("--kc", kingdomHex(this.focus.kingdom));
+    const pill = el.children[0] as HTMLElement;
+    if (pill.textContent !== text) pill.textContent = text;
+    const sub = el.children[1] as HTMLElement;
+    if (sub.textContent) sub.textContent = "";
   }
 
   // ═══════════════════════ 渲染 ═══════════════════════
@@ -1494,9 +1994,12 @@ export class TreeScene {
     gl.drawElements(gl.TRIANGLES, this.NI, gl.UNSIGNED_INT, 0);
 
     if (this.exCount > 0) {
+      const gm = this.batchAnim === "idle" ? this.morph : this.bloom;
+      gl.uniform1f(this.uB.uMorph!, gm);
       gl.bindVertexArray(this.vaoS);
       gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, this.ebS);
       gl.drawElements(gl.TRIANGLES, this.exCount * EX_SEGS * 6, gl.UNSIGNED_INT, 0);
+      gl.uniform1f(this.uB.uMorph!, this.morph);
     }
 
     gl.useProgram(this.pL);
@@ -1505,6 +2008,11 @@ export class TreeScene {
     gl.uniform1f(this.uL.uMorph!, this.morph);
     gl.uniform1f(this.uL.uOnly!, only);
     gl.uniform1f(this.uL.uPx!, this.PX);
+    const budOn = only > 0.5 && this.batchAnim !== "idle" && this.budOrigin ? 1 : 0;
+    gl.uniform1f(this.uL.uBudOn!, budOn);
+    gl.uniform1f(this.uL.uBudT!, this.batchAnim === "out" ? 1 - this.bloom : this.bloom);
+    const bo = this.budOrigin ?? [0, 0, 0];
+    gl.uniform3f(this.uL.uBud!, bo[0], bo[1], bo[2]);
     gl.uniform3fv(this.uL.uFog!, BG);
     gl.uniform1f(this.uL.uFogK!, fogK);
     gl.uniform1f(this.uL.uFogN!, fogN);
@@ -1522,6 +2030,7 @@ export class TreeScene {
     gl.bindVertexArray(this.vaoL);
     gl.drawArrays(gl.POINTS, 0, this.lc);
     if (hz > 0 && only > 0.5) {
+      gl.uniform1f(this.uL.uBudOn!, 0);
       gl.uniform1f(this.uL.uSzK!, 1.0);
       gl.uniform1f(this.uL.uAlpha!, 0.5);
       gl.uniform1f(this.uL.uDeep!, 0);
@@ -1557,6 +2066,23 @@ export class TreeScene {
         this.morph = 0;
         this.applyFocus(this.pending ?? this.root);
         this.pending = null; this.phase = "in";
+      }
+    } else if (this.batchAnim === "out" || this.batchAnim === "in") {
+      const dur = this.batchAnim === "out" ? 0.28 : 0.52;
+      this.bloomClock = Math.min(1, this.bloomClock + dt / dur);
+      this.bloom = 1 - (1 - this.bloomClock) ** 3;
+      if (this.bloomClock >= 1) {
+        if (this.batchAnim === "out") {
+          this.batchPage = this.pendingPage;
+          this.batchAnim = "in";
+          this.bloomClock = 0;
+          this.bloom = 0;
+          this.applyFocus(this.focus, true, "grow");
+        } else {
+          this.batchAnim = "idle";
+          this.bloom = 1;
+          this.bloomClock = 1;
+        }
       }
     } else if (this.phase === "in") {
       if (this.morphGoal > 0) {

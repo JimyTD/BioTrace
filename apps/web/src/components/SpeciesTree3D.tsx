@@ -9,20 +9,26 @@
  * 走 React 会每帧触发 reconcile。TreeScene 直接操作 DOM 池。
  * 概要卡则用 React —— 它不是每帧更新的。
  */
+import { formatRank, t } from "@biotrace/messages";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import type { CollectionEntry } from "../api";
 import { TreeScene } from "../tree/TreeScene";
 import {
   type SpeciesTree,
   type TreeNode,
+  RANKS,
   buildSpeciesTree,
   chainOf,
   collectEntries,
   labelOf,
-  RANK_ZH,
 } from "../tree/treeModel";
-import { kingdomHex } from "../tree/geom";
+import { kingdomHex, kvis } from "../tree/geom";
 import "./SpeciesTree3D.css";
+
+function rankName(lvl: number) {
+  const key = RANKS[lvl];
+  return key ? formatRank(key) : "";
+}
 
 export type SpeciesTree3DProps = {
   entries: CollectionEntry[];
@@ -31,12 +37,6 @@ export type SpeciesTree3DProps = {
   onFocusChange: (id: string | null) => void;
   onOpenEntry: (entry: CollectionEntry) => void;
 };
-
-function kfmt(n: number) {
-  if (n >= 10000) return (n / 10000).toFixed(1) + "万";
-  if (n >= 1000) return (n / 1000).toFixed(1) + "k";
-  return String(n);
-}
 
 export default function SpeciesTree3D({
   entries,
@@ -60,7 +60,7 @@ export default function SpeciesTree3D({
     try {
       return buildSpeciesTree(entries);
     } catch (e) {
-      setErr(e instanceof Error ? e.message : "建树失败");
+      setErr(e instanceof Error ? e.message : t("tree3d.buildFailed"));
       return null;
     }
   }, [entries]);
@@ -102,7 +102,7 @@ export default function SpeciesTree3D({
       sceneRef.current = scene;
       setFocus(built.root);
     } catch (e) {
-      setErr(e instanceof Error ? e.message : "WebGL 初始化失败");
+      setErr(e instanceof Error ? e.message : t("tree3d.webglFailed"));
     }
     return () => {
       scene?.destroy();
@@ -146,7 +146,7 @@ export default function SpeciesTree3D({
       {/* 面包屑：3D 场景里没有"来路"的表达，靠它给出层级感 */}
       <div className="tree3d-crumb">
         <button type="button" className="home" onClick={() => tree && jump(tree.root)}>
-          全树
+          {t("tree3d.crumbRoot")}
         </button>
         {chain.slice(-4).map((n) => (
           <button
@@ -163,8 +163,8 @@ export default function SpeciesTree3D({
       {tree ? (
         <div className="tree3d-stat">
           {tree.totalGot > 0
-            ? `已收集 ${tree.totalGot} 项 · 骨架 ${kfmt(tree.realCount)} 节点`
-            : `骨架 ${kfmt(tree.realCount)} 节点 · 等待第一次相遇`}
+            ? t("tree3d.statGot", { count: tree.totalGot })
+            : t("tree3d.statEmpty")}
         </div>
       ) : null}
 
@@ -201,6 +201,7 @@ function NodeCard({
   onOpenList: () => void;
 }) {
   const term = node.ch.length === 0;
+  const sealed = Boolean(kvis(node.kingdom).dead);
   /* 子级规模。不能假设「子级阶元 = 自己 + 1」——
      GBIF 里同一个父节点下的子级 rank 可以不统一：
      Chordata 的 62 个子级是 16 纲 + 46 目（鱼类没有纲那一级，
@@ -213,12 +214,14 @@ function NodeCard({
     groups.set(c.lvl, (groups.get(c.lvl) ?? 0) + 1);
   }
   const meta: string[] = [];
-  if (term) meta.push("尚未细分到更下一级");
+  if (sealed) {
+    /* 假枝丛不算细分。再说「还没有细分」像是在邀你往下走。 */
+  } else if (term) meta.push(t("tree3d.noFurtherRank"));
   else if (groups.size > 0) {
     for (const [lvl, n] of [...groups].sort((a, b) => a[0] - b[0])) {
-      meta.push(`${n} ${RANK_ZH[lvl] ?? ""}`);
+      meta.push(t("tree3d.childGroup", { count: n, rank: rankName(lvl) }));
     }
-  } else meta.push("这一支还没有细分");
+  } else meta.push(t("tree3d.noChildren"));
 
   return (
     <div className="tree3d-card is-on" style={{ ["--kc" as string]: kingdomHex(node.kingdom) }}>
@@ -228,7 +231,7 @@ function NodeCard({
       <div className="tree3d-card-b">
         <div className="tree3d-card-h">
           <b>{labelOf(node)}</b>
-          <span className="rank">{RANK_ZH[node.lvl] ?? ""}</span>
+          <span className="rank">{rankName(node.lvl)}</span>
           <i>{node.la}</i>
         </div>
         <div className="tree3d-card-m">
@@ -239,16 +242,21 @@ function NodeCard({
       </div>
       {node.got > 0 ? (
         <button type="button" className="tree3d-card-go" onClick={onOpenList}>
-          查看收集
-          <em>{node.got} 项 ›</em>
+          {t("tree3d.viewCollection")}
+          <em>{t("tree3d.gotCountGo", { count: node.got })}</em>
+        </button>
+      ) : sealed ? (
+        <button type="button" className="tree3d-card-go off" disabled>
+          {t("tree3d.notCollectible")}
+          <em>{t("tree3d.notCollectibleHint")}</em>
         </button>
       ) : (
         <button type="button" className="tree3d-card-go off" disabled>
-          尚无足迹
-          <em>{node.lvl >= 6 ? "还没拍到过" : "这一支还没去过"}</em>
+          {t("tree3d.noFootprint")}
+          <em>{node.lvl >= 6 ? t("tree3d.notCollectedSpecies") : t("tree3d.notCollectedBranch")}</em>
         </button>
       )}
-      <button type="button" className="tree3d-card-x" onClick={onClose} aria-label="关闭">
+      <button type="button" className="tree3d-card-x" onClick={onClose} aria-label={t("tree3d.close")}>
         ×
       </button>
     </div>
@@ -278,17 +286,17 @@ function TreeDetail({
     <div className="tree3d-sheet is-on">
       <header>
         <button type="button" className="back" onClick={onClose}>
-          ← 回到树
+          {t("tree3d.backToTree")}
         </button>
         <div className="path">{chain.map((n) => labelOf(n)).join(" › ")}</div>
         <h2>
           {labelOf(node)}
-          <span className="rank">{RANK_ZH[node.lvl] ?? ""}</span>
+          <span className="rank">{rankName(node.lvl)}</span>
         </h2>
         <p className="la">{node.la}</p>
         <p className="sum">
-          这一支下有 <b>{node.got}</b> 项收集
-          {entries.length < node.got ? `（显示前 ${entries.length} 项）` : ""}
+          {t("tree3d.sheetSum", { count: node.got })}
+          {entries.length < node.got ? t("tree3d.sheetCap", { shown: entries.length }) : ""}
         </p>
       </header>
       <div className="grid">
@@ -297,7 +305,7 @@ function TreeDetail({
             <div className="art">
               {e.coverDisplayUrl ? <img src={e.coverDisplayUrl} alt="" loading="lazy" /> : null}
             </div>
-            <span className="nm">{e.commonName || e.scientificName || "未命名"}</span>
+            <span className="nm">{e.commonName || e.scientificName || t("tree3d.unnamed")}</span>
             {e.scientificName && e.commonName ? <span className="sci">{e.scientificName}</span> : null}
           </button>
         ))}

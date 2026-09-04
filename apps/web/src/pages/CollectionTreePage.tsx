@@ -62,7 +62,7 @@ export default function CollectionTreePage() {
   return (
     <div className="page-tree3d">
       {loading && entries.length === 0 ? (
-        <div className="tree3d-boot">正在生长这棵树…</div>
+        <div className="tree3d-boot">{t("tree3d.growing")}</div>
       ) : (
         <SpeciesTree3D
           entries={entries}

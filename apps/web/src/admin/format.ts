@@ -36,6 +36,7 @@ const OBS_ERROR_KEYS: Record<string, MessageKey> = {
   identify_not_organism: "admin.error.identifyNotOrganism",
   identify_human: "admin.error.identifyHuman",
   identify_not_living: "admin.error.identifyNotLiving",
+  identify_no_kingdom: "admin.error.identifyNoKingdom",
   identify_not_collectible: "admin.error.identifyNotCollectible",
 };
 

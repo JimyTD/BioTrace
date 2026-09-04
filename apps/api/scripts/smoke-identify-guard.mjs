@@ -29,6 +29,8 @@ const { updateUserIdentify, resolveUserIdentify } = await import("../src/service
 const { runIdentifyForUser } = await import("../src/identify/run.ts");
 const { chatCompletionsUrl } = await import("../src/identify/openai-compatible.ts");
 const { mockIdentifyResult } = await import("../src/identify/mock.ts");
+const { evaluateEligibility } = await import("../src/identify/eligibility.ts");
+const { emptyTaxonomy } = await import("../src/identify/types.ts");
 
 await migrate();
 
@@ -56,6 +58,16 @@ check(
 // mock shape
 const mock = mockIdentifyResult({ imagePath: "/x", mimeType: "image/jpeg" });
 check("mock collectible", mock.eligibility === "collectible" && mock.finest_reliable_rank === "species");
+{
+  const clean = { ...mock, blurb_zh: "麻雀常见于城市。", notes: "" };
+  check("kingdom ok", evaluateEligibility(clean).ok === true);
+  const noKingdom = {
+    ...clean,
+    taxonomy: { ...emptyTaxonomy(), species: { name_la: "Passer montanus", name_zh: "树麻雀" } },
+  };
+  const gate = evaluateEligibility(noKingdom);
+  check("no kingdom blocked", gate.ok === false && gate.code === "identify_no_kingdom");
+}
 
 const userId = randomUUID();
 await db.insert(users).values({

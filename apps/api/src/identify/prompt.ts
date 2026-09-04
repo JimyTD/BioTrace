@@ -55,13 +55,14 @@ ${identifyLocationLines(input)}
    - subject_living：boolean；是否仍活着。仅 living_organism 可 true，空壳等为 false
    - eligibility：collectible | not_collectible
      · 仅 subject_kind=living_organism 允许 collectible（不要求仍活着）
+     · collectible 时 taxonomy.kingdom.name_la 必须有值（如 Animalia）；认不出是哪一界则 not_collectible，禁止编造界
      · 人、玩具、卡通、书页、无生物等必须 not_collectible
    - ineligibility_reason_zh：短中文；不合格时必填（说明为何不能进图鉴）；合格时可空字符串
    - common_name_zh（中文俗名；不合格时不要写真实物种名冒充；可空）
    - scientific_name（拉丁学名；不合格时必须空字符串，禁止把玩具写成 Ursus 等）
    - taxonomy：对象，键为 kingdom, phylum, class, order, family, genus, species。
      每一级值为对象 {"name_la":拉丁名或英文名或null,"name_zh":通行中文名或null}。
-     不合格时 taxonomy 各级均为 null；合格时按证据填写。
+     不合格时 taxonomy 各级均为 null；合格时按证据填写，且 kingdom.name_la 必填。
      若该阶元没有稳定、通行的中文译名，name_zh 必须为 null，禁止臆造中译。
    - confidence_0_to_1（0~1 数字）
    - finest_reliable_rank（合格时：可靠最细阶元如 family/genus/species；不合格时空字符串）

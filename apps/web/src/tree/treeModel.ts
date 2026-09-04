@@ -25,7 +25,6 @@ import backboneRaw from "../data/backbone.json";
 
 export const RANKS = ["kingdom", "phylum", "class", "order", "family", "genus", "species"] as const;
 export type Rank = (typeof RANKS)[number];
-export const RANK_ZH = ["界", "门", "纲", "目", "科", "属", "种"] as const;
 
 /** 三段式分区。见 docs/wip/物种树-结构议题.md §4.2「高度即可及性」。 */
 export type Zone = "crown" | "basal" | "root";
@@ -85,6 +84,37 @@ export function nodeId(lvl: number, la: string) {
 
 export function labelOf(n: TreeNode) {
   return n.zh ?? n.la;
+}
+
+/** 一茬最多几根可认的子枝。和总览 8 界同一只手数，不是某个类群的特例。 */
+export const FAN_BATCH = 8;
+
+/**
+ * 每一级分茬、展开共用的排序：有权威中文的在前，没有的排后面。
+ * 同组内保持建树时的 sib，形态稳定。
+ */
+export function orderKids(kids: TreeNode[]): TreeNode[] {
+  return kids.slice().sort((a, b) => {
+    const az = a.zh ? 0 : 1;
+    const bz = b.zh ? 0 : 1;
+    if (az !== bz) return az - bz;
+    if (a.sib !== b.sib) return a.sib - b.sib;
+    return a.id < b.id ? -1 : a.id > b.id ? 1 : 0;
+  });
+}
+
+export function batchKids(kids: TreeNode[], page: number) {
+  const ordered = orderKids(kids);
+  const pages = Math.max(1, Math.ceil(ordered.length / FAN_BATCH));
+  /* 不绕圈。最后一茬没有「下一批」，第一茬没有「上一批」。 */
+  const p = Math.max(0, Math.min(pages - 1, page | 0));
+  const start = p * FAN_BATCH;
+  return {
+    ordered,
+    shown: ordered.slice(start, start + FAN_BATCH),
+    pages,
+    page: p,
+  };
 }
 
 function mkNode(o: Partial<TreeNode> & { id: string; lvl: number; la: string }): TreeNode {
@@ -193,6 +223,8 @@ export function buildSpeciesTree(entries: CollectionEntry[]): SpeciesTree {
   rollup(root);
   // ── 5. 序号 + 装饰性叶片 ──
   finalize(root, 0);
+  // 树冠三界叶量拉齐：不跟真实末端数走（动物 659 端 vs 植物 253）。
+  equalizeCrownFoliage(root);
 
   return { root, byId, totalGot: root.got, realCount };
 }
@@ -215,6 +247,34 @@ function finalize(n: TreeNode, sib: number) {
     n.fillLeaves = Math.max(6, Math.round(base * (0.55 + 0.9 * h01(seed, 17))));
   }
   n.ch.forEach((c, i) => finalize(c, i));
+}
+
+/**
+ * 树冠三界的装饰叶总量拉到同一预算。
+ *
+ * 每枝叶数仍由 hash 定（同一目永远同形），但三蓬雾的总量不跟骨架末端数走。
+ * 这是视觉作弊，不是「把动物画小」：植物 / 真菌同样按这个预算画。
+ */
+const CROWN_FILL_BUDGET = 12000;
+
+function countFillLeaves(n: TreeNode): number {
+  let s = n.fillLeaves;
+  for (const c of n.ch) s += countFillLeaves(c);
+  return s;
+}
+
+function scaleFillLeaves(n: TreeNode, k: number) {
+  if (n.fillLeaves > 0) n.fillLeaves = Math.max(6, Math.round(n.fillLeaves * k));
+  for (const c of n.ch) scaleFillLeaves(c, k);
+}
+
+function equalizeCrownFoliage(root: TreeNode) {
+  for (const k of root.ch) {
+    if (k.zone !== "crown") continue;
+    const t = countFillLeaves(k);
+    if (t < 1) continue;
+    scaleFillLeaves(k, CROWN_FILL_BUDGET / t);
+  }
 }
 
 /**

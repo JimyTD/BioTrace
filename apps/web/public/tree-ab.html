@@ -1,0 +1,108 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>物种树 · 树冠布局 A/B</title>
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    height: 100vh; display: flex; flex-direction: column; overflow: hidden;
+    background: #20262f; color: #e8edf4;
+    font: 14px/1.5 "Microsoft YaHei", "PingFang SC", system-ui, sans-serif;
+  }
+  header {
+    flex: none; display: flex; align-items: center; gap: 18px;
+    padding: 10px 16px; background: #171c24; border-bottom: 1px solid #2c343f;
+  }
+  h1 { font-size: 15px; font-weight: 700; letter-spacing: .3px; }
+  h1 span { color: #8b97a8; font-weight: 400; margin-left: 8px; font-size: 12.5px; }
+  .grp { display: flex; align-items: center; gap: 7px; margin-left: auto; }
+  .grp b { font-size: 12px; color: #8b97a8; font-weight: 400; }
+  button {
+    background: #2a323d; color: #cfd8e4; border: 1px solid #3a4450;
+    border-radius: 6px; padding: 5px 12px; font-size: 12.5px; cursor: pointer;
+    font-family: inherit;
+  }
+  button:hover { background: #333d4a; }
+  button.on { background: #c46a3a; border-color: #c46a3a; color: #fff; font-weight: 700; }
+  main {
+    flex: 1; display: flex; gap: 14px; padding: 14px; min-height: 0;
+    justify-content: center; align-items: stretch;
+  }
+  .pane { display: flex; flex-direction: column; min-width: 0; min-height: 0; }
+  .pane > .tag {
+    flex: none; padding: 6px 12px; font-size: 12.5px; font-weight: 700;
+    border-radius: 7px 7px 0 0; display: flex; align-items: center; gap: 8px;
+  }
+  .pane > .tag i { font-style: normal; font-weight: 400; font-size: 11.5px; opacity: .75; }
+  .old > .tag { background: #4a2f2c; color: #ffb3a3; }
+  .new > .tag { background: #23422f; color: #96e3b4; }
+  .frame {
+    flex: 1; min-height: 0; background: #eef1f5; border-radius: 0 0 7px 7px;
+    overflow: hidden; position: relative;
+  }
+  iframe { width: 100%; height: 100%; border: 0; display: block; }
+  /* 手机模式：固定 390 宽，居中 */
+  body.mobile .pane { width: 390px; flex: none; }
+  body.mobile main { align-items: center; }
+  body.mobile .frame { height: 844px; max-height: 100%; }
+  body.desktop .pane { flex: 1; }
+  .hint {
+    flex: none; padding: 7px 16px; background: #171c24; border-top: 1px solid #2c343f;
+    font-size: 12px; color: #8b97a8;
+  }
+  .hint code { background: #2a323d; padding: 1px 5px; border-radius: 3px; color: #cfd8e4; }
+</style>
+</head>
+<body class="desktop">
+  <header>
+    <h1>物种树 · 树冠布局 A/B<span>两边都是活的，可各自点击、旋转、展开</span></h1>
+    <div class="grp">
+      <b>视口</b>
+      <button id="bD" class="on">桌面</button>
+      <button id="bM">手机 390×844</button>
+      <b style="margin-left:10px">操作</b>
+      <button id="bR">同时重载</button>
+    </div>
+  </header>
+
+  <main>
+    <div class="pane old">
+      <div class="tag">改造前<i>三段式 · 色藻/原生动物贴主干腰 · isBasal 特例生效</i></div>
+      <div class="frame"><iframe id="fA" src="/dev/tree?layout=old"></iframe></div>
+    </div>
+    <div class="pane new">
+      <div class="tag">改造后<i>三档写死 · 动物/植物各拆两支 · 矮枝入树冠</i></div>
+      <div class="frame"><iframe id="fB" src="/dev/tree?layout=new"></iframe></div>
+    </div>
+  </main>
+
+  <div class="hint">
+    左右各自独立运行。用页面底部的 <code>空 / 6 / 21 / 60 / 140 项</code> 切换收集量——
+    <b>两边要分别点</b>，才是等价对照。
+  </div>
+
+<script>
+  const fA = document.getElementById("fA");
+  const fB = document.getElementById("fB");
+  const bD = document.getElementById("bD");
+  const bM = document.getElementById("bM");
+
+  function mode(m) {
+    document.body.className = m;
+    bD.classList.toggle("on", m === "desktop");
+    bM.classList.toggle("on", m === "mobile");
+    // iframe 尺寸变了必须重载，WebGL 画布尺寸和响应式布局才会重算
+    reload();
+  }
+  function reload() {
+    fA.src = "/dev/tree?layout=old&t=" + Date.now();
+    fB.src = "/dev/tree?layout=new&t=" + Date.now();
+  }
+  bD.onclick = () => mode("desktop");
+  bM.onclick = () => mode("mobile");
+  document.getElementById("bR").onclick = reload;
+</script>
+</body>
+</html>

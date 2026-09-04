@@ -16,6 +16,7 @@ const known: Record<string, MessageKey> = {
   identify_not_organism: "error.identifyNotCollectible",
   identify_human: "error.identifyNotCollectible",
   identify_not_living: "error.identifyNotCollectible",
+  identify_no_kingdom: "error.identifyNotCollectible",
 };
 
 export function apiError(code: string, status: number) {
