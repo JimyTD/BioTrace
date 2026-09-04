@@ -890,7 +890,7 @@ function SecretsPage() {
     group: string;
     env: string;
     configured?: boolean;
-    hint?: string | null;
+    hint?: { length: number; head: string | null; tail: string | null } | null;
     value?: string | number;
     source?: string;
   };
@@ -1140,10 +1140,16 @@ function StoragePage() {
         const uptimeSec = Number(host.uptimeSec ?? 0);
         const uptimeLabel =
           uptimeSec >= 86400
-            ? `${Math.floor(uptimeSec / 86400)} 天 ${Math.floor((uptimeSec % 86400) / 3600)} 小时`
+            ? t("admin.storage.uptimeDays", {
+                days: Math.floor(uptimeSec / 86400),
+                hours: Math.floor((uptimeSec % 86400) / 3600),
+              })
             : uptimeSec >= 3600
-              ? `${Math.floor(uptimeSec / 3600)} 小时 ${Math.floor((uptimeSec % 3600) / 60)} 分`
-              : `${Math.floor(uptimeSec / 60)} 分`;
+              ? t("admin.storage.uptimeHours", {
+                  hours: Math.floor(uptimeSec / 3600),
+                  minutes: Math.floor((uptimeSec % 3600) / 60),
+                })
+              : t("admin.storage.uptimeMinutes", { minutes: Math.floor(uptimeSec / 60) });
         return (
           <div className="admin-panel">
             <strong>{t("admin.storage.hostTitle")}</strong>

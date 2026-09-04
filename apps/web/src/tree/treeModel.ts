@@ -19,6 +19,7 @@
  *   Diplura 目 ← Diplura(纲)     「双尾目」，父是同名的纲
  * 不带 rank 的话这些节点会自己当自己的父级 → 建树成环。
  */
+import { t, type MessageKey } from "@biotrace/messages";
 import type { CollectionEntry, Taxonomy } from "../api";
 import { BACKBONE_ZH } from "../data/backboneZh";
 import backboneRaw from "../data/backbone.json";
@@ -71,11 +72,12 @@ type RawDoc = {
 
 const DOC = backboneRaw as unknown as RawDoc;
 
-/** 根系三界。不在 backbone.json 里，此处补上界节点，其下用 filler 填。 */
-const ROOT_KINGDOMS: { la: string; zh: string; fill: number }[] = [
-  { la: "Bacteria", zh: "细菌界", fill: 7 },
-  { la: "Archaea", zh: "古菌界", fill: 5 },
-  { la: "Viruses", zh: "病毒界", fill: 4 },
+/** 根系三界。不在 backbone.json 里，此处补上界节点，其下用 filler 填。
+ *  中文名不在 backboneZh（那会被 check-zh.py 判死键），走 messages 的 tree3d.*。 */
+const ROOT_KINGDOMS: { la: string; zhKey: MessageKey; fill: number }[] = [
+  { la: "Bacteria", zhKey: "tree3d.kingdomBacteria", fill: 7 },
+  { la: "Archaea", zhKey: "tree3d.kingdomArchaea", fill: 5 },
+  { la: "Viruses", zhKey: "tree3d.kingdomViruses", fill: 4 },
 ];
 
 export function nodeId(lvl: number, la: string) {
@@ -167,7 +169,7 @@ export function buildSpeciesTree(entries: CollectionEntry[]): SpeciesTree {
   DOC.fields.forEach((f, i) => (F[f] = i));
   const byId = new Map<string, TreeNode>();
 
-  const root = mkNode({ id: "root", lvl: -1, la: "Vita", zh: "生命", src: "backbone" });
+  const root = mkNode({ id: "root", lvl: -1, la: "Vita", zh: t("tree3d.rootLife"), src: "backbone" });
 
   // ── 1. 骨架 ──
   for (const row of DOC.nodes) {
@@ -200,7 +202,7 @@ export function buildSpeciesTree(entries: CollectionEntry[]): SpeciesTree {
       id: nodeId(0, rk.la),
       lvl: 0,
       la: rk.la,
-      zh: rk.zh,
+      zh: t(rk.zhKey),
       kingdom: rk.la,
       zone: "root",
       src: "backbone", // 界本身是真的，其下才是假的

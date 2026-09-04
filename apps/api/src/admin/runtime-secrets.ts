@@ -64,13 +64,18 @@ export function getRuntimeSecretsPath(): string {
   return secretsPath;
 }
 
-function hintOf(value: string | undefined | null): string | null {
+/** 密钥回显：只给结构化片段（长度 + 首尾），句子由前端 messages 拼。 */
+export type SecretHint = {
+  length: number;
+  head: string | null;
+  tail: string | null;
+};
+
+function hintOf(value: string | undefined | null): SecretHint | null {
   const v = (value ?? "").trim();
   if (!v) return null;
-  if (v.length <= 8) return `共 ${v.length} 位（过短，不展示片段）`;
-  const head = v.slice(0, 6);
-  const tail = v.slice(-6);
-  return `共 ${v.length} 位 · 开头 ${head} · 结尾 ${tail}`;
+  if (v.length <= 8) return { length: v.length, head: null, tail: null };
+  return { length: v.length, head: v.slice(0, 6), tail: v.slice(-6) };
 }
 
 function sourceOf(slot: SecretSlot): "overlay" | "env" | "none" {

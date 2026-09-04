@@ -254,9 +254,12 @@ export const zh = {
   "collection.speciesLoadFailed": "加载这种失败",
   "collection.treeTitle": "物种树",
   "collection.treeCount": "已点亮 {count} 界",
-  "collection.treeUnplaced": "未归类",
 
   "tree3d.crumbRoot": "全树",
+  "tree3d.rootLife": "生命",
+  "tree3d.kingdomBacteria": "细菌界",
+  "tree3d.kingdomArchaea": "古菌界",
+  "tree3d.kingdomViruses": "病毒界",
   "tree3d.statGot": "已收集 {count} 项",
   "tree3d.statEmpty": "等待第一次相遇",
   "tree3d.viewCollection": "查看收集",
@@ -740,6 +743,9 @@ export const zh = {
   "admin.storage.free": "剩余 {free}",
   "admin.storage.loadAvg": "负载（1/5/15 分钟）",
   "admin.storage.uptime": "进程可见运行时长",
+  "admin.storage.uptimeDays": "{days} 天 {hours} 小时",
+  "admin.storage.uptimeHours": "{hours} 小时 {minutes} 分",
+  "admin.storage.uptimeMinutes": "{minutes} 分",
   "admin.storage.diskUnavailable": "无法读取磁盘统计",
   "admin.secrets.hint":
     "先在下拉框选择要改的项，再填新值保存。密钥不明文回显；清空并保存可去掉后台覆盖、回落环境变量。浏览器端天地图 key 保存后地图下次加载即生效（不必重建前端）。",
