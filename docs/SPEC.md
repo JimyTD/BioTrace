@@ -186,7 +186,7 @@ docs/        筹划 + 本实现规格
 
 | 键 | 问的是 | 权重 |
 |----|--------|------|
-| `indoor` | 跟着人的房屋 / 家具 / 仓储生活（床铺、墙缝、粮仓） | −1.0 |
+| `indoor` | 自主栖居于人的房屋 / 家具 / 仓储（床铺、墙缝、粮仓；被养宠物不算） | −1.0 |
 | `domesticated` | 驯化家畜或宠物种 | −1.0 |
 | `disliked` | 多数人看见觉得讨厌或脏 | −0.8 |
 | `near_home` | 平常就住在市区（住宅区、街道、公园绿地） | −0.5 |
@@ -251,13 +251,13 @@ docs/        筹划 + 本实现规格
       → resolveRarity（rarity/index.ts）
           → resolveScaleRarity（rarity/scale.ts）
               → 有效国家 = countryCode || CN（无国家按中国常见度）
-              → 读缓存 scale1|有效国家|taxon（不过期）
+              → 读缓存 scale2|有效国家|taxon（不过期）
               → 名录查表：灭绝 → XR，0 次模型调用
               → 3 批题走模型链（llm/text-chain.ts）→ 逐题取多数
               → scoreFromScale 本地切档 → 贴界则补采样到 3 次
               → 写缓存（连 score / 12 题答案 / 生效模型 / 采样次数一起留痕）
               → 全链不可用：占位 SR 且**不写缓存**，下次仍会重算
-              → 改档：管理后台删缓存或重判；规则语义变了则升 `scale1` 前缀
+              → 改档：管理后台删缓存或重判；规则语义变了则再升前缀（当前 `scale2`）
   → 观测写入 rarity，状态 pending_settle → 开包
 ```
 
@@ -323,7 +323,7 @@ node node_modules/tsx/dist/cli.mjs scripts/smoke-rarity-scale.ts
 `SR` 上侧 / `SSR` / `UR` 与 `UR` 上侧 / `LR` 之间本就是模糊带。
 
 缓存不设 TTL，每物种只判一次。纠错走管理后台（删单条 / 重判并回写观察与图鉴）；
-判定规则语义变化时把键前缀从 `scale1` 升一档。
+判定规则语义变化时把键前缀升一档（当前 `scale2`）。
 
 #### 已知缺口
 

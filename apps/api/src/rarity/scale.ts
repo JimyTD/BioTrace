@@ -21,8 +21,8 @@ import {
   type ScaleItems,
 } from "./scale-rubric.js";
 
-/** 题面、权重或结算语义变到旧分不能用了就升版本，缓存自然作废。 */
-export const SCALE_CACHE_VER = "scale1";
+/** 题面、权重或结算语义变到旧分不能用了就升版本，缓存自然作废。scale2：indoor 改自住口径（被养宠物/家畜不算）。 */
+export const SCALE_CACHE_VER = "scale2";
 
 export type ScaleRaritySource = "cache" | "scale" | "list" | "unavailable";
 
@@ -58,7 +58,7 @@ export function scaleCacheKey(countryCode: string | null, taxonKey: string): str
   return `${SCALE_CACHE_VER}|${effectiveCountry(countryCode)}|${taxonKey}`;
 }
 
-/** `scale1|CN|Passer montanus` → 三段；taxonKey 自身可能含 `|`。 */
+/** `scale2|CN|Passer montanus` → 三段；taxonKey 自身可能含 `|`。 */
 export function parseScaleCacheKey(
   key: string,
 ): { version: string; countryCode: string; taxonKey: string } | null {
