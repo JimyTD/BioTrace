@@ -1,0 +1,134 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>物种树 · 各层级 vs V2</title>
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    height: 100vh; display: flex; flex-direction: column; overflow: hidden;
+    background: #20262f; color: #e8edf4;
+    font: 14px/1.5 "Microsoft YaHei", "PingFang SC", system-ui, sans-serif;
+  }
+  header {
+    flex: none; display: flex; align-items: center; gap: 18px;
+    padding: 10px 16px; background: #171c24; border-bottom: 1px solid #2c343f;
+  }
+  h1 { font-size: 15px; font-weight: 700; letter-spacing: .3px; }
+  h1 span { color: #8b97a8; font-weight: 400; margin-left: 8px; font-size: 12.5px; }
+  .grp { display: flex; align-items: center; gap: 7px; margin-left: auto; }
+  .grp b { font-size: 12px; color: #8b97a8; font-weight: 400; }
+  button {
+    background: #2a323d; color: #cfd8e4; border: 1px solid #3a4450;
+    border-radius: 6px; padding: 5px 12px; font-size: 12.5px; cursor: pointer;
+    font-family: inherit;
+  }
+  button:hover { background: #333d4a; }
+  button.on { background: #c46a3a; border-color: #c46a3a; color: #fff; font-weight: 700; }
+  main {
+    flex: 1; min-height: 0; overflow: hidden; display: flex;
+    justify-content: center; align-items: center; padding: 10px;
+  }
+  /* 竖屏是这个应用的真实形态：两栏各锁 390×844，整体等比缩放去适配窗口 */
+  #stage { flex: none; display: flex; gap: 14px; transform-origin: center center; }
+  .pane { display: flex; flex-direction: column; width: 390px; flex: none; }
+  .pane > .tag {
+    flex: none; padding: 6px 12px; font-size: 12.5px; font-weight: 700;
+    border-radius: 7px 7px 0 0; display: flex; align-items: baseline; gap: 8px;
+  }
+  .pane > .tag i { font-style: normal; font-weight: 400; font-size: 11.5px; opacity: .75; }
+  .now > .tag { background: #23422f; color: #96e3b4; }
+  .ref > .tag { background: #26384a; color: #93c4ea; }
+  .frame {
+    flex: none; height: 844px; background: #eef1f5; border-radius: 0 0 7px 7px;
+    overflow: hidden; position: relative;
+  }
+  iframe { width: 390px; height: 844px; border: 0; display: block; }
+  .hint {
+    flex: none; padding: 7px 16px; background: #171c24; border-top: 1px solid #2c343f;
+    font-size: 12px; color: #8b97a8;
+  }
+  .hint code { background: #2a323d; padding: 1px 5px; border-radius: 3px; color: #cfd8e4; }
+</style>
+</head>
+<body>
+  <header>
+    <h1>物种树 · 各层级 vs V2<span>两栏都是活的，可旋转、点击、继续往下钻</span></h1>
+    <div class="grp">
+      <b>层级</b>
+      <span id="bL"></span>
+      <button id="bR" style="margin-left:10px">同时重载</button>
+    </div>
+  </header>
+
+  <main><div id="stage">
+    <div class="pane now">
+      <div class="tag">当前<i id="tNow"></i></div>
+      <div class="frame"><iframe id="f1"></iframe></div>
+    </div>
+    <div class="pane ref">
+      <div class="tag">V2 参照<i id="tRef"></i></div>
+      <div class="frame"><iframe id="f2"></iframe></div>
+    </div>
+  </div></main>
+
+  <div class="hint">
+    两栏的类群不是同一批（V2 是自带假数据），比的是<b>同一深度下的观感</b>：枝上有没有东西、
+    末端那一丛是细枝还是一坨球、标签读不读得出。左栏走「动物界→脊索动物门→鸟纲→雀形目→鸦科→鸦属」，
+    右栏由 <code>?lv=</code> 沿每级头一个子级下钻。
+  </div>
+
+<script>
+  /* 左栏用真实 nodeId 定位；右栏用 ?lv= 按深度下钻。两边类群不同是有意的——
+     V2 的数据是自带的假树，能比的只有同深度的观感。 */
+  const LEVELS = [
+    { zh: "全树", at: null, lv: null, now: "总览已定稿", ref: "八界总览" },
+    { zh: "界", at: "0:Animalia", lv: 0, now: "动物界 → 门", ref: "动物界 → 门" },
+    { zh: "门", at: "1:Chordata", lv: 1, now: "脊索动物门 → 纲", ref: "第一个门 → 纲" },
+    { zh: "纲", at: "2:Aves", lv: 2, now: "鸟纲 → 目", ref: "第一个纲 → 目" },
+    { zh: "目", at: "3:Passeriformes", lv: 3, now: "雀形目 → 科", ref: "第一个目 → 科" },
+    { zh: "科", at: "4:Corvidae", lv: 4, now: "鸦科 → 属", ref: "第一个科 → 属" },
+    { zh: "属", at: "5:Corvus", lv: 5, now: "鸦属 → 种", ref: "第一个属 → 种" },
+  ];
+  let cur = 3; // 默认落在「纲」——差距最刺眼的一级
+
+  const bL = document.getElementById("bL");
+  LEVELS.forEach((L, i) => {
+    const b = document.createElement("button");
+    b.textContent = L.zh;
+    b.style.marginRight = "6px";
+    b.onclick = () => { cur = i; sync(); };
+    bL.appendChild(b);
+  });
+
+  function sync() {
+    [...bL.children].forEach((c, i) => c.classList.toggle("on", i === cur));
+    const L = LEVELS[cur];
+    document.getElementById("tNow").textContent = L.now;
+    document.getElementById("tRef").textContent = L.ref;
+    reload();
+  }
+
+  function reload() {
+    const L = LEVELS[cur], t = Date.now();
+    const at = L.at ? `&at=${encodeURIComponent(L.at)}` : "";
+    document.getElementById("f1").src = `/dev/tree?mock=140${at}&t=${t}`;
+    const lv = L.lv === null ? "" : `?lv=${L.lv}&t=${t}`;
+    document.getElementById("f2").src = `/proto/clear-tree/v2-roots.html${lv || "?t=" + t}`;
+  }
+
+  const stage = document.getElementById("stage");
+  const main = document.querySelector("main");
+  function fit() {
+    const w = stage.scrollWidth, h = stage.scrollHeight;
+    const s = Math.min(1, (main.clientWidth - 20) / w, (main.clientHeight - 20) / h);
+    stage.style.transform = `scale(${s})`;
+  }
+  addEventListener("resize", fit);
+  fit();
+  document.getElementById("bR").onclick = reload;
+  sync();
+</script>
+</body>
+</html>

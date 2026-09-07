@@ -73,11 +73,57 @@ function mockEntries(n: number): CollectionEntry[] {
   return out;
 }
 
+/**
+ * 造「一个科下收集出 N 个属」的假收集，用来构造大扇出的**情况 3**
+ * （[结构议题 §4.4](../../../../docs/wip/物种树-结构议题.md)：总数超出、
+ * 已收集也超出）。
+ *
+ * 为什么非得单开一档：`mockEntries` 那 21 条路径是循环用的，`mock` 调到 400
+ * 也只是同一个属下多出几个种，**点亮的类群数恒定**，最宽的点亮扇只有 3。而
+ * 骨架（真实 GBIF，rank 到目）最宽的节点是脊索动物门的 62 个子级 —— 在骨架
+ * 层里怎么点亮都凑不出「一屏摆不下」。
+ *
+ * 能造出来的地方只有科以下：属和种是收集条目动态挂上去的，宽度不受骨架限制。
+ * 这也正是真实上线后会出事的地方 —— 菊科在 GBIF 里约 1900 属。
+ *
+ * 挂在真实存在的菊科（Asteraceae ← Asterales，骨架里有）下面，属名是编的。
+ */
+function wideEntries(n: number): CollectionEntry[] {
+  const out: CollectionEntry[] = [];
+  for (let i = 0; i < n; i++) {
+    const tax = emptyTax();
+    const genus = `Asterogenus${String(i + 1).padStart(3, "0")}`;
+    const species = `${genus} fictus`;
+    tax.kingdom = { name_la: "Plantae", name_zh: null };
+    tax.phylum = { name_la: "Tracheophyta", name_zh: null };
+    tax.class = { name_la: "Magnoliopsida", name_zh: null };
+    tax.order = { name_la: "Asterales", name_zh: null };
+    tax.family = { name_la: "Asteraceae", name_zh: null };
+    tax.genus = { name_la: genus, name_zh: null };
+    tax.species = { name_la: species, name_zh: null };
+    out.push({
+      id: `wide-${i}`,
+      taxonKey: species,
+      commonName: `假菊 ${i + 1}`,
+      scientificName: species,
+      rarity: RARITY[i % RARITY.length]!,
+      coverObservationId: null,
+      coverDisplayUrl: null,
+      firstCollectedAt: new Date(Date.now() - i * 86400000).toISOString(),
+      updatedAt: new Date(Date.now() - i * 3600000).toISOString(),
+      taxonomy: tax,
+    });
+  }
+  return out;
+}
+
 export default function DevTreePage() {
   const [sp, setSp] = useSearchParams();
   const navigate = useNavigate();
   const n = Math.max(0, Math.min(400, Number(sp.get("mock") ?? 0) || 0));
-  const entries = useMemo(() => mockEntries(n), [n]);
+  // ?wide=N 叠在普通 mock 之上：情况 3 的验证数据，见 wideEntries
+  const w = Math.max(0, Math.min(600, Number(sp.get("wide") ?? 0) || 0));
+  const entries = useMemo(() => [...mockEntries(n), ...wideEntries(w)], [n, w]);
   const focusId = sp.get("at");
 
   return (
@@ -108,6 +154,23 @@ export default function DevTreePage() {
             }}
           >
             {v === 0 ? "空" : `${v} 项`}
+          </button>
+        ))}
+        {/* 情况 3 的验证档：菊科下点亮 N 个属。见 wideEntries */}
+        {[0, 24, 60, 300].map((v) => (
+          <button
+            type="button"
+            key={`w${v}`}
+            className={v === w ? "on" : ""}
+            onClick={() => {
+              const next = new URLSearchParams(sp);
+              if (v) next.set("wide", String(v));
+              else next.delete("wide");
+              next.delete("at");
+              setSp(next, { replace: true });
+            }}
+          >
+            {v === 0 ? "窄" : `菊科 ${v} 属`}
           </button>
         ))}
       </div>

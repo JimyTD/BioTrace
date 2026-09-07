@@ -30,6 +30,52 @@ const S = 62; // 扇形世界尺度
 const FAN_LEN = [0, S * 0.5, S * 0.255, S * 0.15, S * 0.088];
 const FAN_SPREAD = [0, 1.0, 0.72, 0.58, 0.5];
 const MAXREL = 4;
+/**
+ * 大扇出的展开态怎么摆（见 docs/wip/物种树-结构议题.md §4.4）。
+ *
+ * - **`on`（缺省）** 全部子级都成枝、枝端补叶丛、**不按收集褪色**、标签照摆。
+ * - **`off`** 改造前：`FAN_BATCH = 8` 分页 + 枝梢「上一批 / 下一批」。留着并排比。
+ * - **`haze`** = `on` 再加一层淡枝影。情况 3 的预研入口，见 fanHaze。
+ *
+ * 09-07 拍板收敛成一套。曾并排比过的 a（没点亮的退向背景）/ b（只有点亮的
+ * 成枝、其余铺淡影）都撤了：两案的分歧只在「没点亮的怎么办」，而**展开态不
+ * 按收集褪色**这个更上游的决定把分歧本身取消了。理由见 fanNode 里 dim 原址
+ * 的注释与 §4.6。
+ */
+type FanMode = "on" | "off" | "haze";
+const FAN_MODE: FanMode = (() => {
+  if (typeof location === "undefined") return "on";
+  const v = new URLSearchParams(location.search).get("fanout");
+  return v === "off" || v === "haze" ? v : "on";
+})();
+/** 展开态是否走改造后那套。分页只在 off、以及超出 FAN_CAP 时才出现。 */
+const FAN_NEW = FAN_MODE !== "off";
+/** 枝端补几根细枝（按 rel 递减），每根挂几片叶。 */
+const FAN_TWIG = [5, 4, 3, 2, 2];
+const FAN_BLADE = [3, 3, 2, 2, 1];
+/**
+ * 一扇最多摆几根枝。超出才回到翻页 —— 分页是兜底，不是常态。
+ *
+ * 64 是照真实骨架定的：`backbone.json` 最宽的一层（门下的纲、纲下的目）在
+ * 60 上下。定成 64 意味着实测那几级都能一屏摆完，翻页只在异常宽的类群出现。
+ */
+const FAN_CAP = 64;
+/**
+ * 淡枝影的长度与混色（`?fanout=haze`，见 fanHaze）。
+ *
+ * 必须混向**背景色**而不是灰度均值 —— 枝本来就是蓝灰的，往灰里混等于没混，
+ * 线条照样实心可见，读作细枝而不是余光。
+ */
+const HAZE_LEN = 0.54;
+const HAZE_MIX = 0.66;
+/** 往背景色混。混向 BG 而不是灰度均值，色相才留得住。 */
+function towardBg(c: V3, k: number): V3 {
+  return [
+    c[0] + (BG[0] - c[0]) * k,
+    c[1] + (BG[1] - c[1]) * k,
+    c[2] + (BG[2] - c[2]) * k,
+  ];
+}
 const FUZZ = S * 0.032;
 const ZOFF = S * 0.3;
 const MAXEX = 1600;
@@ -383,6 +429,19 @@ export class TreeScene {
   private sF0!: Float32Array; private sF1!: Float32Array;
   private sW!: Float32Array; private sWF!: Float32Array; private sCol!: Float32Array;
   private exCount = 0;
+  /** 叶丛密度系数，按当前这一扇的枝数定，见 fanNode。 */
+  private fanK = 1;
+  /**
+   * 这一扇往下预览几层。**扇越宽，看得越浅。**
+   *
+   * 改造前靠 `FAN_BATCH = 8` 限流，所以递归满 MAXREL 层也不过几十段。a 案把
+   * 34 个门全摆上，同样递归 4 层直接顶穿 MAXEX（实测 1600/1600）—— 而
+   * pushExpand 超了是静默丢弃，表现为最后几根枝凭空秃掉，比裸枝更难查。
+   *
+   * 压深度也比压密度合理：34 根枝各带一层子枝加叶丛就已经饱满，再往下那几层
+   * 在这个尺度上本来就糊成一片。
+   */
+  private fanMaxRel = MAXREL;
 
   private pB!: WebGLProgram; private uB: Record<string, WebGLUniformLocation | null> = {};
   private pL!: WebGLProgram; private uL: Record<string, WebGLUniformLocation | null> = {};
@@ -1573,10 +1632,146 @@ export class TreeScene {
     this.pushExpand(tp, tp, tp, 0, 0, base, mid, p, w0, w1, col, true);
   }
 
+  /**
+   * fan 态的枝端叶丛。**大扇出两案共用的底座。**
+   *
+   * 为什么不复用总览的叶槽：总览为了把形态写死，只给每节点 `ovB` 个「外沿」
+   * 子枝分配叶（`grow` 里的 `seen && outer`），其余子级塌成一小截、不分叶槽。
+   * 层级越深越容易落在非外沿，实测纲及以下 `g.le - g.ls` 直接是 0 —— 一片叶
+   * 都没有，所以枝必然是裸的。叶缓冲在 growAll 时已定长，事后加不进去。
+   *
+   * 所以改用展开缓冲现补几何：末段抽几根细枝，每根挂几片纺锤叶（和「种」同一
+   * 套 blade）。展开段实测只用到 16~176/1600，余量够。
+   *
+   * 参照 v2 原型的枝端叶丛（`/proto/clear-tree/v2-roots.html?lv=3`）。它好看
+   * 不是布局更好 —— 布局常量两边逐字相同 —— 是它的假数据一路生成到种，每根
+   * 末端下面本来就有子树可长。
+   */
+  private fanFoliage(nd: TreeNode, L: number, rel: number, col: V3) {
+    const [RB, UB, FB] = this.focusBasis;
+    /* fanK 按这一扇有多少根枝缩密度：62 个门每根都配满叶丛会顶穿 MAXEX，
+       而 pushExpand 超了是静默丢弃 —— 表现为最后几根枝凭空秃掉。 */
+    const tn = Math.max(2, Math.round(FAN_TWIG[Math.min(rel, FAN_TWIG.length - 1)]! * this.fanK));
+    const bn = Math.max(1, Math.round(FAN_BLADE[Math.min(rel, FAN_BLADE.length - 1)]! * this.fanK));
+    const sid = strId(nd.id);
+    const tips: V3[] = [];
+    /* 叶比枝亮一档：枝是结构、叶是体量。照 v2 的 lcol 提亮口径。 */
+    const lcol: V3 = [
+      col[0] + (0.99 - col[0]) * 0.34,
+      col[1] + (0.97 - col[1]) * 0.3,
+      col[2] + (0.86 - col[2]) * 0.34,
+    ];
+    for (let i = 0; i < tn; i++) {
+      /* 细枝铺在主枝后半段，别都从末端一点爆开 —— 那会长成一个球
+         （总览踩过同一个坑，见结构议题 §5「子级分叉位置」）。 */
+      const t = 0.52 + 0.46 * ((i + 0.5) / tn);
+      const base = this.bzAt(nd, t);
+      const bdir = this.bzTan(nd, t);
+      const a = GOLD * i + nd.sib * 1.31 + h01(sid, rel, i, 3) * 0.8;
+      const sp = 0.62 + 0.3 * h01(sid, rel, i, 9);
+      const perp = add(scl(RB, Math.cos(a)), scl(FB, Math.sin(a) * 0.72));
+      const td = nrm(add(add(scl(bdir, Math.cos(sp)), scl(perp, Math.sin(sp))), scl(UB, 0.06)));
+      const tl = L * (0.3 + 0.16 * h01(sid, rel, i, 5));
+      const tEnd = add(base, scl(td, tl));
+      const tMid = add(
+        add(base, scl(td, tl * 0.5)),
+        scl(add(scl(RB, 0.1 * Math.cos(a)), scl(UB, -0.06)), tl),
+      );
+      this.pushExBlade(base, base, tMid, tEnd, tl * 0.02, tl * 0.012, col);
+      this.bbAdd(tEnd);
+      for (let j = 0; j < bn; j++) {
+        const bt = 0.55 + 0.45 * ((j + 0.5) / bn);
+        const bBase = bez3(base, tMid, tEnd, bt);
+        const side = j % 2 ? 1 : -1;
+        const ba = side * (0.7 + 0.34 * h01(sid, i, j, 11));
+        const bd = nrm(add(add(scl(td, Math.cos(ba)), scl(perp, Math.sin(ba))), scl(FB, 0.12)));
+        const pl = tl * (0.42 + 0.2 * h01(sid, i, j, 13));
+        const p = add(bBase, scl(bd, pl));
+        const mid = add(
+          scl(add(bBase, p), 0.5),
+          scl(add(scl(RB, 0.13 * side), scl(UB, -0.05)), pl),
+        );
+        this.pushExBlade(bBase, bBase, mid, p, pl * 0.035, pl * 0.115, lcol);
+        this.bbAdd(p);
+        tips.push(p);
+      }
+      /* 细枝身上也当锚点。点叶只挂叶尖的话，界级一个门上千片叶就摊在 4 个点
+         上，又是深色实心球；放大散布半径治不了 —— FUZZ 只有 2 个世界单位，
+         再大叶就脱枝飘了。多取锚点不吃段数，而且叶贴着枝，正是要的簌簌感。 */
+      for (let s = 0; s < 3; s++) tips.push(bez3(base, tMid, tEnd, 0.34 + s * 0.28));
+    }
+    return tips;
+  }
+
+  /**
+   * 这一扇摆哪些子级。
+   *
+   * 改造后：**全摆**，一个不藏。分页降为兜底，只在超出 FAN_CAP 时出现。
+   *
+   * `off` 是改造前：`FAN_BATCH = 8` 分页，其余藏起来靠枝梢那对芽翻。结构议题
+   * §3.1 判过这个方向与「树的隐喻」冲突 —— 落地成一枚白药丸摆在画面正中，
+   * 读作翻页控件。
+   */
+  private pickKids(kidsAll: TreeNode[], rel: number) {
+    const ordered = orderKids(kidsAll);
+    if (!FAN_NEW) {
+      return rel === 0
+        ? batchKids(kidsAll, this.batchPage)
+        : { shown: ordered.slice(0, FAN_BATCH), ordered, pages: 1, page: 0 };
+    }
+    // 兜底：连一屏能读的量都超了，才回到翻页
+    const cap = rel === 0 ? FAN_CAP : FAN_BATCH;
+    if (ordered.length <= cap) return { shown: ordered, ordered, pages: 1, page: 0 };
+    const pages = Math.ceil(ordered.length / cap);
+    const page = rel === 0 ? Math.min(this.batchPage, pages - 1) : 0;
+    return { shown: ordered.slice(page * cap, page * cap + cap), ordered, pages, page };
+  }
+
+  /**
+   * 淡枝影：不占扇位的子级铺成扇形外围一层低对比的短痕。
+   *
+   * 参照 19 世纪彩色博物图版的处理 —— 前景那一支画到毫毛，背景林子只留调子。
+   * 它们不挂叶、不给标签。
+   *
+   * **只在 `?fanout=haze` 下有调用点**，是情况 3 的预研零件：那一档「翻页外还
+   * 有两百多个属」现在落成画面正中一枚白药丸，正该由这层淡影来说。等 §4.4
+   * 情况 3 定了再决定接不接进缺省。
+   *
+   * 段数很省：一根一段。几十个溢出的子级也只多几十段。
+   */
+  private fanHaze(
+    kids: TreeNode[], nd: TreeNode,
+    nl: number, w: number, sp: number, lenK: number, col: V3,
+  ) {
+    const [RB, UB, FB] = this.focusBasis;
+    const hc = towardBg(col, HAZE_MIX);
+    const n = kids.length;
+    for (let i = 0; i < n; i++) {
+      const c = kids[i]!;
+      const g2 = this.G(c);
+      const sid = strId(c.id);
+      /* 铺满整个张角、并往外多张一点：淡影是「后面还有一大片」的余光，
+         压在亮枝那几路里就看不出规模了。 */
+      const a = this.fanAngle(i, n, sp * 1.32) + (h01(sid, 1, 2, 3) - 0.5) * 0.12;
+      const t = 0.42 + 0.5 * h01(sid, 4, 5, 6);
+      const base = this.bzAt(nd, t);
+      const bdir = this.bzTan(nd, t);
+      const pd = nrm(add(scl(bdir, Math.cos(a)), scl(RB, Math.sin(a))));
+      const ln = nl * lenK * HAZE_LEN * (0.7 + 0.6 * h01(sid, 7, 8, 9));
+      const tip = add(add(base, scl(pd, ln)), scl(FB, (h01(sid, 2, 4, 8) - 0.5) * ZOFF * 0.7));
+      const mid = add(scl(add(base, tip), 0.5), scl(UB, -ln * 0.1));
+      this.pushExBranch(g2, base, mid, tip, w * 0.5, w * 0.12, hc, 1);
+      g2.bA = base; g2.bB = mid; g2.bC = tip; g2.fp = tip;
+      /* 淡影得进包围盒。不进的话，只点亮一两个的类群（情况 4 的常态）会按那
+         一小簇亮枝定距，镜头推到极近，淡影反被放大成两根出画的巨枝。 */
+      this.bbAdd(tip);
+    }
+  }
+
   /** 把节点（含子树）写入展开缓冲。 */
   private fanNode(nd: TreeNode, A: V3, dir: V3, L: number, w0: number, w1: number, rel: number) {
     const [RB, UB, FB] = this.focusBasis;
-    if (rel > MAXREL || L <= 0.001) { this.collapse(nd, A, FUZZ, dir, true); return; }
+    if (rel > this.fanMaxRel || L <= 0.001) { this.collapse(nd, A, FUZZ, dir, true); return; }
     const g = this.G(nd);
     /* 3D 弯曲。横向分量必须沿离心方向外凸而不是用 cos(phase) ——
        后者会让某些枝的横向弯曲正好归零，变成直棍。 */
@@ -1591,6 +1786,12 @@ export class TreeScene {
     const fB = add(add(A, scl(dir, L * 0.5)), scl(bend, L));
     const cs = g.selfVs * 3;
     const col: V3 = [this.aCol[cs]!, this.aCol[cs + 1]!, this.aCol[cs + 2]!];
+    /* ⚠ 这里曾按「没点亮」把整枝往背景混（a 案）。09-07 撤掉，别再加回来。
+       实测冷启动那一屏：鸟纲 42 个目一个都没点亮，整扇就是一片灰白、连标签
+       都没有 —— 那不是雄伟，是荒凉。而这正是新用户点进来的第一眼。
+       褪色是减法；进度改由橙点、标签、「N 项」这些**加法**表达，它们本来就
+       有，而且说得更准：褪色只能说「这些没有」，橙点直接说「这个有 14 项」。
+       总览那档 COLLECT_UNLIT 不受影响 —— 见 §4.6 与 nodeColor。 */
     this.pushExBranch(g, A, fB, fC, w0, w1, col, rel);
     g.bA = A; g.bB = fB; g.bC = fC;
     const end = fC;
@@ -1654,7 +1855,7 @@ export class TreeScene {
         const lg = this.G(lf);
         const li = lg.leafIdx[0];
         if (li == null) continue;
-        if (rel + 1 > MAXREL || nl <= 0.001) {
+        if (rel + 1 > this.fanMaxRel || nl <= 0.001) {
           const p = this.fuzzPt(end, FUZZ, li, dir);
           this.placeFanLeaf(li, p);
           lg.fp = p; continue;
@@ -1671,6 +1872,10 @@ export class TreeScene {
         this.placeFanLeaf(li, p);
         lg.fp = p; lg.fbase = base; this.bbAdd(p);
       }
+      /* 种很少的枝也要补叶丛。属下往往只收了一个种 —— 只摆那一片纺锤叶，枝身
+         就是光的。情况 3（菊科 61 个属全点亮）整屏都是这种枝，走的是这条
+         species 分支而不是上面的 fanFoliage 分支，得单独补。 */
+      if (FAN_NEW && n < 3) this.fanFoliage(nd, L, rel, col);
       const shownSp = new Set(species);
       for (const lf of speciesAll) {
         if (!shownSp.has(lf)) this.collapse(lf, end, FUZZ, dir, true);
@@ -1679,6 +1884,25 @@ export class TreeScene {
     }
 
     // ── 装饰叶：跟着本枝末端走（它们没有对应节点，不需要标签）──
+    /* 走到这里 kidsAll 为空就是真末端（有种的情况上面已经 return）。
+       补一丛细枝带叶。有叶槽的把点叶摊到叶丛上 —— 原先全塞进
+       fuzzPt(end, FUZZ*2.2) 一个球里，读作深色实心一坨，不是枝叶。 */
+    if (FAN_NEW && kidsAll.length === 0) {
+      const tips = this.fanFoliage(nd, L, rel, col);
+      /* 散布半径跟着「每个锚点分到多少叶」走。界级一个门能摊上千片，全塞进
+         固定小半径就又回到深色实心球 —— 那正是要治的病象。开立方是因为叶填
+         的是体积。 */
+      const per = g.leafIdx.length / Math.max(1, tips.length);
+      const fr = FUZZ * Math.min(1.3, 0.42 + Math.cbrt(per) * 0.16);
+      for (let k = 0; k < g.leafIdx.length; k++) {
+        const li = g.leafIdx[k]!;
+        const anchor = tips.length > 0 ? tips[k % tips.length]! : end;
+        const p = this.fuzzPt(anchor, fr, li, dir);
+        this.placeFanLeaf(li, p);
+        this.bbAdd(p);
+      }
+      return;
+    }
     if (g.leafIdx.length > 0 && kidsAll.length === 0) {
       for (const li of g.leafIdx) {
         const p = this.fuzzPt(end, FUZZ * (rel === 0 ? 2.2 : 1), li, dir);
@@ -1688,22 +1912,39 @@ export class TreeScene {
       return;
     }
 
-    const kidBat = rel === 0
-      ? batchKids(kidsAll, this.batchPage)
-      : { shown: orderKids(kidsAll).slice(0, FAN_BATCH), ordered: orderKids(kidsAll), pages: 1, page: 0 };
+    const kidBat = this.pickKids(kidsAll, rel);
     const shownKids = kidBat.shown;
     const n = shownKids.length;
-    if (n === 0) return;
-    if (rel === 0) this.batchPages = kidBat.pages;
+    if (rel === 0) {
+      this.batchPages = kidBat.pages;
+      /* 这一扇的枝数定叶丛密度与预览深度。放在 rel===0 定、深层沿用：一屏的
+         段数预算是整扇共享的，按每层各自算会在门那种 62 路扇出上超支。 */
+      // 深度已按扇宽压过（fanMaxRel），密度不必再压那么狠
+      this.fanK = n <= 14 ? 1 : n <= 30 ? 0.85 : 0.7;
+      if (FAN_NEW) this.fanMaxRel = n > 24 ? 2 : n > 12 ? 3 : MAXREL;
+    }
     const nl = FAN_LEN[Math.min(rel + 1, MAXREL)]!;
     // 竖屏收窄张角（见 spreadK），并让子级枝更长 —— 补回收窄损失的铺开感
     const sk = this.spreadK();
-    const sp = FAN_SPREAD[Math.min(rel + 1, MAXREL)]! * sk;
+    const spRaw = FAN_SPREAD[Math.min(rel + 1, MAXREL)]! * sk;
+    /* 枝少就收窄张角。竖屏取景对「宽而扁」的扇是故意允许两侧出画的（见
+       applyFocus 里的 aspect < 0.72 那支），而只有两三根子级的枝（雀形目下
+       就 2 个科）按满张角摆就是个大 V 字，正好撞上那条规则、两头齐齐出画。
+       收窄成 Y 字既像树，也让包围盒竖起来。 */
+    const sp = spRaw * (FAN_NEW && n <= 3 ? 0.55 : 1);
     const lenK = 1 + (1 - sk) * 0.55;
+    /* 一根都没摆出来：改造后只有「这个类群在骨架里真的没有子级」才会到这。
+       haze 档下仍要把溢出的那些铺成淡影，否则只剩一根光柄。 */
+    if (n === 0) {
+      if (FAN_MODE === "haze" && kidBat.ordered.length > 0) {
+        this.fanHaze(kidBat.ordered, nd, nl, w1, spRaw, lenK, col);
+      }
+      return;
+    }
 
     for (let j = 0; j < n; j++) {
       const c = shownKids[j]!;
-      if (rel + 1 > MAXREL || nl <= 0.001) { this.collapse(c, end, FUZZ, dir, true); continue; }
+      if (rel + 1 > this.fanMaxRel || nl <= 0.001) { this.collapse(c, end, FUZZ, dir, true); continue; }
       let d2: V3, ln: number, base: V3;
       if (rel === 0) {
         /* 直接子级：屏幕上仍是扇形均分（保证标签不重叠、可读），
@@ -1731,15 +1972,23 @@ export class TreeScene {
       }
       /* 末端收尖：子级已到最深一层时枝梢要收到近 0，
          否则每根枝都像被平切的水管。 */
-      const isTip = rel + 1 >= MAXREL;
+      const isTip = rel + 1 >= this.fanMaxRel;
       this.fanNode(c, base, d2, ln, w1, w1 * (isTip ? 0.1 : 0.48), rel + 1);
     }
+    /* 真实子级只有一两个时，本枝自己也要补叶丛。
+       收集出来的东西是「链」不是「树」：雀形目下就 1 个科、科下 1 个属、属下
+       1 个种，一路递归也只得到一根光杆。 */
+    if (FAN_NEW && rel >= 1 && n < 3) this.fanFoliage(nd, L, rel, col);
     const shownSet = new Set(shownKids);
+    const hazeAll: TreeNode[] = [];
     for (const c of kidBat.ordered) {
       if (shownSet.has(c)) continue;
+      if (FAN_MODE === "haze") { hazeAll.push(c); continue; }
       /* 焦点这一茬之外：藏。更深一层预览的溢出仍收成那根枝梢的叶簇。 */
       if (rel > 0) this.collapse(c, end, FUZZ, dir, true);
     }
+    // 淡影用未收窄的张角：它要读作「外围还有一大片」，缩到亮枝那几路里就没了规模
+    if (hazeAll.length > 0) this.fanHaze(hazeAll, nd, nl, w1, spRaw, lenK, col);
     if (this.exMode !== "retract" && rel === 0 && kidBat.pages > 1) {
       this.placeBatchBuds(end, dir, L, w1, col, RB, UB, kidBat.page, kidBat.pages);
     }
@@ -1786,6 +2035,8 @@ export class TreeScene {
   private applyFocus(nd: TreeNode, keepView = false, exMode: "open" | "retract" | "grow" = "open") {
     this.focus = nd;
     this.exCount = 0;
+    // 上一次焦点若是宽扇（压过深度），别让它带到这次窄扇上
+    this.fanMaxRel = MAXREL;
     this.nextBudP = null;
     this.nextBudBase = null;
     this.prevBudP = null;
@@ -1867,6 +2118,16 @@ export class TreeScene {
     this.cam.spin = 0;
     this.setFocusFlags(nd);
     this.upload();
+    if (import.meta.env.DEV) {
+      console.info(
+        /* 展开段快见底就是在静默丢枝（pushExpand 满了直接 return），
+           叶槽池为 0 则说明这一级只能靠 fanFoliage 现补几何叶。两个都要看。 */
+        `[tree] 展开 ${nd.id} fanout=${FAN_MODE}`
+        + ` · 子级 ${this.kidsOf(nd).length} 摆 ${this.pickKids(this.kidsOf(nd), 0).shown.length}`
+        + ` · 段 ${this.exCount}/${MAXEX} · 预览 ${this.fanMaxRel} 层 · 密度 ${this.fanK}`
+        + ` · 叶槽池 ${g.le - g.ls} 摆出 ${this.fanLeaf.length}`,
+      );
+    }
   }
 
   private turnBatch(delta: number) {
@@ -2025,9 +2286,16 @@ export class TreeScene {
       : isLeafParent
         ? this.focus.ch.filter((c) => c.lvl >= 6)
         : this.kidsOf(this.focus);
-    const kids = this.focus === this.root
+    /* 必须和几何走同一个挑法（pickKids），否则标签摆的是第 8 个子级、枝摆的是
+       另一批，标签就挂到别人的枝上去了。 */
+    const shownKids = this.focus === this.root
       ? rawKids
-      : batchKids(rawKids, this.batchPage).shown;
+      : this.pickKids(rawKids, 0).shown;
+    /* ⚠ 这里曾按「点亮」筛掉未收集子级的标签（几十个空目人人一个 pill 读不
+       了）。09-07 一并撤掉：既然展开态不按收集褪色，点亮就不再是取舍依据，
+       未收集的目一样是能点进去的真实类群，藏了标签反而没法往下走。冷启动那
+       屏因此从零标签变成几个目名可读可点。挤不挤得下交给标签避让去判。 */
+    const kids = shownKids;
     let op: number;
     if (this.focus === this.root) op = 1;
     else if (this.batchAnim === "out") op = Math.max(0, 1 - this.bloom / 0.5);

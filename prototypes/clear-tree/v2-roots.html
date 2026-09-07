@@ -340,7 +340,13 @@ function nameFor(lvl,king,sib,seed){
 const BIGFAN=(()=>{
   const v=parseInt(new URLSearchParams(location.search).get("fan")||"0",10);
   return isFinite(v)?Math.max(0,Math.min(200,v)):0;})();
-let bigfanAt=null;   // 记下被改造的那个科，便于一键跳转
+let bigfanAt=null;
+/** ?lv=N：起飞后自动下钻到第 N 级的展开态。见文件末尾「起飞」段。 */
+const LV=(()=>{
+  const raw=new URLSearchParams(location.search).get("lv");
+  if(raw===null)return -1;
+  const v=parseInt(raw,10);
+  return isFinite(v)?Math.max(0,Math.min(6,v)):-1;})();   // 记下被改造的那个科，便于一键跳转
 
 let nid=0,specTotal=0,branchCount=0,leafCount=0,segTotal=0,gotTotal=0;
 
@@ -1838,6 +1844,14 @@ requestAnimationFrame(t=>{last=t;frame(t);});
 setTimeout(()=>document.getElementById("boot").classList.add("gone"),120);
 // 大扇出实验：直接跳到那个被改造的科，省去手点五层
 if(bigfanAt)setTimeout(()=>goTo(bigfanAt),260);
+/* ?lv=N 直接落在第 N 级的展开态（0=界 … 5=属），沿每级头一个子级下钻。
+   加它是为了和正式实现并排比同一深度的观感 —— 原型本来只能手点，
+   换个人对比就走不到同一级。纯导航，不碰任何几何与配色。 */
+if(!bigfanAt&&LV>=0){
+  let n=TRUNK;
+  for(let i=0;i<=LV&&n.ch&&n.ch.length;i++)n=n.ch[0];
+  if(n!==TRUNK)setTimeout(()=>goTo(n),260);
+}
 console.log("[tree] grow",GROW_MS+"ms","verts",NV,"tris",NI/3,"leaves",leafCount,
             bigfanAt?("bigfan "+bigfanAt.zh+" x"+bigfanAt.ch.length):"");
 

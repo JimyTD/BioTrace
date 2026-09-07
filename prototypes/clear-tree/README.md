@@ -14,8 +14,13 @@ Web dev server 起着的话直接开 `http://127.0.0.1:5173/proto/clear-tree/dev
 —— `/proto` 由 `apps/web/vite.config.ts` 里的 `devStatic` 挂到本目录，只在 dev
 生效，进不了生产包。
 
-**和定稿实现并排比**：`http://127.0.0.1:5173/devpages/tree-2up.html`（左栏当前
-实现、右栏 v1 参照，两栏都由 dev server 挂出，不必另起服务器）。
+**和定稿实现并排比**：
+- 总览：`http://127.0.0.1:5173/devpages/tree-2up.html`（右栏 v1 参照）
+- 各层级：`http://127.0.0.1:5173/devpages/tree-levels.html`（右栏 v2，按 `?lv=` 同深度下钻）
+- 大扇出两案：`http://127.0.0.1:5173/devpages/tree-fanout.html`（A / B / v2 三栏，见
+  [`结构议题 §4.4`](../../docs/wip/物种树-结构议题.md)）
+
+两页都由 dev server 挂出，不必另起静态服务器。
 
 不想起前端时也可以单独起静态服务器（纯静态 HTML，但**必须用 http** —— WebGL 在
 `file://` 下会被部分浏览器拦）：
@@ -40,6 +45,8 @@ python -m http.server 8099
 ```
 ?fan=50     让动物界的第一个「科」下带 50 个属，并自动跳进去
             用来测大扇出的形态与标签取舍。任意数量（上限 200）
+?lv=3       直接落在第 3 级（0=界…5=属）的展开态，沿每级头一个子级下钻
+            为了和正式实现并排比同一深度而加；原型本来只能手点五层
 ```
 
 ## `shots/` 里的图
