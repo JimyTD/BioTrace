@@ -9,6 +9,7 @@
     "build": "pnpm -r --filter @biotrace/api --filter @biotrace/web build",
     "db:push": "pnpm --filter @biotrace/api db:push",
     "mobile:sync": "pnpm --filter @biotrace/mobile sync",
-    "mobile:open": "pnpm --filter @biotrace/mobile open"
+    "mobile:open": "pnpm --filter @biotrace/mobile open",
+    "check:copy": "python scripts/check-zh.py && python scripts/check-voice.py"
   }
 }

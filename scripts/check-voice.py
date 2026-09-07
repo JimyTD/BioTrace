@@ -6,7 +6,7 @@
    不是以某张覆盖表为准）。
 2. 成套覆盖组换了半个 —— nav 四词、点亮词族，写一个就必须写全组。
 
-用法：python scripts/check-voice.py（CI 同步调用）
+用法：仓库根 `pnpm check:copy` 一键跑双闸；或单独 python scripts/check-voice.py
 """
 import re
 import sys
