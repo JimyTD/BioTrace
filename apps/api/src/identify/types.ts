@@ -21,6 +21,7 @@ export const SUBJECT_KINDS = [
   "living_organism",
   "human",
   "artifact_or_toy",
+  "specimen",
   "depiction_or_media",
   "no_organism",
   "unclear",

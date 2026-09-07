@@ -75,6 +75,7 @@ export function serializeObservation(
   opts?: { redactPending?: boolean; uploaderName?: string | null },
 ) {
   const redact = opts?.redactPending !== false && obs.status === "pending_settle";
+  const softEncounter = obs.error === "identify_soft_encounter";
 
   let taxonomy = null;
   if (!redact && obs.taxonomyJson) {
@@ -122,6 +123,8 @@ export function serializeObservation(
     updatedAt: obs.updatedAt.toISOString(),
     pendingReveal: obs.status === "pending_settle",
     uploaderName: opts?.uploaderName ?? null,
+    /** 软档（影像/标本真生物）：已识别但不收集。前端据此出「未相遇」徽章。 */
+    softEncounter,
   };
 }
 

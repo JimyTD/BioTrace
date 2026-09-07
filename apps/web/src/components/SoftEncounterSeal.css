@@ -1,0 +1,40 @@
+/**
+ * 「不可收集」印章的材质：纸灰、无辉光。与稀有度蜡章同理，
+ * 色不进 token——皮肤要换物件走 themes/slots.ts 槽位整枚换掉。
+ * 由 main.tsx 显式 import，层叠顺序在 styles.css 之后（皮肤可覆盖）。
+ */
+
+.soft-seal {
+  display: inline-flex;
+  align-items: center;
+  width: 5.6rem;
+  color: var(--muted);
+  opacity: 0.9;
+}
+
+.soft-seal-svg {
+  display: block;
+  width: 100%;
+  height: auto;
+  overflow: visible;
+  filter: drop-shadow(0 1px 1.5px rgba(42, 36, 28, 0.18));
+}
+
+/* badge.soft：中性纸灰「未相遇」，区别于 danger 红（硬拦）与 warn 黄（进行中） */
+.badge.soft {
+  background: color-mix(in srgb, var(--muted) 14%, transparent);
+  color: var(--muted);
+}
+
+/* 照片下方的理由说明块：标题行 + 正文两行 */
+.detail-soft-reason {
+  display: grid;
+  gap: 4px;
+  padding: 10px 12px;
+  border-left: 3px solid color-mix(in srgb, var(--muted) 45%, transparent);
+  background: color-mix(in srgb, var(--muted) 7%, transparent);
+}
+
+.detail-soft-reason-text {
+  margin: 0;
+}

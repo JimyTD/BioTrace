@@ -69,6 +69,67 @@ check("mock collectible", mock.eligibility === "collectible" && mock.finest_reli
   check("no kingdom blocked", gate.ok === false && gate.code === "identify_no_kingdom");
 }
 
+// soft encounter: depiction/specimen with identity + kingdom → soft pass
+{
+  const taxonomy = emptyTaxonomy();
+  taxonomy.kingdom = { name_la: "Animalia", name_zh: "动物界" };
+  taxonomy.species = { name_la: "Bos taurus", name_zh: "牛" };
+
+  const depiction = {
+    ...mock,
+    subject_kind: "depiction_or_media",
+    eligibility: "not_collectible",
+    ineligibility_reason_zh: "画布上的真牛，非野外相遇",
+    common_name_zh: "牛",
+    scientific_name: "Bos taurus",
+    taxonomy,
+  };
+  const g1 = evaluateEligibility(depiction);
+  check(
+    "soft depiction pass",
+    g1.ok === true && "soft" in g1 && g1.soft.kind === "depiction_or_media",
+  );
+
+  const specimen = {
+    ...depiction,
+    subject_kind: "specimen",
+    ineligibility_reason_zh: "馆藏标本，非野外相遇",
+  };
+  const g2 = evaluateEligibility(specimen);
+  check(
+    "soft specimen pass",
+    g2.ok === true && "soft" in g2 && g2.soft.kind === "specimen",
+  );
+
+  // 无身份（名字全空）→ 照旧拦死 identify_not_living
+  const noName = { ...depiction, common_name_zh: "", scientific_name: "" };
+  const g3 = evaluateEligibility(noName);
+  check(
+    "soft no identity blocked",
+    g3.ok === false && g3.code === "identify_not_living",
+  );
+
+  // 无界 → 照旧拦死
+  const noK = { ...depiction, taxonomy: emptyTaxonomy() };
+  const g4 = evaluateEligibility(noK);
+  check(
+    "soft no kingdom blocked",
+    g4.ok === false && g4.code === "identify_not_living",
+  );
+
+  // 玩具（artifact_or_toy）即使带名字也拦死，不走软档
+  const toy = {
+    ...depiction,
+    subject_kind: "artifact_or_toy",
+    ineligibility_reason_zh: "玩具模型",
+  };
+  const g5 = evaluateEligibility(toy);
+  check(
+    "toy still blocked",
+    g5.ok === false && g5.code === "identify_not_living",
+  );
+}
+
 const userId = randomUUID();
 await db.insert(users).values({
   id: userId,

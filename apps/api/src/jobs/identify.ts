@@ -5,6 +5,7 @@ import { localizeThrownMessage } from "../errors.js";
 import { evaluateEligibility } from "../identify/eligibility.js";
 import { runIdentifyForUser } from "../identify/run.js";
 import { emptyTaxonomy, type IdentifyResult } from "../identify/types.js";
+import { resolveCountry } from "../settle/country.js";
 import { computeSettle } from "../settle/rules.js";
 import { storeAcceptedTaxonomyJson } from "../settle/taxon.js";
 import { enqueueIdentifyJob } from "./identify-queue.js";
@@ -20,6 +21,7 @@ const STORED_CODES = new Set([
   "identify_human",
   "identify_not_living",
   "identify_no_kingdom",
+  "identify_soft_encounter",
 ]);
 
 type IdentifyOpts = {
@@ -164,7 +166,8 @@ export function enqueueIdentify(opts: IdentifyOpts) {
       );
 
       const gate = evaluateEligibility(result);
-      if (!gate.ok) {
+      const soft = gate.ok && "soft" in gate ? gate.soft : null;
+      if (!gate.ok && !soft) {
         console.log(
           `[identify] ineligible obs=${opts.observationId} code=${gate.code} kind=${gate.kind}`,
         );
@@ -192,6 +195,50 @@ export function enqueueIdentify(opts: IdentifyOpts) {
             identifyProvider: provider,
             identifyModel: model,
             settledAt: null,
+            updatedAt: new Date(),
+          })
+          .where(eq(observations.id, opts.observationId));
+        return;
+      }
+
+      /* 软档（2026-09-07 拍板）：影像/标本上的真生物。识别放行、全套字段保留，
+         但不进结算（无稀有度/taxonKey/图鉴），国别与可读地名照常判定。
+         status=settled 让详情页按「已识别」渲染，错误码 identify_soft_encounter
+         驱动前端「未相遇」徽章与理由文案。 */
+      if (soft) {
+        console.log(
+          `[identify] soft encounter obs=${opts.observationId} kind=${soft.kind}`,
+        );
+        const fresh = await db.query.observations.findFirst({
+          where: eq(observations.id, opts.observationId),
+          columns: { lat: true, lng: true },
+        });
+        const country = await resolveCountry(fresh?.lat ?? opts.lat, fresh?.lng ?? opts.lng);
+        const taxonomyJson = JSON.stringify(result.taxonomy);
+        await db
+          .update(observations)
+          .set({
+            status: "settled",
+            commonName: result.common_name_zh || null,
+            scientificName: result.scientific_name || null,
+            finestReliableRank: result.finest_reliable_rank || null,
+            confidence: result.confidence_0_to_1,
+            taxonomyJson,
+            blurb: result.blurb_zh || null,
+            notes: result.notes || null,
+            error: "identify_soft_encounter",
+            settleTier: "none",
+            rarity: null,
+            countryCode: country.code,
+            countrySource: country.source,
+            locationLabel: country.locationLabel,
+            locationPrecise: Boolean(country.code),
+            alertIntroduced: false,
+            taxonKey: null,
+            acceptedTaxonomyJson: null,
+            identifyProvider: provider,
+            identifyModel: model,
+            settledAt: new Date(),
             updatedAt: new Date(),
           })
           .where(eq(observations.id, opts.observationId));

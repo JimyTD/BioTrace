@@ -38,6 +38,7 @@ const OBS_ERROR_KEYS: Record<string, MessageKey> = {
   identify_not_living: "admin.error.identifyNotLiving",
   identify_no_kingdom: "admin.error.identifyNoKingdom",
   identify_not_collectible: "admin.error.identifyNotCollectible",
+  identify_soft_encounter: "admin.error.identifySoftEncounter",
 };
 
 /** 观察 error 字段：稳定 code 译成管理端中文；已是中文原文则原样展示 */

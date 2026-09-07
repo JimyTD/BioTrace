@@ -17,6 +17,7 @@ const known: Record<string, MessageKey> = {
   identify_human: "error.identifyNotCollectible",
   identify_not_living: "error.identifyNotCollectible",
   identify_no_kingdom: "error.identifyNotCollectible",
+  identify_soft_encounter: "error.identifySoftEncounter",
 };
 
 export function apiError(code: string, status: number) {

@@ -11,7 +11,9 @@ import {
   identifyErrorHint,
   identifyErrorPrimary,
   isNotCollectibleError,
+  isSoftEncounterError,
 } from "../identifyErrors";
+import SoftEncounterSeal from "../components/SoftEncounterSeal";
 import { hasValidCoords } from "../geo";
 import { peekObservation, rememberObservation } from "../pageCache";
 import { containedImageBox, decodeIfSimilarAspect, playPhotoLift } from "../photoLift";
@@ -46,6 +48,28 @@ function rankLabel(rank: (typeof RANK_ORDER)[number]) {
 function locationText(obs: Observation) {
   if (!hasValidCoords(obs.lat, obs.lng)) return t("detail.noGps");
   return obs.locationLabel || `${obs.lat!.toFixed(5)}, ${obs.lng!.toFixed(5)}`;
+}
+
+/**
+ * 软档理由句：识图作业把模型的 ineligibility_reason_zh 写进 notes 首段。
+ * 「影像/标本」分型在落库时没有单独字段，这里按 notes 内容回读分型；
+ * 分不出就用通用句，不猜。
+ */
+function softReasonText(obs: Observation): string {
+  const notes = (obs.notes ?? "").trim();
+  const generic = t("detail.softReasonGeneric");
+  if (!notes) return generic;
+  const reasonMatch = notes.match(/^([^·]+)(?:\s*·\s*(.*))?$/);
+  const reason = reasonMatch?.[1]?.trim() ?? "";
+  const rest = reasonMatch?.[2]?.trim() ?? "";
+  const kindLine = `${reason} ${rest}`;
+  if (/标本/.test(kindLine)) {
+    return reason ? t("detail.softReasonSpecimen", { reason }) : t("detail.softReasonSpecimen", { reason: t("error.identifySoftDefaultReason") });
+  }
+  if (/影像|画布|油画|画作|挂画|海报|屏幕|书页|印刷|照片|直播|描绘/.test(kindLine)) {
+    return reason ? t("detail.softReasonDepiction", { reason }) : t("detail.softReasonDepiction", { reason: t("error.identifySoftDefaultReason") });
+  }
+  return generic;
 }
 
 function TaxonomyList({ taxonomy }: { taxonomy: Taxonomy }) {
@@ -278,6 +302,9 @@ export default function ObservationDetailPage({ userId }: { userId?: string }) {
   }
 
   const notCollectible = isNotCollectibleError(obs?.error);
+  const softEncounter = isSoftEncounterError(obs?.error);
+  /** 软档与硬拦都「不进图鉴」，但软档保留全套身份字段 */
+  const noCollection = notCollectible || softEncounter;
   const title = notCollectible
     ? t("detail.notCollectibleTitle")
     : obs?.commonName || obs?.scientificName || t("detail.unnamed");
@@ -286,6 +313,7 @@ export default function ObservationDetailPage({ userId }: { userId?: string }) {
   const failedCoarse =
     !!obs &&
     !notCollectible &&
+    !softEncounter &&
     (obs.error === "identify_too_coarse" ||
       (obs.status === "failed" && obs.settleTier === "none"));
   const showTaxonomy =
@@ -293,7 +321,7 @@ export default function ObservationDetailPage({ userId }: { userId?: string }) {
   const failHint = obs?.status === "failed" ? identifyErrorHint(obs.error) : null;
   const hasCoords = obs ? hasValidCoords(obs.lat, obs.lng) : false;
   const identifyName = obs ? identifyDisplayName(obs.identifyProvider, obs.identifyModel) : null;
-  const acceptedSci = obs && !notCollectible ? acceptedScientificIfDifferent(obs) : null;
+  const acceptedSci = obs && !noCollection ? acceptedScientificIfDifferent(obs) : null;
 
   return (
     <div className="stack detail-page" ref={pageRef}>
@@ -319,7 +347,7 @@ export default function ObservationDetailPage({ userId }: { userId?: string }) {
           <p className="muted">{t("detail.acceptedScientificName", { name: acceptedSci })}</p>
         ) : null}
         <div className="detail-marks">
-          {!notCollectible && obs.rarity ? (
+          {!noCollection && obs.rarity ? (
             <span className={`rarity-badge rarity-${obs.rarity}`}>
               {t(`rarity.${obs.rarity}` as MessageKey)}
             </span>
@@ -328,6 +356,10 @@ export default function ObservationDetailPage({ userId }: { userId?: string }) {
             <span className="muted">
               {t("album.reliableTo", { rank: formatRank(obs.finestReliableRank) })}
             </span>
+          ) : null}
+          {softEncounter ? <SoftEncounterSeal /> : null}
+          {softEncounter ? (
+            <span className="badge soft">{t("status.softEncounter")}</span>
           ) : null}
           {obs.status === "analyzing" ? (
             <span className="badge warn">{t("status.analyzing")}</span>
@@ -342,7 +374,7 @@ export default function ObservationDetailPage({ userId }: { userId?: string }) {
             </span>
           ) : null}
         </div>
-        <ListTagRow tags={notCollectible ? [] : obs.tags} />
+        <ListTagRow tags={noCollection && !softEncounter ? [] : obs.tags} />
       </header>
 
       {notice ? <p className="muted">{notice}</p> : null}
@@ -352,6 +384,13 @@ export default function ObservationDetailPage({ userId }: { userId?: string }) {
         <div className="detail-fail">
           <p className="error">{identifyErrorPrimary(obs.error)}</p>
           {failHint ? <p className="muted">{failHint}</p> : null}
+        </div>
+      ) : null}
+
+      {softEncounter && obs ? (
+        <div className="detail-soft-reason">
+          <p className="muted">{t("detail.softReasonTitle")}</p>
+          <p className="detail-soft-reason-text">{softReasonText(obs)}</p>
         </div>
       ) : null}
 

@@ -18,6 +18,7 @@ import { OpenBookCloseContext } from "../components/TripBookLayer";
 import {
   identifyErrorPrimary,
   isNotCollectibleError,
+  isSoftEncounterError,
 } from "../identifyErrors";
 import {
   canUseNativePicker,
@@ -49,6 +50,9 @@ function statusBadge(obs: Observation) {
   }
   if (obs.status === "pending_settle") {
     return <span className="badge warn">{t("status.pending_settle")}</span>;
+  }
+  if (isSoftEncounterError(obs.error)) {
+    return <span className="badge soft">{t("status.softEncounter")}</span>;
   }
   if (obs.status === "failed") {
     if (isNotCollectibleError(obs.error)) {
@@ -675,9 +679,11 @@ export default function TripAlbumPage({ userId }: { userId: string }) {
                   alt={
                     obs.status === "pending_settle"
                       ? t("status.pending_settle")
-                      : isNotCollectibleError(obs.error)
-                        ? t("status.notCollectible")
-                        : obs.commonName || t("map.observationFallback")
+                      : isSoftEncounterError(obs.error)
+                        ? obs.commonName || obs.scientificName || t("detail.unnamed")
+                        : isNotCollectibleError(obs.error)
+                          ? t("status.notCollectible")
+                          : obs.commonName || t("map.observationFallback")
                   }
                 />
               </span>
@@ -689,7 +695,16 @@ export default function TripAlbumPage({ userId }: { userId: string }) {
                 <span className="film-tile-mark-no">{tileNo(index)}</span>
               </span>
               <span className="film-tile-caption">
-                {obs.status === "settled" ? (
+                {obs.status === "settled" && isSoftEncounterError(obs.error) ? (
+                  <>
+                    <strong className="film-tile-name">
+                      {obs.commonName || obs.scientificName || t("detail.unnamed")}
+                    </strong>
+                    <span className="muted film-tile-rank">
+                      {t("detail.softSeal")}
+                    </span>
+                  </>
+                ) : obs.status === "settled" ? (
                   <>
                     <strong className="film-tile-name">
                       {obs.commonName || obs.scientificName || t("detail.unnamed")}

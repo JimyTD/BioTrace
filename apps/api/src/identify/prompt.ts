@@ -45,11 +45,12 @@ ${identifyLocationLines(input)}
 1. 只输出一个 JSON 对象，不要 Markdown，不要其它文字。
 2. 字段必须包含：
    - subject_kind：枚举之一
-     living_organism | human | artifact_or_toy | depiction_or_media | no_organism | unclear
+     living_organism | human | artifact_or_toy | specimen | depiction_or_media | no_organism | unclear
      · living_organism：现场真生物（含饲养与刚死；空壳/海胆壳/完整蟹蜕按该动物，寄居蟹收蟹；巢羽骨足迹不算）
      · human：真人/明显人类主体
-     · artifact_or_toy：玩具、雕像、手办、馆藏标本、仿生道具等
-     · depiction_or_media：卡通、插画、书页、屏幕截图、照片里的照片等影像/印刷形象
+     · artifact_or_toy：玩具、雕像、手办、仿生道具等仿制品（没有真实生物遗体）
+     · specimen：馆藏标本（展柜/标本框/标本瓶中的真实生物遗体，非仿制品）
+     · depiction_or_media：真生物的影像/印刷形象（海报、画布、书页、屏幕、直播、照片里的照片）
      · no_organism：书本、建筑、纯风景、日用品、菜台食材等无明显现场生物
      · unclear：难以判断
    - subject_living：boolean；是否仍活着。仅 living_organism 可 true，空壳等为 false
@@ -58,21 +59,25 @@ ${identifyLocationLines(input)}
      · collectible 时 taxonomy.kingdom.name_la 必须有值（如 Animalia）；认不出是哪一界则 not_collectible，禁止编造界
      · 人、玩具、卡通、书页、无生物等必须 not_collectible
    - ineligibility_reason_zh：短中文；不合格时必填（说明为何不能进图鉴）；合格时可空字符串
-   - common_name_zh（中文俗名；不合格时不要写真实物种名冒充；可空）
-   - scientific_name（拉丁学名；不合格时必须空字符串，禁止把玩具写成 Ursus 等）
+   - common_name_zh（中文俗名；subject_kind=specimen 或 depiction_or_media 时仍要写出真实物种名；其余不合格时不要写真实物种名冒充；可空）
+   - scientific_name（拉丁学名；subject_kind=specimen 或 depiction_or_media 时仍要填写；其余不合格时必须空字符串，禁止把玩具写成 Ursus 等）
    - taxonomy：对象，键为 kingdom, phylum, class, order, family, genus, species。
      每一级值为对象 {"name_la":拉丁名或英文名或null,"name_zh":通行中文名或null}。
-     不合格时 taxonomy 各级均为 null；合格时按证据填写，且 kingdom.name_la 必填。
+     subject_kind=specimen 或 depiction_or_media 时按证据正常填写，且 kingdom.name_la 必填；
+     其余不合格时 taxonomy 各级均为 null；合格时按证据填写，且 kingdom.name_la 必填。
      若该阶元没有稳定、通行的中文译名，name_zh 必须为 null，禁止臆造中译。
    - confidence_0_to_1（0~1 数字）
-   - finest_reliable_rank（合格时：可靠最细阶元如 family/genus/species；不合格时空字符串）
-   - blurb_zh（合格时：针对 finest_reliable_rank 的中文科普短文，3～4 行；不合格时可空）
+   - finest_reliable_rank（living_organism/specimen/depiction_or_media 时：可靠最细阶元如 family/genus/species；其余不合格时空字符串）
+   - blurb_zh（living_organism/specimen/depiction_or_media 时：针对 finest_reliable_rank 的中文科普短文，3～4 行；其余不合格时可空）
    - notes（识别不确定性等简短技术备注）
 3. 硬性禁止：
    - 玩具熊/雕像/卡通熊 → 不得标成棕熊等真实种，不得 collectible
    - 卡通人物/真人 → human 或 depiction_or_media，不得 collectible，不得按人类分类发卡
    - 书本/物体照片 → no_organism 或 depiction_or_media，不得硬凑生物分类
 4. 分不清是真生物还是玩具/印刷时：unclear + not_collectible。死活看不清不要紧。
+   specimen/depiction_or_media 的关键区别：画面主体是真实生物遗体（标本）→ specimen；
+   是真实生物的影像/印刷形象（海报、屏幕、画布上的真牛）→ depiction_or_media；
+   是仿制品（玩具、雕像）→ artifact_or_toy。分不清标本还是玩具 → artifact_or_toy。
 5. 合格但不确定种级时：finest_reliable_rank 最高只给到 genus 或 family，species 可为 null，不要编造异域种。
 6. 若提供了国家，优先考虑该国野外可能出现的类群（仅对合格个体）。图中形态与当地分布明显冲突时，宁可停在属/科，不要编造该国没有的种。无国家时不要按中国常见种硬猜。`;
 }
