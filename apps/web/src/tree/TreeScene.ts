@@ -35,6 +35,13 @@ const ZOFF = S * 0.3;
 const MAXEX = 1600;
 const EX_SEGS = 10;
 const TRUNK_H = 132;
+/**
+ * 主干露在外面的那一段有多高。
+ *
+ * 和 TRUNK_H 分开：冠的枝长、中枝、根系、地面全部以 TRUNK_H 为基准，缩主干不该
+ * 把已经定稿的树冠一起缩小。缩的只是冠底到根系之间那截光秃的褐色干。
+ */
+const TRUNK_VIS = TRUNK_H * (2 / 3);
 /** 目科属种未收集时往灰里收多少。界门纲不走这条。 */
 const COLLECT_UNLIT = 0.52;
 /**
@@ -47,11 +54,13 @@ const COLLECT_UNLIT = 0.52;
  * 这一屏只为好看：动物 34 门、植物 9 门画出来一样茂密。真实数量在展开后的
  * 层级里才体现，两屏之间有生长动画兜着，不必一一对应。
  *
- * ⚠ 浅层必须分得多。v1 原型的界→门按真实数据分，动物界一上来就是 34 支，
- * 主枝一分叉就摊成一个扇面；每层一律 4 支的话，一根主枝只能长成一根穗子，
- * 六根穗子立在冠顶就是尖的，冠不圆。冠的圆润靠骨架密度，不靠叶簇撑。
+ * ⚠ 分级要匀。冠面是由末梢的方位分布铺出来的，而末梢摊得开不开取决于每一
+ * 级都摊一点：v1 是 6/5/4/4/4，逐级均匀。前一版 8/8/5/4/4/3 头重脚轻，枝都
+ * 堆在中层，末梢数量一样多却成了「六束」，束与束之间是空的，冠的上轮廓因此
+ * 起伏能有画面高度的 14%（v1 只有 4%）。这里的乘积与前一版相等 —— 换的是
+ * 分布，不是密度。
  */
-const OV_B = [0, 8, 8, 5, 4, 4, 3];
+const OV_B = [0, 6, 6, 5, 4, 4, 4];
 const OV_D = 6;
 /** depth 这一层的枝各分几根可见子枝 */
 const ovB = (depth: number) => OV_B[Math.min(depth, OV_B.length - 1)]!;
@@ -64,6 +73,10 @@ const OV_HIDE = 0.05;
  * 的体积，成了两颗实心球。枝长是写死的，按长度收尾同样与数据无关。
  */
 const OV_LMIN = TRUNK_H * 0.09;
+/** 地平线。地面那层沙粒散布在它上下一点点，根系的枝与叶都不许越过它。 */
+const GROUND_Y = -TRUNK_H * 0.035;
+/** 中枝整支放大后，收尾阈值同步放大，层数才不变。见 MID_K。 */
+const lminOf = (nd: TreeNode) => (!LAYOUT_OLD && nd.zone === "basal" ? OV_LMIN * MID_K : OV_LMIN);
 
 /**
  * 树冠布局表。
@@ -86,9 +99,34 @@ const CANOPY: Record<string, CanopyItem> = {
 };
 const CANOPY_DEF: CanopyItem = { tier: 0, split: 1 };
 /** 两档枝长（主干高的倍数）。写死，也不加界级抖动。 */
-const TIER_LEN = [0.72, 0.20];
-/** 中枝在主干上的分叉高度 */
-const TIER2_AT = 0.70;
+const TIER_LEN = [0.72, 0.30];
+/**
+ * 中枝整体放大倍数，相对最初的 0.20 档。
+ *
+ * 「单纯长大到 1.5 倍」—— 是放大镜，不是长得更多：`OV_LMIN` 是绝对长度，枝一
+ * 放大就会在同一处多分出一层，那是结构变了。所以中枝这一支的收尾阈值同步乘
+ * 这个系数，分叉数、层数、叶数全部不动。
+ */
+const MID_K = 1.5;
+/**
+ * 六个枝位的杈长系数，按枝位取。就是 v1 那六个数（0.86~1.14），只是重排过。
+ *
+ * 六杈全等的话，冠顶是六个等高的尖围成一环，环心（中轴正上方）空着，转到任意
+ * 两尖之间就看见一个凹口 —— 那个 M 形。v1 的六杈长短交错，短的那处由邻杈的叶
+ * 补上，上轮廓就被抹平了。
+ *
+ * 重排的规矩：轮转发牌后同界两支落在 k 与 k+3，所以这里 (k, k+3) 两两配对、
+ * 每对和都是 2.00，三个界的体量因此严格相等（铁律 §5 不破）；相邻枝位的高低
+ * 则刻意不成周期，免得又摆出一圈规则的尖。
+ */
+const ARM_JIT = [0.86, 1.05, 0.86, 1.14, 0.95, 1.14];
+/**
+ * 中枝在主干上的分叉高度（占露出那段主干的比例）。
+ *
+ * 主干缩到 2/3 后只剩 88 个单位，而中枝那一团连叶竖直跨度就有 50 —— 位置得按
+ * 「上下各留一截」重新分：贴着冠底它读作冠的下摆，贴着地面它读作根出土。
+ */
+const TIER2_AT = 0.52;
 
 /**
  * 改造前的三段式布局开关，仅供 `?layout=old` 回看。
@@ -100,19 +138,26 @@ const LAYOUT_OLD = typeof location !== "undefined"
 const FORK_SEGS = 6;
 
 /**
- * 叶簇的尺度，全部按所在枝长取比例（照 v1 原型）。
+ * 一簇叶的尺度，按所在枝长取比例。取值对齐 v1 原型 —— 但对齐的是**绝对**尺寸，
+ * 不是比例系数。我们的末梢比 v1 短三分之一（多一级衰减），照抄它的系数，簇就
+ * 只有 v1 四成体积，18 片叶挤进去互相盖住，叶面积比 v1 还多两成，画面上却只
+ * 覆盖到它六成。所以系数要放大回来：簇半径 0.35~0.67L ≈ v1 的 5~10 个单位。
  *
- * 三个数一起决定冠面是连续的絮还是一堆球：叶点 0.18L、簇半径 0.5L，于是
- * 每簇十来片松松地绕在枝端，覆盖率三成。上万个这样的稀疏小簇彼此搭接才铺成
- * 连续冠面；反过来把叶挤进少数末梢、每簇几十片，得到的是一堆密实的球，
- * 球之间必然有缝、轮廓必然起伏。叶点也不能太细 —— 我们的末梢比 v1 短，
- * 照 v1 的 0.115 取，屏幕上的颗粒只有它一半，冠就成了一层碎点。
+ * ⚠ 覆盖率相同时，「多而小」是簌簌的絮，「少而大」是一颗颗糖球。量过：叶点
+ * 抬到 0.22L 后屏幕上一片叶 3.4px，是 v1（2.5px）的 1.85 倍面积，两边覆盖率
+ * 却都是四成 —— 粗细这一档纯赔不赚。补覆盖靠叶多、靠簇大，不靠叶大。
+ *
+ * 另外簇不是球：叶取在垂直枝的环上（环半径逐片不同），沿枝方向再分三档错开，
+ * 于是一簇是顺着枝拉长的一撮，有生长方向。正球贴在枝端会读成挂件。
  */
-const LEAF_R = 0.22;
-const CLUMP_R = 0.62;
-const CLUMP_FILL = 0.42;
-/** 尺度都 ∝ 枝长，(2R/叶点)² 因此是常数，每簇叶数与枝长无关。 */
-const CLUMP_N = Math.round(CLUMP_FILL * ((2 * CLUMP_R) / LEAF_R) ** 2);
+const LEAF_R = 0.125;
+const CLUMP_R0 = 0.35;
+const CLUMP_RD = 0.32;
+/** 沿枝方向的三档错开：起点 + 档距，同样已按末梢偏短放大过。 */
+const CLUMP_EL0 = 0.13;
+const CLUMP_ELD = 0.295;
+/** 每簇叶数，与枝长、与这根枝下面有多少物种都无关（总览不跟真实数据走）。 */
+const CLUMP_N = 18;
 /** 补足分叉数用的装饰枝，每根几段。见 decoFillOn。 */
 const DECO_SEGS = 2;
 
@@ -357,7 +402,7 @@ export class TreeScene {
   private rbA: WebGLRenderbuffer | null = null;
   private FW = 0; private FH = 0;
 
-  private GND_N = 2400;
+  private GND_N = 4200;
   private gP!: Float32Array; private gC!: Float32Array; private gS!: Float32Array;
 
   private TREE_H = 1; private TREE_CY = 0;
@@ -579,7 +624,7 @@ export class TreeScene {
     if (LAYOUT_OLD) { this.growTrunkOld(); return; }
     const nd = this.root;
     const g = this.G(nd);
-    this.growSelf(nd, [0, 0, 0], [0, 1, 0], TRUNK_H, 7.2, 4.6, 0);
+    this.growSelf(nd, [0, 0, 0], [0, 1, 0], TRUNK_VIS, 7.2, 4.6, 0);
 
     const canopy: TreeNode[] = [], roots: TreeNode[] = [];
     for (const c of this.kidsOf(nd)) (c.zone === "root" ? roots : canopy).push(c);
@@ -616,18 +661,21 @@ export class TreeScene {
 
     for (const c of upper) {
       const { tier, split } = cf(c);
-      // 三界等长：长短差异不是自然感的来源，只会让一个界压住另外两个
+      /* 三界等量：一个界的两支可以一长一短（ARM_JIT），但两支之和三界相同，
+         谁的门多、收得多都不影响它在画面上的体量。 */
       const L = TRUNK_H * TIER_LEN[tier]!;
       const [w0, w1] = [4.6, 2.8];
-      const arms = armSlots.get(c)!.map(slotDir);
+      const ks = armSlots.get(c)!;
+      const arms = ks.map(slotDir);
+      const jit = ks.map((k) => ARM_JIT[k % ARM_JIT.length]!);
       if (split > 1) {
         // 柄朝两臂的中间方向；两臂分处对面时水平分量抵消，柄便直上
         const stem = nrm(add(arms.reduce(
           (s, a) => [s[0] + a[0], s[1] + a[1], s[2] + a[2]] as V3,
           [0, 0, 0] as V3,
         ), scl(UP, 0.35)));
-        this.growForked(c, TOP, stem, arms, L, w0!, w1!);
-      } else this.grow(c, TOP, arms[0]!, L, w0!, w1!, 1);
+        this.growForked(c, TOP, stem, arms, jit, L, w0!, w1!);
+      } else this.grow(c, TOP, arms[0]!, L * jit[0]!, w0!, w1!, 1);
     }
 
     /* 中枝：从主干 3/4 高处分出，短、细、外倾。它要读作「树冠下缘够不着的
@@ -637,13 +685,16 @@ export class TreeScene {
     lower.forEach((c, j) => {
       const a = -Math.PI / 2 + gap * Math.round((j * slots) / Math.max(1, lower.length));
       const L = TRUNK_H * TIER_LEN[1]!;
-      this.grow(c, lowAt, nrm([Math.cos(a) * 1.5, 0.5, Math.sin(a) * 1.5]), L, 2.2, 1.2, 1);
+      // 放大 1.5 倍要连宽度一起（§5：改长度就同比改宽度），否则成了两根细杆挑着大球
+      this.grow(c, lowAt, nrm([Math.cos(a) * 1.5, 0.5, Math.sin(a) * 1.5]), L, 3.3, 1.8, 1);
     });
 
     const rn = roots.length;
     roots.forEach((c, j) => {
       const a = (Math.PI * 2 * j) / Math.max(1, rn) + 2.1;
-      this.grow(c, BASE, nrm([Math.cos(a) * 1.5, -0.3, Math.sin(a) * 1.5]), TRUNK_H * 0.42, 3.4, 1.8, 1);
+      /* 根要铺得比冠宽 —— 它读作「这棵树扎在地里」，不是树冠的倒影。起手就
+         斜下去，别贴着地面走，不然第一段自己就压在地平线上。 */
+      this.grow(c, BASE, nrm([Math.cos(a) * 1.5, -0.42, Math.sin(a) * 1.5]), TRUNK_H * 0.54, 4.2, 2.2, 1);
     });
     g.ve = this.vc; g.le = this.lc;
   }
@@ -682,7 +733,7 @@ export class TreeScene {
    * collapse / fanReset / 焦点隐藏都会连带处理，不需要额外分支。
    */
   private growForked(
-    nd: TreeNode, A: V3, stem: V3, arms: V3[], L: number, w0: number, w1: number,
+    nd: TreeNode, A: V3, stem: V3, arms: V3[], jit: number[], L: number, w0: number, w1: number,
   ) {
     const g = this.G(nd);
     const n = arms.length;
@@ -691,12 +742,15 @@ export class TreeScene {
 
     const fp = g.p1;
     const col = this.branchColor(nd, 1);
+    /* 长短只作用在次主枝自身的几何长度上，子枝与装饰枝一律以未抖动的 armL 为
+       基准。跟着缩放的话短的那支会在 OV_LMIN 处早收一层，末梢数、叶数跟着少，
+       短支就真的稀了 —— 要的是杈端高低错落，不是一支比一支疏。 */
     const armL = L * 0.76;
-    const forks: Fork[] = arms.map((d) => {
+    const forks: Fork[] = arms.map((d, i) => {
       // 外凸：弯离柄的方向，两支才是「张开的杈」而不是两根平行棍
       const out = nrm(sub(d, scl(stem, dot(d, stem))));
       return this.writeFork(
-        fp, d, armL, add(scl(out, 0.1), scl(UP, 0.04)), w0 * 0.86, w1, col,
+        fp, d, armL * jit[i]!, add(scl(out, 0.1), scl(UP, 0.04)), w0 * 0.86, w1, col,
       );
     });
     const f0 = forks[0];
@@ -901,7 +955,7 @@ export class TreeScene {
     const n = kids.length;
     const isRoot = nd.zone === "root";
     /* 根系是假枝丛，形态本来就和收集无关，照原样长；其余按 ovB / OV_D 写死。 */
-    const last = depth >= OV_D || L < OV_LMIN;
+    const last = depth >= OV_D || L < lminOf(nd);
     const vis = isRoot ? null : this.visKids(last ? 0 : n, depth + 1);
     const visN = vis ? vis.size : n;
     if (seen) {
@@ -947,8 +1001,10 @@ export class TreeScene {
         * spreadK * (outer ? 1 : 0.42);
       const perp = add(scl(bu, Math.cos(a)), scl(bv, Math.sin(a)));
       let d2 = nrm(add(add(scl(bdir, Math.cos(sp)), scl(perp, Math.sin(sp))), scl(UP, photo)));
-      // 根系「压扁」：竖直分量按比例压掉，长度全部转化为水平延展
-      if (isRoot) d2 = nrm([d2[0], d2[1] * 0.3, d2[2]]);
+      /* 根系「压扁」：竖直分量按比例压掉，长度全部转化为水平延展。
+         方向一律取向下 —— 根系的张角开到 80°+，光按比例压会留下正的竖直分量，
+         那些枝就从土里钻出来了。 */
+      if (isRoot) d2 = nrm([d2[0], -Math.abs(d2[1]) * 0.5, d2[2]]);
       // 露在外面的照长，其余塌成一小截（§5：改长度要同比改宽度）
       const visK = outer ? 1 : OV_HIDE;
       const cl = L * 0.72 * (0.86 + 0.28 * (((j * 3) % 4) / 3)) * visK;
@@ -1016,7 +1072,7 @@ export class TreeScene {
       const dl = L * 0.72 * (0.86 + 0.28 * (((i * 3) % 4) / 3));
       const f = this.writeFork(base, d, dl, scl(UP, -0.05), w, w * 0.6, col, DECO_SEGS);
       // 补出来的枝要一路补到收尾条件，否则真骨架深的地方细、浅的地方秃
-      if (depth + 1 >= OV_D || dl < OV_LMIN) {
+      if (depth + 1 >= OV_D || dl < lminOf(nd)) {
         this.tipOn(nd, f.A, f.B, f.C, dl, w * 0.6, i + 1, depth + 1);
       } else {
         this.decoFillOn(nd, f.A, f.B, f.C, dl, w * 0.6, 0, depth + 1, seed * b + i + 1);
@@ -1028,25 +1084,27 @@ export class TreeScene {
     nd: TreeNode, tip: V3, dir: V3, L: number, extra: number, seed: number, idxs: number[],
   ) {
     const total = CLUMP_N + extra;
-    const R = L * CLUMP_R;
     const sz = L * LEAF_R;
     const v = kvis(nd.kingdom);
     const dim = v.zone === "root" ? (v.dead ? 0.35 : 0.5) : v.zone === "basal" ? 0.82 : 1;
     const gy = v.c[0] * 0.34 + v.c[1] * 0.5 + v.c[2] * 0.16;
     // 各簇要不同种子，否则同一根枝上几簇长得一模一样
     const sid = strId(nd.id) + seed * 7919 + idxs.length * 104729;
-    // 簇心稍探出枝端：叶要把枝梢包住，不是被枝梢戳穿
-    const center = add(tip, scl(dir, L * 0.12));
+    const [cu, cv] = ortho(dir);
     for (let i = 0; i < total; i++) {
-      /* 球内均匀取点：半径按立方根分布。直接取均匀半径会把叶堆在球心，
-         外圈只剩几根毛刺 —— 那是绒球没长开的样子。 */
-      const rr = R * Math.cbrt(0.1 + 0.9 * h01(sid, i, 11, 3));
-      const ct = 2 * h01(sid, i, 23, 5) - 1;
-      const st = Math.sqrt(Math.max(0, 1 - ct * ct));
-      const ph = GOLD * i + h01(sid, i, 37, 7) * 0.9;
-      const e: V3 = [st * Math.cos(ph), ct, st * Math.sin(ph)];
-      // 沿枝方向轻微拉长，絮团才有生长方向，不是一颗颗糖球
-      const p = add(center, scl(add(e, scl(dir, dot(e, dir) * 0.3)), rr));
+      /* 环上取点（不是球内）：一簇是三圈叶顺着枝端串起来，圈心留空。填实球心
+         得到的是不透光的实心球，簇与簇之间就必然有缝。 */
+      const a = GOLD * i + nd.sib + h01(sid, i, 37, 7) * 0.5;
+      const rr = L * (CLUMP_R0 + CLUMP_RD * (((i * 7) % 5) / 5));
+      const el = CLUMP_EL0 + (i % 3) * CLUMP_ELD;
+      const p = add(
+        add(tip, scl(dir, L * el)),
+        add(scl(cu, Math.cos(a) * rr), scl(cv, Math.sin(a) * rr)),
+      );
+      /* 地下的簇要整簇留在地下。簇的半径能有末梢枝长的三分之二，贴着地面的那些
+         末梢，上半个簇会浮到地平线以上 —— 读作土面上散落的碎点。翻到地下去，
+         不是压平成一层饼。 */
+      if (v.zone === "root" && p[1] > GROUND_Y) p[1] = 2 * GROUND_Y - p[1];
       const o = this.lc * 3;
       this.lP[o] = p[0]; this.lP[o + 1] = p[1]; this.lP[o + 2] = p[2];
       this.lF[o] = p[0]; this.lF[o + 1] = p[1]; this.lF[o + 2] = p[2];
@@ -1105,26 +1163,43 @@ export class TreeScene {
     ];
   }
 
+  /**
+   * 地面：一圈散落的沙粒，交代「这棵树扎在土里」。
+   *
+   * 三件事一起才看得见（缺一个就读作「地面没了」）：
+   *
+   * 1. 半径按 TRUNK_H 写死，**不跟树冠的包围盒走**。点数固定，半径一涨面密度就
+   *    掉平方 —— 冠每宽一点这层沙就淡一点，冠改到撑满画面时它已经稀没了。
+   * 2. 要比根系铺得开。镜头几乎平视，地面被压成一条窄带，正好落在根系那团灰
+   *    叶后面；只有露在根系之外的那一圈才读得出是地面。
+   * 3. 渐隐留在最外圈。原先 pow(t,2.2) 从圆心就开始褪，能看见的那一圈刚好被褪
+   *    掉了。
+   */
   private makeGround() {
     const N = this.GND_N;
     this.gP = new Float32Array(N * 3);
     this.gC = new Float32Array(N * 3);
     this.gS = new Float32Array(N);
-    const R = Math.max(this.bbX1 - this.bbCX, this.bbZ1 - this.bbCZ) * 1.02;
+    const R = TRUNK_H * 1.25;
     for (let i = 0; i < N; i++) {
-      const t = Math.sqrt(h01(i, 11, 22, 33));
+      /* 中心密、外圈散。均匀面密度（t=√rand）铺出来的是一层均匀的沙雾，读不出
+         「面」；树基部要有一块坐得住的土，向外才散成沙粒。 */
+      const t = Math.pow(h01(i, 11, 22, 33), 1.15);
       const r = t * R, a = h01(i, 44, 55, 66) * 6.28318, o = i * 3;
       this.gP[o] = this.bbCX + Math.cos(a) * r;
-      this.gP[o + 1] = (h01(i, 77, 88, 99) - 0.5) * this.TREE_H * 0.008;
+      this.gP[o + 1] = (h01(i, 77, 88, 99) - 0.5) * TRUNK_H * 0.012;
       this.gP[o + 2] = this.bbCZ + Math.sin(a) * r;
-      // 径向渐隐，否则地面会变成一块硬边的椭圆色块
-      const fade = Math.pow(t, 2.2);
-      const v = 0.86 + 0.1 * h01(i, 12, 34, 56);
-      this.gC[o] = v * 0.995 + (BG[0] - v * 0.995) * fade;
-      this.gC[o + 1] = v * 0.982 + (BG[1] - v * 0.982) * fade;
-      this.gC[o + 2] = v * 0.96 + (BG[2] - v * 0.96) * fade;
+      /* 比背景低一档、并且偏土色。原先 0.86 的中性浅灰和 BG 几乎同色，又和根须
+         那片灰叶占着同一块画面，两样东西糊成一团 —— 暗一档能从背景里分出来，
+         偏暖能从根须里分出来。 */
+      const s = Math.max(0, Math.min(1, (t - 0.6) / 0.4));
+      const fade = s * s * (3 - 2 * s);
+      const v = 0.66 + 0.10 * h01(i, 12, 34, 56);
+      this.gC[o] = v * 1.0 + (BG[0] - v * 1.0) * fade;
+      this.gC[o + 1] = v * 0.955 + (BG[1] - v * 0.955) * fade;
+      this.gC[o + 2] = v * 0.90 + (BG[2] - v * 0.90) * fade;
       // 尺寸不能太小：小于 1px 会被 clamp 后再乘 alpha，直接消失
-      this.gS[i] = this.TREE_H * (0.0026 + 0.0026 * h01(i, 65, 43, 21));
+      this.gS[i] = TRUNK_H * (0.011 + 0.011 * h01(i, 65, 43, 21));
     }
   }
 
@@ -2230,7 +2305,7 @@ export class TreeScene {
     if (hz > 0 && only > 0.5) {
       gl.uniform1f(this.uL.uBudOn!, 0);
       gl.uniform1f(this.uL.uSzK!, 1.0);
-      gl.uniform1f(this.uL.uAlpha!, 0.5);
+      gl.uniform1f(this.uL.uAlpha!, 0.62);
       gl.uniform1f(this.uL.uDeep!, 0);
       gl.uniform1f(this.uL.uHorizon!, 0);
       gl.uniform1f(this.uL.uLeaf!, 0);

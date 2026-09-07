@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
-<title>物种树 · 界级枝布局 vs V1</title>
+<title>物种树 · 定稿基线 vs V1</title>
 <style>
   * { box-sizing: border-box; margin: 0; padding: 0; }
   body {
@@ -57,7 +57,7 @@
 </head>
 <body>
   <header>
-    <h1>物种树 · 界级枝布局 vs V1<span>左屏是活的，可旋转、点击、展开</span></h1>
+    <h1>物种树 · 定稿基线 vs V1<span>左栏是活的，可旋转、点击、展开</span></h1>
     <div class="grp">
       <b>收集量</b>
       <span id="bK"></span>
@@ -67,19 +67,20 @@
 
   <main><div id="stage">
     <div class="pane now">
-      <div class="tag">当前<i>三个界各拆两支、等长 · 六杈 60° 等分、外倾 32° · 同界两支分处对面 · 色藻原生动物在主干腰</i></div>
+      <div class="tag">当前<i>09-07 定稿 · 冠 / 中枝 / 根系 / 地面 / 主干 2/3 全部拍板</i></div>
       <div class="frame"><iframe id="f1" src="/dev/tree"></iframe></div>
     </div>
     <div class="pane ref">
-      <div class="tag">V1 参照<i>prototypes/clear-tree/v1-canopy.html · 六杈六色</i></div>
-      <div class="frame"><iframe id="f2" src="http://127.0.0.1:8099/clear-tree/v1-canopy.html"></iframe></div>
+      <div class="tag">V1 参照<i>只有冠，没有中枝与根系；冠左右两端本来就在画面外</i></div>
+      <div class="frame"><iframe id="f2" src="/proto/clear-tree/v1-canopy.html"></iframe></div>
     </div>
   </div></main>
 
   <div class="hint">
-    收集量只作用于左屏。第一屏的形态与收集量无关，切收集量只该看到颜色变化。
-    V1 参照是原型自带的满树 mock，它需要 <code>python -m http.server 8099</code> 起在
-    <code>prototypes/</code> 目录。本页是临时脚手架，定稿后删。
+    收集量只作用于左栏。第一屏的形态与收集量无关，切收集量只该看到颜色变化。
+    两栏都由 dev server 直接挂出（<code>/proto</code> 指向 <code>prototypes/</code>），
+    不必另起静态服务器。本页留作定稿基线的对照口，改树冠前后都该开一次；
+    它不在 <code>public/</code> 下，进不了生产包。
   </div>
 
 <script>
@@ -103,8 +104,7 @@
   function reload() {
     const t = Date.now();
     document.getElementById("f1").src = `/dev/tree?mock=${mock}&t=${t}`;
-    document.getElementById("f2").src =
-      `http://127.0.0.1:8099/clear-tree/v1-canopy.html?t=${t}`;
+    document.getElementById("f2").src = `/proto/clear-tree/v1-canopy.html?t=${t}`;
   }
   const stage = document.getElementById("stage");
   const main = document.querySelector("main");

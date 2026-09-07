@@ -10,7 +10,15 @@
 
 ## 怎么看
 
-这些是纯静态 HTML，但**必须用 http 打开**（WebGL 在 `file://` 下会被部分浏览器拦）：
+Web dev server 起着的话直接开 `http://127.0.0.1:5173/proto/clear-tree/device.html`
+—— `/proto` 由 `apps/web/vite.config.ts` 里的 `devStatic` 挂到本目录，只在 dev
+生效，进不了生产包。
+
+**和定稿实现并排比**：`http://127.0.0.1:5173/devpages/tree-2up.html`（左栏当前
+实现、右栏 v1 参照，两栏都由 dev server 挂出，不必另起服务器）。
+
+不想起前端时也可以单独起静态服务器（纯静态 HTML，但**必须用 http** —— WebGL 在
+`file://` 下会被部分浏览器拦）：
 
 ```bash
 cd prototypes
@@ -40,6 +48,8 @@ python -m http.server 8099
 
 | 图 | 说明 |
 |---|---|
+| **`canopy-final-empty.png`** | **09-07 定稿基线**（竖屏 390×844，空收集）。改树冠 / 中枝 / 根系 / 地面前后都该和它比一次 |
+| **`canopy-final-140.png`** | 同上，140 项收集。**和上一张的差别应当只有颜色** —— 形状或叶数变了就是骨架被数据带跑了 |
 | `tree-live.png` | 正式工程里跑起来的样子（PC 1440×860，空收集态） |
 | `tree-chordata.png` | 展开脊索动物门（手机 393×852）。**这张是「子级 rank 不统一」的实证** —— 「哺乳纲」和「喉盘鱼目」并列在同一屏 |
 | `fanout-fix.png` | 标签取舍改造的前后对比（16 属崩溃 → 修复 → 50 属）。左格是「碰撞就往下顶」的结果：标签叠成一竖列、脱离自己的枝、盖住整棵树 |
