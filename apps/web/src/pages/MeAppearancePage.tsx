@@ -41,6 +41,7 @@ export default function MeAppearancePage({
     <div className="stack page-me">
       <MeSubHead title={t("me.appearance")} />
       <p className="lede">{t("me.appearanceLede")}</p>
+      <p className="muted">{t("me.appearanceSyncHint")}</p>
       <div className="me-menu">
         {THEME_IDS.map((id) => {
           const on = id === current;
