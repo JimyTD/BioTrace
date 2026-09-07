@@ -74,7 +74,7 @@ docs/        筹划 + 本实现规格
 - Prompt 要求模型声明 `subject_kind` / `subject_living` / `eligibility`；有坐标时带上离线判定的国家中文名作分布先验（不打天地图）；代码：[`eligibility.ts`](../apps/api/src/identify/eligibility.ts)、[`prompt.ts`](../apps/api/src/identify/prompt.ts)。
 - **可收集**：`living_organism`（死活不限；含饲养；空壳/海胆壳/完整蟹蜕按该动物；寄居蟹收蟹）。
 - **不可收集**：人、玩具/模型、菜台食材、巢羽骨足迹、无生物、不明；写 `failed` + 分型码，**清空**俗名/学名/taxonomy/稀有度/`taxonKey`/`accepted_taxonomy_json`，不开包、不进图鉴。
-- **软档（2026-09-07）**：真生物但非野外相遇——影像/印刷（海报、画布、屏幕、直播里的真牛）与馆藏标本（`specimen`）。有身份+有界 → `settled` + `identify_soft_encounter`：识别放行、全套字段保留（含保护级别标签），但**不进**结算/图鉴/套册/物种树；UI 灰徽章「未相遇」+「不可收集」印章 + 理由说明。无身份或无界 → 照旧 `identify_not_living` 拦死。细节见 [`识图护栏.md`](./features/识图护栏.md) §5。
+- **软档（2026-09-07）**：真生物但非野外相遇——影像/印刷（海报、画布、屏幕、直播里的真牛）与馆藏标本（`specimen`）。有身份+有界 → `settled` + `identify_soft_encounter`：识别放行、全套字段保留（含保护级别标签），但**不进**结算/图鉴/套册/物种树；UI 灰徽章「未相遇」+「NC · 未收录」印章 + 理由说明。无身份或无界 → 照旧 `identify_not_living` 拦死。细节见 [`识图护栏.md`](./features/识图护栏.md) §5。
 - 用户主文案（术语表）：**「东西是真的，但没用。」**（`error.identifyNotCollectible`）+ 副句「图是好图，图鉴不收。」；徽章「不可收集」。软档主句「认出来了，但这次不算相遇。」
 - 过粗（真生物但粗于科）仍用 `identify_too_coarse`。
 - 详情可点进：不合格不渲染分类链，不因脏字段报错。软档渲染全套识别 UI。

@@ -163,7 +163,7 @@ const zhCore = {
   "status.notCollectible": "不可收集",
   "status.softEncounter": "未相遇",
 
-  "detail.softSeal": "不可收集",
+  "detail.softSeal": "NC · 未收录",
   "detail.softReasonTitle": "为何不进图鉴",
   "detail.softReasonDepiction": "认出它是{reason}。影像与印刷不是野外相遇，不计入图鉴。",
   "detail.softReasonSpecimen": "认出它是{reason}。馆藏标本不是野外相遇，不计入图鉴。",
