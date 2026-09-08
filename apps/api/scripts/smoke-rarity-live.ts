@@ -4,6 +4,7 @@
  *
  *   node node_modules/tsx/dist/cli.mjs scripts/smoke-rarity-live.ts
  */
+import { formatScaleAdjustment, formatScaleItemKey } from "@biotrace/messages";
 import { env } from "../src/env.js";
 import { migrate } from "../src/db/index.js";
 import { resolveScaleRarity, scaleCacheKey } from "../src/rarity/scale.js";
@@ -37,10 +38,12 @@ async function main() {
       `${c.label}  ${r.rarity}  S=${r.score ?? "-"}  source=${r.source}  ` +
         `model=${r.model || "-"}  采样=${r.samples}  list=${r.listLevel ?? "-"}  ${ms}ms`,
     );
-    if (r.adjustments.length) console.log(`   加减: ${r.adjustments.join(", ")}`);
+    if (r.adjustments.length) {
+      console.log(`   加减: ${r.adjustments.map((a) => formatScaleAdjustment(a)).join("，")}`);
+    }
     if (r.items) {
       const compact = Object.entries(r.items)
-        .map(([k, v]) => `${k}=${v === true ? "T" : v === false ? "F" : "?"}`)
+        .map(([k, v]) => `${formatScaleItemKey(k)}=${v === true ? "是" : v === false ? "否" : "跳过"}`)
         .join(" ");
       console.log(`   ${compact}`);
     }

@@ -1,7 +1,14 @@
 import { Fragment, useEffect, useState, type FormEvent, type ReactNode } from "react";
 import { createPortal } from "react-dom";
 import { Link, NavLink, Navigate, Route, Routes, useNavigate, useParams } from "react-router-dom";
-import { t, formatRank } from "@biotrace/messages";
+import {
+  t,
+  formatRank,
+  formatScaleAdjustment,
+  formatScaleBatch,
+  formatScaleItemKey,
+  formatScaleListLevel,
+} from "@biotrace/messages";
 import { adminApi, type AdminUser, type RarityCacheEntry, type RarityCacheItem } from "./api";
 import {
   auditActionLabel,
@@ -1651,26 +1658,27 @@ function RarityScaleDetail({ detail }: { detail: RarityCacheEntry }) {
     <div style={{ marginBottom: 12 }}>
       {detail.listLevel ? (
         <p className="admin-muted">
-          {t("admin.rarityCache.listLevel")}: {detail.listLevel}
+          {t("admin.rarityCache.listLevel")}: {formatScaleListLevel(detail.listLevel)}
         </p>
       ) : null}
       {detail.adjustments.length > 0 ? (
         <p className="admin-muted">
-          {t("admin.rarityCache.adjustments")}: {detail.adjustments.join("  ")}
+          {t("admin.rarityCache.adjustments")}:{" "}
+          {detail.adjustments.map((code) => formatScaleAdjustment(code)).join(" · ")}
         </p>
       ) : null}
       {items.length > 0 ? (
         <p className="admin-muted" style={{ display: "flex", flexWrap: "wrap", gap: "4px 12px" }}>
           {items.map(([key, value]) => (
             <span key={key}>
-              {key}=<strong>{triLabel(value)}</strong>
+              {formatScaleItemKey(key)}：<strong>{triLabel(value)}</strong>
             </span>
           ))}
         </p>
       ) : null}
       {reasons.map(([batch, reason]) => (
         <p key={batch} className="admin-muted">
-          {batch}: {reason}
+          {formatScaleBatch(batch)}：{reason}
         </p>
       ))}
     </div>

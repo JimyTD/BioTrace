@@ -112,4 +112,78 @@ export function formatRank(rank: string | null | undefined, locale: Locale = def
   return raw;
 }
 
+/** 量表 12 题键 → 中文说明。未知键原样返回。 */
+export function formatScaleItemKey(key: string, locale: Locale = defaultLocale): string {
+  const msgKey = `admin.rarityCache.item.${key}`;
+  return hasMessage(msgKey) ? t(msgKey, undefined, locale) : key;
+}
+
+/** 量表分批 id（gate/city/attitude）→ 中文。 */
+export function formatScaleBatch(id: string, locale: Locale = defaultLocale): string {
+  const msgKey = `admin.rarityCache.batch.${id}`;
+  return hasMessage(msgKey) ? t(msgKey, undefined, locale) : id;
+}
+
+/** 名录档 `class_i` / `sanyou` / `extinct` → 固定区标签。 */
+export function formatScaleListLevel(
+  level: string | null | undefined,
+  locale: Locale = defaultLocale,
+): string {
+  if (!level) return "";
+  const msgKey = `listTag.${level}`;
+  return hasMessage(msgKey) ? t(msgKey, undefined, locale) : level;
+}
+
+/**
+ * 把缓存里的加减码译成中文说明，旧缓存 `domestic-1` 与特殊闸门都能读。
+ * 例：`驯化家畜/宠物 −1`、`成体能到成年人量级 +0.5`。
+ */
+export function formatScaleAdjustment(raw: string, locale: Locale = defaultLocale): string {
+  const s = raw.trim();
+  if (!s) return s;
+
+  const special: Record<string, MessageKey> = {
+    "gate:extinct": "admin.rarityCache.adj.extinct",
+    extinct: "admin.rarityCache.adj.extinct",
+    chain_unavailable: "admin.rarityCache.adj.chain_unavailable",
+    identify_mock: "admin.rarityCache.adj.identify_mock",
+  };
+  const specialKey = special[s];
+  if (specialKey) return t(specialKey, undefined, locale);
+
+  const m = s.match(/^([a-z_]+)([+-]\d+(?:\.\d+)?)$/i);
+  if (!m) return s;
+  const tag = m[1]!.toLowerCase();
+  const delta = m[2]!;
+
+  const tagToItem: Record<string, string> = {
+    indoor: "indoor",
+    near: "near_home",
+    domestic: "domesticated",
+    disliked: "disliked",
+    dense: "habitat_common",
+    swarm: "swarm",
+    night: "nocturnal",
+    window: "short_window",
+    liked: "liked",
+    large: "large",
+    narrow: "narrow_range",
+    absent: "often_absent",
+  };
+  const tagToList: Record<string, MessageKey> = {
+    class_i: "listTag.class_i",
+    class_ii: "listTag.class_ii",
+    sanyou: "listTag.sanyou",
+  };
+
+  let label = tag;
+  const itemKey = tagToItem[tag];
+  if (itemKey) label = formatScaleItemKey(itemKey, locale);
+  else if (tagToList[tag]) label = t(tagToList[tag]!, undefined, locale);
+  else if (special[tag]) label = t(special[tag]!, undefined, locale);
+
+  const pretty = delta.startsWith("-") ? `−${delta.slice(1)}` : delta;
+  return `${label} ${pretty}`;
+}
+
 export const locales = Object.keys(catalogs) as Locale[];

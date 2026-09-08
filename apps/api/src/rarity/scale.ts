@@ -6,6 +6,7 @@
  * 得分贴着档位界的补到 3 次采样共 9 次。缓存按「国家 + taxonKey」永久保存；
  * 驯养个体另开 `|dom` 后缀，不与野生父种共座、也不升整代版本号。
  */
+import { formatScaleAdjustment } from "@biotrace/messages";
 import { env } from "../env.js";
 import { extractJson } from "../llm/json.js";
 import { callTextChain } from "../llm/text-chain.js";
@@ -266,7 +267,9 @@ export async function resolveScaleRarity(
   console.log(
     `[rarity] scale ${input.taxonKey} S=${scored.score} → ${scored.rarity} ` +
       `(${model}, ${draws.length} 采样${listed.level ? `, list=${listed.level}` : ""})` +
-      (scored.adjustments.length ? ` [${scored.adjustments.join(",")}]` : ""),
+      (scored.adjustments.length
+        ? ` [${scored.adjustments.map((a) => formatScaleAdjustment(a)).join("，")}]`
+        : ""),
   );
 
   return {

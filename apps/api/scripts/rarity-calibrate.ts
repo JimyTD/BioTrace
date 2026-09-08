@@ -11,6 +11,7 @@ import { readFileSync, writeFileSync, mkdirSync } from "node:fs";
 import { dirname, join } from "node:path";
 import { fileURLToPath } from "node:url";
 import { ProxyAgent, fetch as undiciFetch, type RequestInit } from "undici";
+import { formatScaleAdjustment } from "@biotrace/messages";
 import { env } from "../src/env.js";
 import { lookupListed, lookupCnStatus } from "../src/rarity/cn-status.js";
 import { collectibleRankFromTier } from "../src/rarity/scale-rubric.js";
@@ -429,7 +430,9 @@ async function main() {
       const listTag = scored.listLevel ? ` list=${scored.listLevel}` : "";
       console.log(
         `${knowTag} ${scored.rarity} S=${sTag} (${ref}) ${compactItems(scored.items)}` +
-          (scored.adjustments.length ? ` [${scored.adjustments.join(",")}]` : "") +
+          (scored.adjustments.length
+            ? ` [${scored.adjustments.map((a) => formatScaleAdjustment(a)).join("，")}]`
+            : "") +
           listTag,
       );
     } catch (err) {
