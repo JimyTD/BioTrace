@@ -81,6 +81,7 @@ export default function CollectionTreePage() {
           onOpenEntry={(e) =>
             navigate(`/collection/species/${e.id}`, { state: { from: location.pathname } })
           }
+          onLeave={() => navigate("/collection")}
         />
       )}
       {error ? <div className="tree3d-err">{error}</div> : null}

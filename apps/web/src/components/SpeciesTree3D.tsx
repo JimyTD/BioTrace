@@ -36,6 +36,8 @@ export type SpeciesTree3DProps = {
   focusId: string | null;
   onFocusChange: (id: string | null) => void;
   onOpenEntry: (entry: CollectionEntry) => void;
+  /** 离开 3D 树、回到图鉴。正式页才有；dev 预览不传。 */
+  onLeave?: () => void;
 };
 
 export default function SpeciesTree3D({
@@ -43,6 +45,7 @@ export default function SpeciesTree3D({
   focusId,
   onFocusChange,
   onOpenEntry,
+  onLeave,
 }: SpeciesTree3DProps) {
   const hostRef = useRef<HTMLDivElement | null>(null);
   const sceneRef = useRef<TreeScene | null>(null);
@@ -148,6 +151,11 @@ export default function SpeciesTree3D({
 
       {/* 面包屑：3D 场景里没有"来路"的表达，靠它给出层级感 */}
       <div className="tree3d-crumb">
+        {onLeave ? (
+          <button type="button" className="leave" onClick={onLeave}>
+            ← {t("collection.volumeBack")}
+          </button>
+        ) : null}
         <button type="button" className="home" onClick={() => tree && jump(tree.root)}>
           {t("tree3d.crumbRoot")}
         </button>

@@ -232,6 +232,10 @@
   color: #c74e18;
   font-weight: 600;
 }
+.tree3d-crumb button.leave {
+  font-weight: 600;
+  color: #252d35;
+}
 .tree3d-crumb button.cur {
   background: #fff;
   color: #252d35;
