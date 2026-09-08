@@ -9,6 +9,7 @@ import {
 } from "../db/schema.js";
 import { collectibleRankFromTier } from "../rarity/scale-rubric.js";
 import { collectionScientificName } from "../settle/taxon.js";
+import { rebuildPetTaxonForUser } from "./pets.js";
 import {
   evaluateVolumesForUser,
   type VolumeEvalResult,
@@ -31,7 +32,15 @@ async function memberIdsOfTrip(tripId: string): Promise<string[]> {
 }
 
 export async function upsertCollectionForUser(userId: string, obs: Observation) {
-  if (!obs.taxonKey || !obs.rarity || obs.status !== "settled") return;
+  if (!obs.taxonKey || obs.status !== "settled") return;
+  // 驯养进宠物图鉴、不碰野生卡；野生进现有图鉴。两边都按源观察重算，
+  // 身份从家野翻转时对侧会回缩。套册仍由 grant 里 evaluateVolumesForUser 点亮。
+  if (obs.domesticated) {
+    await rebuildPetTaxonForUser(userId, obs.taxonKey);
+    await rebuildCollectionTaxonForUser(userId, obs.taxonKey);
+    return;
+  }
+  if (!obs.rarity) return;
 
   const existing = await db.query.collectionEntries.findFirst({
     where: and(eq(collectionEntries.userId, userId), eq(collectionEntries.taxonKey, obs.taxonKey)),
@@ -50,6 +59,7 @@ export async function upsertCollectionForUser(userId: string, obs: Observation) 
       firstCollectedAt: now,
       updatedAt: now,
     });
+    await rebuildPetTaxonForUser(userId, obs.taxonKey);
     return;
   }
 
@@ -76,6 +86,7 @@ export async function upsertCollectionForUser(userId: string, obs: Observation) 
       updatedAt: now,
     })
     .where(eq(collectionEntries.id, existing.id));
+  await rebuildPetTaxonForUser(userId, obs.taxonKey);
 }
 
 async function recordCredit(userId: string, obs: Observation) {
@@ -160,7 +171,8 @@ export async function rebuildCollectionTaxonForUser(userId: string, taxonKey: st
         })
       : [];
 
-  const sources = [...own, ...credited];
+  const sources = [...own, ...credited].filter((o) => !o.domesticated);
+  const ownWild = own.filter((o) => !o.domesticated);
   const existing = await db.query.collectionEntries.findFirst({
     where: and(eq(collectionEntries.userId, userId), eq(collectionEntries.taxonKey, taxonKey)),
   });
@@ -177,7 +189,7 @@ export async function rebuildCollectionTaxonForUser(userId: string, taxonKey: st
     }
   }
   // Prefer own cover for privacy
-  const ownBest = own.sort(
+  const ownBest = ownWild.sort(
     (a, b) => collectibleRankFromTier(b.rarity ?? "R") - collectibleRankFromTier(a.rarity ?? "R"),
   )[0];
   const cover = ownBest ?? best;
@@ -226,6 +238,7 @@ export async function reclaimSharedProgressForUserTrip(userId: string, tripId: s
 
   for (const taxon of taxons) {
     await rebuildCollectionTaxonForUser(userId, taxon);
+    await rebuildPetTaxonForUser(userId, taxon);
   }
 
   // Unlit slots lit only by *others'* photos on this trip (own uploads stay).
@@ -275,6 +288,7 @@ export async function revokeCreditsForObservation(observationId: string) {
   for (const [uid, taxons] of byUser) {
     for (const taxon of taxons) {
       await rebuildCollectionTaxonForUser(uid, taxon);
+      await rebuildPetTaxonForUser(uid, taxon);
     }
   }
 

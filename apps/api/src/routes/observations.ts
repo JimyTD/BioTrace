@@ -133,6 +133,7 @@ observationRoutes.patch("/:id/location", async (c) => {
       scientificName: row.scientificName,
       commonName: row.commonName,
       taxonomyJson: row.taxonomyJson,
+      domesticated: Boolean(row.domesticated),
     });
     patch = {
       ...patch,

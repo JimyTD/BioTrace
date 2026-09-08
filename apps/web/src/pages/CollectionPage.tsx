@@ -35,8 +35,10 @@ export default function CollectionPage() {
   const volumeOpen = Boolean(useMatch("/collection/volumes/:id"));
   const navigate = useNavigate();
   const [entryCount, setEntryCount] = useState(() => peekCollection()?.entryCount ?? 0);
+  const [petCount, setPetCount] = useState(() => peekCollection()?.petCount ?? 0);
   const [kingdomCount, setKingdomCount] = useState(() => peekCollection()?.kingdomCount ?? 0);
   const [entries, setEntries] = useState<CollectionEntry[]>(() => peekCollection()?.entries ?? []);
+  const [petFaces, setPetFaces] = useState<string[]>([]);
   const [volumes, setVolumes] = useState<VolumeListItem[]>(() => peekCollection()?.volumes ?? []);
   const [error, setError] = useState<string | null>(null);
   const [loading, setLoading] = useState(() => !peekCollection());
@@ -46,14 +48,25 @@ export default function CollectionPage() {
   const scrollRestored = useRef(false);
 
   useEffect(() => {
-    Promise.all([api.listCollection(), api.listVolumes()])
-      .then(([col, vol]) => {
+    Promise.all([
+      api.listCollection(),
+      api.listVolumes(),
+      api.listPetCollection().catch(() => ({ entries: [] as const })),
+    ])
+      .then(([col, vol, pets]) => {
+        const petCoverUrls = pets.entries
+          .map((e) => e.coverDisplayUrl)
+          .filter((u): u is string => Boolean(u))
+          .slice(0, 4);
         setEntryCount(col.entries.length);
+        setPetCount(pets.entries.length);
         setKingdomCount(countTreeKingdoms(col.entries));
         setEntries(col.entries);
+        setPetFaces(petCoverUrls);
         setVolumes(vol.volumes);
         rememberCollection({
           entryCount: col.entries.length,
+          petCount: pets.entries.length,
           kingdomCount: countTreeKingdoms(col.entries),
           entries: col.entries,
           volumes: vol.volumes,
@@ -228,6 +241,27 @@ export default function CollectionPage() {
             <div className="collection-faces" aria-hidden>
               {faces.map((entry) => (
                 <img key={entry.id} src={entry.coverDisplayUrl ?? ""} alt="" loading="lazy" />
+              ))}
+            </div>
+          </Link>
+          <Link
+            className="me-row"
+            to="/collection/pets"
+            onClick={() => saveContentScroll("collection")}
+          >
+            <MeRowIcon name="pets" />
+            <span>{t("collection.petsTitle")}</span>
+            <span className="me-row-side">
+              <span className="muted">
+                {t("collection.petsCount", { count: petCount })}
+              </span>
+              <span className="me-row-go" aria-hidden>
+                ›
+              </span>
+            </span>
+            <div className="collection-faces" aria-hidden>
+              {petFaces.map((url, i) => (
+                <img key={`${i}-${url}`} src={url} alt="" loading="lazy" />
               ))}
             </div>
           </Link>

@@ -100,6 +100,20 @@ const BATCH_KEYS: Array<{ id: string; keys: ScaleItemKey[] }> = [
 export const SCALE_BATCHES: Array<{ id: string; keys: ScaleItemKey[]; rubric: string }> =
   BATCH_KEYS.map((b) => ({ ...b, rubric: batchRubric(b.keys) }));
 
+/**
+ * 发给模型的批次：摘掉 `domesticated`（改由识图身份注入）。
+ * `SCALE_ITEM_KEYS` / 题定义不动。
+ */
+export function scaleBatchesForModel(): Array<{ id: string; keys: ScaleItemKey[]; rubric: string }> {
+  const out: Array<{ id: string; keys: ScaleItemKey[]; rubric: string }> = [];
+  for (const b of SCALE_BATCHES) {
+    const keys = b.keys.filter((k) => k !== "domesticated");
+    if (keys.length === 0) continue;
+    out.push({ id: b.id, keys, rubric: batchRubric(keys) });
+  }
+  return out;
+}
+
 export function parseBool(raw: unknown): boolean | null {
   if (typeof raw === "boolean") return raw;
   if (typeof raw === "number" && (raw === 0 || raw === 1)) return raw === 1;

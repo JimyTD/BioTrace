@@ -14,7 +14,8 @@ export type MeRowIconName =
   | "help"
   | "about"
   | "species"
-  | "tree";
+  | "tree"
+  | "pets";
 
 /** 图标 → 用第几号淡彩。同一枚图标在哪个页面都是同一色。 */
 const TINT: Record<MeRowIconName, 1 | 2 | 3 | 4> = {
@@ -25,6 +26,7 @@ const TINT: Record<MeRowIconName, 1 | 2 | 3 | 4> = {
   about: 1,
   species: 3,
   tree: 1,
+  pets: 2,
 };
 
 function Glyph({ name }: { name: MeRowIconName }) {
@@ -74,6 +76,15 @@ function Glyph({ name }: { name: MeRowIconName }) {
           <path d="M12 6.5v3.3" />
           <circle cx="5.6" cy="10.6" r="1.9" />
           <circle cx="18.4" cy="10.6" r="1.9" />
+        </>
+      );
+    case "pets":
+      return (
+        <>
+          <circle cx="8" cy="8.8" r="1.6" />
+          <circle cx="12" cy="7" r="1.6" />
+          <circle cx="16" cy="8.8" r="1.6" />
+          <path d="M7.4 14.4c1.3-2.1 8-2.1 9.2 0 .7 1.1-.1 2.5-1.5 2.7H8.9c-1.4-.2-2.2-1.6-1.5-2.7z" />
         </>
       );
   }

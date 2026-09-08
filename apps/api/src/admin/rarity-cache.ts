@@ -12,6 +12,7 @@ import {
   scaleCacheKey,
 } from "../rarity/scale.js";
 import { rebuildCollectionTaxonForUser } from "../services/shared-progress.js";
+import { rebuildPetTaxonForUser } from "../services/pets.js";
 
 function iso(d: Date | null | undefined) {
   return d ? d.toISOString() : null;
@@ -42,11 +43,12 @@ function observationCountryClause(cacheCountry: string) {
   return eq(observations.countryCode, cc);
 }
 
-function scoredObservationClause(cacheCountry: string, taxonKey: string) {
+function scoredObservationClause(cacheCountry: string, taxonKey: string, domesticated = false) {
   return and(
     eq(observations.taxonKey, taxonKey),
     observationCountryClause(cacheCountry),
     inArray(observations.status, ["pending_settle", "settled"]),
+    eq(observations.domesticated, domesticated),
   );
 }
 
@@ -72,11 +74,18 @@ async function taxonKeysMatchingQuery(q: string): Promise<string[]> {
 function effectiveObsCount(
   cacheCountry: string,
   taxonKey: string,
-  groups: Array<{ taxonKey: string | null; countryCode: string | null; n: number }>,
+  domesticated: boolean,
+  groups: Array<{
+    taxonKey: string | null;
+    countryCode: string | null;
+    domesticated: boolean | null;
+    n: number;
+  }>,
 ) {
   let n = 0;
   for (const g of groups) {
     if (g.taxonKey !== taxonKey) continue;
+    if (Boolean(g.domesticated) !== domesticated) continue;
     const effective = g.countryCode?.trim().toUpperCase() || "CN";
     if (effective === cacheCountry.trim().toUpperCase()) n += g.n;
   }
@@ -89,7 +98,10 @@ export async function listRarityCache(opts: { q?: string; limit: number; offset:
   if (q) {
     const needle = `%${sanitizeLike(q)}%`;
     const taxa = await taxonKeysMatchingQuery(q);
-    const taxonLikes = taxa.map((taxon) => like(rarityCache.cacheKey, `%|${sanitizeLike(taxon)}`));
+    const taxonLikes = taxa.flatMap((taxon) => [
+      like(rarityCache.cacheKey, `%|${sanitizeLike(taxon)}`),
+      like(rarityCache.cacheKey, `%|${sanitizeLike(taxon)}|dom`),
+    ]);
     const combined = taxonLikes.length
       ? or(like(rarityCache.cacheKey, needle), ...taxonLikes)
       : like(rarityCache.cacheKey, needle);
@@ -115,6 +127,7 @@ export async function listRarityCache(opts: { q?: string; limit: number; offset:
           .select({
             taxonKey: observations.taxonKey,
             countryCode: observations.countryCode,
+            domesticated: observations.domesticated,
             n: count(),
           })
           .from(observations)
@@ -124,7 +137,7 @@ export async function listRarityCache(opts: { q?: string; limit: number; offset:
               inArray(observations.status, ["pending_settle", "settled"]),
             ),
           )
-          .groupBy(observations.taxonKey, observations.countryCode)
+          .groupBy(observations.taxonKey, observations.countryCode, observations.domesticated)
       : [];
 
   return {
@@ -142,7 +155,9 @@ export async function listRarityCache(opts: { q?: string; limit: number; offset:
       countryCode: parts?.countryCode ?? null,
       taxonKey: parts?.taxonKey ?? null,
       observationCount:
-        parts != null ? effectiveObsCount(parts.countryCode, parts.taxonKey, groups) : 0,
+        parts != null
+          ? effectiveObsCount(parts.countryCode, parts.taxonKey, parts.domesticated, groups)
+          : 0,
     })),
   };
 }
@@ -153,7 +168,9 @@ export async function getRarityCacheEntry(cacheKey: string) {
   });
   if (!row) return null;
   const parts = parseScaleCacheKey(row.cacheKey);
-  const where = parts ? scoredObservationClause(parts.countryCode, parts.taxonKey) : undefined;
+  const where = parts
+    ? scoredObservationClause(parts.countryCode, parts.taxonKey, parts.domesticated)
+    : undefined;
   const obsCount = where
     ? ((await db.select({ n: count() }).from(observations).where(where))[0]?.n ?? 0)
     : 0;
@@ -202,7 +219,11 @@ export async function rescoreRarityCache(cacheKey: string) {
   if (!parts) return { error: "bad_key" as const };
 
   const sample = await db.query.observations.findFirst({
-    where: and(eq(observations.taxonKey, parts.taxonKey), observationCountryClause(parts.countryCode)),
+    where: and(
+      eq(observations.taxonKey, parts.taxonKey),
+      observationCountryClause(parts.countryCode),
+      eq(observations.domesticated, parts.domesticated),
+    ),
     orderBy: [desc(observations.updatedAt)],
   });
 
@@ -217,6 +238,7 @@ export async function rescoreRarityCache(cacheKey: string) {
     scientificName: sample?.scientificName ?? parts.taxonKey,
     finestReliableRank: sample?.finestReliableRank ?? null,
     skipCache: true,
+    domesticated: parts.domesticated,
   });
 
   if (resolved.source === "unavailable") {
@@ -227,7 +249,12 @@ export async function rescoreRarityCache(cacheKey: string) {
     };
   }
 
-  const applied = await applyRarity(parts.countryCode, parts.taxonKey, resolved.rarity);
+  const applied = await applyRarity(
+    parts.countryCode,
+    parts.taxonKey,
+    resolved.rarity,
+    parts.domesticated,
+  );
 
   const updated = await db.query.rarityCache.findFirst({
     where: eq(rarityCache.cacheKey, cacheKey),
@@ -253,10 +280,15 @@ export async function rescoreRarityCache(cacheKey: string) {
  * 把新档位刷到该国该物种的已结算观测上，并重建受影响用户的图鉴聚合。
  * 共享行程里别人替你点亮的那一格也要跟着变，所以要连 shared_collection_credits 一起收。
  */
-async function applyRarity(countryCode: string, taxonKey: string, rarity: string) {
+async function applyRarity(
+  countryCode: string,
+  taxonKey: string,
+  rarity: string,
+  domesticated = false,
+) {
   const now = new Date();
   const toUpdate = await db.query.observations.findMany({
-    where: scoredObservationClause(countryCode, taxonKey),
+    where: scoredObservationClause(countryCode, taxonKey, domesticated),
   });
   if (toUpdate.length === 0) return { observationsUpdated: 0, collectionsUpdated: 0 };
 
@@ -276,6 +308,7 @@ async function applyRarity(countryCode: string, taxonKey: string, rarity: string
   for (const c of credits) rebuildIds.add(c.userId);
   for (const userId of rebuildIds) {
     await rebuildCollectionTaxonForUser(userId, taxonKey);
+    await rebuildPetTaxonForUser(userId, taxonKey);
   }
   return { observationsUpdated: ids.length, collectionsUpdated: rebuildIds.size };
 }
@@ -287,9 +320,10 @@ type PendingTaxon = {
   label: string | null;
   scientificName: string | null;
   finestReliableRank: string | null;
+  domesticated: boolean;
 };
 
-/** 已结算观测里出现过、但还没有量表缓存的「国家 + 物种」组合。 */
+/** 已结算观测里出现过、但还没有量表缓存的「国家 + 物种 + 驯化位」组合。 */
 async function pendingTaxa(): Promise<PendingTaxon[]> {
   const rows = await db
     .selectDistinct({
@@ -298,6 +332,7 @@ async function pendingTaxa(): Promise<PendingTaxon[]> {
       commonName: observations.commonName,
       scientificName: observations.scientificName,
       finestReliableRank: observations.finestReliableRank,
+      domesticated: observations.domesticated,
     })
     .from(observations)
     .where(
@@ -316,7 +351,7 @@ async function pendingTaxa(): Promise<PendingTaxon[]> {
   for (const r of rows) {
     if (!r.taxonKey) continue;
     const countryCode = effectiveCountry(r.countryCode);
-    const cacheKey = scaleCacheKey(countryCode, r.taxonKey);
+    const cacheKey = scaleCacheKey(countryCode, r.taxonKey, Boolean(r.domesticated));
     if (existing.has(cacheKey) || seen.has(cacheKey)) continue;
     seen.add(cacheKey);
     out.push({
@@ -326,6 +361,7 @@ async function pendingTaxa(): Promise<PendingTaxon[]> {
       label: r.commonName ?? r.scientificName,
       scientificName: r.scientificName,
       finestReliableRank: r.finestReliableRank,
+      domesticated: Boolean(r.domesticated),
     });
   }
   return out;
@@ -358,13 +394,19 @@ export async function recomputeRarityBatch(opts: { limit: number }) {
       label: item.label,
       scientificName: item.scientificName,
       finestReliableRank: item.finestReliableRank,
+      domesticated: item.domesticated,
     });
     if (resolved.source === "unavailable") {
       failed.push(item.taxonKey);
       // 全链不可用时停手：接着刷只会把整批都记成失败。
       break;
     }
-    const applied = await applyRarity(item.countryCode, item.taxonKey, resolved.rarity);
+    const applied = await applyRarity(
+      item.countryCode,
+      item.taxonKey,
+      resolved.rarity,
+      item.domesticated,
+    );
     changes.push({
       taxonKey: item.taxonKey,
       countryCode: item.countryCode,

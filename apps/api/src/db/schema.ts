@@ -109,6 +109,13 @@ export const observations = sqliteTable(
     identifyProvider: text("identify_provider"),
     /** 真正出货的模型名（TokenHub 视觉链档位；Gemini 为 GEMINI_MODEL） */
     identifyModel: text("identify_model"),
+    /**
+     * 驯化位。识图 null 落库前折成 false（按 wild）。旧行缺省 false，不回刷。
+     */
+    domesticated: integer("domesticated", { mode: "boolean" }).notNull().default(false),
+    breedZh: text("breed_zh"),
+    /** 识图自报 L1 本体证据，仅审计。 */
+    domEvidenceZh: text("dom_evidence_zh"),
     settledAt: integer("settled_at", { mode: "timestamp_ms" }),
     createdAt: integer("created_at", { mode: "timestamp_ms" }).notNull(),
     updatedAt: integer("updated_at", { mode: "timestamp_ms" }).notNull(),
@@ -153,6 +160,29 @@ export const collectionEntries = sqliteTable(
     updatedAt: integer("updated_at", { mode: "timestamp_ms" }).notNull(),
   },
   (t) => [uniqueIndex("collection_user_taxon").on(t.userId, t.taxonKey)],
+);
+
+/**
+ * 宠物图鉴：收录单位 = (userId, taxonKey)，只收 domesticated 观察。
+ * 不挂稀有度；品种点亮写在 litBreedIdsJson，未认证格独立布尔。
+ */
+export const petCollectionEntries = sqliteTable(
+  "pet_collection_entries",
+  {
+    id: text("id").primaryKey(),
+    userId: text("user_id")
+      .notNull()
+      .references(() => users.id),
+    taxonKey: text("taxon_key").notNull(),
+    commonName: text("common_name"),
+    scientificName: text("scientific_name"),
+    coverObservationId: text("cover_observation_id"),
+    litBreedIdsJson: text("lit_breed_ids_json").notNull(),
+    unregisteredLit: integer("unregistered_lit", { mode: "boolean" }).notNull(),
+    firstCollectedAt: integer("first_collected_at", { mode: "timestamp_ms" }).notNull(),
+    updatedAt: integer("updated_at", { mode: "timestamp_ms" }).notNull(),
+  },
+  (t) => [uniqueIndex("pet_collection_user_taxon").on(t.userId, t.taxonKey)],
 );
 
 /**
@@ -258,6 +288,7 @@ export type TripMember = typeof tripMembers.$inferSelect;
 export type SharedCollectionCredit = typeof sharedCollectionCredits.$inferSelect;
 export type Observation = typeof observations.$inferSelect;
 export type CollectionEntry = typeof collectionEntries.$inferSelect;
+export type PetCollectionEntry = typeof petCollectionEntries.$inferSelect;
 export type RarityCacheRow = typeof rarityCache.$inferSelect;
 export type PasswordResetToken = typeof passwordResetTokens.$inferSelect;
 export type VolumeProgress = typeof volumeProgress.$inferSelect;

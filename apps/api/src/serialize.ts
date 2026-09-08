@@ -1,6 +1,7 @@
 import { normalizeTaxonomy, type Taxonomy } from "./identify/types.js";
-import type { CollectionEntry, Observation, Trip, User } from "./db/schema.js";
-import { lookupListed, statusTagsFrom, type StatusTag } from "./rarity/cn-status.js";
+import type { CollectionEntry, Observation, PetCollectionEntry, Trip, User } from "./db/schema.js";
+import { catalogForTaxon, parseBreedIdList, petDisplayCommonName } from "./pets/breeds.js";
+import { EMPTY_CN_STATUS, lookupListed, statusTagsFrom, type StatusTag } from "./rarity/cn-status.js";
 import { canonicalizeUserTheme } from "./theme-id.js";
 import type { TripSummaryResolved } from "./trips/summary.js";
 
@@ -9,9 +10,13 @@ function tagsForNames(
     scientificName?: string | null;
     taxonKey?: string | null;
     commonName?: string | null;
+    domesticated?: boolean | null;
   },
   introduced: boolean,
 ): StatusTag[] {
+  if (input.domesticated) {
+    return statusTagsFrom(EMPTY_CN_STATUS, false);
+  }
   return statusTagsFrom(
     lookupListed({
       scientificName: input.scientificName,
@@ -150,5 +155,32 @@ export function serializeCollectionEntry(
     firstCollectedAt: entry.firstCollectedAt.toISOString(),
     updatedAt: entry.updatedAt.toISOString(),
     taxonomy: opts?.taxonomy ?? null,
+  };
+}
+
+export function serializePetCollectionEntry(
+  entry: PetCollectionEntry,
+  coverDisplayUrl?: string | null,
+  opts?: { taxonomy?: Taxonomy | null },
+) {
+  const catalog = catalogForTaxon(entry.taxonKey);
+  const lit = new Set(parseBreedIdList(entry.litBreedIdsJson));
+  return {
+    id: entry.id,
+    taxonKey: entry.taxonKey,
+    commonName: petDisplayCommonName(entry.taxonKey, entry.commonName),
+    scientificName: entry.scientificName,
+    coverObservationId: entry.coverObservationId,
+    coverDisplayUrl: coverDisplayUrl ?? null,
+    firstCollectedAt: entry.firstCollectedAt.toISOString(),
+    updatedAt: entry.updatedAt.toISOString(),
+    taxonomy: opts?.taxonomy ?? null,
+    unregisteredLit: Boolean(entry.unregisteredLit),
+    breeds: (catalog?.breeds ?? []).map((b) => ({
+      id: b.id,
+      zh: b.zh,
+      prevalence: b.prevalence,
+      lit: lit.has(b.id),
+    })),
   };
 }

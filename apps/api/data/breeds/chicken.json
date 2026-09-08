@@ -1,0 +1,11 @@
+{
+  "id": "chicken",
+  "taxonKey": "Gallus gallus",
+  "commonNameZh": "家鸡",
+  "breeds": [
+    { "id": "sanhuang", "zh": "三黄鸡", "aliases": ["三黄"], "prevalence": "common" },
+    { "id": "silkie", "zh": "乌骨鸡", "en": "Silkie", "aliases": ["乌鸡", "丝羽乌骨鸡"], "prevalence": "common" },
+    { "id": "barred", "zh": "芦花鸡", "aliases": ["芦花"], "prevalence": "uncommon" },
+    { "id": "leghorn", "zh": "来航鸡", "en": "Leghorn", "aliases": ["白来航"], "prevalence": "uncommon" }
+  ]
+}

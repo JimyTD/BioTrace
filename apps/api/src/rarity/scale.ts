@@ -3,7 +3,8 @@
  * 打分逻辑全在 scale-rubric.ts，与标定脚本共用同一份，这里只管调度、采样与缓存。
  *
  * 调用预算：名录里的灭绝种 0 次调用；普通物种 3 次（1 次采样 × 3 批）；
- * 得分贴着档位界的补到 3 次采样共 9 次。缓存按「国家 + taxonKey」永久保存。
+ * 得分贴着档位界的补到 3 次采样共 9 次。缓存按「国家 + taxonKey」永久保存；
+ * 驯养个体另开 `|dom` 后缀，不与野生父种共座、也不升整代版本号。
  */
 import { env } from "../env.js";
 import { extractJson } from "../llm/json.js";
@@ -11,11 +12,11 @@ import { callTextChain } from "../llm/text-chain.js";
 import { readRarityCache, writeRarityCache } from "./cache.js";
 import { lookupListed, type CnListLevel, type CnStatus } from "./cn-status.js";
 import {
-  SCALE_BATCHES,
   distanceToBand,
   emptyItems,
   mergeItems,
   parseScaleItems,
+  scaleBatchesForModel,
   scoreFromScale,
   UNKNOWN_PLACEHOLDER_TIER,
   type ScaleItems,
@@ -47,6 +48,8 @@ export type ScaleRarityInput = {
   finestReliableRank?: string | null;
   /** 跳过读缓存（仍会写）。后台重打用。 */
   skipCache?: boolean;
+  /** 驯养个体：缓存分键、名录豁免、domesticated 题注入 true。 */
+  domesticated?: boolean;
 };
 
 /** 无国家 → CN，与缓存键、Prompt、结算文案一致。 */
@@ -54,23 +57,33 @@ export function effectiveCountry(countryCode: string | null | undefined): string
   return countryCode?.trim().toUpperCase() || "CN";
 }
 
-export function scaleCacheKey(countryCode: string | null, taxonKey: string): string {
-  return `${SCALE_CACHE_VER}|${effectiveCountry(countryCode)}|${taxonKey}`;
+export function scaleCacheKey(
+  countryCode: string | null,
+  taxonKey: string,
+  domesticated = false,
+): string {
+  const base = `${SCALE_CACHE_VER}|${effectiveCountry(countryCode)}|${taxonKey}`;
+  return domesticated ? `${base}|dom` : base;
 }
 
-/** `scale2|CN|Passer montanus` → 三段；taxonKey 自身可能含 `|`。 */
+/** `scale2|CN|Passer montanus` 或 `scale2|CN|Canis lupus|dom`。taxonKey 自身可能含 `|`。 */
 export function parseScaleCacheKey(
   key: string,
-): { version: string; countryCode: string; taxonKey: string } | null {
+): { version: string; countryCode: string; taxonKey: string; domesticated: boolean } | null {
   const i1 = key.indexOf("|");
   if (i1 < 0) return null;
   const i2 = key.indexOf("|", i1 + 1);
   if (i2 < 0) return null;
   const version = key.slice(0, i1);
   const countryCode = key.slice(i1 + 1, i2);
-  const taxonKey = key.slice(i2 + 1);
-  if (!version || !countryCode || !taxonKey) return null;
-  return { version, countryCode, taxonKey };
+  let rest = key.slice(i2 + 1);
+  let domesticated = false;
+  if (rest.endsWith("|dom")) {
+    domesticated = true;
+    rest = rest.slice(0, -4);
+  }
+  if (!version || !countryCode || !rest) return null;
+  return { version, countryCode, taxonKey: rest, domesticated };
 }
 
 function sleep(ms: number) {
@@ -101,13 +114,17 @@ function listOpts(listed: CnStatus) {
 type Draw = { items: ScaleItems; reasons: Record<string, string>; models: string[] };
 
 /** 一次采样 = 顺序问完 3 批。任一批彻底失败就整次采样作废。 */
-async function drawOnce(input: ScaleRarityInput, country: string): Promise<Draw> {
+async function drawOnce(
+  input: ScaleRarityInput,
+  country: string,
+  domesticated: boolean,
+): Promise<Draw> {
   const items: Partial<ScaleItems> = {};
   const reasons: Record<string, string> = {};
   const models: string[] = [];
   const block = taxonBlock(input, country);
   let first = true;
-  for (const batch of SCALE_BATCHES) {
+  for (const batch of scaleBatchesForModel()) {
     if (!first) await sleep(env.rarityCallDelayMs);
     first = false;
     const { content, model } = await callTextChain(`${batch.rubric}\n\n${block}`);
@@ -116,6 +133,7 @@ async function drawOnce(input: ScaleRarityInput, country: string): Promise<Draw>
     reasons[batch.id] = String(parsed.reason ?? "").slice(0, 200);
     models.push(model);
   }
+  items.domesticated = domesticated;
   return { items: items as ScaleItems, reasons, models };
 }
 
@@ -127,7 +145,8 @@ export async function resolveScaleRarity(
   input: ScaleRarityInput,
 ): Promise<ScaleRarityResolution> {
   const country = effectiveCountry(input.countryCode);
-  const key = scaleCacheKey(country, input.taxonKey);
+  const domesticated = Boolean(input.domesticated);
+  const key = scaleCacheKey(country, input.taxonKey, domesticated);
 
   if (!input.skipCache) {
     const cached = await readRarityCache(key);
@@ -148,8 +167,8 @@ export async function resolveScaleRarity(
     }
   }
 
-  // 名录先行：灭绝种直接 XR，一次模型都不调。
-  const listed = lookupListed(input);
+  // 名录先行：灭绝种直接 XR，一次模型都不调。驯养个体名录全豁免。
+  const listed = lookupListed({ ...input, domesticated });
   if (listed.extinct) {
     const scored = scoreFromScale(emptyItems(), listOpts(listed));
     await writeRarityCache({
@@ -184,7 +203,7 @@ export async function resolveScaleRarity(
   try {
     for (let i = 0; i < base; i++) {
       if (i > 0) await sleep(env.rarityCallDelayMs);
-      draws.push(await drawOnce(input, country));
+      draws.push(await drawOnce(input, country, domesticated));
     }
   } catch (err) {
     console.warn(
@@ -216,7 +235,7 @@ export async function resolveScaleRarity(
     try {
       while (draws.length < target) {
         await sleep(env.rarityCallDelayMs);
-        draws.push(await drawOnce(input, country));
+        draws.push(await drawOnce(input, country, domesticated));
       }
     } catch (err) {
       // 补采样失败不致命，用已有的采样定档。

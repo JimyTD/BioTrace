@@ -86,6 +86,20 @@ export async function migrate() {
     CREATE INDEX IF NOT EXISTS idx_obs_trip ON observations(trip_id);
     CREATE INDEX IF NOT EXISTS idx_obs_user ON observations(user_id);
     CREATE UNIQUE INDEX IF NOT EXISTS collection_user_taxon ON collection_entries(user_id, taxon_key);
+    CREATE TABLE IF NOT EXISTS pet_collection_entries (
+      id TEXT PRIMARY KEY NOT NULL,
+      user_id TEXT NOT NULL REFERENCES users(id),
+      taxon_key TEXT NOT NULL,
+      common_name TEXT,
+      scientific_name TEXT,
+      cover_observation_id TEXT,
+      lit_breed_ids_json TEXT NOT NULL,
+      unregistered_lit INTEGER NOT NULL,
+      first_collected_at INTEGER NOT NULL,
+      updated_at INTEGER NOT NULL
+    );
+    CREATE UNIQUE INDEX IF NOT EXISTS pet_collection_user_taxon
+      ON pet_collection_entries(user_id, taxon_key);
     CREATE TABLE IF NOT EXISTS rarity_cache (
       cache_key TEXT PRIMARY KEY NOT NULL,
       rarity TEXT NOT NULL,
@@ -136,6 +150,13 @@ export async function migrate() {
   await ensureColumn("observations", "accepted_taxonomy_json", "accepted_taxonomy_json TEXT");
   await ensureColumn("observations", "identify_provider", "identify_provider TEXT");
   await ensureColumn("observations", "identify_model", "identify_model TEXT");
+  await ensureColumn(
+    "observations",
+    "domesticated",
+    "domesticated INTEGER NOT NULL DEFAULT 0",
+  );
+  await ensureColumn("observations", "breed_zh", "breed_zh TEXT");
+  await ensureColumn("observations", "dom_evidence_zh", "dom_evidence_zh TEXT");
   await ensureColumn("observations", "settled_at", "settled_at INTEGER");
   await ensureColumn("observations", "content_hash", "content_hash TEXT");
   await ensureColumn("observations", "original_path", "original_path TEXT");

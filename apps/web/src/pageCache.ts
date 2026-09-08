@@ -3,6 +3,7 @@ import type { CollectionEntry, Observation, Trip, VolumeListItem } from "./api";
 type AlbumSnap = { trip: Trip; observations: Observation[] };
 type CollectionSnap = {
   entryCount: number;
+  petCount?: number;
   kingdomCount?: number;
   entries?: CollectionEntry[];
   volumes: VolumeListItem[];

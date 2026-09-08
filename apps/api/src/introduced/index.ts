@@ -19,7 +19,10 @@ export function resolveIntroducedAlert(input: {
   scientificName?: string | null;
   taxonKey?: string | null;
   matchNames?: string[];
+  /** 家养个体跟着人走，不是「引入野生种群」。 */
+  domesticated?: boolean;
 }): IntroducedResolution {
+  if (input.domesticated) return { alert: false, source: "none", matchedName: null };
   const cc = input.countryCode?.trim().toUpperCase();
   if (!cc) return { alert: false, source: "none", matchedName: null };
   if (!isSpeciesRank(input.finestReliableRank)) {

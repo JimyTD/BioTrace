@@ -57,8 +57,9 @@
   {"id":56,"label":"朱鹮（野生）","taxon":"Nipponia nippon","rank":"species","user":"LR","agent":"LR","notes":"国家一级。洋县当地能看到，但那是唯一一处——全国范围仍是碰不上，LR"},
   {"id":57,"label":"雪豹","taxon":"Panthera uncia","rank":"species","user":"LR","agent":"LR","notes":"国家一级。来自跨度更大的 20 锚点"},
   {"id":58,"label":"白鱀豚","taxon":"Lipotes vexillifer","rank":"species","user":"XR","agent":"XR","notes":"野外功能灭绝，产品按 XR。IUCN 仍写 CR，不跟活体一级走"},
-  {"id":59,"label":"家猫","taxon":"Felis catus","rank":"species","user":"N","agent":"N","notes":"驯化种。N–R 均可接受。填 domesticated 轴的空白"},
-  {"id":60,"label":"家犬","taxon":"Canis lupus familiaris","rank":"species","user":"N","agent":"N","notes":"驯化种。N–R 均可接受。品种（腊肠犬等）不作锚点，识别管线返回的是种"},
-  {"id":61,"label":"家鸡","taxon":"Gallus gallus domesticus","rank":"species","user":"N","agent":"N","notes":"驯化种。农村院子与市场常见"},
-  {"id":62,"label":"家马","taxon":"Equus caballus","rank":"species","user":"R","agent":"R","notes":"驯化种但有喜爱度，且城里要去马场景区才见到。R–SR 均可接受。顺带检验 large 轴"}
+  {"id":59,"label":"家猫","taxon":"Felis catus","rank":"species","user":"N","agent":"N","dom":true,"notes":"驯化种。N–R 均可接受。填 domesticated 轴的空白"},
+  {"id":60,"label":"家犬","taxon":"Canis lupus","rank":"species","user":"N","agent":"N","dom":true,"notes":"驯化种。N–R 均可接受。键与生产折叠同形 Canis lupus + dom"},
+  {"id":61,"label":"家鸡","taxon":"Gallus gallus","rank":"species","user":"N","agent":"N","dom":true,"notes":"驯化种。农村院子与市场常见。键与生产折叠同形 Gallus gallus + dom"},
+  {"id":62,"label":"家马","taxon":"Equus caballus","rank":"species","user":"R","agent":"R","dom":true,"notes":"驯化种但有喜爱度，且城里要去马场景区才见到。R–SR 均可接受。顺带检验 large 轴"},
+  {"id":63,"label":"狼","taxon":"Canis lupus","rank":"species","user":"UR","agent":"UR","notes":"野狼 wild 卷，与家犬同键不同位。保持 UR 级"}
 ]

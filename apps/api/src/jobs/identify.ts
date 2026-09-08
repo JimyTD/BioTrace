@@ -80,6 +80,7 @@ async function persistSettle(opts: {
 }) {
   const t0 = Date.now();
   const taxonomyJson = JSON.stringify(opts.result.taxonomy);
+  const dom = storedDomIdentity(opts.result);
   const fresh = await db.query.observations.findFirst({
     where: eq(observations.id, opts.observationId),
     columns: { lat: true, lng: true },
@@ -91,6 +92,7 @@ async function persistSettle(opts: {
     scientificName: opts.result.scientific_name,
     commonName: opts.result.common_name_zh,
     taxonomyJson,
+    domesticated: dom.domesticated,
   });
 
   if (settle.settleTier === "none") {

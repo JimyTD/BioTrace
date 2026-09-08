@@ -626,6 +626,7 @@ adminRoutes.post("/observations/:id/recompute-settle", async (c) => {
     scientificName: row.scientificName,
     commonName: row.commonName,
     taxonomyJson: row.taxonomyJson,
+    domesticated: Boolean(row.domesticated),
   });
   const now = new Date();
   await db

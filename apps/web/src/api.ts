@@ -139,6 +139,27 @@ export type CollectionEntry = {
   taxonomy?: Taxonomy | null;
 };
 
+export type PetBreedCell = {
+  id: string;
+  zh: string;
+  prevalence: "common" | "uncommon" | "rare";
+  lit: boolean;
+};
+
+export type PetCollectionEntry = {
+  id: string;
+  taxonKey: string;
+  commonName: string | null;
+  scientificName: string | null;
+  coverObservationId: string | null;
+  coverDisplayUrl: string | null;
+  firstCollectedAt: string;
+  updatedAt: string;
+  taxonomy?: Taxonomy | null;
+  unregisteredLit: boolean;
+  breeds: PetBreedCell[];
+};
+
 export class ApiError extends Error {
   readonly code: string | null;
   readonly status: number;
@@ -374,6 +395,11 @@ export const api = {
   listCollection: () => request<{ entries: CollectionEntry[] }>("/api/collection"),
   getCollectionEntry: (id: string) =>
     request<{ entry: CollectionEntry; sightings: CollectionSighting[] }>(`/api/collection/${id}`),
+  listPetCollection: () => request<{ entries: PetCollectionEntry[] }>("/api/collection/pets"),
+  getPetCollectionEntry: (id: string) =>
+    request<{ entry: PetCollectionEntry; sightings: CollectionSighting[] }>(
+      `/api/collection/pets/${id}`,
+    ),
   listVolumes: () => request<{ volumes: VolumeListItem[] }>("/api/volumes"),
 };
 

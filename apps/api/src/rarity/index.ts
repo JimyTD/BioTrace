@@ -22,6 +22,7 @@ export async function resolveRarity(input: {
   matchNames?: string[];
   label?: string | null;
   scientificName?: string | null;
+  domesticated?: boolean;
 }): Promise<RarityResolution> {
   // 护栏 / 本地测试：识图被 mock 时不真调模型。
   if (env.identifyMock) {
@@ -40,6 +41,7 @@ export async function resolveRarity(input: {
     finestReliableRank: input.finestReliableRank,
     label: input.label,
     scientificName: input.scientificName ?? input.matchNames?.[0] ?? null,
+    domesticated: input.domesticated,
   });
   return {
     rarity: resolved.rarity,
@@ -73,6 +75,7 @@ export {
   lookupCnStatus,
   lookupCnProtected,
   lookupListed,
+  EMPTY_CN_STATUS,
   statusTagsFrom,
   type CnStatus,
   type CnProtectLevel,

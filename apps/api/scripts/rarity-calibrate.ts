@@ -12,11 +12,10 @@ import { dirname, join } from "node:path";
 import { fileURLToPath } from "node:url";
 import { ProxyAgent, fetch as undiciFetch, type RequestInit } from "undici";
 import { env } from "../src/env.js";
-import { lookupCnStatus } from "../src/rarity/cn-status.js";
+import { lookupListed, lookupCnStatus } from "../src/rarity/cn-status.js";
 import { collectibleRankFromTier } from "../src/rarity/scale-rubric.js";
 import {
   KNOW_RUBRIC,
-  SCALE_BATCHES,
   SCALE_ITEM_KEYS,
   UNKNOWN_PLACEHOLDER_TIER,
   emptyItems,
@@ -24,6 +23,7 @@ import {
   mergeTri,
   parseKnows,
   parseScaleItems,
+  scaleBatchesForModel,
   scoreFromScale,
   type ScaleItems,
 } from "../src/rarity/scale-rubric.js";
@@ -36,6 +36,8 @@ type TaxonRow = {
   user: string;
   agent: string;
   notes?: string;
+  /** 驯养卷；缺省按 wild。 */
+  dom?: boolean;
 };
 
 const root = dirname(fileURLToPath(import.meta.url));
@@ -195,12 +197,13 @@ async function scoreOnce(
 
   const items: Partial<ScaleItems> = {};
   const batchReasons: Record<string, string> = {};
-  for (const batch of SCALE_BATCHES) {
+  for (const batch of scaleBatchesForModel()) {
     await sleep(opts.delayMs);
     const parsed = extractJson(await callChat(`${batch.rubric}\n\n${taxonBlock(row)}`, opts));
     Object.assign(items, parseScaleItems(parsed, batch.keys));
     batchReasons[batch.id] = String(parsed.reason ?? "");
   }
+  items.domesticated = Boolean(row.dom);
   return {
     known,
     items: items as ScaleItems,
@@ -248,7 +251,12 @@ async function scoreRow(
     assumeKnown: boolean;
   },
 ) {
-  const listed = lookupCnStatus(row.taxon, row.label);
+  const listed = lookupListed({
+    scientificName: row.taxon,
+    taxonKey: row.taxon,
+    label: row.label,
+    domesticated: Boolean(row.dom),
+  });
   if (listed.extinct) {
     const scored = scoreFromScale(emptyItems(), listOpts(listed));
     return {
@@ -275,6 +283,7 @@ async function scoreRow(
   const knowReason = draws.find((d) => d.known === known)?.knowReason ?? draws[0]!.knowReason;
   const itemDraws = draws.filter((d): d is typeof d & { items: ScaleItems } => d.items != null);
   const items = itemDraws.length ? mergeItems(itemDraws.map((d) => d.items)) : emptyItems();
+  items.domesticated = Boolean(row.dom);
   const scored = scoreFromScale(items, listOpts(listed));
   return {
     known,

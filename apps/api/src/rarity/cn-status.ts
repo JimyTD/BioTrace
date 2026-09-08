@@ -35,7 +35,7 @@ type NameIndex<T> = {
   taxon: Array<{ prefix: string; value: T }>;
 };
 
-const empty: CnStatus = {
+export const EMPTY_CN_STATUS: CnStatus = {
   extinct: false,
   extinctStatus: null,
   class_i: false,
@@ -44,6 +44,8 @@ const empty: CnStatus = {
   level: null,
   matchedBy: null,
 };
+
+const empty = EMPTY_CN_STATUS;
 
 let cached: {
   protect: NameIndex<CnProtectLevel>;
@@ -185,7 +187,10 @@ export function lookupListed(input: {
   scientificName?: string | null;
   taxonKey?: string | null;
   label?: string | null;
+  /** 驯养个体：名录四项全豁免，家犬不领狼的二级。 */
+  domesticated?: boolean;
 }): CnStatus {
+  if (input.domesticated) return EMPTY_CN_STATUS;
   const names = [input.scientificName?.trim(), input.taxonKey?.trim()].filter(
     (n): n is string => Boolean(n),
   );

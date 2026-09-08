@@ -15,6 +15,8 @@ import { api, type User } from "./api";
 import ForceAppUpdateGate from "./components/ForceAppUpdateGate";
 import PageOverlay from "./PageOverlay";
 import CollectionPage from "./pages/CollectionPage";
+import CollectionPetCardPage from "./pages/CollectionPetCardPage";
+import CollectionPetsPage from "./pages/CollectionPetsPage";
 import CollectionSpeciesCardPage from "./pages/CollectionSpeciesCardPage";
 import CollectionSpeciesPage from "./pages/CollectionSpeciesPage";
 import CollectionTreePage from "./pages/CollectionTreePage";
@@ -68,6 +70,15 @@ function SpeciesListLayout() {
   return (
     <>
       <CollectionSpeciesPage />
+      <Outlet />
+    </>
+  );
+}
+
+function PetsListLayout() {
+  return (
+    <>
+      <CollectionPetsPage />
       <Outlet />
     </>
   );
@@ -131,6 +142,17 @@ function AppShell({
                 element={
                   <PageOverlay className="is-species">
                     <CollectionSpeciesCardPage />
+                  </PageOverlay>
+                }
+              />
+            </Route>
+            <Route path="/collection/pets" element={<PetsListLayout />}>
+              <Route index element={null} />
+              <Route
+                path=":id"
+                element={
+                  <PageOverlay className="is-species">
+                    <CollectionPetCardPage />
                   </PageOverlay>
                 }
               />

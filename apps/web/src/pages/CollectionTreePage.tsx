@@ -51,6 +51,7 @@ export default function CollectionTreePage() {
         const prev = peekCollection();
         rememberCollection({
           entryCount: col.entries.length,
+          petCount: prev?.petCount,
           kingdomCount: countTreeKingdoms(col.entries),
           entries: col.entries,
           volumes: prev?.volumes ?? [],

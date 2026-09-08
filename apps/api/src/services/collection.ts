@@ -30,6 +30,9 @@ export async function detachObservationFromCollection(
   for (const entry of candidates) {
     await refreshCollectionEntry(entry.id, userId, entry.taxonKey, observationId);
   }
+
+  const { detachObservationFromPets } = await import("./pets.js");
+  await detachObservationFromPets(userId, observationId, taxonKey);
 }
 
 async function refreshCollectionEntry(
@@ -46,8 +49,9 @@ async function refreshCollectionEntry(
     ),
     orderBy: [desc(observations.settledAt)],
   });
+  const wild = settled.filter((o) => !o.domesticated);
 
-  const replacement = settled.find((o) => o.id !== excludeObservationId) ?? null;
+  const replacement = wild.find((o) => o.id !== excludeObservationId) ?? null;
 
   if (!replacement) {
     await db.delete(collectionEntries).where(eq(collectionEntries.id, entryId));
@@ -55,7 +59,7 @@ async function refreshCollectionEntry(
   }
 
   let bestRarity = replacement.rarity ?? "R";
-  for (const o of settled) {
+  for (const o of wild) {
     if (excludeObservationId && o.id === excludeObservationId) continue;
     if (collectibleRankFromTier(o.rarity ?? "R") > collectibleRankFromTier(bestRarity)) {
       bestRarity = o.rarity ?? bestRarity;
@@ -84,6 +88,9 @@ export async function sanitizeUserCollection(userId: string) {
   for (const entry of entries) {
     await rebuildCollectionTaxonForUser(userId, entry.taxonKey);
   }
+
+  const { sanitizeUserPets } = await import("./pets.js");
+  await sanitizeUserPets(userId);
 }
 
 export async function repairCollectionAfterObservationDeleted(

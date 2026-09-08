@@ -22,12 +22,6 @@ export function rarityCollectibleRank(tier: string): number {
   return RARITY_RANK[tier] ?? 0;
 }
 
-export type IndexedSpecies = CollectionEntry & {
-  pinyin: string;
-  pinyinCompact: string;
-  initials: string;
-};
-
 function syllablesOf(name: string): string[] {
   if (!name.trim()) return [];
   const raw = pinyin(name, {
@@ -40,7 +34,17 @@ function syllablesOf(name: string): string[] {
   return parts.map((s) => s.toLowerCase().replace(/[^a-z0-9]/g, "")).filter(Boolean);
 }
 
-export function indexSpecies(entry: CollectionEntry): IndexedSpecies {
+export type IndexedNamed<T extends { id: string; commonName: string | null; scientificName: string | null }> = T & {
+  pinyin: string;
+  pinyinCompact: string;
+  initials: string;
+};
+
+export type IndexedSpecies = IndexedNamed<CollectionEntry>;
+
+export function indexNamed<T extends { id: string; commonName: string | null; scientificName: string | null }>(
+  entry: T,
+): IndexedNamed<T> {
   const syllables = syllablesOf(entry.commonName ?? "");
   return {
     ...entry,
@@ -50,7 +54,17 @@ export function indexSpecies(entry: CollectionEntry): IndexedSpecies {
   };
 }
 
-function haystack(entry: IndexedSpecies): string {
+export function indexSpecies(entry: CollectionEntry): IndexedSpecies {
+  return indexNamed(entry);
+}
+
+function haystack(entry: {
+  commonName: string | null;
+  scientificName: string | null;
+  pinyin: string;
+  pinyinCompact: string;
+  initials: string;
+}): string {
   return [entry.commonName, entry.scientificName, entry.pinyin, entry.pinyinCompact, entry.initials]
     .filter(Boolean)
     .join(" ")
@@ -61,7 +75,9 @@ function normalizeQuery(q: string): string {
   return q.trim().toLowerCase().replace(/\s+/g, " ");
 }
 
-export function buildSpeciesFuse(entries: IndexedSpecies[]) {
+export function buildNamedFuse<T extends IndexedNamed<{ id: string; commonName: string | null; scientificName: string | null }>>(
+  entries: T[],
+) {
   return new Fuse(entries, {
     keys: [
       { name: "commonName", weight: 2 },
@@ -77,11 +93,15 @@ export function buildSpeciesFuse(entries: IndexedSpecies[]) {
   });
 }
 
-export function filterSpecies(
-  entries: IndexedSpecies[],
-  fuse: Fuse<IndexedSpecies> | null,
+export function buildSpeciesFuse(entries: IndexedSpecies[]) {
+  return buildNamedFuse(entries);
+}
+
+export function filterNamed<T extends IndexedNamed<{ id: string; commonName: string | null; scientificName: string | null }>>(
+  entries: T[],
+  fuse: Fuse<T> | null,
   query: string,
-): IndexedSpecies[] {
+): T[] {
   const q = normalizeQuery(query);
   if (!q) return entries;
 
@@ -110,6 +130,14 @@ export function filterSpecies(
   return [...substringHits, ...fused.filter((e) => !seen.has(e.id))];
 }
 
+export function filterSpecies(
+  entries: IndexedSpecies[],
+  fuse: Fuse<IndexedSpecies> | null,
+  query: string,
+): IndexedSpecies[] {
+  return filterNamed(entries, fuse, query);
+}
+
 export function sortSpecies(entries: IndexedSpecies[], sort: SpeciesSort): IndexedSpecies[] {
   const copy = [...entries];
   if (sort === "recent") {
@@ -128,7 +156,10 @@ export function sortSpecies(entries: IndexedSpecies[], sort: SpeciesSort): Index
   return copy;
 }
 
-export function speciesEntryName(entry: CollectionEntry, unnamed = ""): string {
+export function speciesEntryName(
+  entry: { commonName?: string | null; scientificName?: string | null; taxonKey?: string | null },
+  unnamed = "",
+): string {
   return entry.commonName || entry.scientificName || entry.taxonKey || unnamed;
 }
 

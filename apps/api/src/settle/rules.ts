@@ -43,6 +43,7 @@ export async function computeSettle(input: {
   scientificName?: string | null;
   commonName?: string | null;
   taxonomyJson?: string | null;
+  domesticated?: boolean;
 }): Promise<SettleComputation> {
   const country = await resolveCountry(input.lat, input.lng);
   const countryCode = country.code;
@@ -101,6 +102,7 @@ export async function computeSettle(input: {
         matchNames,
         label: input.commonName?.trim() || input.scientificName?.trim() || taxonKey,
         scientificName: input.scientificName,
+        domesticated: input.domesticated,
       })
     : { rarity: "R" as const };
 
@@ -111,6 +113,7 @@ export async function computeSettle(input: {
     scientificName: input.scientificName,
     taxonKey,
     matchNames,
+    domesticated: input.domesticated,
   });
 
   return {

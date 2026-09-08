@@ -1,0 +1,27 @@
+{
+  "id": "cat",
+  "taxonKey": "Felis catus",
+  "commonNameZh": "家猫",
+  "breeds": [
+    { "id": "british-shorthair", "zh": "英国短毛猫", "en": "British Shorthair", "aliases": ["英短"], "prevalence": "common" },
+    { "id": "golden-shaded", "zh": "金渐层", "en": "Golden Shaded", "aliases": ["金渐层英短"], "prevalence": "common" },
+    { "id": "silver-shaded", "zh": "银渐层", "en": "Silver Shaded", "aliases": ["银渐层英短"], "prevalence": "common" },
+    { "id": "american-shorthair", "zh": "美国短毛猫", "en": "American Shorthair", "aliases": ["美短"], "prevalence": "common" },
+    { "id": "exotic-shorthair", "zh": "异国短毛猫", "en": "Exotic Shorthair", "aliases": ["加菲", "加菲猫"], "prevalence": "common" },
+    { "id": "ragdoll", "zh": "布偶猫", "en": "Ragdoll", "aliases": ["布偶"], "prevalence": "common" },
+    { "id": "siamese", "zh": "暹罗猫", "en": "Siamese", "aliases": ["暹罗"], "prevalence": "uncommon" },
+    { "id": "persian", "zh": "波斯猫", "en": "Persian", "aliases": ["波斯"], "prevalence": "uncommon" },
+    { "id": "scottish-fold", "zh": "苏格兰折耳猫", "en": "Scottish Fold", "aliases": ["折耳", "苏格兰折耳"], "prevalence": "common" },
+    { "id": "maine-coon", "zh": "缅因猫", "en": "Maine Coon", "aliases": ["缅因"], "prevalence": "uncommon" },
+    { "id": "russian-blue", "zh": "俄罗斯蓝猫", "en": "Russian Blue", "aliases": ["俄蓝"], "prevalence": "uncommon" },
+    { "id": "bengal", "zh": "孟加拉猫", "en": "Bengal", "aliases": ["孟加拉"], "prevalence": "uncommon" },
+    { "id": "sphynx", "zh": "斯芬克斯猫", "en": "Sphynx", "aliases": ["无毛猫", "斯芬克斯"], "prevalence": "rare" },
+    { "id": "norwegian-forest", "zh": "挪威森林猫", "en": "Norwegian Forest Cat", "aliases": ["挪威森林"], "prevalence": "uncommon" },
+    { "id": "abyssinian", "zh": "阿比西尼亚猫", "en": "Abyssinian", "aliases": ["阿比"], "prevalence": "rare" },
+    { "id": "devon-rex", "zh": "德文卷毛猫", "en": "Devon Rex", "aliases": ["德文卷毛"], "prevalence": "rare" },
+    { "id": "cornish-rex", "zh": "康沃尔卷毛猫", "en": "Cornish Rex", "aliases": ["康沃尔卷毛"], "prevalence": "rare" },
+    { "id": "birman", "zh": "伯曼猫", "en": "Birman", "aliases": ["伯曼"], "prevalence": "uncommon" },
+    { "id": "turkish-angora", "zh": "土耳其安哥拉猫", "en": "Turkish Angora", "aliases": ["安哥拉"], "prevalence": "rare" },
+    { "id": "oriental", "zh": "东方短毛猫", "en": "Oriental Shorthair", "aliases": ["东方短毛"], "prevalence": "uncommon" }
+  ]
+}
