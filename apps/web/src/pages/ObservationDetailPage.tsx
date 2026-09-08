@@ -347,6 +347,7 @@ export default function ObservationDetailPage({ userId }: { userId?: string }) {
           <p className="muted">{t("detail.acceptedScientificName", { name: acceptedSci })}</p>
         ) : null}
         <div className="detail-marks">
+          {softEncounter ? <SoftEncounterSeal /> : null}
           {!noCollection && obs.rarity ? (
             <span className={`rarity-badge rarity-${obs.rarity}`}>
               {t(`rarity.${obs.rarity}` as MessageKey)}
@@ -356,10 +357,6 @@ export default function ObservationDetailPage({ userId }: { userId?: string }) {
             <span className="muted">
               {t("album.reliableTo", { rank: formatRank(obs.finestReliableRank) })}
             </span>
-          ) : null}
-          {softEncounter ? <SoftEncounterSeal /> : null}
-          {softEncounter ? (
-            <span className="badge soft">{t("status.softEncounter")}</span>
           ) : null}
           {obs.status === "analyzing" ? (
             <span className="badge warn">{t("status.analyzing")}</span>
