@@ -1,0 +1,412 @@
+﻿
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>清透开包 · 三拍显影示意</title>
+<style>
+:root {
+  --bg0: #f4f8fa;
+  --ink: #333b41;
+  --muted: #8d979e;
+  --cta: #d9531e;
+  --cta-ink: #fffaf7;
+  --mount-ink: #6a6357;
+  --trip-cover-plate: #f3f0e9;
+  --photo-mat: #e9eff3;
+  --font-sans: "Outfit", system-ui, sans-serif;
+  --font-meta: "Courier Prime", "Courier New", ui-monospace, monospace;
+  --rarity-SR-bg: #ebdcff;
+  --rarity-SR-fg: #6a20bd;
+}
+* { box-sizing: border-box; margin: 0; padding: 0; }
+body {
+  font-family: var(--font-sans);
+  color: var(--ink);
+  background: radial-gradient(ellipse 130% 90% at 50% 12%, #ffffff 0%, #f8fbfc 42%, #eef3f6 100%) fixed;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 28px 16px 48px;
+}
+header { text-align: center; }
+header h1 { font-size: 1.45rem; font-weight: 600; letter-spacing: 0.02em; }
+header p { margin-top: 6px; font-size: 0.84rem; color: var(--muted); }
+.bench {
+  width: min(680px, 100%);
+  margin: 22px auto 0;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 20px;
+}
+@media (max-width: 560px) { .bench { grid-template-columns: 1fr; } }
+.demo-card {
+  background: rgba(255, 255, 255, 0.86);
+  border-radius: 18px;
+  box-shadow: 0 1px 2px rgba(90, 112, 128, 0.05), 0 10px 24px rgba(90, 112, 128, 0.07);
+  padding: 14px 14px 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+.demo-head {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 8px;
+  padding: 0 4px;
+}
+.demo-head h2 { font-size: 0.95rem; font-weight: 600; }
+.demo-head .chip { font-size: 0.68rem; font-weight: 600; letter-spacing: 0.08em; color: var(--muted); }
+.demo-head .chip.now { color: var(--cta); }
+.time-bar {
+  display: flex;
+  height: 26px;
+  margin: 0 4px;
+  border-radius: 8px;
+  overflow: hidden;
+  font-size: 0.62rem;
+  line-height: 26px;
+  text-align: center;
+  color: #fff;
+  letter-spacing: 0.04em;
+  user-select: none;
+  white-space: nowrap;
+}
+.time-bar span { display: block; overflow: hidden; }
+.tb-flat { width: 100%; background: rgba(141, 151, 158, 0.35); color: #5b656c; }
+.tb-lift { width: 23%; background: rgba(74, 112, 137, 0.85); }
+.tb-dev  { width: 58%; background: rgba(74, 112, 137, 0.55); }
+.tb-drop { width: 19%; background: rgba(74, 112, 137, 0.30); color: #3d566b; }
+.reveal-stage {
+  position: relative;
+  width: 100%;
+  aspect-ratio: 1 / 1.12;
+  display: grid;
+  align-content: center;
+  justify-items: center;
+  container-type: inline-size;
+}
+.reveal-under {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  z-index: 1;
+  width: 67cqw;
+  aspect-ratio: 1 / 1.16;
+  border-radius: 5px;
+  background: var(--trip-cover-plate);
+  box-shadow: 0 6px 16px rgba(70, 90, 105, 0.13);
+  pointer-events: none;
+}
+.reveal-under-l { transform: translate(-50%, -50%) rotate(-6.2deg) translateX(-3.5cqw); }
+.reveal-under-r { transform: translate(-50%, -50%) rotate(4.8deg) translateX(3.5cqw); }
+.reveal-bloom {
+  position: absolute;
+  top: 48%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  z-index: 2;
+  width: 130%;
+  aspect-ratio: 1;
+  background: radial-gradient(ellipse at 50% 50%,
+    rgba(255, 255, 255, 0.95) 0%,
+    rgba(255, 255, 255, 0.55) 34%,
+    rgba(255, 255, 255, 0) 62%);
+  opacity: 0;
+  filter: blur(3px);
+  pointer-events: none;
+}
+.reveal-card {
+  position: relative;
+  z-index: 3;
+  width: 70cqw;
+  padding: 4.6cqw 4.6cqw 0;
+  border-radius: 6px;
+  background: var(--trip-cover-plate);
+  box-shadow: 0 2px 4px rgba(70, 90, 105, 0.16), 0 16px 34px rgba(70, 90, 105, 0.18);
+}
+.reveal-window { display: block; aspect-ratio: 1; border-radius: 3px; overflow: hidden; background: var(--photo-mat); }
+.reveal-photo { display: block; width: 100%; height: 100%; object-fit: cover; }
+.reveal-mark {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  padding: 2.4cqw 0.5cqw 3cqw;
+  font-family: var(--font-meta);
+  font-size: 0.62rem;
+  line-height: 1.35;
+  letter-spacing: 0.06em;
+  color: var(--mount-ink);
+  white-space: nowrap;
+}
+.reveal-mark-where { overflow: hidden; text-overflow: ellipsis; opacity: 0.6; }
+.reveal-rank {
+  position: absolute;
+  left: 50%;
+  bottom: 1.5%;
+  transform: translateX(-50%);
+  z-index: 4;
+  padding: 5px 15px 4px;
+  border-radius: 999px;
+  font-size: 0.7rem;
+  font-weight: 600;
+  line-height: 1;
+  letter-spacing: 0.16em;
+  text-indent: 0.16em;
+  background: var(--rarity-SR-bg);
+  color: var(--rarity-SR-fg);
+  box-shadow: 0 2px 8px rgba(70, 90, 105, 0.14);
+}
+.reveal-stage.is-open .reveal-bloom { opacity: 0.28; }
+.demo-old .reveal-stage { --dur: 780ms; }
+.demo-old .reveal-stage.is-sealed .reveal-photo { filter: blur(9px) saturate(0.5); transform: scale(1.07); }
+.demo-old .reveal-stage.is-sealed .reveal-card { transform: scale(0.965); }
+.demo-old .reveal-stage.is-sealed .reveal-mark { opacity: 0.3; }
+.demo-old .reveal-stage.is-sealed .reveal-rank { opacity: 0; }
+.demo-old .reveal-stage.is-sealed .reveal-under { opacity: 0.5; }
+.demo-old .reveal-stage.is-sealed .reveal-under-l { transform: translate(-50%, -50%) rotate(-1.4deg); }
+.demo-old .reveal-stage.is-sealed .reveal-under-r { transform: translate(-50%, -50%) rotate(1.1deg); }
+.demo-old .reveal-stage.is-revealing .reveal-photo { animation: oldSharpen var(--dur) ease-out forwards; }
+.demo-old .reveal-stage.is-revealing .reveal-card { animation: oldSettle var(--dur) cubic-bezier(0.2, 0.9, 0.25, 1) forwards; }
+.demo-old .reveal-stage.is-revealing .reveal-mark { animation: oldInk var(--dur) ease-out forwards; }
+.demo-old .reveal-stage.is-revealing .reveal-rank { animation: oldInk var(--dur) ease-out forwards; }
+.demo-old .reveal-stage.is-revealing .reveal-bloom { animation: oldBloom var(--dur) ease-out forwards; }
+@keyframes oldSharpen { from { filter: blur(9px) saturate(0.5); transform: scale(1.07); } to { filter: none; transform: none; } }
+@keyframes oldSettle { from { transform: scale(0.965); } to { transform: none; } }
+@keyframes oldInk { from { opacity: 0; } to { opacity: 1; } }
+@keyframes oldBloom { 0% { opacity: 0; } 45% { opacity: 1; } 100% { opacity: 0.28; } }
+.demo-new .reveal-stage { --dur: 960ms; }
+.demo-new .reveal-stage.is-sealed .reveal-photo { filter: blur(9px) saturate(0.5); transform: scale(1.07); }
+.demo-new .reveal-stage.is-sealed .reveal-card { transform: scale(0.965); }
+.demo-new .reveal-stage.is-sealed .reveal-mark { opacity: 0.3; }
+.demo-new .reveal-stage.is-sealed .reveal-rank { opacity: 0; }
+.demo-new .reveal-stage.is-sealed .reveal-under { opacity: 0.5; }
+.demo-new .reveal-stage.is-sealed .reveal-under-l { transform: translate(-50%, -50%) rotate(-1.4deg); }
+.demo-new .reveal-stage.is-sealed .reveal-under-r { transform: translate(-50%, -50%) rotate(1.1deg); }
+.demo-new .reveal-stage.is-revealing .reveal-card {
+  animation: liftCard var(--dur) cubic-bezier(0.2, 0.9, 0.25, 1) forwards;
+}
+@keyframes liftCard {
+  0%   { transform: scale(0.965) translateY(0); box-shadow: 0 2px 4px rgba(70, 90, 105, 0.16), 0 16px 34px rgba(70, 90, 105, 0.18); }
+  23%  { transform: scale(1.015) translateY(-2cqw); box-shadow: 0 4px 8px rgba(70, 90, 105, 0.15), 0 26px 46px rgba(70, 90, 105, 0.22); }
+  81%  { transform: scale(1.015) translateY(-2cqw); box-shadow: 0 4px 8px rgba(70, 90, 105, 0.15), 0 26px 46px rgba(70, 90, 105, 0.19); }
+  100% { transform: scale(1) translateY(0); box-shadow: 0 2px 4px rgba(70, 90, 105, 0.16), 0 16px 34px rgba(70, 90, 105, 0.18); }
+}
+.demo-new .reveal-stage.is-revealing .reveal-photo { animation: devSharpen var(--dur) ease-out forwards; }
+@keyframes devSharpen {
+  0%   { filter: blur(9px) saturate(0.5); transform: scale(1.07); }
+  23%  { filter: blur(8.5px) saturate(0.55); transform: scale(1.06); }
+  81%  { filter: blur(0.5px) saturate(0.97); transform: scale(1.004); }
+  100% { filter: none; transform: none; }
+}
+.demo-new .reveal-stage.is-revealing .reveal-bloom { animation: devBloom var(--dur) ease-out forwards; }
+@keyframes devBloom {
+  0%   { opacity: 0; }
+  23%  { opacity: 1; }
+  81%  { opacity: 0.45; }
+  100% { opacity: 0.28; }
+}
+.demo-new .reveal-stage.is-revealing .reveal-under-l { animation: underL var(--dur) cubic-bezier(0.2, 0.9, 0.25, 1) forwards; }
+.demo-new .reveal-stage.is-revealing .reveal-under-r { animation: underR var(--dur) cubic-bezier(0.2, 0.9, 0.25, 1) forwards; }
+@keyframes underL {
+  0%   { transform: translate(-50%, -50%) rotate(-1.4deg) translateX(0); opacity: 0.5; }
+  23%  { transform: translate(-50%, -50%) rotate(-6.2deg) translateX(-3.5cqw); opacity: 1; }
+  100% { transform: translate(-50%, -50%) rotate(-6.2deg) translateX(-3.5cqw); opacity: 1; }
+}
+@keyframes underR {
+  0%   { transform: translate(-50%, -50%) rotate(1.1deg) translateX(0); opacity: 0.5; }
+  23%  { transform: translate(-50%, -50%) rotate(4.8deg) translateX(3.5cqw); opacity: 1; }
+  100% { transform: translate(-50%, -50%) rotate(4.8deg) translateX(3.5cqw); opacity: 1; }
+}
+.demo-new .reveal-stage.is-revealing .reveal-mark { animation: devInk var(--dur) ease-out forwards; }
+@keyframes devInk {
+  0%   { opacity: 0.3; }
+  58%  { opacity: 0.3; }
+  81%  { opacity: 1; }
+  100% { opacity: 1; }
+}
+.demo-new .reveal-stage.is-revealing .reveal-rank {
+  animation: rankStamp calc(var(--dur) * 0.28) ease-out calc(var(--dur) * 0.72) both;
+}
+@keyframes rankStamp {
+  0%   { opacity: 0; transform: translateX(-50%) scale(1.4); }
+  60%  { opacity: 1; transform: translateX(-50%) scale(0.94); }
+  100% { opacity: 1; transform: translateX(-50%) scale(1); }
+}
+.controls {
+  width: min(680px, 100%);
+  margin: 26px auto 0;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  justify-content: center;
+  align-items: center;
+}
+.controls button {
+  font-family: var(--font-sans);
+  font-size: 0.86rem;
+  font-weight: 500;
+  padding: 9px 22px;
+  border: none;
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.9);
+  color: var(--ink);
+  box-shadow: 0 1px 2px rgba(90, 112, 128, 0.08), 0 4px 12px rgba(90, 112, 128, 0.07);
+  cursor: pointer;
+  transition: transform 0.15s ease, box-shadow 0.15s ease;
+}
+.controls button:hover { transform: translateY(-1px); box-shadow: 0 2px 4px rgba(90, 112, 128, 0.1), 0 8px 18px rgba(90, 112, 128, 0.1); }
+.controls button.play { background: var(--cta); color: var(--cta-ink); box-shadow: 0 4px 12px rgba(217, 83, 30, 0.2); }
+.controls label {
+  font-size: 0.78rem;
+  color: var(--muted);
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  cursor: pointer;
+}
+.controls input[type="checkbox"] { accent-color: var(--cta); }
+.footnote {
+  width: min(680px, 100%);
+  margin: 20px auto 0;
+  font-size: 0.78rem;
+  line-height: 1.75;
+  color: var(--muted);
+  text-align: center;
+}
+.footnote b { color: var(--ink); font-weight: 600; }
+</style>
+</head>
+<body>
+<header>
+  <h1>清透开包 · 三拍显影示意</h1>
+  <p>左：现状（780ms 一段平过渡）　右：三拍方案（960ms 拿起 / 显影 / 落定，药丸后落）</p>
+</header>
+<div class="bench">
+  <section class="demo-card demo-old">
+    <div class="demo-head">
+      <h2>现状</h2>
+      <span class="chip" id="phaseOld">封缄</span>
+    </div>
+    <div class="time-bar" aria-hidden="true"><span class="tb-flat">780ms · 一段平过渡</span></div>
+    <div class="reveal-stage is-sealed" id="stageOld">
+      <span class="reveal-under reveal-under-l" aria-hidden></span>
+      <span class="reveal-under reveal-under-r" aria-hidden></span>
+      <span class="reveal-bloom" aria-hidden></span>
+      <div class="reveal-card">
+        <span class="reveal-window">
+          <img class="reveal-photo" src="./assets/demo-photo-bird.jpg" alt="示例照片">
+        </span>
+        <span class="reveal-mark" aria-hidden>
+          <span>2026-09-07</span>
+          <span class="reveal-mark-where">深圳湾公园</span>
+        </span>
+      </div>
+      <span class="reveal-rank">SR</span>
+    </div>
+  </section>
+  <section class="demo-card demo-new">
+    <div class="demo-head">
+      <h2>三拍显影</h2>
+      <span class="chip now" id="phaseNew">封缄</span>
+    </div>
+    <div class="time-bar" aria-hidden="true">
+      <span class="tb-lift">拿起 220ms</span>
+      <span class="tb-dev">显影 560ms</span>
+      <span class="tb-drop">落定 180ms</span>
+    </div>
+    <div class="reveal-stage is-sealed" id="stageNew">
+      <span class="reveal-under reveal-under-l" aria-hidden></span>
+      <span class="reveal-under reveal-under-r" aria-hidden></span>
+      <span class="reveal-bloom" aria-hidden></span>
+      <div class="reveal-card">
+        <span class="reveal-window">
+          <img class="reveal-photo" src="./assets/demo-photo-bird.jpg" alt="示例照片">
+        </span>
+        <span class="reveal-mark" aria-hidden>
+          <span>2026-09-07</span>
+          <span class="reveal-mark-where">深圳湾公园</span>
+        </span>
+      </div>
+      <span class="reveal-rank">SR</span>
+    </div>
+  </section>
+</div>
+<div class="controls">
+  <button class="play" id="btnPlay" type="button">开包对比（两边同播）</button>
+  <button id="btnNew" type="button">只看三拍</button>
+  <button id="btnReset" type="button">复位</button>
+  <label>
+    <input type="checkbox" id="slowmo">
+    0.25× 慢放（细看节奏）
+  </label>
+</div>
+<p class="footnote">
+  <b>为什么这样切</b>：现状是「一段 780ms 平滑过渡」，缺句读。三拍是每个人都做过的动作——从一叠照片里拿起最上面那张：拿起（离叠）、看清（显影）、放定（落回）；稀有度药丸等照片显清之后再落下，把「先照片、后结论」的鉴定顺序本身演出来。色值与几何照抄仓库现有 ClearRevealStage，仅演示动效差异。
+</p>
+<script>
+var PHASE_LABEL = { sealed: "封缄", revealing: "揭示中", open: "展出" };
+var BASE_DUR = { old: 780, new: 960 };
+var SLOW = 4;
+var stageOld = document.getElementById("stageOld");
+var stageNew = document.getElementById("stageNew");
+var chipOld = document.getElementById("phaseOld");
+var chipNew = document.getElementById("phaseNew");
+var timers = [];
+function dur(which) {
+  var slowmo = document.getElementById("slowmo").checked;
+  return BASE_DUR[which] * (slowmo ? SLOW : 1);
+}
+function setPhase(which, phase) {
+  var stage = which === "old" ? stageOld : stageNew;
+  var chip = which === "old" ? chipOld : chipNew;
+  stage.classList.remove("is-sealed", "is-revealing", "is-open");
+  if (phase !== "sealed") {
+    void stage.offsetWidth;
+  }
+  stage.classList.add("is-" + phase);
+  chip.textContent = PHASE_LABEL[phase];
+}
+function clearTimers() {
+  timers.forEach(clearTimeout);
+  timers = [];
+}
+function playBoth() {
+  clearTimers();
+  setPhase("old", "sealed");
+  setPhase("new", "sealed");
+  void stageOld.offsetWidth;
+  void stageNew.offsetWidth;
+  setPhase("old", "revealing");
+  setPhase("new", "revealing");
+  timers.push(setTimeout(function () { setPhase("old", "open"); }, dur("old")));
+  timers.push(setTimeout(function () { setPhase("new", "open"); }, dur("new")));
+}
+function playNewOnly() {
+  clearTimers();
+  setPhase("old", "sealed");
+  setPhase("new", "sealed");
+  void stageNew.offsetWidth;
+  setPhase("new", "revealing");
+  timers.push(setTimeout(function () { setPhase("new", "open"); }, dur("new")));
+}
+function resetAll() {
+  clearTimers();
+  setPhase("old", "sealed");
+  setPhase("new", "sealed");
+}
+document.getElementById("btnPlay").addEventListener("click", playBoth);
+document.getElementById("btnNew").addEventListener("click", playNewOnly);
+document.getElementById("btnReset").addEventListener("click", resetAll);
+document.getElementById("slowmo").addEventListener("change", function () {
+  var on = this.checked;
+  stageOld.style.setProperty("--dur", (on ? BASE_DUR.old * SLOW : BASE_DUR.old) + "ms");
+  stageNew.style.setProperty("--dur", (on ? BASE_DUR.new * SLOW : BASE_DUR.new) + "ms");
+});
+</script>
+</body>
+</html>

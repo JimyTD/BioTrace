@@ -1,0 +1,682 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>清透开包 · 稀有度当主角 v4 · 光柱与流光</title>
+<style>
+@property --edge-rot {
+  syntax: '<angle>';
+  initial-value: 0deg;
+  inherits: false;
+}
+:root {
+  --bg0: #f4f8fa;
+  --ink: #333b41;
+  --muted: #8d979e;
+  --cta: #d9531e;
+  --cta-ink: #fffaf7;
+  --mount-ink: #6a6357;
+  --trip-cover-plate: #f3f0e9;
+  --photo-mat: #e9eff3;
+  --font-sans: "Outfit", system-ui, sans-serif;
+  --font-meta: "Courier Prime", "Courier New", ui-monospace, monospace;
+  --rarity-N-bg: #e8edf0;  --rarity-N-fg: #5b656c;
+  --rarity-R-bg: #d9eaff;  --rarity-R-fg: #0a5f9e;
+  --rarity-SR-bg: #ebdcff; --rarity-SR-fg: #6a20bd;
+  --rarity-SSR-bg: #ffe58c; --rarity-SSR-fg: #6b4200;
+  --rarity-UR-bg: #ffc7be; --rarity-UR-fg: #b02010;
+  --rarity-LR-bg: linear-gradient(135deg, #d8c0ff 0%, #ffe27a 48%, #ffb0d8 100%);
+  --rarity-LR-fg: #55187a;
+  --rarity-XR-bg: #ffc9ef; --rarity-XR-fg: #96006e;
+}
+* { box-sizing: border-box; margin: 0; padding: 0; }
+body {
+  font-family: var(--font-sans);
+  color: var(--ink);
+  background: radial-gradient(ellipse 130% 90% at 50% 12%, #ffffff 0%, #f8fbfc 42%, #eef3f6 100%) fixed;
+  min-height: 100vh;
+  display: flex; flex-direction: column; align-items: center;
+  padding: 28px 16px 48px;
+}
+header { text-align: center; }
+header h1 { font-size: 1.45rem; font-weight: 600; letter-spacing: 0.02em; }
+header p { margin-top: 6px; font-size: 0.84rem; color: var(--muted); }
+.bench { width: min(680px, 100%); margin: 22px auto 0; display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
+@media (max-width: 560px) { .bench { grid-template-columns: 1fr; } }
+.demo-card {
+  background: rgba(255, 255, 255, 0.86);
+  border-radius: 18px;
+  box-shadow: 0 1px 2px rgba(90, 112, 128, 0.05), 0 10px 24px rgba(90, 112, 128, 0.07);
+  padding: 14px 14px 16px;
+  display: flex; flex-direction: column; gap: 10px;
+}
+.demo-head { display: flex; align-items: baseline; justify-content: space-between; gap: 8px; padding: 0 4px; }
+.demo-head h2 { font-size: 0.95rem; font-weight: 600; }
+.demo-head .chip { font-size: 0.68rem; font-weight: 600; letter-spacing: 0.08em; color: var(--muted); }
+.demo-head .chip.now { color: var(--cta); }
+.time-bar {
+  display: flex; height: 26px; margin: 0 4px; border-radius: 8px; overflow: hidden;
+  font-size: 0.62rem; line-height: 26px; text-align: center; color: #fff;
+  letter-spacing: 0.04em; user-select: none; white-space: nowrap;
+}
+.time-bar span { display: block; overflow: hidden; }
+.tb-a { background: rgba(74, 112, 137, 0.85); }
+.tb-b { background: rgba(74, 112, 137, 0.55); }
+.tb-c { background: rgba(217, 83, 30, 0.75); }
+.tb-d { background: rgba(74, 112, 137, 0.30); color: #3d566b; }
+.reveal-stage {
+  position: relative; width: 100%; aspect-ratio: 1 / 1.12;
+  display: grid; align-content: center; justify-items: center;
+  container-type: inline-size; --slow: 1; --drama: 0.75; --tint-ms: 850;
+  /* 光强总增益：只放大亮度轴（opacity、渐变 alpha、辉光半径），形状、模式、时序一概不碰 */
+  --gain: 1.5;
+}
+.reveal-bloom {
+  position: absolute; top: 48%; left: 50%; transform: translate(-50%, -50%); z-index: 3;
+  width: 130%; aspect-ratio: 1;
+  background: radial-gradient(ellipse at 50% 50%,
+    rgba(255, 255, 255, 0.95) 0%, rgba(255, 255, 255, 0.55) 34%, rgba(255, 255, 255, 0) 62%);
+  opacity: 0; filter: blur(3px); pointer-events: none;
+}
+.reveal-card-wrap { position: relative; z-index: 4; width: 70cqw; }
+.reveal-card {
+  position: relative; z-index: 1;
+  padding: 4.6cqw 4.6cqw 0; border-radius: 6px; background: var(--trip-cover-plate);
+  box-shadow: 0 2px 4px rgba(70, 90, 105, 0.16), 0 16px 34px rgba(70, 90, 105, 0.18);
+}
+.reveal-window { position: relative; display: block; aspect-ratio: 1; border-radius: 3px; overflow: hidden; background: var(--photo-mat); }
+.reveal-photo { display: block; width: 100%; height: 100%; object-fit: cover; }
+.reveal-tint {
+  position: absolute; inset: 0; z-index: 3; border-radius: 3px;
+  mix-blend-mode: soft-light; opacity: 0; pointer-events: none;
+}
+.reveal-mark {
+  display: flex; align-items: center; justify-content: space-between; gap: 8px;
+  padding: 2.4cqw 0.5cqw 3cqw; font-family: var(--font-meta);
+  font-size: 0.62rem; line-height: 1.35; letter-spacing: 0.06em;
+  color: var(--mount-ink); white-space: nowrap;
+}
+.reveal-mark-where { overflow: hidden; text-overflow: ellipsis; opacity: 0.6; }
+.reveal-rank {
+  position: absolute; left: 50%; bottom: 1.5%; transform: translateX(-50%); z-index: 6;
+  padding: 5px 15px 4px; border-radius: 999px; font-size: 0.7rem; font-weight: 600;
+  line-height: 1; letter-spacing: 0.16em; text-indent: 0.16em;
+  background: var(--rarity-SR-bg); color: var(--rarity-SR-fg);
+  box-shadow: 0 2px 8px rgba(70, 90, 105, 0.14);
+}
+.reveal-rank.rarity-N  { background: var(--rarity-N-bg);  color: var(--rarity-N-fg);  --ring-c: rgba(120,132,140,1); }
+.reveal-rank.rarity-R  { background: var(--rarity-R-bg);  color: var(--rarity-R-fg);  --ring-c: rgba(60,150,255,1); }
+.reveal-rank.rarity-SR { background: var(--rarity-SR-bg); color: var(--rarity-SR-fg); --ring-c: rgba(180,110,255,1); }
+.reveal-rank.rarity-SSR { background: var(--rarity-SSR-bg); color: var(--rarity-SSR-fg); --ring-c: rgba(255,205,70,1); }
+.reveal-rank.rarity-UR { background: var(--rarity-UR-bg); color: var(--rarity-UR-fg); --ring-c: rgba(255,110,80,1); }
+.reveal-rank.rarity-LR { background: var(--rarity-LR-bg); color: var(--rarity-LR-fg); --ring-c: rgba(200,140,255,1); }
+.reveal-rank.rarity-XR { background: var(--rarity-XR-bg); color: var(--rarity-XR-fg); --ring-c: rgba(255,90,220,1); }
+/* 档位色同时挂到舞台：色浪 / 舞台染 / 涟漪 / 药丸辉光共用同一档色，不再走黄色兜底
+   alpha 提满：层不透明度已乘 --gain，峰值再乘会被 1.0 上限截断，固有色打满做补偿 */
+.reveal-stage.g-N  { --ring-c: rgba(120,132,140,1); }
+.reveal-stage.g-R  { --ring-c: rgba(60,150,255,1); }
+.reveal-stage.g-SR { --ring-c: rgba(180,110,255,1); }
+.reveal-stage.g-SSR { --ring-c: rgba(255,205,70,1); }
+.reveal-stage.g-UR { --ring-c: rgba(255,110,80,1); }
+.reveal-stage.g-LR { --ring-c: rgba(200,140,255,1); }
+.reveal-stage.g-XR { --ring-c: rgba(255,90,220,1); }
+.reveal-tint.tint-N  { background: radial-gradient(circle at 50% 38%, rgba(255,255,255,1), rgba(255,255,255,0) 66%); }
+.reveal-tint.tint-R  { background: radial-gradient(circle at 50% 38%, rgba(120,180,255,0.82), rgba(120,180,255,0) 70%); }
+.reveal-tint.tint-SR { background: radial-gradient(circle at 50% 38%, rgba(200,160,255,0.9), rgba(200,160,255,0) 70%); }
+.reveal-tint.tint-SSR { background: radial-gradient(circle at 50% 38%, rgba(255,224,120,0.97), rgba(255,224,120,0) 70%); }
+.reveal-tint.tint-UR { background: radial-gradient(circle at 50% 38%, rgba(255,150,130,0.9), rgba(255,150,130,0) 70%); }
+.reveal-tint.tint-LR { background: linear-gradient(115deg, #d8c0ff, #ffe27a 28%, #b5f0d0 50%, #ffb0d8 72%, #d8c0ff); background-size: 300% 300%; }
+.reveal-tint.tint-XR { background: linear-gradient(115deg, #ffc9ef, #ffd6f4 20%, #bfe6ff 40%, #ffc9ef 60%, #ffe0a8 80%, #ffc9ef); background-size: 300% 300%; }
+.is-sealed .reveal-photo { filter: blur(14px) saturate(0.3) brightness(0.55); transform: scale(1.12); }
+.is-sealed .reveal-card-wrap { transform: scale(0.92) translateY(1.5cqw); }
+.is-sealed .reveal-mark { opacity: 0.25; }
+.is-sealed .reveal-rank { opacity: 0; }
+.is-open .reveal-bloom { opacity: 0.28; }
+.is-open .reveal-rank { opacity: 1; }
+.is-open .reveal-mark { opacity: 1; }
+/* ── 左台：三拍版（现状，稀有度陪衬）────────────────── */
+.demo-left .is-revealing .reveal-card-wrap { animation: liftCard calc(960ms * var(--slow)) cubic-bezier(0.2, 0.9, 0.25, 1) forwards; }
+.demo-left .is-revealing .reveal-photo { animation: devSharpen calc(960ms * var(--slow)) ease-out forwards; }
+.demo-left .is-revealing .reveal-bloom { animation: devBloom calc(960ms * var(--slow)) ease-out forwards; }
+.demo-left .is-revealing .reveal-mark { animation: devInk calc(960ms * var(--slow)) ease-out forwards; }
+.demo-left .is-revealing .reveal-rank { animation: rankStamp calc(270ms * var(--slow)) ease-out calc(700ms * var(--slow)) both; }
+.demo-left .is-open .reveal-card-wrap { transform: none; }
+@keyframes liftCard {
+  0%   { transform: scale(0.965) translateY(0); }
+  23%  { transform: scale(1.015) translateY(-2cqw); }
+  100% { transform: scale(1) translateY(0); }
+}
+@keyframes devSharpen {
+  0%   { filter: blur(9px) saturate(0.5); transform: scale(1.07); }
+  81%  { filter: blur(0.5px) saturate(0.97); transform: scale(1.004); }
+  100% { filter: none; transform: none; }
+}
+@keyframes devBloom { 0% { opacity: 0; } 23% { opacity: 1; } 81% { opacity: 0.45; } 100% { opacity: 0.28; } }
+@keyframes devInk { 0% { opacity: 0.25; } 58% { opacity: 0.25; } 81% { opacity: 1; } 100% { opacity: 1; } }
+@keyframes rankStamp {
+  0%   { opacity: 0; transform: translateX(-50%) scale(1.4); }
+  60%  { opacity: 1; transform: translateX(-50%) scale(0.94); }
+  100% { opacity: 1; transform: translateX(-50%) scale(1); }
+}
+/* ── 右台：v4 光柱与流光 ───────────────────────────────────
+   结构：拿起 260 → 显影 640 → 定色(档位时长+档位戏码) → 落章 360
+   戏码开关由 stage 上的 g-档位 class 控制：N 零戏，XR 全套 */
+.stage-tint {
+  position: absolute; inset: -8%; z-index: 0; opacity: 0; pointer-events: none;
+  background: radial-gradient(ellipse at 50% 44%, var(--ring-c, rgba(255,205,70,0.5)), rgba(255,255,255,0) 64%);
+}
+.reveal-ring {
+  position: absolute; inset: 0; z-index: 5; border-radius: 9px;
+  border: calc(1.2cqw * var(--drama) + 1px) solid var(--ring-c, rgba(255,205,70,0.85));
+  filter: blur(calc(0.9cqw * var(--drama) + 0.5px));
+  opacity: 0; transform: scale(1);
+  pointer-events: none;
+}
+.reveal-flash {
+  position: absolute; inset: 0; z-index: 4; opacity: 0; pointer-events: none;
+  background: radial-gradient(ellipse 72% 62% at 50% 46%, #ffffff 0%, rgba(255,255,255,1) 42%, rgba(255,255,255,0) 78%);
+}
+.reveal-sheen {
+  position: absolute; top: -10%; bottom: -10%; left: -45%; width: 90%; z-index: 5;
+  background: linear-gradient(100deg, rgba(255,255,255,0) 0%, rgba(255,255,255,0.82) 45%, rgba(255,255,255,1) 50%, rgba(255,255,255,0.82) 55%, rgba(255,255,255,0) 100%);
+  transform: translateX(-160%) skewX(-18deg); opacity: 0; pointer-events: none;
+  mix-blend-mode: overlay;
+}
+.reveal-ripple {
+  position: absolute; left: 50%; bottom: -4%; z-index: 5; width: 42cqw; aspect-ratio: 2.8 / 1;
+  border-radius: 50%; border: calc(1px + 0.5cqw * var(--drama)) solid var(--ring-c);
+  opacity: 0; transform: translateX(-50%) scale(0.3); pointer-events: none;
+}
+.dust {
+  position: absolute; z-index: 5; border-radius: 50%;
+  background: var(--dust-c, #ffd675); box-shadow: 0 0 calc(7px * var(--gain, 1)) calc(1px * var(--gain, 1)) var(--dust-c, #ffd675);
+  opacity: 0; pointer-events: none;
+}
+/* 光柱：照片窗口内的光幕——窗口裁剪保证出发点=照片底边、左右=照片两边，严丝合缝 */
+.reveal-beam {
+  position: absolute; inset: 0; z-index: 1; opacity: 0; pointer-events: none;
+  transform-origin: 50% 100%;
+  background:
+    linear-gradient(to top, var(--ring-c) 0%, rgba(255, 255, 255, 0) 74%),
+    radial-gradient(ellipse 43% 26% at 50% 100%, var(--ring-c), rgba(255, 255, 255, 0) 72%);
+}
+/* 流光描边：贴相框外壁的一圈光，LR/XR 四色流转 */
+.reveal-edge {
+  position: absolute; inset: 0; z-index: 5; border-radius: 9px; opacity: 0; pointer-events: none;
+  padding: calc(0.55cqw * var(--drama) + 1px);
+  background: linear-gradient(120deg, var(--ring-c), rgba(255, 255, 255, 0.12) 46%, var(--ring-c) 88%);
+  -webkit-mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
+  -webkit-mask-composite: xor;
+  mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
+  mask-composite: exclude;
+}
+.g-LR .reveal-edge, .g-XR .reveal-edge {
+  background: conic-gradient(from var(--edge-rot), #d8c0ff, #ffe27a, #b5f0d0, #ffb0d8, #bfe6ff, #d8c0ff);
+}
+/* R/SR 也有描边，但收敛一档：线更细，亮度和落定余韵各自压低，不抢 SSR/UR 的戏 */
+.g-R .reveal-edge  { padding: calc(0.38cqw * var(--drama) + 1px); }
+.g-SR .reveal-edge { padding: calc(0.46cqw * var(--drama) + 1px); }
+/* 心搏白光：定色中段照片中央透亮一拍 */
+.reveal-pulse {
+  position: absolute; inset: 0; z-index: 4; opacity: 0; pointer-events: none; mix-blend-mode: screen;
+  background: radial-gradient(circle at 50% 42%, rgba(255, 255, 255, 1), rgba(255, 255, 255, 0) 60%);
+}
+/* 星闪：JS 按档位生成，定色窗口内在照片区绽开的四角星 */
+.spark {
+  position: absolute; z-index: 6; opacity: 0; pointer-events: none;
+  background: var(--dust-c, #fff);
+  clip-path: polygon(50% 0%, 61% 39%, 100% 50%, 61% 61%, 50% 100%, 39% 61%, 0% 50%, 39% 39%);
+  filter: drop-shadow(0 0 calc(5px * var(--gain, 1)) var(--dust-c, #fff));
+}
+/* 戏码开关：N 全关；R 浪+光柱+细描边；SR +闪+尘+描边；SSR/UR +双浪+描边+星闪+震卡+递弱扫光；LR/XR +扫光+虹彩 */
+.g-N .reveal-ring, .g-N .reveal-flash, .g-N .reveal-sheen, .g-N .reveal-ripple,
+.g-N .reveal-beam, .g-N .reveal-edge, .g-N .reveal-pulse, .g-N .spark { display: none; }
+.g-R .reveal-ring.r2, .g-R .reveal-flash, .g-R .reveal-sheen { display: none; }
+.g-SR .reveal-ring.r2, .g-SR .reveal-sheen { display: none; }
+/* 右台时间轴动画 */
+.demo-right .is-revealing .reveal-card-wrap { animation: heroLift calc(300ms * var(--slow)) cubic-bezier(0.18, 0.9, 0.3, 1.2) forwards; }
+@keyframes heroLift {
+  0%   { transform: scale(0.92) translateY(1.5cqw); }
+  100% { transform: scale(1.04) translateY(-3.2cqw); }
+}
+.demo-right .is-revealing .reveal-photo { animation: heroDev calc(900ms * var(--slow)) ease-out forwards; }
+@keyframes heroDev {
+  0%   { filter: blur(14px) saturate(0.3) brightness(0.55); transform: scale(1.12); }
+  30%  { filter: blur(12px) saturate(0.35) brightness(0.6); transform: scale(1.1); }
+  62%  { filter: blur(7px) saturate(0.6) brightness(0.78); transform: scale(1.05); }
+  88%  { filter: blur(0.6px) saturate(1.02) brightness(1.03); transform: scale(1.006); }
+  100% { filter: none; transform: none; }
+}
+.demo-right .is-revealing .reveal-mark { animation: devInk2 calc(900ms * var(--slow)) ease-out forwards; }
+@keyframes devInk2 { 0% { opacity: 0.25; } 70% { opacity: 0.25; } 100% { opacity: 1; } }
+/* 定色拍：tint 成色 + 舞台染色 + 色浪 + 白闪 + 光尘 + 扫光，全在 900ms 处开闸 */
+.demo-right .is-revealing .reveal-tint {
+  animation: tintPlay calc(var(--tint-ms) * var(--slow)) ease-out calc(900ms * var(--slow)) both;
+}
+.demo-right .is-revealing .reveal-tint.tint-LR,
+.demo-right .is-revealing .reveal-tint.tint-XR {
+  animation:
+    tintPlay calc(var(--tint-ms) * var(--slow)) ease-out calc(900ms * var(--slow)) both,
+    tintFlow calc(1.4s * var(--slow)) linear calc(900ms * var(--slow)) infinite;
+}
+@keyframes tintPlay { 0% { opacity: 0; } 22% { opacity: calc((0.95 * var(--drama) + 0.15) * var(--gain, 1)); } 55% { opacity: calc((0.7 * var(--drama) + 0.15) * var(--gain, 1)); } 100% { opacity: calc((0.55 * var(--drama) + 0.12) * var(--gain, 1)); } }
+@keyframes tintFlow { 0% { background-position: 0% 0%; } 100% { background-position: 100% 100%; } }
+/* 心搏白光：定色中段照片透亮一拍，像心跳漏半拍 */
+.demo-right .is-revealing .reveal-pulse {
+  animation: pulseOnce calc(460ms * var(--slow)) ease-in-out calc((900ms + var(--tint-ms) * 0.62) * var(--slow)) both;
+}
+@keyframes pulseOnce {
+  0%, 100% { opacity: 0; }
+  40% { opacity: calc((0.5 * var(--drama) + 0.1) * var(--gain, 1)); }
+}
+/* 光柱：定色拍从卡底升起，把整张卡托在档色光上 */
+.demo-right .is-revealing .reveal-beam {
+  animation: beamUp calc(calc(520ms + var(--tint-ms) * 0.5) * var(--slow)) cubic-bezier(0.2, 0.8, 0.3, 1) calc(900ms * var(--slow)) both;
+}
+@keyframes beamUp {
+  0%   { transform: scaleY(0); opacity: 0; }
+  22%  { transform: scaleY(0.96); opacity: calc((0.85 * var(--drama) + 0.1) * var(--gain, 1)); }
+  62%  { transform: scaleY(0.9); opacity: calc((0.55 * var(--drama) + 0.08) * var(--gain, 1)); }
+  100% { transform: scaleY(0.55); opacity: calc((0.22 * var(--drama) + 0.04) * var(--gain, 1)); }
+}
+/* 流光描边：白闪同拍点亮，LR/XR 常驻流转 */
+.demo-right .is-revealing .reveal-edge {
+  animation: edgeOn calc(430ms * var(--slow)) ease-out calc(900ms * var(--slow)) both;
+}
+.demo-right .is-revealing.g-R .reveal-edge {
+  animation: edgeOnR calc(430ms * var(--slow)) ease-out calc(900ms * var(--slow)) both;
+}
+.demo-right .is-revealing.g-SR .reveal-edge {
+  animation: edgeOnSR calc(430ms * var(--slow)) ease-out calc(900ms * var(--slow)) both;
+}
+@keyframes edgeOnR {
+  0%   { opacity: 0; transform: scale(1); }
+  34%  { opacity: calc(0.55 * var(--drama) * var(--gain, 1)); transform: scale(1.006); }
+  100% { opacity: calc(0.34 * var(--drama) * var(--gain, 1)); transform: scale(1); }
+}
+@keyframes edgeOnSR {
+  0%   { opacity: 0; transform: scale(1); }
+  34%  { opacity: calc(0.8 * var(--drama) * var(--gain, 1)); transform: scale(1.008); }
+  100% { opacity: calc(0.55 * var(--drama) * var(--gain, 1)); transform: scale(1); }
+}
+.demo-right .is-revealing.g-LR .reveal-edge,
+.demo-right .is-revealing.g-XR .reveal-edge {
+  animation: edgeOn calc(430ms * var(--slow)) ease-out calc(900ms * var(--slow)) both,
+             edgeFlow calc(2.4s * var(--slow)) linear calc(1330ms * var(--slow)) infinite;
+}
+@keyframes edgeOn {
+  0%   { opacity: 0; transform: scale(1); }
+  34%  { opacity: calc(0.95 * var(--drama) * var(--gain, 1)); transform: scale(1.012); }
+  100% { opacity: calc(0.7 * var(--drama) * var(--gain, 1)); transform: scale(1); }
+}
+@keyframes edgeFlow { to { --edge-rot: 360deg; } }
+/* 回声浪：更弱、更快、扩得近，读作余韵而非重放 */
+.demo-right .is-revealing .reveal-flash {
+  animation: flashSnap calc(430ms * var(--slow)) ease-out calc(900ms * var(--slow)) both;
+}
+@keyframes flashSnap {
+  0%, 100% { opacity: 0; }
+  10% { opacity: calc(1.05 * var(--drama) * var(--gain, 1)); }
+  100% { opacity: 0; }
+}
+.demo-right .is-revealing .reveal-sheen {
+  animation: sheenSweep calc(950ms * var(--slow)) ease-in-out calc(920ms * var(--slow)) both;
+}
+/* 扫光递弱：LR/XR 全亮 0.95，UR 次之，SSR 最收，从左到右一档比一档淡 */
+.demo-right .is-revealing.g-UR .reveal-sheen {
+  animation: sheenSweepUR calc(950ms * var(--slow)) ease-in-out calc(920ms * var(--slow)) both;
+}
+.demo-right .is-revealing.g-SSR .reveal-sheen {
+  animation: sheenSweepSSR calc(950ms * var(--slow)) ease-in-out calc(920ms * var(--slow)) both;
+}
+@keyframes sheenSweep {
+  0%   { transform: translateX(-160%) skewX(-18deg); opacity: 0; }
+  18%  { opacity: calc(0.95 * var(--gain, 1)); }
+  82%  { opacity: calc(0.7 * var(--gain, 1)); }
+  100% { transform: translateX(160%) skewX(-18deg); opacity: 0; }
+}
+@keyframes sheenSweepUR {
+  0%   { transform: translateX(-160%) skewX(-18deg); opacity: 0; }
+  18%  { opacity: calc(0.62 * var(--gain, 1)); }
+  82%  { opacity: calc(0.45 * var(--gain, 1)); }
+  100% { transform: translateX(160%) skewX(-18deg); opacity: 0; }
+}
+@keyframes sheenSweepSSR {
+  0%   { transform: translateX(-160%) skewX(-18deg); opacity: 0; }
+  18%  { opacity: calc(0.4 * var(--gain, 1)); }
+  82%  { opacity: calc(0.28 * var(--gain, 1)); }
+  100% { transform: translateX(160%) skewX(-18deg); opacity: 0; }
+}
+/* 落章拍：药丸砸下 + 卡片震 + 涟漪 */
+.demo-right .is-revealing .reveal-rank {
+  animation: rankSlam calc(380ms * var(--slow)) cubic-bezier(0.3, 0.9, 0.4, 1.3)
+    calc((900ms + var(--tint-ms)) * var(--slow)) both,
+    rankGlow2 calc(620ms * var(--slow)) ease-out calc((900ms + var(--tint-ms) + 380ms) * var(--slow)) 1 both;
+}
+@keyframes rankSlam {
+  0%   { opacity: 0; transform: translateX(-50%) translateY(-10cqw) scale(2.2); }
+  42%  { opacity: 1; transform: translateX(-50%) translateY(0.5cqw) scale(0.84); }
+  60%  { transform: translateX(-50%) translateY(-1.6cqw) scale(1.06); }
+  78%  { transform: translateX(-50%) translateY(0.3cqw) scale(0.96); }
+  100% { opacity: 1; transform: translateX(-50%) translateY(0) scale(1); }
+}
+@keyframes rankGlow2 {
+  0%   { box-shadow: 0 2px 8px rgba(70, 90, 105, 0.14), 0 0 0 0 var(--ring-c); }
+  100% { box-shadow: 0 2px 8px rgba(70, 90, 105, 0.14), 0 0 0 calc(14px * var(--gain, 1)) rgba(255, 255, 255, 0); }
+}
+.demo-right .is-revealing .reveal-card {
+  animation: cardQuake calc(520ms * var(--slow)) ease-out calc((900ms + var(--tint-ms) + 300ms) * var(--slow)) both;
+}
+@keyframes cardQuake {
+  0%, 100% { transform: translate(0, 0) rotate(0deg); }
+  18% { transform: translate(calc(-1.1cqw * var(--drama)), calc(0.35cqw * var(--drama))) rotate(calc(-0.7deg * var(--drama))); }
+  42% { transform: translate(calc(0.85cqw * var(--drama)), calc(-0.15cqw * var(--drama))) rotate(calc(0.5deg * var(--drama))); }
+  66% { transform: translate(calc(-0.45cqw * var(--drama)), 0) rotate(calc(-0.25deg * var(--drama))); }
+  84% { transform: translate(0.2cqw, 0) rotate(0.1deg); }
+}
+/* 光尘：JS 按档位生成，从照片区上浮 */
+.demo-right .is-revealing .dust { animation: dustRise var(--dur) ease-out var(--delay) both; }
+@keyframes dustRise {
+  0%   { transform: translate(0, 0) scale(0.3); opacity: 0; }
+  18%  { opacity: 1; }
+  100% { transform: translate(var(--dx), var(--dy)) scale(1.1); opacity: 0; }
+}
+/* 星闪：JS 按档位生成，定色窗口内绽开 */
+.demo-right .is-revealing .spark { animation: sparkTwinkle var(--dur) ease-in-out var(--delay) both; }
+@keyframes sparkTwinkle {
+  0%   { transform: scale(0) rotate(0deg); opacity: 0; }
+  32%  { transform: scale(1) rotate(70deg); opacity: calc((0.85 * var(--drama) + 0.15) * var(--gain, 1)); }
+  100% { transform: scale(0.2) rotate(150deg) translateY(calc(-2.4cqw * var(--drama))); opacity: 0; }
+}
+/* 展出态：收束 + 余韵 */
+.demo-right .is-open .reveal-card-wrap {
+  transform: none;
+  transition: transform calc(340ms * var(--slow)) cubic-bezier(0.2, 0.9, 0.3, 1.1);
+}
+.demo-right .is-open .reveal-tint {
+  animation: none; opacity: calc((0.38 * var(--drama) + 0.05) * var(--gain, 1)); transition: opacity calc(560ms * var(--slow)) ease-out;
+}
+.demo-right .is-open .reveal-tint.tint-LR,
+.demo-right .is-open .reveal-tint.tint-XR {
+  animation: tintFlow calc(1.8s * var(--slow)) linear infinite;
+}
+.demo-right .is-open .dust { animation: none; opacity: 0; }
+.demo-right .is-open .reveal-beam {
+  animation: none;
+  transform: scaleY(0.5);
+  opacity: calc((0.16 * var(--drama) + 0.03) * var(--gain, 1));
+  transition: opacity calc(620ms * var(--slow)) ease-out, transform calc(620ms * var(--slow)) ease-out;
+}
+.demo-right .is-open .reveal-pulse { animation: none; opacity: 0; }
+.demo-right .is-open .spark { animation: none; opacity: 0; }
+.demo-right .is-open .reveal-edge {
+  animation: none; opacity: calc(0.42 * var(--drama) * var(--gain, 1));
+  transition: opacity calc(620ms * var(--slow)) ease-out;
+}
+.demo-right .is-open.g-R .reveal-edge  { opacity: calc(0.24 * var(--drama) * var(--gain, 1)); }
+.demo-right .is-open.g-SR .reveal-edge { opacity: calc(0.34 * var(--drama) * var(--gain, 1)); }
+.demo-right .is-open.g-LR .reveal-edge,
+.demo-right .is-open.g-XR .reveal-edge {
+  animation: edgeFlow calc(2.4s * var(--slow)) linear infinite;
+}
+/* 控件区 */
+.controls {
+  width: min(680px, 100%); margin: 26px auto 0;
+  display: flex; flex-wrap: wrap; gap: 10px; justify-content: center; align-items: center;
+}
+.controls button {
+  font-family: var(--font-sans); font-size: 0.86rem; font-weight: 500;
+  padding: 9px 22px; border: none; border-radius: 999px;
+  background: rgba(255, 255, 255, 0.9); color: var(--ink);
+  box-shadow: 0 1px 2px rgba(90, 112, 128, 0.08), 0 4px 12px rgba(90, 112, 128, 0.07);
+  cursor: pointer; transition: transform 0.15s ease, box-shadow 0.15s ease;
+}
+.controls button:hover { transform: translateY(-1px); box-shadow: 0 2px 4px rgba(90, 112, 128, 0.1), 0 8px 18px rgba(90, 112, 128, 0.1); }
+.controls button.play { background: var(--cta); color: var(--cta-ink); box-shadow: 0 4px 12px rgba(217, 83, 30, 0.2); }
+.controls button.rk { padding: 7px 14px; font-size: 0.78rem; font-weight: 600; letter-spacing: 0.1em; text-indent: 0.1em; }
+.controls button.rk.is-active { outline: 2px solid var(--cta); outline-offset: 2px; }
+.controls label { font-size: 0.78rem; color: var(--muted); display: flex; align-items: center; gap: 6px; cursor: pointer; }
+.controls input[type="checkbox"] { accent-color: var(--cta); }
+.footnote {
+  width: min(680px, 100%); margin: 20px auto 0;
+  font-size: 0.78rem; line-height: 1.75; color: var(--muted); text-align: center;
+}
+.footnote b { color: var(--ink); font-weight: 600; }
+</style>
+</head>
+<body>
+<header>
+  <h1>清透开包 · 稀有度当主角 v4</h1>
+  <p>左：三拍版（现状）　右：光柱托卡、流光描边、星闪点缀、心搏白光、虹彩流转、砸章震卡</p></header>
+<div class="bench">
+  <section class="demo-card demo-left">
+    <div class="demo-head">
+      <h2>三拍版 · 现状</h2>
+      <span class="chip" id="phaseLeft">封缄</span>
+    </div>
+    <div class="time-bar" aria-hidden="true">
+      <span class="tb-a" style="width:23%">拿起 220</span>
+      <span class="tb-b" style="width:58%">显影 560</span>
+      <span class="tb-d" style="width:19%">落定 180</span>
+    </div>
+    <div class="reveal-stage is-sealed" id="stageLeft">
+      <span class="reveal-bloom" aria-hidden></span>
+      <div class="reveal-card-wrap">
+        <div class="reveal-card">
+          <span class="reveal-window">
+            <img class="reveal-photo" src="./assets/demo-photo-bird.jpg" alt="示例照片">
+          </span>
+          <span class="reveal-mark" aria-hidden>
+            <span>2026-09-07</span>
+            <span class="reveal-mark-where">深圳湾公园</span>
+          </span>
+        </div>
+      </div>
+      <span class="reveal-rank rarity-SSR">SSR</span>
+    </div>
+  </section>
+  <section class="demo-card demo-right">
+    <div class="demo-head">
+      <h2>v4 · 光柱与流光</h2>
+      <span class="chip now" id="phaseRight">封缄</span>
+    </div>
+    <div class="time-bar" aria-hidden="true">
+      <span class="tb-a" id="tbLift" style="width:12%">拿起 260</span>
+      <span class="tb-b" id="tbDev" style="width:29%">显影 640</span>
+      <span class="tb-c" id="tbTint" style="width:39%">定色 850</span>
+      <span class="tb-d" id="tbLand" style="width:16%">落章 380</span>
+    </div>
+    <div class="reveal-stage is-sealed" id="stageRight">
+      <div class="reveal-card-wrap">
+        <span class="reveal-edge" aria-hidden></span>
+        <div class="reveal-card">
+          <span class="reveal-window">
+            <img class="reveal-photo" src="./assets/demo-photo-bird.jpg" alt="示例照片">
+            <span class="reveal-beam" aria-hidden></span>
+            <span class="reveal-tint tint-SSR" aria-hidden></span>
+            <span class="reveal-pulse" aria-hidden></span>
+            <span class="reveal-flash" aria-hidden></span>
+            <span class="reveal-sheen" aria-hidden></span>
+          </span>
+          <span class="reveal-mark" aria-hidden>
+            <span>2026-09-07</span>
+            <span class="reveal-mark-where">深圳湾公园</span>
+          </span>
+        </div>
+      </div>
+      <span class="reveal-rank rarity-SSR">SSR</span>
+    </div>
+  </section>
+</div>
+<div class="controls">
+  <span id="rkRow">
+    <button class="rk play" type="button" data-r="N">N</button><button class="rk" type="button" data-r="R">R</button><button class="rk" type="button" data-r="SR">SR</button><button class="rk is-active" type="button" data-r="SSR">SSR</button><button class="rk" type="button" data-r="UR">UR</button><button class="rk" type="button" data-r="LR">LR</button><button class="rk" type="button" data-r="XR">XR</button>
+  </span>
+  <button class="play" id="btnPlay" type="button">开包对比（两边同播）</button>
+  <button id="btnRight" type="button">只看 v4</button>
+  <button id="btnReset" type="button">复位</button>
+  <label>
+    <input type="checkbox" id="slowmo">
+    0.25× 慢放（细看每层戏）
+  </label>
+</div>
+<p class="footnote">
+  <b>v4 戏码清单</b>：拿起（卡片上抬）→ 显影（深灰糊 → 冲清晰）→ <b>定色</b>（档色成色 + <b>光柱从照片底边升起</b> + 白闪一拍 + 心搏白光 + 光尘上浮 + <b>星闪绽开</b> + <b>流光描边点亮</b> + LR/XR 虹彩扫光一道）→ <b>落章</b>（药丸从高处砸下回弹 + 卡片随档位震颤）。<br>
+  <b>戏码数量制</b>：N 零戏（只有显影和药丸轻落，游戏里白卡就该安静）；R 光柱微托；SR + 白闪 + 光尘 + 星闪；SSR + 流光描边 + 6 光尘 + 4 星闪 + 震卡；UR 更猛 + 6 星闪；LR/XR 全套：虹彩描边常驻流转 + 星闪最密，XR 定色最久。<br>
+  <b>看点</b>：切换底部档位按钮再点「只看 v4」，N 与 XR 是两个世界；LR/XR 落定后相框四色流光一直转。
+</p>
+<script>
+var PHASE_LABEL = { sealed: "封缄", revealing: "揭示中", open: "展出" };
+var RARITIES = ["N", "R", "SR", "SSR", "UR", "LR", "XR"];
+var TINT_MS = { N: 380, R: 520, SR: 680, SSR: 850, UR: 1020, LR: 1200, XR: 1350 };
+var DRAMA  = { N: 0.12, R: 0.35, SR: 0.6, SSR: 0.85, UR: 1.0, LR: 1.15, XR: 1.3 };
+var DUST_N = { N: 0, R: 0, SR: 3, SSR: 6, UR: 9, LR: 12, XR: 14 };
+var SPARK_N = { N: 0, R: 0, SR: 2, SSR: 4, UR: 6, LR: 8, XR: 10 };
+var DUST_C = {
+  N: "#aab4bc", R: "#7ab8ff", SR: "#c9a0ff", SSR: "#ffd675", UR: "#ff9a80",
+  LR: ["#d8c0ff", "#ffe27a", "#ffb0d8", "#b5f0d0"], XR: ["#ffc9ef", "#bfe6ff", "#ffe0a8", "#ffb0d8"]
+};
+var LEFT_DUR = 960;
+var LIFT = 260, DEV = 640, LAND = 380;
+var stageLeft = document.getElementById("stageLeft");
+var stageRight = document.getElementById("stageRight");
+var rightWrap = stageRight.querySelector(".reveal-card-wrap");
+var phaseLeft = document.getElementById("phaseLeft");
+var phaseRight = document.getElementById("phaseRight");
+var rankLeft = stageLeft.querySelector(".reveal-rank");
+var rankRight = stageRight.querySelector(".reveal-rank");
+var tintEl = stageRight.querySelector(".reveal-tint");
+var tbTint = document.getElementById("tbTint");
+var tbLand = document.getElementById("tbLand");
+var tbLift = document.getElementById("tbLift");
+var tbDev = document.getElementById("tbDev");
+var timers = [];
+var current = "SSR";
+function slowFactor() { return document.getElementById("slowmo").checked ? 4 : 1; }
+function setPhase(which, phase) {
+  var stage = which === "left" ? stageLeft : stageRight;
+  var chip = which === "left" ? phaseLeft : phaseRight;
+  stage.classList.remove("is-sealed", "is-revealing", "is-open");
+  if (phase !== "sealed") { void stage.offsetWidth; }
+  stage.classList.add("is-" + phase);
+  chip.textContent = PHASE_LABEL[phase];
+}
+function clearTimers() { timers.forEach(clearTimeout); timers = []; }
+function resetAll() {
+  clearTimers();
+  setPhase("left", "sealed");
+  setPhase("right", "sealed");
+}
+function buildDust(r) {
+  stageRight.querySelectorAll(".dust").forEach(function (d) { d.remove(); });
+  var n = DUST_N[r];
+  if (!n) { return; }
+  var frag = document.createDocumentFragment();
+  for (var i = 0; i < n; i++) {
+    var d = document.createElement("span");
+    d.className = "dust";
+    var size = 2.2 + Math.random() * 2.6;
+    var colors = DUST_C[r];
+    var color = Array.isArray(colors) ? colors[i % colors.length] : colors;
+    d.style.width = size.toFixed(1) + "px";
+    d.style.height = size.toFixed(1) + "px";
+    d.style.left = (18 + Math.random() * 64) + "%";
+    d.style.top = (28 + Math.random() * 46) + "%";
+    d.style.setProperty("--dust-c", color);
+    d.style.setProperty("--dx", (Math.random() * 56 - 28).toFixed(0) + "px");
+    d.style.setProperty("--dy", (-(38 + Math.random() * 62)).toFixed(0) + "px");
+    d.style.setProperty("--dur", ((0.45 + Math.random() * 0.3) * TINT_MS[r]).toFixed(0) + "ms");
+    d.style.setProperty("--delay", (900 + (0.04 + Math.random() * 0.2) * TINT_MS[r]).toFixed(0) + "ms");
+    frag.appendChild(d);
+  }
+  rightWrap.appendChild(frag);
+}
+function buildSparks(r) {
+  stageRight.querySelectorAll(".spark").forEach(function (s) { s.remove(); });
+  var n = SPARK_N[r];
+  if (!n) { return; }
+  var frag = document.createDocumentFragment();
+  for (var i = 0; i < n; i++) {
+    var s = document.createElement("span");
+    s.className = "spark";
+    var size = 7 + Math.random() * 9;
+    var colors = DUST_C[r];
+    var color = Array.isArray(colors) ? colors[i % colors.length] : colors;
+    s.style.width = size.toFixed(1) + "px";
+    s.style.height = size.toFixed(1) + "px";
+    s.style.left = (20 + Math.random() * 60).toFixed(1) + "%";
+    s.style.top = (22 + Math.random() * 46).toFixed(1) + "%";
+    s.style.setProperty("--dust-c", color);
+    s.style.setProperty("--dur", ((0.35 + Math.random() * 0.3) * TINT_MS[r]).toFixed(0) + "ms");
+    s.style.setProperty("--delay", (900 + (0.06 + Math.random() * 0.25) * TINT_MS[r]).toFixed(0) + "ms");
+    frag.appendChild(s);
+  }
+  rightWrap.appendChild(frag);
+}
+function setRarity(r) {
+  current = r;
+  resetAll();
+  RARITIES.forEach(function (x) {
+    rankLeft.classList.remove("rarity-" + x);
+    rankRight.classList.remove("rarity-" + x);
+    stageRight.classList.remove("g-" + x);
+    tintEl.classList.remove("tint-" + x);
+  });
+  rankLeft.classList.add("rarity-" + r);
+  rankRight.classList.add("rarity-" + r);
+  stageRight.classList.add("g-" + r);
+  tintEl.classList.add("tint-" + r);
+  rankLeft.textContent = r;
+  rankRight.textContent = r;
+  stageRight.style.setProperty("--drama", DRAMA[r]);
+  stageRight.style.setProperty("--tint-ms", TINT_MS[r] + "ms");
+  buildDust(r);
+  buildSparks(r);
+  var tint = TINT_MS[r];
+  var total = LIFT + DEV + tint + LAND;
+  tbLift.style.width = (LIFT / total * 100).toFixed(1) + "%";
+  tbDev.style.width = (DEV / total * 100).toFixed(1) + "%";
+  tbTint.style.width = (tint / total * 100).toFixed(1) + "%";
+  tbLand.style.width = (LAND / total * 100).toFixed(1) + "%";
+  tbLift.textContent = "拿起 " + LIFT;
+  tbDev.textContent = "显影 " + DEV;
+  tbTint.textContent = "定色 " + tint;
+  tbLand.textContent = "落章 " + LAND;
+  var btns = document.querySelectorAll("#rkRow .rk");
+  btns.forEach(function (b) { b.classList.toggle("is-active", b.getAttribute("data-r") === r); });
+}
+function playBoth() {
+  resetAll();
+  var s = slowFactor();
+  setPhase("left", "revealing");
+  setPhase("right", "revealing");
+  buildDust(current);
+  buildSparks(current);
+  timers.push(setTimeout(function () { setPhase("left", "open"); }, LEFT_DUR * s));
+  timers.push(setTimeout(function () { setPhase("right", "open"); }, (LIFT + DEV + TINT_MS[current] + LAND) * s));
+}
+function playRightOnly() {
+  resetAll();
+  var s = slowFactor();
+  setPhase("left", "sealed");
+  setPhase("right", "revealing");
+  buildDust(current);
+  buildSparks(current);
+  timers.push(setTimeout(function () { setPhase("right", "open"); }, (LIFT + DEV + TINT_MS[current] + LAND) * s));
+}
+document.getElementById("btnPlay").addEventListener("click", playBoth);
+document.getElementById("btnRight").addEventListener("click", playRightOnly);
+document.getElementById("btnReset").addEventListener("click", resetAll);
+document.querySelectorAll("#rkRow .rk").forEach(function (b) {
+  b.addEventListener("click", function () { setRarity(b.getAttribute("data-r")); });
+});
+document.getElementById("slowmo").addEventListener("change", function () {
+  var v = this.checked ? "4" : "1";
+  stageLeft.style.setProperty("--slow", v);
+  stageRight.style.setProperty("--slow", v);
+});
+setRarity("SSR");
+</script>
+</body>
+</html>
