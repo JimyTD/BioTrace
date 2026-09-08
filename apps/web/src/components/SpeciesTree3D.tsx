@@ -55,6 +55,8 @@ export default function SpeciesTree3D({
   // 回调放进 ref：TreeScene 只在挂载时构造一次，不该因回调变化而重建
   const cb = useRef({ onFocusChange, onOpenEntry });
   cb.current = { onFocusChange, onOpenEntry };
+  /** 进场镜头只播一次。StrictMode 二次挂载、收集数据刷新导致的重建都跳过。 */
+  const seenIntro = useRef(false);
 
   const built = useMemo(() => {
     try {
@@ -98,7 +100,8 @@ export default function SpeciesTree3D({
           });
         },
         onFocus: (node) => setFocus(node),
-      });
+      }, seenIntro.current);
+      seenIntro.current = true;
       sceneRef.current = scene;
       setFocus(built.root);
     } catch (e) {

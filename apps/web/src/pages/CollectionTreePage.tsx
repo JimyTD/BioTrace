@@ -23,6 +23,13 @@ import { peekCollection, rememberCollection } from "../pageCache";
 import { countTreeKingdoms } from "../treeBuild";
 import SpeciesTree3D from "../components/SpeciesTree3D";
 
+function sameEntryIds(a: CollectionEntry[], b: CollectionEntry[]) {
+  if (a === b) return true;
+  if (a.length !== b.length) return false;
+  for (let i = 0; i < a.length; i++) if (a[i]!.id !== b[i]!.id) return false;
+  return true;
+}
+
 export default function CollectionTreePage() {
   const splat = useParams()["*"];
   const focusId = useMemo(() => {
@@ -40,7 +47,7 @@ export default function CollectionTreePage() {
     api
       .listCollection()
       .then((col) => {
-        setEntries(col.entries);
+        setEntries((prev) => (sameEntryIds(prev, col.entries) ? prev : col.entries));
         const prev = peekCollection();
         rememberCollection({
           entryCount: col.entries.length,

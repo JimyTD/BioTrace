@@ -545,7 +545,7 @@ export class TreeScene {
 
   stats: SceneStats = { branches: 0, leaves: 0, growMs: 0 };
 
-  constructor(host: HTMLElement, root: TreeNode, ev: TreeSceneEvents) {
+  constructor(host: HTMLElement, root: TreeNode, ev: TreeSceneEvents, skipIntro = false) {
     this.root = root;
     this.ev = ev;
     this.cv = document.createElement("canvas");
@@ -571,6 +571,10 @@ export class TreeScene {
     this.SQ = this.calcSQ();
     this.focus = root;
     this.applyFocus(root);
+    /* 进场是镜头从 dist=1 缓到 ovDist。React 18 StrictMode 会把 effect 拆掉再
+       建一次，同一段就会播两遍；正式页缓存后再拉 API 也会换掉 entries、重建
+       场景。第二次起直接贴上目标距，进场只留第一次。 */
+    if (skipIntro) this.snapCam();
     this.bindInput();
     window.addEventListener("resize", this.onResize);
     gl.enable(gl.DEPTH_TEST);
@@ -603,6 +607,14 @@ export class TreeScene {
   }
 
   getFocus() { return this.focus; }
+
+  /** 镜头立刻落到当前目标。进场动画只该播一次，重建场景时用这个跳过。 */
+  private snapCam() {
+    this.cam.yaw = this.camGoal.yaw;
+    this.cam.pitch = this.camGoal.pitch;
+    this.cam.dist = this.camGoal.dist;
+    this.cam.tgt = [this.camGoal.tgt[0]!, this.camGoal.tgt[1]!, this.camGoal.tgt[2]!];
+  }
 
   // ═══════════════════════ 生长 ═══════════════════════
 
