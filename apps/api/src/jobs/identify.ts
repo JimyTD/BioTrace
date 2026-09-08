@@ -4,7 +4,7 @@ import { observations } from "../db/schema.js";
 import { localizeThrownMessage } from "../errors.js";
 import { evaluateEligibility } from "../identify/eligibility.js";
 import { runIdentifyForUser } from "../identify/run.js";
-import { emptyTaxonomy, type IdentifyResult } from "../identify/types.js";
+import { emptyTaxonomy, storedDomIdentity, type IdentifyResult } from "../identify/types.js";
 import { resolveCountry } from "../settle/country.js";
 import { computeSettle } from "../settle/rules.js";
 import { storeAcceptedTaxonomyJson } from "../settle/taxon.js";
@@ -22,6 +22,7 @@ const STORED_CODES = new Set([
   "identify_not_living",
   "identify_no_kingdom",
   "identify_soft_encounter",
+  "identify_keepsake",
 ]);
 
 type IdentifyOpts = {
@@ -38,6 +39,21 @@ function storedError(raw: string): string {
   if (!STORED_CODES.has(raw)) return localizeThrownMessage(raw);
   return raw === "identify_quota" ? "identify_unavailable" : raw;
 }
+
+function domColumns(result: IdentifyResult) {
+  const d = storedDomIdentity(result);
+  return {
+    domesticated: d.domesticated,
+    breedZh: d.breedZh,
+    domEvidenceZh: d.domEvidenceZh,
+  };
+}
+
+const clearedDom = {
+  domesticated: false,
+  breedZh: null as string | null,
+  domEvidenceZh: null as string | null,
+};
 
 async function markFailed(observationId: string, err: unknown) {
   const raw = err instanceof Error ? err.message : String(err);
@@ -101,6 +117,7 @@ async function persistSettle(opts: {
         acceptedTaxonomyJson: storeAcceptedTaxonomyJson(settle.acceptedTaxonomy, taxonomyJson),
         identifyProvider: opts.provider,
         identifyModel: opts.model,
+        ...domColumns(opts.result),
         settledAt: null,
         updatedAt: new Date(),
       })
@@ -134,6 +151,7 @@ async function persistSettle(opts: {
       acceptedTaxonomyJson: storeAcceptedTaxonomyJson(settle.acceptedTaxonomy, taxonomyJson),
       identifyProvider: opts.provider,
       identifyModel: opts.model,
+      ...domColumns(opts.result),
       settledAt: null,
       updatedAt: new Date(),
     })
@@ -167,7 +185,8 @@ export function enqueueIdentify(opts: IdentifyOpts) {
 
       const gate = evaluateEligibility(result);
       const soft = gate.ok && "soft" in gate ? gate.soft : null;
-      if (!gate.ok && !soft) {
+      const keepsake = gate.ok && "keepsake" in gate ? gate.keepsake : null;
+      if (!gate.ok && !soft && !keepsake) {
         console.log(
           `[identify] ineligible obs=${opts.observationId} code=${gate.code} kind=${gate.kind}`,
         );
@@ -194,6 +213,7 @@ export function enqueueIdentify(opts: IdentifyOpts) {
             acceptedTaxonomyJson: null,
             identifyProvider: provider,
             identifyModel: model,
+            ...clearedDom,
             settledAt: null,
             updatedAt: new Date(),
           })
@@ -238,6 +258,50 @@ export function enqueueIdentify(opts: IdentifyOpts) {
             acceptedTaxonomyJson: null,
             identifyProvider: provider,
             identifyModel: model,
+            ...domColumns(result),
+            settledAt: new Date(),
+            updatedAt: new Date(),
+          })
+          .where(eq(observations.id, opts.observationId));
+        return;
+      }
+
+      /* 留影档（2026-09-08 拍板）：没生物/仅背景/分不清/人/器物。
+         照片永远留在相册——身份字段照存不清空，只是不结算、不给稀有度、不进图鉴。
+         status=settled 让详情页按「已识别」渲染；错误码 identify_keepsake
+         驱动前端中性灰「留影」徽章；标题走 subject_title_zh（agent 短名）。 */
+      if (keepsake) {
+        console.log(`[identify] keepsake obs=${opts.observationId} kind=${keepsake.kind}`);
+        const fresh = await db.query.observations.findFirst({
+          where: eq(observations.id, opts.observationId),
+          columns: { lat: true, lng: true },
+        });
+        const country = await resolveCountry(fresh?.lat ?? opts.lat, fresh?.lng ?? opts.lng);
+        const taxonomyJson = JSON.stringify(result.taxonomy);
+        await db
+          .update(observations)
+          .set({
+            status: "settled",
+            commonName: result.subject_title_zh?.trim() || result.common_name_zh || null,
+            scientificName: result.scientific_name || null,
+            finestReliableRank: result.finest_reliable_rank || null,
+            confidence: result.confidence_0_to_1,
+            taxonomyJson,
+            blurb: result.blurb_zh || null,
+            notes: result.notes || null,
+            error: "identify_keepsake",
+            settleTier: "none",
+            rarity: null,
+            countryCode: country.code,
+            countrySource: country.source,
+            locationLabel: country.locationLabel,
+            locationPrecise: Boolean(country.code),
+            alertIntroduced: false,
+            taxonKey: null,
+            acceptedTaxonomyJson: null,
+            identifyProvider: provider,
+            identifyModel: model,
+            ...domColumns(result),
             settledAt: new Date(),
             updatedAt: new Date(),
           })

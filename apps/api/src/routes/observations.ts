@@ -1,6 +1,6 @@
 import { join } from "node:path";
 import { Hono } from "hono";
-import { and, desc, eq, inArray, isNotNull, or } from "drizzle-orm";
+import { and, desc, eq, inArray, isNotNull, isNull, or } from "drizzle-orm";
 import { z } from "zod";
 import { t } from "@biotrace/messages";
 import { requireUser, type Variables } from "../auth.js";
@@ -56,8 +56,18 @@ observationRoutes.get("/", async (c) => {
       ? or(eq(observations.userId, user.id), inArray(observations.tripId, tripIds))
       : eq(observations.userId, user.id);
 
+  /* 地图只画「相遇」档（2026-09-08 拍板）：未相遇（软档）与留影档坐标照存，
+     但不产生地图点，否则地图会从「生物分布图」变成「我去过的地方」。 */
   const rows = await db.query.observations.findMany({
-    where: mappedOnly ? and(scope, isNotNull(observations.lat), isNotNull(observations.lng)) : scope,
+    where: mappedOnly
+      ? and(
+          scope,
+          isNotNull(observations.lat),
+          isNotNull(observations.lng),
+          isNotNull(observations.taxonKey),
+          isNull(observations.error),
+        )
+      : scope,
     orderBy: [desc(observations.createdAt)],
   });
   const names = await uploaderNamesForObservations(rows);

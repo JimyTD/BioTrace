@@ -38,6 +38,7 @@ const OBS_ERROR_KEYS: Record<string, MessageKey> = {
   identify_not_living: "admin.error.identifyNotLiving",
   identify_no_kingdom: "admin.error.identifyNoKingdom",
   identify_not_collectible: "admin.error.identifyNotCollectible",
+  identify_keepsake: "admin.error.identifyKeepsake",
   identify_soft_encounter: "admin.error.identifySoftEncounter",
 };
 

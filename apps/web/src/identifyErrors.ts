@@ -16,9 +16,20 @@ export function isSoftEncounterError(code: string | null | undefined): boolean {
   return code === "identify_soft_encounter";
 }
 
+/** 留影档：照片留在相册、不进图鉴。非故障，前端一律中性灰，不用红字。 */
+export function isKeepsakeError(code: string | null | undefined): boolean {
+  return code === "identify_keepsake";
+}
+
+/** 非故障类（不进图鉴但系统没坏）：留影 + 软档 + 太粗。这些不配红字。 */
+export function isNotAFault(code: string | null | undefined): boolean {
+  return isKeepsakeError(code) || isSoftEncounterError(code) || code === "identify_too_coarse";
+}
+
 /** User-facing primary line for observation.error codes. Never dump raw stack/API junk. */
 export function identifyErrorPrimary(code: string | null | undefined): string {
   if (!code) return t("error.identifyGenericFailed");
+  if (isKeepsakeError(code)) return t("error.identifyKeepsake");
   if (isSoftEncounterError(code)) return t("error.identifySoftEncounter");
   if (isNotCollectibleError(code)) return t("error.identifyNotCollectible");
   if (code === "identify_too_coarse") return t("error.identifyTooCoarse");
@@ -32,6 +43,7 @@ export function identifyErrorPrimary(code: string | null | undefined): string {
 }
 
 export function identifyErrorHint(code: string | null | undefined): string | null {
+  if (isKeepsakeError(code)) return t("error.identifyKeepsakeHint");
   if (isSoftEncounterError(code)) return t("error.identifySoftEncounterHint");
   if (isNotCollectibleError(code)) return t("error.identifyNotCollectibleHint");
   if (code === "identify_daily_limit") return t("me.identifyQuotaHint");

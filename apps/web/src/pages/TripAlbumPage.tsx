@@ -17,6 +17,8 @@ import ConfirmDialog from "../components/ConfirmDialog";
 import { OpenBookCloseContext } from "../components/TripBookLayer";
 import {
   identifyErrorPrimary,
+  isKeepsakeError,
+  isNotAFault,
   isNotCollectibleError,
   isSoftEncounterError,
 } from "../identifyErrors";
@@ -51,19 +53,22 @@ function statusBadge(obs: Observation) {
   if (obs.status === "pending_settle") {
     return <span className="badge warn">{t("status.pending_settle")}</span>;
   }
+  if (isKeepsakeError(obs.error)) {
+    return <span className="badge soft">{t("status.keepsake")}</span>;
+  }
   if (isSoftEncounterError(obs.error)) {
     return <span className="badge soft">{t("status.softEncounter")}</span>;
   }
   if (obs.status === "failed") {
-    if (isNotCollectibleError(obs.error)) {
-      return <span className="badge danger">{t("status.notCollectible")}</span>;
+    /* 红字只留给真故障（服务挂/额度尽/Key 没配）；不进图鉴不是错误 */
+    if (isNotAFault(obs.error)) {
+      return (
+        <span className="badge soft">
+          {isNotCollectibleError(obs.error) ? t("status.notCollectible") : t("status.tooCoarse")}
+        </span>
+      );
     }
-    const coarse = obs.error === "identify_too_coarse" || obs.settleTier === "none";
-    return (
-      <span className="badge danger">
-        {coarse ? t("status.tooCoarse") : t("status.failed")}
-      </span>
-    );
+    return <span className="badge danger">{t("status.failed")}</span>;
   }
   return <span className="badge">{t("status.settled")}</span>;
 }
@@ -679,11 +684,9 @@ export default function TripAlbumPage({ userId }: { userId: string }) {
                   alt={
                     obs.status === "pending_settle"
                       ? t("status.pending_settle")
-                      : isSoftEncounterError(obs.error)
-                        ? obs.commonName || obs.scientificName || t("detail.unnamed")
-                        : isNotCollectibleError(obs.error)
-                          ? t("status.notCollectible")
-                          : obs.commonName || t("map.observationFallback")
+                      : obs.commonName ||
+                        obs.scientificName ||
+                        t("map.observationFallback")
                   }
                 />
               </span>

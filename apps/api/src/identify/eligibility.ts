@@ -5,7 +5,9 @@ export type EligibilityErrorCode =
   | "identify_not_organism"
   | "identify_human"
   | "identify_not_living"
-  | "identify_no_kingdom";
+  | "identify_no_kingdom"
+  /** 留影档（2026-09-08 拍板）：照片永远留在相册，只是不进图鉴。非故障，不用红字 */
+  | "identify_keepsake";
 
 /**
  * 识别软档：真生物但非野外相遇（宣传图/屏幕里的真牛、馆藏标本）。
@@ -14,6 +16,16 @@ export type EligibilityErrorCode =
 export type EligibilitySoft = {
   kind: "depiction_or_media" | "specimen";
   /** 模型给的理由（如「画布上的真牛，非野外相遇」），详情页展示用 */
+  reasonZh: string;
+};
+
+/**
+ * 识别留影档（2026-09-08 拍板）：没生物 / 生物仅背景 / 分不清 / 人 / 器物。
+ * 照片本身就该留在相册——识别不报错、不给稀有度、不进图鉴，仅此而已。
+ * 标题走 subject_title_zh（agent 给的短名），识别不出来也不补分类信息。
+ */
+export type EligibilityKeepsake = {
+  kind: SubjectKind;
   reasonZh: string;
 };
 
@@ -29,6 +41,11 @@ export type EligibilityDecision =
   | {
       ok: true;
       soft: EligibilitySoft;
+    }
+  /** 留影档：识别放行，相册留档，不进图鉴 */
+  | {
+      ok: true;
+      keepsake: EligibilityKeepsake;
     };
 
 const ARTIFACT_HINT =
@@ -48,18 +65,6 @@ function looksHuman(result: IdentifyResult): boolean {
 function looksArtifactOrDepiction(result: IdentifyResult): boolean {
   const hay = `${result.common_name_zh} ${result.notes} ${result.blurb_zh} ${result.ineligibility_reason_zh}`;
   return ARTIFACT_HINT.test(hay);
-}
-
-function codeForKind(kind: SubjectKind): EligibilityErrorCode {
-  if (kind === "human") return "identify_human";
-  if (
-    kind === "artifact_or_toy" ||
-    kind === "depiction_or_media" ||
-    kind === "specimen"
-  ) {
-    return "identify_not_living";
-  }
-  return "identify_not_organism";
 }
 
 /**
@@ -86,13 +91,14 @@ export function evaluateEligibility(result: IdentifyResult): EligibilityDecision
   const collectible = eligibility === "collectible" && kind === "living_organism";
   const kingdomLa = result.taxonomy.kingdom?.name_la?.trim() ?? "";
 
-  /* 已拍板：没界不进图鉴。树上本来就挂不住；识图这一关也要拦。 */
+  /* 认不出界：不是错误，归留影（照片仍在相册，只是不进图鉴） */
   if (collectible && !kingdomLa) {
     return {
-      ok: false,
-      code: "identify_no_kingdom",
-      kind,
-      reasonZh: result.ineligibility_reason_zh.trim() || t("error.identifyNoKingdomReason"),
+      ok: true,
+      keepsake: {
+        kind,
+        reasonZh: result.ineligibility_reason_zh.trim() || t("error.identifyNoKingdomReason"),
+      },
     };
   }
 
@@ -124,12 +130,20 @@ export function evaluateEligibility(result: IdentifyResult): EligibilityDecision
         ? t("error.identifyNotLivingReason")
         : t("error.identifyNotOrganismReason"));
 
+  /* 留影档：其余一切（无生物、仅背景、分不清、人、器物）都不再拦，
+     照片留在相册，只是不进图鉴。硬拦（红字）只留给真故障。 */
   return {
-    ok: false,
-    code: codeForKind(kind),
-    kind,
-    reasonZh,
+    ok: true,
+    keepsake: {
+      kind,
+      reasonZh,
+    },
   };
+}
+
+/** 留影档：识别过、留在相册，只是不进图鉴。非故障，前端不用红字。 */
+export function isKeepsakeError(code: string | null | undefined): boolean {
+  return code === "identify_keepsake";
 }
 
 export function isEligibilityErrorCode(code: string | null | undefined): code is EligibilityErrorCode {
@@ -137,6 +151,7 @@ export function isEligibilityErrorCode(code: string | null | undefined): code is
     code === "identify_not_organism" ||
     code === "identify_human" ||
     code === "identify_not_living" ||
-    code === "identify_no_kingdom"
+    code === "identify_no_kingdom" ||
+    code === "identify_keepsake"
   );
 }

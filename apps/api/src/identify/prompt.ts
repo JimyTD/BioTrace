@@ -3,8 +3,10 @@ import { countryZhNameFromCode } from "../settle/geo/iso3166.js";
 import {
   emptyTaxonomy,
   normalizeEligibility,
+  normalizeOptionalZh,
   normalizeSubjectKind,
   normalizeTaxonomy,
+  normalizeTriBool,
   type IdentifyInput,
   type IdentifyResult,
   type Taxonomy,
@@ -66,10 +68,28 @@ ${identifyLocationLines(input)}
      subject_kind=specimen 或 depiction_or_media 时按证据正常填写，且 kingdom.name_la 必填；
      其余不合格时 taxonomy 各级均为 null；合格时按证据填写，且 kingdom.name_la 必填。
      若该阶元没有稳定、通行的中文译名，name_zh 必须为 null，禁止臆造中译。
+   - subject_title_zh（留影短标题，一行内，不超过 12 字；见下方第 2 条末的说明）
    - confidence_0_to_1（0~1 数字）
    - finest_reliable_rank（living_organism/specimen/depiction_or_media 时：可靠最细阶元如 family/genus/species；其余不合格时空字符串）
    - blurb_zh（living_organism/specimen/depiction_or_media 时：针对 finest_reliable_rank 的中文科普短文，3～4 行；其余不合格时可空）
    - notes（识别不确定性等简短技术备注）
+   - subject_title_zh：不合格（not_collectible）时的画面短标题，一行内、不超过 12 字。
+     用途：照片照样留在相册，只是不进图鉴，需要个称呼当标题。
+     写法：写画面里主体是什么，用名词短语，不加书名号、不加引号、不加标点、不要解释。
+     例：茶杯、桂林山水、滑滑梯、老街墙影、孩子合影、博物馆展厅。
+     规则：
+     · 不合格（no_organism/human/artifact_or_toy/depiction_or_media/unclear）时必须给一个
+     · 认不出具体是什么，就写最像的那个东西，不要空着、不要写「未识别」「不明物体」
+     · 合格（collectible）时填空字符串——真生物用 common_name_zh 当标题，不占用此字段
+     · 禁止借这个字段塞物种名冒充收集品；它是给留影的称呼，不是分类字段
+   - domesticated：true | false | null。主体是否为驯化家畜/宠物种。只看生物本体（家养型物种外观、品种外观），场景和佩戴物一律不算。
+     · true：形态本身就是驯化型。流浪犬、田园猫、家鸡、能认出的品种（英短/金渐层）都算。
+     · false：形态是野生物种（狼、红原鸡、野猪、獾）。
+     · null：从本体看不出家野。下游按野生算。
+     硬性禁止用这些推出 true：项圈、牵引绳、衣服、名牌、被抱、室内、沙发、食盆、房屋、笼子。项圈下的獾仍是 false。
+     true 必须能指出 L1 本体证据，否则降 null。
+   - breed_zh：标准品种中文名或 null。仅 domesticated=true 且能认出认证品种时填写。认不出、颜色系俗名（狸花/橘猫）、非驯化：必须 null。俗名 common_name_zh 写物种（家犬/家猫），不要把品种写进俗名。
+   - dom_evidence_zh：自报证据，短中文。格式「L1:家犬垂耳与吻部」或「L1:英短圆脸」或「无L1:仅项圈+室内」。仅审计用。
 3. 硬性禁止：
    - 玩具熊/雕像/卡通熊 → 不得标成棕熊等真实种，不得 collectible
    - 卡通人物/真人 → human 或 depiction_or_media，不得 collectible，不得按人类分类发卡
@@ -79,7 +99,8 @@ ${identifyLocationLines(input)}
    是真实生物的影像/印刷形象（海报、屏幕、画布上的真牛）→ depiction_or_media；
    是仿制品（玩具、雕像）→ artifact_or_toy。分不清标本还是玩具 → artifact_or_toy。
 5. 合格但不确定种级时：finest_reliable_rank 最高只给到 genus 或 family，species 可为 null，不要编造异域种。
-6. 若提供了国家，优先考虑该国野外可能出现的类群（仅对合格个体）。图中形态与当地分布明显冲突时，宁可停在属/科，不要编造该国没有的种。无国家时不要按中国常见种硬猜。`;
+6. 若提供了国家，优先考虑该国野外可能出现的类群（仅对合格个体）。图中形态与当地分布明显冲突时，宁可停在属/科，不要编造该国没有的种。无国家时不要按中国常见种硬猜。
+7. 驯化位自检：输出前确认 domesticated=true 时 dom_evidence_zh 写的是 L1 生物本体（物种/品种外观），不是项圈或室内。对不上就改成 null。`;
 }
 
 export function extractIdentifyJson(text: string): IdentifyResult {
@@ -105,7 +126,15 @@ export function extractIdentifyJson(text: string): IdentifyResult {
           .trim()
           .toLowerCase() === "true";
 
+  const domesticated = normalizeTriBool(parsed.domesticated);
+  const breedRaw = normalizeOptionalZh(parsed.breed_zh);
+
+  const subjectTitleRaw = String(parsed.subject_title_zh ?? "").trim();
+  const eligibility = normalizeEligibility(parsed.eligibility);
+
   return {
+    /* 留影标题只在不合格时有效；合格时强制清空，避免物种名之外多一个称呼来源 */
+    subject_title_zh: eligibility === "collectible" ? undefined : subjectTitleRaw || undefined,
     common_name_zh: String(parsed.common_name_zh ?? ""),
     scientific_name: String(parsed.scientific_name ?? ""),
     taxonomy,
@@ -115,7 +144,10 @@ export function extractIdentifyJson(text: string): IdentifyResult {
     notes: String(parsed.notes ?? ""),
     subject_kind: normalizeSubjectKind(parsed.subject_kind),
     subject_living,
-    eligibility: normalizeEligibility(parsed.eligibility),
+    eligibility,
     ineligibility_reason_zh: String(parsed.ineligibility_reason_zh ?? "").trim(),
+    domesticated,
+    breed_zh: domesticated === true ? breedRaw : null,
+    dom_evidence_zh: normalizeOptionalZh(parsed.dom_evidence_zh),
   };
 }

@@ -10,10 +10,13 @@ import ReidentifyDialog from "../components/ReidentifyDialog";
 import {
   identifyErrorHint,
   identifyErrorPrimary,
+  isKeepsakeError,
+  isNotAFault,
   isNotCollectibleError,
   isSoftEncounterError,
 } from "../identifyErrors";
 import SoftEncounterSeal from "../components/SoftEncounterSeal";
+import KeepsakeSeal from "../components/KeepsakeSeal";
 import { hasValidCoords } from "../geo";
 import { peekObservation, rememberObservation } from "../pageCache";
 import { containedImageBox, decodeIfSimilarAspect, playPhotoLift } from "../photoLift";
@@ -303,11 +306,12 @@ export default function ObservationDetailPage({ userId }: { userId?: string }) {
 
   const notCollectible = isNotCollectibleError(obs?.error);
   const softEncounter = isSoftEncounterError(obs?.error);
-  /** 软档与硬拦都「不进图鉴」，但软档保留全套身份字段 */
-  const noCollection = notCollectible || softEncounter;
-  const title = notCollectible
-    ? t("detail.notCollectibleTitle")
-    : obs?.commonName || obs?.scientificName || t("detail.unnamed");
+  const keepsake = isKeepsakeError(obs?.error);
+  /** 软档、硬拦与留影都「不进图鉴」，但软档与留影都保留身份字段 */
+  const noCollection = notCollectible || softEncounter || keepsake;
+  /** 展示层统一取标题：留影档用 agent 短名，其余回落到物种名（见留影档设计方案 §5） */
+  const title =
+    obs?.commonName || obs?.scientificName || t("detail.unnamed");
   const photoSrc = heroSrc || liftOpen?.photoUrl || (obs ? heroUrl(obs) : "");
   const busy = deleting || reidentifying || obs?.status === "analyzing";
   const failedCoarse =
@@ -347,6 +351,7 @@ export default function ObservationDetailPage({ userId }: { userId?: string }) {
           <p className="muted">{t("detail.acceptedScientificName", { name: acceptedSci })}</p>
         ) : null}
         <div className="detail-marks">
+          {keepsake ? <KeepsakeSeal /> : null}
           {softEncounter ? <SoftEncounterSeal /> : null}
           {!noCollection && obs.rarity ? (
             <span className={`rarity-badge rarity-${obs.rarity}`}>
@@ -362,7 +367,7 @@ export default function ObservationDetailPage({ userId }: { userId?: string }) {
             <span className="badge warn">{t("status.analyzing")}</span>
           ) : null}
           {obs.status === "failed" ? (
-            <span className="badge danger">
+            <span className={isNotAFault(obs.error) ? "badge soft" : "badge danger"}>
               {notCollectible
                 ? t("status.notCollectible")
                 : failedCoarse
@@ -370,6 +375,7 @@ export default function ObservationDetailPage({ userId }: { userId?: string }) {
                   : t("status.failed")}
             </span>
           ) : null}
+          {keepsake ? <span className="badge soft">{t("status.keepsake")}</span> : null}
         </div>
         <ListTagRow tags={noCollection && !softEncounter ? [] : obs.tags} />
       </header>
@@ -379,7 +385,9 @@ export default function ObservationDetailPage({ userId }: { userId?: string }) {
 
       {obs.status === "failed" ? (
         <div className="detail-fail">
-          <p className="error">{identifyErrorPrimary(obs.error)}</p>
+          <p className={isNotAFault(obs.error) ? "muted" : "error"}>
+            {identifyErrorPrimary(obs.error)}
+          </p>
           {failHint ? <p className="muted">{failHint}</p> : null}
         </div>
       ) : null}

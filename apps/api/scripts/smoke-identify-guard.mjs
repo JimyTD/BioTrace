@@ -30,7 +30,8 @@ const { runIdentifyForUser } = await import("../src/identify/run.ts");
 const { chatCompletionsUrl } = await import("../src/identify/openai-compatible.ts");
 const { mockIdentifyResult } = await import("../src/identify/mock.ts");
 const { evaluateEligibility } = await import("../src/identify/eligibility.ts");
-const { emptyTaxonomy } = await import("../src/identify/types.ts");
+const { emptyTaxonomy, storedDomIdentity } = await import("../src/identify/types.ts");
+const { buildIdentifyPrompt, extractIdentifyJson } = await import("../src/identify/prompt.ts");
 
 await migrate();
 
@@ -58,6 +59,46 @@ check(
 // mock shape
 const mock = mockIdentifyResult({ imagePath: "/x", mimeType: "image/jpeg" });
 check("mock collectible", mock.eligibility === "collectible" && mock.finest_reliable_rank === "species");
+check("mock wild sparrow", mock.domesticated === false && mock.breed_zh === null);
+
+{
+  const prompt = buildIdentifyPrompt({ imagePath: "/x", mimeType: "image/jpeg" });
+  check("prompt body-only", prompt.includes("只看生物本体"));
+  check("prompt forbids collar", prompt.includes("项圈") && prompt.includes("牵引绳"));
+  const stray = extractIdentifyJson(
+    JSON.stringify({
+      subject_kind: "living_organism",
+      subject_living: true,
+      eligibility: "collectible",
+      common_name_zh: "家犬",
+      scientific_name: "Canis lupus familiaris",
+      taxonomy: { kingdom: { name_la: "Animalia", name_zh: "动物界" } },
+      confidence_0_to_1: 0.9,
+      finest_reliable_rank: "species",
+      blurb_zh: "x",
+      notes: "",
+      domesticated: true,
+      breed_zh: null,
+      dom_evidence_zh: "L1:家犬垂耳与吻部",
+    }),
+  );
+  check("parse stray dog", stray.domesticated === true && stray.breed_zh === null);
+  check("store stray dog", storedDomIdentity(stray).domesticated === true);
+  const missing = extractIdentifyJson(JSON.stringify({ common_name_zh: "狼", scientific_name: "Canis lupus" }));
+  check("parse missing dom", missing.domesticated === null);
+  check("fold missing to wild", storedDomIdentity(missing).domesticated === false);
+  const wild = extractIdentifyJson(
+    JSON.stringify({
+      common_name_zh: "狼",
+      scientific_name: "Canis lupus",
+      domesticated: false,
+      breed_zh: "哈士奇",
+      dom_evidence_zh: "L1:狼的吻部与耳形",
+    }),
+  );
+  check("strip breed if wild", wild.breed_zh === null && wild.domesticated === false);
+}
+
 {
   const clean = { ...mock, blurb_zh: "麻雀常见于城市。", notes: "" };
   check("kingdom ok", evaluateEligibility(clean).ok === true);

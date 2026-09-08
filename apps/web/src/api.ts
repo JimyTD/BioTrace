@@ -95,6 +95,11 @@ export type Observation = {
   taxonKey: string | null;
   identifyProvider: string | null;
   identifyModel?: string | null;
+  /** 驯化位；待开包时为 false。旧观察缺省 false。 */
+  domesticated?: boolean;
+  breedZh?: string | null;
+  /** 识图自报驯化证据，仅审计。 */
+  domEvidenceZh?: string | null;
   settledAt: string | null;
   createdAt: string;
   updatedAt: string;

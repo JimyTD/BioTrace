@@ -30,5 +30,8 @@ export function mockIdentifyResult(input: IdentifyInput): IdentifyResult {
     subject_living: true,
     eligibility: "collectible",
     ineligibility_reason_zh: "",
+    domesticated: false,
+    breed_zh: null,
+    dom_evidence_zh: "L1:麻雀野生型形态",
   };
 }
