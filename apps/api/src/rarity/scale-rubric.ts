@@ -4,6 +4,7 @@
  * 题面与权重只有一份，两边不可能漂移。
  *
  * 一级、二级、三有、灭绝只查表（见 cn-status.ts），不问模型。
+ * 驯化卷身份三题（驯化 / 室内 / 常空手）由识图注入，也不问模型。
  */
 
 export const SCALE_ITEM_KEYS = [
@@ -101,13 +102,32 @@ export const SCALE_BATCHES: Array<{ id: string; keys: ScaleItemKey[]; rubric: st
   BATCH_KEYS.map((b) => ({ ...b, rubric: batchRubric(b.keys) }));
 
 /**
- * 发给模型的批次：摘掉 `domesticated`（改由识图身份注入）。
+ * 识图身份注入。驯化卷锁死三题：驯化=是、室内=否、常空手=否。
+ * 短窗口 / 分布窄不锁——宠物上这两题会左右为难，留给模型或以后再议。
+ */
+export function applyIdentityItems(items: Partial<ScaleItems>, domesticated: boolean): void {
+  items.domesticated = domesticated;
+  if (domesticated) {
+    items.indoor = false;
+    items.often_absent = false;
+  }
+}
+
+/**
+ * 发给模型的批次：摘掉身份已锁死的题。
  * `SCALE_ITEM_KEYS` / 题定义不动。
  */
-export function scaleBatchesForModel(): Array<{ id: string; keys: ScaleItemKey[]; rubric: string }> {
+export function scaleBatchesForModel(opts?: {
+  domesticated?: boolean;
+}): Array<{ id: string; keys: ScaleItemKey[]; rubric: string }> {
+  const skip = new Set<ScaleItemKey>(["domesticated"]);
+  if (opts?.domesticated) {
+    skip.add("indoor");
+    skip.add("often_absent");
+  }
   const out: Array<{ id: string; keys: ScaleItemKey[]; rubric: string }> = [];
   for (const b of SCALE_BATCHES) {
-    const keys = b.keys.filter((k) => k !== "domesticated");
+    const keys = b.keys.filter((k) => !skip.has(k));
     if (keys.length === 0) continue;
     out.push({ id: b.id, keys, rubric: batchRubric(keys) });
   }
@@ -265,12 +285,14 @@ export function scoreFromScale(
 
   let s = 0;
   const adjustments: string[] = [];
+  const domestic = yes(items.domesticated);
 
   // 离人阶梯：室内 > 市区 > 港口农田郊野（第三级不扣）。同一件事只算最重的一级。
-  if (yes(items.indoor)) s = bump(s, w.indoor, "indoor", adjustments);
+  // 驯化种室内已由身份锁否，被人养在屋里不走 indoor。
+  if (yes(items.indoor) && !domestic) s = bump(s, w.indoor, "indoor", adjustments);
   else if (yes(items.near_home)) s = bump(s, w.near_home, "near", adjustments);
 
-  if (yes(items.domesticated)) s = bump(s, w.domesticated, "domestic", adjustments);
+  if (domestic) s = bump(s, w.domesticated, "domestic", adjustments);
   if (yes(items.disliked)) s = bump(s, w.disliked, "disliked", adjustments);
 
   // 遍地折扣：有保护级或只在短窗口出现的，成群不代表好遇见，豁免。
@@ -290,7 +312,9 @@ export function scoreFromScale(
   if (yes(items.liked)) s = bump(s, w.liked, "liked", adjustments);
   if (yes(items.large)) s = bump(s, w.large, "large", adjustments);
   if (yes(items.narrow_range)) s = bump(s, w.narrow_range, "narrow", adjustments);
-  if (yes(items.often_absent) && !abundant) s = bump(s, w.often_absent, "absent", adjustments);
+  if (yes(items.often_absent) && !abundant && !domestic) {
+    s = bump(s, w.often_absent, "absent", adjustments);
+  }
 
   return { score: s, rarity: rarityFromScore(s), adjustments };
 }

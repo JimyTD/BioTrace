@@ -5,6 +5,7 @@
  * 调用预算：名录里的灭绝种 0 次调用；普通物种 3 次（1 次采样 × 3 批）；
  * 得分贴着档位界的补到 3 次采样共 9 次。缓存按「国家 + taxonKey」永久保存；
  * 驯养个体另开 `|dom` 后缀，不与野生父种共座、也不升整代版本号。
+ * 驯化卷身份三题（驯化 / 室内 / 常空手）本地注入，不问模型；旧 `|dom` 缓存命中时回写。
  */
 import { formatScaleAdjustment } from "@biotrace/messages";
 import { env } from "../env.js";
@@ -13,6 +14,7 @@ import { callTextChain } from "../llm/text-chain.js";
 import { readRarityCache, writeRarityCache } from "./cache.js";
 import { lookupListed, type CnListLevel, type CnStatus } from "./cn-status.js";
 import {
+  applyIdentityItems,
   distanceToBand,
   emptyItems,
   mergeItems,
@@ -23,7 +25,7 @@ import {
   type ScaleItems,
 } from "./scale-rubric.js";
 
-/** 题面、权重或结算语义变到旧分不能用了就升版本，缓存自然作废。scale2：indoor 改自住口径（被养宠物/家畜不算）。 */
+/** 题面、权重或结算语义变到旧分不能用了就升版本，缓存自然作废。scale2：indoor 改自住口径（被养宠物/家畜不算）。驯化身份注入只动 `|dom` 键，不升版。 */
 export const SCALE_CACHE_VER = "scale2";
 
 export type ScaleRaritySource = "cache" | "scale" | "list" | "unavailable";
@@ -49,7 +51,7 @@ export type ScaleRarityInput = {
   finestReliableRank?: string | null;
   /** 跳过读缓存（仍会写）。后台重打用。 */
   skipCache?: boolean;
-  /** 驯养个体：缓存分键、名录豁免、domesticated 题注入 true。 */
+  /** 驯养个体：缓存分键、名录豁免、身份三题注入（驯化=是、室内=否、常空手=否）。 */
   domesticated?: boolean;
 };
 
@@ -125,7 +127,7 @@ async function drawOnce(
   const models: string[] = [];
   const block = taxonBlock(input, country);
   let first = true;
-  for (const batch of scaleBatchesForModel()) {
+  for (const batch of scaleBatchesForModel({ domesticated })) {
     if (!first) await sleep(env.rarityCallDelayMs);
     first = false;
     const { content, model } = await callTextChain(`${batch.rubric}\n\n${block}`);
@@ -134,7 +136,7 @@ async function drawOnce(
     reasons[batch.id] = String(parsed.reason ?? "").slice(0, 200);
     models.push(model);
   }
-  items.domesticated = domesticated;
+  applyIdentityItems(items, domesticated);
   return { items: items as ScaleItems, reasons, models };
 }
 
@@ -152,11 +154,53 @@ export async function resolveScaleRarity(
   if (!input.skipCache) {
     const cached = await readRarityCache(key);
     if (cached && cached.source !== "unavailable") {
+      const items = cached.itemsJson ? (JSON.parse(cached.itemsJson) as ScaleItems) : null;
+      if (domesticated && items) {
+        const prevIndoor = items.indoor;
+        const prevAbsent = items.often_absent;
+        const prevDom = items.domesticated;
+        applyIdentityItems(items, true);
+        if (prevIndoor !== false || prevAbsent !== false || prevDom !== true) {
+          const listed = lookupListed({ ...input, domesticated: true });
+          const scored = scoreFromScale(items, listOpts(listed));
+          await writeRarityCache({
+            cacheKey: key,
+            rarity: scored.rarity,
+            source: cached.source,
+            score: scored.score,
+            itemsJson: JSON.stringify(items),
+            adjustmentsJson: JSON.stringify(scored.adjustments),
+            model: cached.model ?? null,
+            samples: cached.samples ?? 0,
+            listLevel: cached.listLevel,
+            reasonsJson: cached.reasonsJson,
+          });
+          console.log(
+            `[rarity] dom 身份回写 ${input.taxonKey} S=${scored.score} → ${scored.rarity}` +
+              (scored.adjustments.length
+                ? ` [${scored.adjustments.map((a) => formatScaleAdjustment(a)).join("，")}]`
+                : ""),
+          );
+          return {
+            rarity: scored.rarity,
+            source: "cache",
+            score: scored.score,
+            items,
+            adjustments: scored.adjustments,
+            model: cached.model ?? null,
+            samples: cached.samples ?? 0,
+            listLevel: (cached.listLevel as CnListLevel) ?? null,
+            reasons: cached.reasonsJson
+              ? (JSON.parse(cached.reasonsJson) as Record<string, string>)
+              : {},
+          };
+        }
+      }
       return {
         rarity: cached.rarity,
         source: "cache",
         score: cached.score ?? null,
-        items: cached.itemsJson ? (JSON.parse(cached.itemsJson) as ScaleItems) : null,
+        items,
         adjustments: cached.adjustmentsJson
           ? (JSON.parse(cached.adjustmentsJson) as string[])
           : [],
@@ -229,6 +273,7 @@ export async function resolveScaleRarity(
   }
 
   let items = mergeItems(draws.map((d) => d.items));
+  applyIdentityItems(items, domesticated);
   let scored = scoreFromScale(items, listOpts(listed));
 
   // 贴着档位界就补采样：这一分再动 0.2 就换档，不值得让一道噪声题拍板。
@@ -246,6 +291,7 @@ export async function resolveScaleRarity(
       );
     }
     items = mergeItems(draws.map((d) => d.items));
+    applyIdentityItems(items, domesticated);
     scored = scoreFromScale(items, listOpts(listed));
   }
 

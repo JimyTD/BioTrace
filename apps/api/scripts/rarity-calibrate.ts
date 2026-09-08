@@ -19,6 +19,7 @@ import {
   KNOW_RUBRIC,
   SCALE_ITEM_KEYS,
   UNKNOWN_PLACEHOLDER_TIER,
+  applyIdentityItems,
   emptyItems,
   majorityBool,
   mergeTri,
@@ -198,13 +199,14 @@ async function scoreOnce(
 
   const items: Partial<ScaleItems> = {};
   const batchReasons: Record<string, string> = {};
-  for (const batch of scaleBatchesForModel()) {
+  const domesticated = Boolean(row.dom);
+  for (const batch of scaleBatchesForModel({ domesticated })) {
     await sleep(opts.delayMs);
     const parsed = extractJson(await callChat(`${batch.rubric}\n\n${taxonBlock(row)}`, opts));
     Object.assign(items, parseScaleItems(parsed, batch.keys));
     batchReasons[batch.id] = String(parsed.reason ?? "");
   }
-  items.domesticated = Boolean(row.dom);
+  applyIdentityItems(items, domesticated);
   return {
     known,
     items: items as ScaleItems,
@@ -284,7 +286,7 @@ async function scoreRow(
   const knowReason = draws.find((d) => d.known === known)?.knowReason ?? draws[0]!.knowReason;
   const itemDraws = draws.filter((d): d is typeof d & { items: ScaleItems } => d.items != null);
   const items = itemDraws.length ? mergeItems(itemDraws.map((d) => d.items)) : emptyItems();
-  items.domesticated = Boolean(row.dom);
+  applyIdentityItems(items, Boolean(row.dom));
   const scored = scoreFromScale(items, listOpts(listed));
   return {
     known,
