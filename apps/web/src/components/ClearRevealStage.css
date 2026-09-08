@@ -1,10 +1,26 @@
 /**
- * 清透皮肤的开包舞台与稀有度药丸。
+ * 清透皮肤的开包舞台与稀有度药丸（v4：稀有度当主角）。
  *
  * 只服务 ClearRevealStage / ClearRankChip 这两个槽位实现，所以样式跟着组件走、
  * 不进共享的 styles.css——理由同 SettleRaritySeal.css 的抬头：
  * 这是某套皮肤的物件，别的皮肤要换就整块换掉，不该在共享结构表里留一份。
+ *
+ * 档色与光效材质（--ring-c 档色、光尘/星闪色板、虹彩渐变）**故意不做成 token**，
+ * 理由同封蜡章那套：换一套皮肤要的不是「换色的光柱」，而是另一个物件（日光那套
+ * 是撕壳+封蜡）。要换就走 themes/slots.ts 的 settleStage 槽位整只换。
+ *
+ * 节奏出自 docs/wip/settle-rarity-spotlight-demo.html 的 v4（2026-09 逐档拍板）：
+ * 拿起 → 显影 → 定色（档色成色 + 光柱 + 白闪 + 心搏 + 光尘星闪 + 流光描边）→ 落章。
+ * 戏码按档位分层：N 零戏，XR 全套。光强总增益 --gain 只放大亮度轴，
+ * 形状、模式、时序一概不碰。
  */
+
+/* 虹彩描边的流转角。不注册这个，edgeFlow 就只是在两个静态值间跳，不会真的转 */
+@property --edge-rot {
+  syntax: "<angle>";
+  initial-value: 0deg;
+  inherits: false;
+}
 
 /* 舞台外那张卡片让开：这一屏的主角是照片自己，不该再套一层卡片 */
 [data-theme="clear"] .settle-card {
@@ -22,6 +38,7 @@
   text-align: center;
 }
 
+/* ── 舞台 ─────────────────────────────────────────────────────── */
 .reveal-stage {
   position: relative;
   width: 100%;
@@ -32,10 +49,28 @@
   /* 舞台宽当 cqw 用：叠在下面那两张、间距都按台宽同比，换屏宽不走样 */
   container-type: inline-size;
   background: none;
+  /* 四拍时长与戏码强度由组件按稀有度挂上；这排只是兜底，正常渲染路径永远有值 */
+  --lift-ms: 260ms;
+  --dev-ms: 640ms;
+  --tint-ms: 850ms;
+  --land-ms: 380ms;
+  --drama: 0.85;
+  /* 光强总增益：只放大亮度轴（opacity、辉光半径），形状、模式、时序一概不碰 */
+  --gain: 1.5;
 }
 
+/* 档位色挂到舞台：光柱、描边、白闪、心搏、光尘共用同一档色 */
+.reveal-stage.g-N   { --ring-c: rgba(120, 132, 140, 1); }
+.reveal-stage.g-R   { --ring-c: rgba(60, 150, 255, 1); }
+.reveal-stage.g-SR  { --ring-c: rgba(180, 110, 255, 1); }
+.reveal-stage.g-SSR { --ring-c: rgba(255, 205, 70, 1); }
+.reveal-stage.g-UR  { --ring-c: rgba(255, 110, 80, 1); }
+.reveal-stage.g-LR  { --ring-c: rgba(200, 140, 255, 1); }
+.reveal-stage.g-XR  { --ring-c: rgba(255, 90, 220, 1); }
+
 /* ── 压在底下的两张 ───────────────────────────────────────────────
-   空卡纸，微微探出来一角。存在的意义是让最上面那张有个「最上面」。 */
+   空卡纸，微微探出来一角。存在的意义是让最上面那张有个「最上面」。
+   sealed 时收拢成一叠，启封后随拿起+显影这段散开。 */
 .reveal-under {
   position: absolute;
   top: 50%;
@@ -48,8 +83,8 @@
   box-shadow: 0 6px 16px rgba(70, 90, 105, 0.13);
   pointer-events: none;
   transition:
-    transform var(--reveal-ms, 780ms) cubic-bezier(0.2, 0.9, 0.25, 1),
-    opacity var(--reveal-ms, 780ms) ease-out;
+    transform calc(var(--lift-ms) + var(--dev-ms)) cubic-bezier(0.2, 0.9, 0.25, 1),
+    opacity calc(var(--lift-ms) + var(--dev-ms)) ease-out;
 }
 
 .reveal-under-l {
@@ -94,32 +129,18 @@
   pointer-events: none;
 }
 
-.reveal-stage.is-revealing .reveal-bloom {
-  animation: revealBloom var(--reveal-ms, 780ms) ease-out forwards;
-}
-
-@keyframes revealBloom {
-  0% {
-    opacity: 0;
-  }
-  45% {
-    opacity: 1;
-  }
-  100% {
-    opacity: 0.28;
-  }
-}
-
-.reveal-stage.is-open .reveal-bloom {
-  opacity: 0.28;
-}
-
-/* ── 最上面那张 ───────────────────────────────────────────────────
-   和相册格是同一种物件：暖白卡纸、下沿宽出来放那行小字。 */
-.reveal-card {
+/* ── 卡片与卡纸 ───────────────────────────────────────────────────
+   wrap 管拿起抬升与展出回落；卡片本体只管震颤，两层 transform 不打架。 */
+.reveal-card-wrap {
   position: relative;
   z-index: 3;
   width: 70cqw;
+}
+
+.reveal-card {
+  position: relative;
+  z-index: 1;
+  width: 100%;
   padding: 4.6cqw 4.6cqw 0;
   border-radius: 6px;
   background: var(--trip-cover-plate);
@@ -129,6 +150,7 @@
 }
 
 .reveal-window {
+  position: relative;
   display: block;
   aspect-ratio: 1;
   border-radius: 3px;
@@ -165,76 +187,564 @@
   opacity: 0.6;
 }
 
-/* ── 还没显出来 ───────────────────────────────────────────────────
-   照片糊着、淡着，卡片略小一圈。不压暗——这套底是亮的，压暗立刻回到暗房去了。 */
+/* ── 还没显出来 ─────────────────────────────────────────────────── */
 .reveal-stage.is-sealed .reveal-photo {
-  filter: blur(9px) saturate(0.5);
-  transform: scale(1.07);
+  filter: blur(14px) saturate(0.3) brightness(0.55);
+  transform: scale(1.12);
 }
 
-.reveal-stage.is-sealed .reveal-card {
-  transform: scale(0.965);
+.reveal-stage.is-sealed .reveal-card-wrap {
+  transform: scale(0.92) translateY(1.5cqw);
 }
 
 .reveal-stage.is-sealed .reveal-mark {
-  opacity: 0.3;
+  opacity: 0.25;
 }
 
-/* ── 显出来 ───────────────────────────────────────────────────────
-   由糊到清是「一段」不是「一下」；时长读组件挂的 --reveal-ms，
-   和「多久之后转 open」同源。 */
-.reveal-stage.is-revealing .reveal-photo {
-  animation: revealSharpen var(--reveal-ms, 780ms) ease-out forwards;
+.reveal-stage.is-sealed .reveal-rank {
+  opacity: 0;
 }
 
-.reveal-stage.is-revealing .reveal-card {
-  animation: revealSettle var(--reveal-ms, 780ms) cubic-bezier(0.2, 0.9, 0.25, 1) forwards;
+/* ── 揭示四拍之一：拿起 ────────────────────────────────────────── */
+.reveal-stage.is-revealing .reveal-card-wrap {
+  /* 300ms 是 demo 真值：时间轴上「拿起 260」指节奏拍点，动画略溢出到显影段，
+     过冲曲线要这一点余量才不像弹一下就死 */
+  animation: revealLift 300ms cubic-bezier(0.18, 0.9, 0.3, 1.2) forwards;
 }
 
-.reveal-stage.is-revealing .reveal-mark,
-.reveal-stage.is-revealing .reveal-rank {
-  animation: revealInk var(--reveal-ms, 780ms) ease-out forwards;
-}
-
-@keyframes revealSharpen {
-  from {
-    filter: blur(9px) saturate(0.5);
-    transform: scale(1.07);
+@keyframes revealLift {
+  0% {
+    transform: scale(0.92) translateY(1.5cqw);
   }
-  to {
+  100% {
+    transform: scale(1.04) translateY(-3.2cqw);
+  }
+}
+
+/* ── 揭示四拍之二：显影（拿起+显影共 900ms，一段而不是一下）──────── */
+.reveal-stage.is-revealing .reveal-photo {
+  animation: revealDev calc(var(--lift-ms) + var(--dev-ms)) ease-out forwards;
+}
+
+@keyframes revealDev {
+  0% {
+    filter: blur(14px) saturate(0.3) brightness(0.55);
+    transform: scale(1.12);
+  }
+  30% {
+    filter: blur(12px) saturate(0.35) brightness(0.6);
+    transform: scale(1.1);
+  }
+  62% {
+    filter: blur(7px) saturate(0.6) brightness(0.78);
+    transform: scale(1.05);
+  }
+  88% {
+    filter: blur(0.6px) saturate(1.02) brightness(1.03);
+    transform: scale(1.006);
+  }
+  100% {
     filter: none;
     transform: none;
   }
 }
 
-@keyframes revealSettle {
-  from {
-    transform: scale(0.965);
+/* 柔光在拿起+显影段漫开 */
+.reveal-stage.is-revealing .reveal-bloom {
+  animation: revealBloom calc(var(--lift-ms) + var(--dev-ms)) ease-out forwards;
+}
+
+@keyframes revealBloom {
+  0% {
+    opacity: 0;
   }
-  to {
-    transform: none;
+  23% {
+    opacity: 1;
+  }
+  81% {
+    opacity: 0.45;
+  }
+  100% {
+    opacity: 0.28;
   }
 }
 
+/* 卡纸下沿小字：显影末段由淡入浓 */
+.reveal-stage.is-revealing .reveal-mark {
+  animation: revealInk calc(var(--lift-ms) + var(--dev-ms)) ease-out forwards;
+}
+
 @keyframes revealInk {
-  from {
-    opacity: 0;
+  0% {
+    opacity: 0.25;
   }
-  to {
+  70% {
+    opacity: 0.25;
+  }
+  100% {
     opacity: 1;
   }
 }
 
+/* ── 定色拍的光效层（全部 aria-hidden 的装饰，无一句用户可见文案）── */
+/* 档色成色：定色拍从照片中央漫开的一层档色 */
+.reveal-tint {
+  position: absolute;
+  inset: 0;
+  z-index: 3;
+  border-radius: 3px;
+  mix-blend-mode: soft-light;
+  opacity: 0;
+  pointer-events: none;
+}
+
+.reveal-tint.tint-N {
+  background: radial-gradient(circle at 50% 38%, rgba(255, 255, 255, 1), rgba(255, 255, 255, 0) 66%);
+}
+
+.reveal-tint.tint-R {
+  background: radial-gradient(circle at 50% 38%, rgba(120, 180, 255, 0.82), rgba(120, 180, 255, 0) 70%);
+}
+
+.reveal-tint.tint-SR {
+  background: radial-gradient(circle at 50% 38%, rgba(200, 160, 255, 0.9), rgba(200, 160, 255, 0) 70%);
+}
+
+.reveal-tint.tint-SSR {
+  background: radial-gradient(circle at 50% 38%, rgba(255, 224, 120, 0.97), rgba(255, 224, 120, 0) 70%);
+}
+
+.reveal-tint.tint-UR {
+  background: radial-gradient(circle at 50% 38%, rgba(255, 150, 130, 0.9), rgba(255, 150, 130, 0) 70%);
+}
+
+.reveal-tint.tint-LR {
+  background: linear-gradient(115deg, #d8c0ff, #ffe27a 28%, #b5f0d0 50%, #ffb0d8 72%, #d8c0ff);
+  background-size: 300% 300%;
+}
+
+.reveal-tint.tint-XR {
+  background: linear-gradient(115deg, #ffc9ef, #ffd6f4 20%, #bfe6ff 40%, #ffc9ef 60%, #ffe0a8 80%, #ffc9ef);
+  background-size: 300% 300%;
+}
+
+/* 光柱：照片窗口内的光幕——窗口裁剪保证出发点=照片底边、左右=照片两边，严丝合缝 */
+.reveal-beam {
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+  opacity: 0;
+  pointer-events: none;
+  transform-origin: 50% 100%;
+  background:
+    linear-gradient(to top, var(--ring-c) 0%, rgba(255, 255, 255, 0) 74%),
+    radial-gradient(ellipse 43% 26% at 50% 100%, var(--ring-c), rgba(255, 255, 255, 0) 72%);
+}
+
+/* 流光描边：贴卡纸外壁的一圈光 */
+.reveal-edge {
+  position: absolute;
+  inset: 0;
+  z-index: 5;
+  border-radius: 9px;
+  opacity: 0;
+  pointer-events: none;
+  padding: calc(0.55cqw * var(--drama) + 1px);
+  background: linear-gradient(120deg, var(--ring-c), rgba(255, 255, 255, 0.12) 46%, var(--ring-c) 88%);
+  -webkit-mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
+  -webkit-mask-composite: xor;
+  mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
+  mask-composite: exclude;
+}
+
+/* LR/XR 的描边换成虹彩，随 --edge-rot 常驻流转 */
+.g-LR .reveal-edge,
+.g-XR .reveal-edge {
+  background: conic-gradient(from var(--edge-rot), #d8c0ff, #ffe27a, #b5f0d0, #ffb0d8, #bfe6ff, #d8c0ff);
+}
+
+/* R/SR 也有描边，但收敛一档：线更细，亮度和落定余韵各自压低，不抢 SSR/UR 的戏 */
+.g-R .reveal-edge {
+  padding: calc(0.38cqw * var(--drama) + 1px);
+}
+
+.g-SR .reveal-edge {
+  padding: calc(0.46cqw * var(--drama) + 1px);
+}
+
+/* 心搏白光：定色中段照片中央透亮一拍 */
+.reveal-pulse {
+  position: absolute;
+  inset: 0;
+  z-index: 4;
+  opacity: 0;
+  pointer-events: none;
+  mix-blend-mode: screen;
+  background: radial-gradient(circle at 50% 42%, rgba(255, 255, 255, 1), rgba(255, 255, 255, 0) 60%);
+}
+
+/* 白闪：定色开闸的一瞬 */
+.reveal-flash {
+  position: absolute;
+  inset: 0;
+  z-index: 4;
+  opacity: 0;
+  pointer-events: none;
+  background: radial-gradient(ellipse 72% 62% at 50% 46%, #ffffff 0%, rgba(255, 255, 255, 1) 42%, rgba(255, 255, 255, 0) 78%);
+}
+
+/* 扫光：从左到右一道，UR/SSR 递弱 */
+.reveal-sheen {
+  position: absolute;
+  top: -10%;
+  bottom: -10%;
+  left: -45%;
+  width: 90%;
+  z-index: 5;
+  background: linear-gradient(
+    100deg,
+    rgba(255, 255, 255, 0) 0%,
+    rgba(255, 255, 255, 0.82) 45%,
+    rgba(255, 255, 255, 1) 50%,
+    rgba(255, 255, 255, 0.82) 55%,
+    rgba(255, 255, 255, 0) 100%
+  );
+  transform: translateX(-160%) skewX(-18deg);
+  opacity: 0;
+  pointer-events: none;
+  mix-blend-mode: overlay;
+}
+
+/* 光尘：JS 按档位生成，定色窗口内从照片区上浮 */
+.dust {
+  position: absolute;
+  z-index: 5;
+  border-radius: 50%;
+  background: var(--dust-c, #ffd675);
+  box-shadow: 0 0 calc(7px * var(--gain, 1)) calc(1px * var(--gain, 1)) var(--dust-c, #ffd675);
+  opacity: 0;
+  pointer-events: none;
+}
+
+/* 星闪：JS 按档位生成，定色窗口内在照片区绽开的四角星 */
+.spark {
+  position: absolute;
+  z-index: 6;
+  opacity: 0;
+  pointer-events: none;
+  background: var(--dust-c, #fff);
+  clip-path: polygon(50% 0%, 61% 39%, 100% 50%, 61% 61%, 50% 100%, 39% 61%, 0% 50%, 39% 39%);
+  filter: drop-shadow(0 0 calc(5px * var(--gain, 1)) var(--dust-c, #fff));
+}
+
+/* 戏码开关：N 全关；R 光柱+细描边；SR +白闪+光尘+星闪+描边；
+   SSR/UR +扫光（递弱）+震卡；LR/XR +扫光全亮+虹彩常驻 */
+.g-N .reveal-flash,
+.g-N .reveal-sheen,
+.g-N .reveal-beam,
+.g-N .reveal-edge,
+.g-N .reveal-pulse,
+.g-N .spark,
+.g-N .dust {
+  display: none;
+}
+
+.g-R .reveal-flash,
+.g-R .reveal-sheen {
+  display: none;
+}
+
+.g-SR .reveal-sheen {
+  display: none;
+}
+
+/* ── 揭示四拍之三：定色（全在 拿起+显影 处开闸）────────────────── */
+.reveal-stage.is-revealing .reveal-tint {
+  animation: tintPlay var(--tint-ms) ease-out calc(var(--lift-ms) + var(--dev-ms)) both;
+}
+
+.reveal-stage.is-revealing .reveal-tint.tint-LR,
+.reveal-stage.is-revealing .reveal-tint.tint-XR {
+  animation:
+    tintPlay var(--tint-ms) ease-out calc(var(--lift-ms) + var(--dev-ms)) both,
+    tintFlow 1.4s linear calc(var(--lift-ms) + var(--dev-ms)) infinite;
+}
+
+@keyframes tintPlay {
+  0% { opacity: 0; }
+  22% { opacity: calc((0.95 * var(--drama) + 0.15) * var(--gain, 1)); }
+  55% { opacity: calc((0.7 * var(--drama) + 0.15) * var(--gain, 1)); }
+  100% { opacity: calc((0.55 * var(--drama) + 0.12) * var(--gain, 1)); }
+}
+
+@keyframes tintFlow {
+  0% { background-position: 0% 0%; }
+  100% { background-position: 100% 100%; }
+}
+
+/* 心搏白光：定色中段照片透亮一拍，像心跳漏半拍 */
+.reveal-stage.is-revealing .reveal-pulse {
+  animation: pulseOnce 460ms ease-in-out calc(var(--lift-ms) + var(--dev-ms) + var(--tint-ms) * 0.62) both;
+}
+
+@keyframes pulseOnce {
+  0%, 100% { opacity: 0; }
+  40% { opacity: calc((0.5 * var(--drama) + 0.1) * var(--gain, 1)); }
+}
+
+/* 光柱：定色拍从照片底边升起，把整张卡托在档色光上 */
+.reveal-stage.is-revealing .reveal-beam {
+  animation: beamUp calc(520ms + var(--tint-ms) * 0.5) cubic-bezier(0.2, 0.8, 0.3, 1) calc(var(--lift-ms) + var(--dev-ms)) both;
+}
+
+@keyframes beamUp {
+  0% { transform: scaleY(0); opacity: 0; }
+  22% { transform: scaleY(0.96); opacity: calc((0.85 * var(--drama) + 0.1) * var(--gain, 1)); }
+  62% { transform: scaleY(0.9); opacity: calc((0.55 * var(--drama) + 0.08) * var(--gain, 1)); }
+  100% { transform: scaleY(0.55); opacity: calc((0.22 * var(--drama) + 0.04) * var(--gain, 1)); }
+}
+
+/* 流光描边：白闪同拍点亮，LR/XR 常驻流转 */
+.reveal-stage.is-revealing .reveal-edge {
+  animation: edgeOn 430ms ease-out calc(var(--lift-ms) + var(--dev-ms)) both;
+}
+
+.reveal-stage.is-revealing.g-R .reveal-edge {
+  animation: edgeOnR 430ms ease-out calc(var(--lift-ms) + var(--dev-ms)) both;
+}
+
+.reveal-stage.is-revealing.g-SR .reveal-edge {
+  animation: edgeOnSR 430ms ease-out calc(var(--lift-ms) + var(--dev-ms)) both;
+}
+
+@keyframes edgeOn {
+  0% { opacity: 0; transform: scale(1); }
+  34% { opacity: calc(0.95 * var(--drama) * var(--gain, 1)); transform: scale(1.012); }
+  100% { opacity: calc(0.7 * var(--drama) * var(--gain, 1)); transform: scale(1); }
+}
+
+@keyframes edgeOnR {
+  0% { opacity: 0; transform: scale(1); }
+  34% { opacity: calc(0.55 * var(--drama) * var(--gain, 1)); transform: scale(1.006); }
+  100% { opacity: calc(0.34 * var(--drama) * var(--gain, 1)); transform: scale(1); }
+}
+
+@keyframes edgeOnSR {
+  0% { opacity: 0; transform: scale(1); }
+  34% { opacity: calc(0.8 * var(--drama) * var(--gain, 1)); transform: scale(1.008); }
+  100% { opacity: calc(0.55 * var(--drama) * var(--gain, 1)); transform: scale(1); }
+}
+
+.reveal-stage.is-revealing.g-LR .reveal-edge,
+.reveal-stage.is-revealing.g-XR .reveal-edge {
+  animation:
+    edgeOn 430ms ease-out calc(var(--lift-ms) + var(--dev-ms)) both,
+    edgeFlow 2.4s linear calc(var(--lift-ms) + var(--dev-ms) + 430ms) infinite;
+}
+
+@keyframes edgeFlow {
+  to { --edge-rot: 360deg; }
+}
+
+/* 白闪：定色开闸的一瞬 */
+.reveal-stage.is-revealing .reveal-flash {
+  animation: flashSnap 430ms ease-out calc(var(--lift-ms) + var(--dev-ms)) both;
+}
+
+@keyframes flashSnap {
+  0%, 100% { opacity: 0; }
+  10% { opacity: calc(1.05 * var(--drama) * var(--gain, 1)); }
+  100% { opacity: 0; }
+}
+
+/* 扫光递弱：LR/XR 全亮 0.95，UR 次之，SSR 最收，从左到右一档比一档淡 */
+.reveal-stage.is-revealing .reveal-sheen {
+  animation: sheenSweep 950ms ease-in-out calc(var(--lift-ms) + var(--dev-ms) + 20ms) both;
+}
+
+.reveal-stage.is-revealing.g-UR .reveal-sheen {
+  animation: sheenSweepUR 950ms ease-in-out calc(var(--lift-ms) + var(--dev-ms) + 20ms) both;
+}
+
+.reveal-stage.is-revealing.g-SSR .reveal-sheen {
+  animation: sheenSweepSSR 950ms ease-in-out calc(var(--lift-ms) + var(--dev-ms) + 20ms) both;
+}
+
+@keyframes sheenSweep {
+  0% { transform: translateX(-160%) skewX(-18deg); opacity: 0; }
+  18% { opacity: calc(0.95 * var(--gain, 1)); }
+  82% { opacity: calc(0.7 * var(--gain, 1)); }
+  100% { transform: translateX(160%) skewX(-18deg); opacity: 0; }
+}
+
+@keyframes sheenSweepUR {
+  0% { transform: translateX(-160%) skewX(-18deg); opacity: 0; }
+  18% { opacity: calc(0.62 * var(--gain, 1)); }
+  82% { opacity: calc(0.45 * var(--gain, 1)); }
+  100% { transform: translateX(160%) skewX(-18deg); opacity: 0; }
+}
+
+@keyframes sheenSweepSSR {
+  0% { transform: translateX(-160%) skewX(-18deg); opacity: 0; }
+  18% { opacity: calc(0.4 * var(--gain, 1)); }
+  82% { opacity: calc(0.28 * var(--gain, 1)); }
+  100% { transform: translateX(160%) skewX(-18deg); opacity: 0; }
+}
+
+/* 光尘与星闪：JS 派的演员，reveal 态按各自的 --delay 起跳 */
+.reveal-stage.is-revealing .dust {
+  animation: dustRise var(--dur) ease-out var(--delay) both;
+}
+
+@keyframes dustRise {
+  0% { transform: translate(0, 0) scale(0.3); opacity: 0; }
+  18% { opacity: 1; }
+  100% { transform: translate(var(--dx), var(--dy)) scale(1.1); opacity: 0; }
+}
+
+.reveal-stage.is-revealing .spark {
+  animation: sparkTwinkle var(--dur) ease-in-out var(--delay) both;
+}
+
+@keyframes sparkTwinkle {
+  0% { transform: scale(0) rotate(0deg); opacity: 0; }
+  32% { transform: scale(1) rotate(70deg); opacity: calc((0.85 * var(--drama) + 0.15) * var(--gain, 1)); }
+  100% { transform: scale(0.2) rotate(150deg) translateY(calc(-2.4cqw * var(--drama))); opacity: 0; }
+}
+
+/* ── 揭示四拍之四：落章 ────────────────────────────────────────── */
+.reveal-stage.is-revealing .reveal-rank {
+  animation:
+    rankSlam var(--land-ms) cubic-bezier(0.3, 0.9, 0.4, 1.3) calc(var(--lift-ms) + var(--dev-ms) + var(--tint-ms)) both,
+    rankGlow2 620ms ease-out calc(var(--lift-ms) + var(--dev-ms) + var(--tint-ms) + var(--land-ms)) 1 both;
+}
+
+@keyframes rankSlam {
+  0% { opacity: 0; transform: translateX(-50%) translateY(-10cqw) scale(2.2); }
+  42% { opacity: 1; transform: translateX(-50%) translateY(0.5cqw) scale(0.84); }
+  60% { transform: translateX(-50%) translateY(-1.6cqw) scale(1.06); }
+  78% { transform: translateX(-50%) translateY(0.3cqw) scale(0.96); }
+  100% { opacity: 1; transform: translateX(-50%) translateY(0) scale(1); }
+}
+
+@keyframes rankGlow2 {
+  0% { box-shadow: 0 2px 8px rgba(70, 90, 105, 0.14), 0 0 0 0 var(--ring-c); }
+  100% { box-shadow: 0 2px 8px rgba(70, 90, 105, 0.14), 0 0 0 calc(14px * var(--gain, 1)) rgba(255, 255, 255, 0); }
+}
+
+/* 卡片震颤：药丸砸下时整卡随档位抖一抖 */
+.reveal-stage.is-revealing .reveal-card {
+  animation: cardQuake 520ms ease-out calc(var(--lift-ms) + var(--dev-ms) + var(--tint-ms) + 300ms) both;
+}
+
+@keyframes cardQuake {
+  0%, 100% { transform: translate(0, 0) rotate(0deg); }
+  18% { transform: translate(calc(-1.1cqw * var(--drama)), calc(0.35cqw * var(--drama))) rotate(calc(-0.7deg * var(--drama))); }
+  42% { transform: translate(calc(0.85cqw * var(--drama)), calc(-0.15cqw * var(--drama))) rotate(calc(0.5deg * var(--drama))); }
+  66% { transform: translate(calc(-0.45cqw * var(--drama)), 0) rotate(calc(-0.25deg * var(--drama))); }
+  84% { transform: translate(0.2cqw, 0) rotate(0.1deg); }
+}
+
+/* ── 展出态：收束 + 余韵 ───────────────────────────────────────── */
+.reveal-stage.is-open .reveal-card-wrap {
+  transform: none;
+  transition: transform 340ms cubic-bezier(0.2, 0.9, 0.3, 1.1);
+}
+
+.reveal-stage.is-open .reveal-bloom {
+  opacity: 0.28;
+}
+
+.reveal-stage.is-open .reveal-tint {
+  animation: none;
+  opacity: calc((0.38 * var(--drama) + 0.05) * var(--gain, 1));
+  transition: opacity 560ms ease-out;
+}
+
+.reveal-stage.is-open .reveal-tint.tint-LR,
+.reveal-stage.is-open .reveal-tint.tint-XR {
+  animation: tintFlow 1.8s linear infinite;
+}
+
+.reveal-stage.is-open .dust,
+.reveal-stage.is-open .spark,
+.reveal-stage.is-open .reveal-pulse {
+  animation: none;
+  opacity: 0;
+}
+
+.reveal-stage.is-open .reveal-beam {
+  animation: none;
+  transform: scaleY(0.5);
+  opacity: calc((0.16 * var(--drama) + 0.03) * var(--gain, 1));
+  transition: opacity 620ms ease-out, transform 620ms ease-out;
+}
+
+.reveal-stage.is-open .reveal-edge {
+  animation: none;
+  opacity: calc(0.42 * var(--drama) * var(--gain, 1));
+  transition: opacity 620ms ease-out;
+}
+
+.reveal-stage.is-open.g-R .reveal-edge {
+  opacity: calc(0.24 * var(--drama) * var(--gain, 1));
+}
+
+.reveal-stage.is-open.g-SR .reveal-edge {
+  opacity: calc(0.34 * var(--drama) * var(--gain, 1));
+}
+
+.reveal-stage.is-open.g-LR .reveal-edge,
+.reveal-stage.is-open.g-XR .reveal-edge {
+  animation: edgeFlow 2.4s linear infinite;
+}
+
+/* ── 减动偏好：四拍压成一瞬，无限流转直接不演 ───────────────────── */
 @media (prefers-reduced-motion: reduce) {
-  .reveal-stage.is-revealing .reveal-photo,
-  .reveal-stage.is-revealing .reveal-card,
+  .reveal-stage.is-revealing .reveal-card-wrap,
   .reveal-stage.is-revealing .reveal-bloom,
+  .reveal-stage.is-revealing .reveal-photo,
   .reveal-stage.is-revealing .reveal-mark,
-  .reveal-stage.is-revealing .reveal-rank {
+  .reveal-stage.is-revealing .reveal-tint,
+  .reveal-stage.is-revealing .reveal-pulse,
+  .reveal-stage.is-revealing .reveal-beam,
+  .reveal-stage.is-revealing .reveal-flash,
+  .reveal-stage.is-revealing .reveal-sheen,
+  .reveal-stage.is-revealing .reveal-rank,
+  .reveal-stage.is-revealing .reveal-card,
+  .reveal-stage.is-revealing .dust,
+  .reveal-stage.is-revealing .spark,
+  .reveal-stage.is-revealing .reveal-edge,
+  .reveal-stage.is-revealing.g-R .reveal-edge,
+  .reveal-stage.is-revealing.g-SR .reveal-edge,
+  .reveal-stage.is-revealing.g-LR .reveal-edge,
+  .reveal-stage.is-revealing.g-XR .reveal-edge,
+  .reveal-stage.is-revealing.g-UR .reveal-sheen,
+  .reveal-stage.is-revealing.g-SSR .reveal-sheen {
     animation-duration: 1ms;
+    animation-delay: 0ms;
+  }
+
+  /* LR/XR 的虹彩流转不是「一下」，减动下不演，落定值交给上面的静态规则 */
+  .reveal-stage.is-revealing .reveal-tint.tint-LR,
+  .reveal-stage.is-revealing .reveal-tint.tint-XR,
+  .reveal-stage.is-revealing.g-LR .reveal-edge,
+  .reveal-stage.is-revealing.g-XR .reveal-edge,
+  .reveal-stage.is-open .reveal-tint.tint-LR,
+  .reveal-stage.is-open .reveal-tint.tint-XR,
+  .reveal-stage.is-open.g-LR .reveal-edge,
+  .reveal-stage.is-open.g-XR .reveal-edge {
+    animation: none;
   }
 
   .reveal-under {
+    transition-duration: 1ms;
+  }
+
+  .reveal-stage.is-open .reveal-card-wrap,
+  .reveal-stage.is-open .reveal-tint,
+  .reveal-stage.is-open .reveal-beam,
+  .reveal-stage.is-open .reveal-edge {
     transition-duration: 1ms;
   }
 }
@@ -258,11 +768,6 @@
   background: var(--rarity-N-bg);
   color: var(--rarity-N-fg);
   box-shadow: 0 2px 8px rgba(70, 90, 105, 0.14);
-}
-
-/* 等级是收下时才定的，照片还没显出来就先亮着说不通 */
-.reveal-stage.is-sealed .reveal-rank {
-  opacity: 0;
 }
 
 .reveal-rank.rarity-N {
