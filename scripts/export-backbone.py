@@ -3,14 +3,15 @@
 跑法：python scripts/export-backbone.py
 产物：apps/web/src/data/backbone.json
 
-── 只导「用户会去的地方」 ──────────────────────────────────
-树冠（动物/植物/真菌）+ 近地（色藻/原生动物）导真骨架。
-根系（细菌/古菌/病毒）**不导** —— 由渲染层生成装饰性假枝丛：
-  · 用户永远不会点进去
-  · 真实名字是 UBA10199 / JACPQU01 这类宏基因组代号，没有可读性
-  · 真实骨架有 1886 个节点，比整个树冠（1429）还大，会压倒主角；
-    假枝丛的茂密度可以由美术自由定
-详见 scripts/probe-backbone.py 顶部的实测结论。
+── 八界全导（2026-09-08 起）───────────────────────────────
+树冠（动物/植物/真菌）+ 近地（色藻/原生动物）+ 根系（细菌/古菌/病毒）
+全部导真骨架，一律到目级；科属种不进骨架，由真实观察动态生长。
+
+历史：2026-09 之前根系三界不导（当时理由：用户不会点进去、
+宏基因组代号没有可读性、1886 节点比树冠 1429 还大会压倒主角），
+由渲染层生成装饰性假枝丛。2026-09-08 拍板推翻，三界入库；
+第一屏形态不受节点数影响的机制见
+docs/wip/物种树-根系三界真数据-设计方案.md §2.3。
 
 ── 为什么节点 id 是「界:rank:拉丁名」而不是拉丁名 ─────────
 拉丁名在同一界内会重复，这是真实的生物学现象而非数据错误：
@@ -45,12 +46,16 @@ UA = {"Accept": "application/json",
       "User-Agent": "BioTrace/0.1 (personal non-profit)"}
 
 # (usageKey, 拉丁名, 中文名, 三段式分区)
+# 三界 usageKey 取自 GBIF Backbone：Bacteria=3, Archaea=2, Viruses=8
 CROWN = [
     (1, "Animalia", "动物界", "crown"),
     (6, "Plantae", "植物界", "crown"),
     (5, "Fungi", "真菌界", "crown"),
     (4, "Chromista", "色藻界", "basal"),
     (7, "Protozoa", "原生动物界", "basal"),
+    (3, "Bacteria", "细菌界", "root"),
+    (2, "Archaea", "古菌界", "root"),
+    (8, "Viruses", "病毒界", "root"),
 ]
 RANKS = ["kingdom", "phylum", "class", "order"]
 OUT = Path(__file__).resolve().parents[1] / "apps/web/src/data/backbone.json"
@@ -171,8 +176,9 @@ def main():
         "datasetKey": BACKBONE,
         "generatedAt": time.strftime("%Y-%m-%d"),
         "ranks": RANKS,
-        "note": ("根系三界（Bacteria/Archaea/Viruses）不在此表内，"
-                 "由渲染层生成装饰性枝丛；见 scripts/export-backbone.py 顶部说明"),
+        "note": ("八界骨架到目级；科属种不进骨架，由真实观察动态生长。"
+                 "根系三界 2026-09-08 起入库，见 "
+                 "docs/wip/物种树-根系三界真数据-设计方案.md"),
         "zones": {la: zone for _, la, _, zone in CROWN},
         "fields": ["id", "parentId", "rank", "la", "zh", "kingdom"],
         # id 形如 "2:Aves"（rank 序号:拉丁名），界内唯一

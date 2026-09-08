@@ -225,10 +225,10 @@ function NodeCard({
     groups.set(c.lvl, (groups.get(c.lvl) ?? 0) + 1);
   }
   const meta: string[] = [];
-  if (sealed) {
-    /* 假枝丛不算细分。再说「还没有细分」像是在邀你往下走。 */
-  } else if (term) meta.push(t("tree3d.noFurtherRank"));
+  if (term) meta.push(t("tree3d.noFurtherRank"));
   else if (groups.size > 0) {
+    /* sealed（病毒）也显示真规模：规模是真数据，「不可收录」另有按钮说，
+       两者不冲突（设计方案 2.5）。 */
     for (const [lvl, n] of [...groups].sort((a, b) => a[0] - b[0])) {
       meta.push(t("tree3d.childGroup", { count: n, rank: rankName(lvl) }));
     }

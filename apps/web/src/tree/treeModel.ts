@@ -1,17 +1,15 @@
 /**
  * 物种树的节点模型：把「静态全景骨架」和「我的收集」合并成一棵树。
  *
- * ── 三种节点来源 ────────────────────────────────────────────
- *   backbone  界→门→纲→目，来自 GBIF，人人相同，内置不查库
+ * ── 节点来源（2026-09-08 起） ────────────────────────────────
+ *   backbone  界→门→纲→目，来自 GBIF，人人相同，内置不查库，八界全导
  *   grown     科→属→种，从我的收集条目里长出来
- *   filler    装饰性假枝，只为表达规模，不可点击
  *
- * ── 为什么根系（细菌/古菌/病毒）是假的 ─────────────────────
- * 真骨架里根系有 1886 个节点，比整个树冠（1429）还大，会压倒主角；
- * 而且名字是 UBA10199 / JACPQU01 这类宏基因组代号，没有可读性；
- * 用户也永远不会点进去。所以根系整段用 filler 生成，
- * 茂密度由渲染层自由定，不受真实节点数绑架。
- * 万一真拍到蓝藻水华：条目自带完整 taxonomy，会在假枝丛里长出一根真枝。
+ * 根系三界（细菌/古菌/病毒）的门/纲/目真数据已于 2026-09-08 入库
+ * （见 docs/wip/物种树-根系三界真数据-设计方案.md），科属种照旧动态生长。
+ * 历史上根系曾整段用 filler 假枝表达（ROOT_KINGDOMS + growFiller），
+ * 已删；总览的根区形态由渲染层写死参数接管（TreeScene rootBushOn）。
+ * 万一真拍到蓝藻水华：条目自带完整 taxonomy，会命中真骨架门枝。
  *
  * ── 节点 id 的形式：`<rank序号>:<拉丁名>` ───────────────────
  * rank 必须参与，因为拉丁名在同一界内会重复（单型分类单元）：
@@ -19,7 +17,7 @@
  *   Diplura 目 ← Diplura(纲)     「双尾目」，父是同名的纲
  * 不带 rank 的话这些节点会自己当自己的父级 → 建树成环。
  */
-import { t, type MessageKey } from "@biotrace/messages";
+import { t } from "@biotrace/messages";
 import type { CollectionEntry, Taxonomy } from "../api";
 import { BACKBONE_ZH } from "../data/backboneZh";
 import backboneRaw from "../data/backbone.json";
@@ -71,14 +69,6 @@ type RawDoc = {
 };
 
 const DOC = backboneRaw as unknown as RawDoc;
-
-/** 根系三界。不在 backbone.json 里，此处补上界节点，其下用 filler 填。
- *  中文名不在 backboneZh（那会被 check-zh.py 判死键），走 messages 的 tree3d.*。 */
-const ROOT_KINGDOMS: { la: string; zhKey: MessageKey; fill: number }[] = [
-  { la: "Bacteria", zhKey: "tree3d.kingdomBacteria", fill: 7 },
-  { la: "Archaea", zhKey: "tree3d.kingdomArchaea", fill: 5 },
-  { la: "Viruses", zhKey: "tree3d.kingdomViruses", fill: 4 },
-];
 
 export function nodeId(lvl: number, la: string) {
   return `${lvl}:${la}`;
@@ -196,22 +186,21 @@ export function buildSpeciesTree(entries: CollectionEntry[]): SpeciesTree {
     (p ?? root).ch.push(n);
   }
 
-  // ── 2. 根系三界 + 假枝丛 ──
-  for (const rk of ROOT_KINGDOMS) {
-    const k = mkNode({
-      id: nodeId(0, rk.la),
-      lvl: 0,
-      la: rk.la,
-      zh: t(rk.zhKey),
-      kingdom: rk.la,
-      zone: "root",
-      src: "backbone", // 界本身是真的，其下才是假的
-      parent: root,
-    });
-    byId.set(k.id, k);
-    root.ch.push(k);
-    growFiller(k, rk.fill, 3);
-  }
+  // ── 2. 根系三界界节点：来自骨架本身（2026-09-08 起八界全导），
+  //       其下门/纲/目为真数据；不再有 filler 假枝 ──
+
+  /* 骨架导出按 (rank, id) 字母序排节点，root.ch 因此变成八界字母序。
+     但渲染层的方位种子（sib）与根区发牌角都以 ch 顺序为准 —— 顺序一变，
+     树冠相位与根系摆位全变，第一屏几何指纹就破了。这里钉回改造前的
+     顺序：五界骨架字母序 + 三界追加（ROOT_KINGDOMS 的书写序）。 */
+  const ROOT_ORDER = [
+    "Animalia", "Chromista", "Fungi", "Plantae", "Protozoa",
+    "Bacteria", "Archaea", "Viruses",
+  ];
+  root.ch.sort((a, b) => {
+    const ai = ROOT_ORDER.indexOf(a.la), bi = ROOT_ORDER.indexOf(b.la);
+    return (ai < 0 ? ROOT_ORDER.length : ai) - (bi < 0 ? ROOT_ORDER.length : bi);
+  });
 
   const realCount = byId.size;
 
@@ -276,33 +265,6 @@ function equalizeCrownFoliage(root: TreeNode) {
     const t = countFillLeaves(k);
     if (t < 1) continue;
     scaleFillLeaves(k, CROWN_FILL_BUDGET / t);
-  }
-}
-
-/**
- * 装饰性假枝。用节点 id 的 hash 决定分支数，所以同一个界永远长成同一个样子
- * ——「假」不等于「随机」，形态必须稳定，否则每次打开树都变样。
- */
-function growFiller(parent: TreeNode, breadth: number, depthLeft: number) {
-  if (depthLeft <= 0) {
-    parent.term = true;
-    return;
-  }
-  const seed = strHash(parent.id);
-  const n = Math.max(2, Math.round(breadth * (0.6 + 0.8 * h01(seed, depthLeft))));
-  for (let i = 0; i < n; i++) {
-    const c = mkNode({
-      id: `${parent.id}/f${i}`,
-      lvl: parent.lvl + 1,
-      la: "",
-      zh: null,
-      kingdom: parent.kingdom,
-      zone: parent.zone,
-      src: "filler",
-      parent,
-    });
-    parent.ch.push(c);
-    growFiller(c, Math.max(2, breadth - 2), depthLeft - 1);
   }
 }
 

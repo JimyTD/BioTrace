@@ -247,9 +247,6 @@ const zhCore = {
 
   "tree3d.crumbRoot": "全树",
   "tree3d.rootLife": "生命",
-  "tree3d.kingdomBacteria": "细菌界",
-  "tree3d.kingdomArchaea": "古菌界",
-  "tree3d.kingdomViruses": "病毒界",
   "tree3d.statGot": "已收录 {count} 项",
   "tree3d.viewCollection": "查看收录",
   "tree3d.gotCount": "{count} 项",

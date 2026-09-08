@@ -1,7 +1,8 @@
-"""给骨架缺中文的纲/目离线配中文名。
+"""给骨架缺中文的门（三界）/纲/目离线配中文名。
 
 主源 Wikidata，补洞 iNaturalist。对齐：学名 + 阶元 + 界，对不上就空着。
 已有 backboneZh.ts 条目不覆盖。
+门级只针对根系三界（细菌/古菌/病毒）——树冠五界的门当初上手填满。
 
 跑法：python scripts/fill-backbone-zh.py
   --wd-only     只跑 Wikidata
@@ -44,8 +45,12 @@ INAT_KINGDOM = {
     "Chromista": 48222,
     "Protozoa": 47686,
 }
-RANK_WD = {2: "class", 3: "order"}
+# 三界微生物中文名 iNat 本就稀薄，Wikidata 单源够用（设计方案 2.7），
+# INAT_KINGDOM 不加三界 → fill_inat 自然跳过。
+RANK_WD = {1: "phylum", 2: "class", 3: "order"}
 RANK_INAT = {2: "class", 3: "order"}
+WD_KINGDOMS = ("Animalia", "Plantae", "Fungi", "Chromista", "Protozoa",
+               "Bacteria", "Archaea", "Viruses")
 
 try:
     from zhconv import convert as _zhconv
@@ -118,7 +123,10 @@ def load_missing() -> list[dict]:
     for n in doc["nodes"]:
         rid = n[F["id"]]
         r = n[F["rank"]]
-        if r not in (2, 3):
+        # 门级只查根系三界：树冠五界的门当初上手填满，没有缺额
+        if r not in (1, 2, 3):
+            continue
+        if r == 1 and n[F["kingdom"]] not in ("Bacteria", "Archaea", "Viruses"):
             continue
         if rid in have:
             continue
@@ -144,6 +152,7 @@ def save_cache(cache: dict) -> None:
 
 def wd_sparql(names: list[str]) -> list[dict] | None:
     values = " ".join(f'"{n}"' for n in names)
+    kingdoms = " ".join(f'"{k}"' for k in WD_KINGDOMS)
     q = f"""
     SELECT ?sci ?zh ?rankEn ?kingdomSci ?item WHERE {{
       VALUES ?sci {{ {values} }}
@@ -157,7 +166,7 @@ def wd_sparql(names: list[str]) -> list[dict] | None:
       OPTIONAL {{
         ?item wdt:P171 ?k .
         ?k wdt:P225 ?kingdomSci .
-        VALUES ?kingdomSci {{ "Animalia" "Plantae" "Fungi" "Chromista" "Protozoa" }}
+        VALUES ?kingdomSci {{ {kingdoms} }}
       }}
     }}
     """
@@ -262,6 +271,9 @@ def inat_lookup(la: str) -> list[dict]:
 
 
 def pick_inat(node: dict, results: list[dict]) -> str | None:
+    # 门级只查三界，iNat 对三界本就稀薄（设计方案 2.7），不进 iNat 流程
+    if node["rank"] not in RANK_INAT:
+        return None
     want_rank = RANK_INAT[node["rank"]]
     kid = INAT_KINGDOM.get(node["kingdom"])
     hits = []
@@ -285,7 +297,8 @@ def pick_inat(node: dict, results: list[dict]) -> str | None:
 def fill_inat(missing: list[dict], cache: dict) -> None:
     pending = [
         n for n in missing
-        if n["id"] not in cache["wd"] and n["id"] not in cache["inat"]
+        if n["rank"] in RANK_INAT
+        and n["id"] not in cache["wd"] and n["id"] not in cache["inat"]
     ]
     print(f"iNat 补洞待查 {len(pending)}", flush=True)
     for i, n in enumerate(pending):
@@ -321,6 +334,8 @@ def wiki_zh_ok(nid: str, zh: str) -> bool:
     if zh in WD_SKIP_ZH:
         return False
     if zh.endswith("科") or zh.endswith("属") or zh.endswith("种"):
+        return False
+    if rank == 1 and not zh.endswith("门"):
         return False
     if rank == 2:
         if zh.endswith("亚纲") or zh.endswith("门"):
@@ -377,11 +392,12 @@ def merge_ts(cache: dict) -> int:
     rows = offline + added
     rows.sort(key=lambda x: (int(x[0].split(":")[0]), x[0]))
     lines = ["  // ── 离线配表开始（Wikidata 主源，iNat 补洞；不覆盖上手填）──"]
+    rank_label = {1: "门", 2: "纲", 3: "目"}
     last_rank = None
     for nid, zh, src in rows:
         r = int(nid.split(":")[0])
         if r != last_rank:
-            lines.append(f"  // rank {r} · {'纲' if r == 2 else '目'}")
+            lines.append(f"  // rank {r} · {rank_label.get(r, f'rank{r}')}")
             last_rank = r
         note = "" if src == "wikidata" else "  // iNat"
         lines.append(f'  "{nid}": {json.dumps(zh, ensure_ascii=False)},{note}')
@@ -415,7 +431,7 @@ def main() -> None:
     missing = load_missing()
     if args.limit:
         missing = missing[: args.limit]
-    print(f"缺中文 纲/目 {len(missing)}（已有表不重查）", flush=True)
+    print(f"缺中文 门(三界)/纲/目 {len(missing)}（已有表不重查）", flush=True)
     cache = load_cache()
     cache.setdefault("wd", {})
     cache.setdefault("inat", {})

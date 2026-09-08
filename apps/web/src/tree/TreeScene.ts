@@ -279,6 +279,36 @@ function decoSize(d: number) {
 }
 
 /**
+ * 根区形态枝的规模预算（rootBushOn 的纯函数镜像）。
+ *
+ * 公式逐字同 rootBushGrow：虚拟 id 种子 + growFiller 枝数式 + SEGS 段数。
+ * growAll 与 rootBushOn 必须共享同一套公式，否则缓冲算少、写几何越界。
+ * tips × CLUMP_N 即叶槽预算（clump 无 extra 时每簇 CLUMP_N 片）。
+ */
+function rootBushSize(nd: TreeNode) {
+  const f = (pid: string, lvl: number, breadth: number, depthLeft: number) => {
+    const seed = strId(pid);
+    const n = Math.max(2, Math.round(breadth * (0.6 + 0.8 * h01(seed, depthLeft, 0, 0))));
+    let segs = 0, branches = 0, tips = 0;
+    for (let j = 0; j < n; j++) {
+      branches++;
+      segs += SEGS[Math.min(SEGS.length - 1, lvl + 2)];
+      if (depthLeft - 1 <= 0) tips++;
+      else {
+        const r = f(`${pid}/f${j}`, lvl + 1, Math.max(2, breadth - 2), depthLeft - 1);
+        segs += r.segs; branches += r.branches; tips += r.tips;
+      }
+    }
+    return { segs, branches, tips };
+  };
+  const breadth = nd.la === "Bacteria" ? 7 : nd.la === "Archaea" ? 5 : 4;
+  /* lvl 基准必须与 rootBushGrow 完全一致：都从界.lvl 起、按 lvl+2 取段数
+     （数学上等价于旧 filler 节点各自的 SEGS[lvl+1]）。差一级少算 308 段，
+     缓冲 undersize、根系末段被静默截断 —— 2026-09-08 实测踩过。 */
+  return f(nd.id, nd.lvl, breadth, 3);
+}
+
+/**
  * 第 depth 层枝的出枝张角（同 v1）。逐层收窄，另加同层内 ±18% 的稳定错落。
  *
  * 深层固定大张角会让每一级都往外炸，枝的方向越分越散，屏幕上就没有一条能从
@@ -660,6 +690,15 @@ export class TreeScene {
       const kids = this.kidsOf(n);
       // 主干的子级是八界，由 growTrunk 按枝位摆，不受 OV_B 约束
       const free = n.lvl < 0 || n.zone === "root";
+      // 根区形态枝预算（rootBushOn 同一套公式，写死参数，与真实子级数无关）。
+      // 必须挂界节点自身 —— 界以下门/纲/目不 walk（总览不画真门纲目），
+      // 预算只能在这里吃。形态枝计「真实枝」口径：旧版 filler 走 walk 的
+      // branches 统计，基线 2124 里含 3 主干 + 206 形态枝。
+      if (seen && n.zone === "root" && n.lvl >= 0) {
+        const b = rootBushSize(n);
+        segs += b.segs; branches += b.branches; tipN += b.tips;
+        leaves += b.tips * this.tipLeaves();
+      }
       // 界拆成几支次主枝，每支各带一套子枝与装饰枝
       const fk = !LAYOUT_OLD && n.parent === this.root && n.zone !== "root"
         ? (CANOPY[n.kingdom] ?? CANOPY_DEF).split
@@ -683,6 +722,8 @@ export class TreeScene {
       }
       const vis = free ? null : this.visKids(depth >= OV_D ? 0 : per, depth + 1);
       kids.forEach((c, j) => {
+        // 根区界节点要进 walk（吃形态枝预算 + 主干段数），其下门/纲/目不 walk
+        if (c.zone === "root" && c.lvl >= 1) return;
         // 拆枝时子级按 j % fk 分到各支上，支内序号才是可见性的依据
         const k = fk > 1 ? Math.floor(j / fk) : j;
         walk(c, depth + 1, seen && (!vis || vis.has(k)));
@@ -1077,6 +1118,15 @@ export class TreeScene {
         this.decoFillOn(nd, g.tA, g.tB, g.tC, L, w1, visN, depth, 0);
       }
     }
+    /* 根系三界（2026-09-08 真数据入库后）：总览不再长真实门纲目 —— 171 个门
+       全进缓冲第一屏就爆了。改由 rootBushOn 用写死参数长形态枝，逐枝复刻
+       当年 growFiller 的样子（同一 id 种子、同一公式），第一屏零改变；
+       真数据只在聚焦视图（fan 态）出现。 */
+    if (isRoot) {
+      this.rootBushOn(nd, L, w1, depth);
+      g.ve = this.vc; g.le = this.lc;
+      return;
+    }
     if (n === 0) { g.ve = this.vc; g.le = this.lc; return; }
 
     /* isBasal 是改造前的几何特例（近地矮丛专用），新版已删除。
@@ -1125,6 +1175,103 @@ export class TreeScene {
       );
     }
     g.ve = this.vc; g.le = this.lc;
+  }
+
+  /**
+   * 根系形态枝（2026-09-08 起取代当年的 filler 假枝丛）。
+   *
+   * 三界门/纲/目已入骨架，但总览不画它们：171 个门全进缓冲，第一屏直接爆，
+   * 违反「总览零改变」拍板。这里用写死参数长形态枝 —— 枝数、抖动、方向、
+   * 长度全部逐字复刻旧 growFiller + grow() isRoot 路径，且种子取自同一套
+   * 虚拟 id（`0:Bacteria/f3/f1` 这类），所以每界枝形与改造前**逐枝一致**。
+   *
+   * 枝纯几何：不对应节点、不可点，顶点写在界节点的 [vs, ve) 区间内，
+   * 收拢 / 焦点隐藏 / fanReset 都连带处理（与 writeFork 同一套机制）。
+   *
+   * 起始 breadth 对应旧 ROOT_KINGDOMS 的 fill：细菌 7 / 古菌 5 / 病毒 4。
+   */
+  private rootBushOn(nd: TreeNode, L: number, w: number, depth: number) {
+    const breadth = nd.la === "Bacteria" ? 7 : nd.la === "Archaea" ? 5 : 4;
+    this.rootBushGrow(nd, nd.id, nd.lvl, nd.sib, breadth, 3, L, w, depth, null);
+  }
+
+  /**
+   * rootBushOn 的递归体：depthLeft 就是旧 growFiller 的剩余层数（3→0）。
+   *
+   * 几何链必须逐枝自持：旧 filler 每个虚拟节点是独立节点，growSelf 各写各的
+   * 枝曲线，子枝沿**自己父枝**的曲线取点分出。这里没有节点，改传上一段
+   * writeFork 的控制点；首层为 null，取界主干曲线（bzAtTree(nd)）。
+   *
+   * 逐枝复刻的完整清单（2026-09-08 修复 3，漏一处第一屏指纹就破）：
+   * - phase / clump 相位用**本层虚拟节点**的 sib（首层=界.sib，子层=j），
+   *   不是恒用界节点的 sib；
+   * - 枝弯 bend 复刻旧 growSelf isRoot 路径：axialOut*(0.2+(depth+1)*0.012)
+   *   + UP*(-0.03-(depth+1)*0.006)，depth+1 是被模拟的 filler 层的 grow depth；
+   * - 末梢叶簇的 sid 基是末梢虚拟节点 id（`${pid}/f${j}`），seed 项与
+   *   idxs.length 项都是 0（旧链路 filler3 各有独立空 leafIdx，每次从 0 起）；
+   * - 末梢层枝色与叶色都要走 COLLECT_UNLIT（旧 filler3 是 lvl=3、got=0 的
+   * 虚拟节点，恒收灰；界节点 lvl=0 不会触发，得手动补）。
+   */
+  private rootBushGrow(
+    nd: TreeNode, pid: string, lvl: number, sib: number, breadth: number, depthLeft: number,
+    L: number, w: number, depth: number, fork: Fork | null,
+  ) {
+    /* 枝数公式逐字照抄旧 growFiller：种子是虚拟 id 的 hash，
+       h01 四参版 c=d=0 时与 treeModel 两参版数学等价。 */
+    const seed = strId(pid);
+    const n = Math.max(2, Math.round(breadth * (0.6 + 0.8 * h01(seed, depthLeft, 0, 0))));
+    const baseCol = this.branchColor(nd, depth + 1);
+    for (let j = 0; j < n; j++) {
+      const col = baseCol.slice() as V3;
+      const t0 = 0.3;
+      const ft = n <= 1 ? (t0 + 0.98) / 2 : t0 + (0.98 - t0) * (j / (n - 1));
+      const base = fork ? bez3(fork.A, fork.B, fork.C, ft) : this.bzAtTree(nd, ft);
+      const bdir = fork ? bezTan(fork.A, fork.B, fork.C, ft) : this.bzTanTree(nd, ft);
+      const [bu, bv] = ortho(bdir);
+      const phase = sib * 1.31 + depth * 0.7;
+      const a = (Math.PI * 2 * j) / n + phase + 0.42 * (h01(seed, depth, j, 7) - 0.5);
+      /* isRoot 旧公式：photo=-0.06、spreadK=1.6、张角随 ft 逐层放开。 */
+      const sp = 0.98 * (1.34 - 0.62 * ft) * 1.6;
+      const perp = add(scl(bu, Math.cos(a)), scl(bv, Math.sin(a)));
+      let d2 = nrm(add(add(scl(bdir, Math.cos(sp)), scl(perp, Math.sin(sp))), scl(UP, -0.06)));
+      /* 根系「压扁」：竖直分量取绝对值再压半，一律朝下。 */
+      d2 = nrm([d2[0], -Math.abs(d2[1]) * 0.5, d2[2]]);
+      const cl = L * 0.72 * (0.86 + 0.28 * (((j * 3) % 4) / 3));
+      /* 枝弯复刻旧 growSelf（isRoot）：水平轴向偏移 + 逐层加深下垂。
+         axialOut 回退分支的取角用本枝序号 j —— 旧链路里这是虚拟节点自己的
+         sib（= 同层第 j 个），不是首层的界.sib。 */
+      const axial = nrm([
+        base[0] || Math.cos(j * 1.7) * 0.3, 0,
+        base[2] || Math.sin(j * 1.7) * 0.3,
+      ]);
+      const bend = add(
+        scl(axial, 0.2 + (depth + 1) * 0.012),
+        scl(UP, -0.03 - (depth + 1) * 0.006),
+      );
+      /* 一段写枝 + 末端叶簇，段数对齐旧 filler 节点的 SEGS[lvl+1]。 */
+      const segs = SEGS[Math.min(SEGS.length - 1, lvl + 2)];
+      if (depthLeft - 1 <= 0) {
+        /* 旧 filler3：lvl=3、got=0 的虚拟节点 → 枝色恒收一层饱和度。 */
+        const gy = col[0] * 0.34 + col[1] * 0.5 + col[2] * 0.16;
+        col[0] = col[0] + (gy - col[0]) * COLLECT_UNLIT;
+        col[1] = col[1] + (gy - col[1]) * COLLECT_UNLIT;
+        col[2] = col[2] + (gy - col[2]) * COLLECT_UNLIT;
+      }
+      const f = this.writeFork(base, d2, cl, bend, w, w * 0.6, col, segs);
+      if (depthLeft - 1 <= 0) {
+        /* 旧链路收尾：filler3 的 tipOn(nd=filler3, seed=0)，clump 的 sid 基
+           是末梢虚拟 id、相位是 filler3.sib=j、leafIdx 每簇从 0 起。 */
+        this.clump(
+          nd, bez3(f.A, f.B, f.C, 1), bezTan(f.A, f.B, f.C, 1), cl, 0, 0, this.G(nd).leafIdx,
+          { sid: strId(`${pid}/f${j}`), sib: j, unlit: true },
+        );
+      } else {
+        this.rootBushGrow(
+          nd, `${pid}/f${j}`, lvl + 1, j, Math.max(2, breadth - 2), depthLeft - 1,
+          cl, w * 0.6, depth + 1, f,
+        );
+      }
+    }
   }
 
   /**
@@ -1194,6 +1341,7 @@ export class TreeScene {
 
   private clump(
     nd: TreeNode, tip: V3, dir: V3, L: number, extra: number, seed: number, idxs: number[],
+    ov?: { sid: number; sib: number; unlit?: boolean },
   ) {
     const total = CLUMP_N + extra;
     const sz = L * LEAF_R;
@@ -1201,12 +1349,13 @@ export class TreeScene {
     const dim = v.zone === "root" ? (v.dead ? 0.35 : 0.5) : v.zone === "basal" ? 0.82 : 1;
     const gy = v.c[0] * 0.34 + v.c[1] * 0.5 + v.c[2] * 0.16;
     // 各簇要不同种子，否则同一根枝上几簇长得一模一样
-    const sid = strId(nd.id) + seed * 7919 + idxs.length * 104729;
+    const sid = ov ? ov.sid : strId(nd.id) + seed * 7919 + idxs.length * 104729;
+    const csib = ov ? ov.sib : nd.sib;
     const [cu, cv] = ortho(dir);
     for (let i = 0; i < total; i++) {
       /* 环上取点（不是球内）：一簇是三圈叶顺着枝端串起来，圈心留空。填实球心
          得到的是不透光的实心球，簇与簇之间就必然有缝。 */
-      const a = GOLD * i + nd.sib + h01(sid, i, 37, 7) * 0.5;
+      const a = GOLD * i + csib + h01(sid, i, 37, 7) * 0.5;
       const rr = L * (CLUMP_R0 + CLUMP_RD * (((i * 7) % 5) / 5));
       const el = CLUMP_EL0 + (i % 3) * CLUMP_ELD;
       const p = add(
@@ -1226,7 +1375,7 @@ export class TreeScene {
       if (dim < 1) {
         cr += (gy - cr) * (1 - dim); cg += (gy - cg) * (1 - dim); cb += (gy - cb) * (1 - dim);
       }
-      if (nd.lvl >= 3 && nd.got === 0) {
+      if (nd.lvl >= 3 && nd.got === 0 || ov?.unlit) {
         cr += (gy - cr) * COLLECT_UNLIT;
         cg += (gy - cg) * COLLECT_UNLIT;
         cb += (gy - cb) * COLLECT_UNLIT;

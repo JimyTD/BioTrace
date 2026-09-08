@@ -12,10 +12,13 @@
  * 「若该阶元没有稳定、通行的中文译名，name_zh 必须为 null，禁止臆造中译」
  * （`apps/api/src/identify/prompt.ts:65`）。这张表遵守同一条原则：
  *
- *   · 界（5）、门（76）—— 全覆盖，都有通行中译
- *   · 纲 / 目 —— 上手填常见类群；其余由 scripts/fill-backbone-zh.py
+ *   · 界（8）、门（树冠五界 76）—— 全覆盖，都有通行中译
+ *     （根系三界 Bacteria / Archaea / Viruses 2026-09-08 入库，见
+ *     docs/wip/物种树-根系三界真数据-设计方案.md）
+ *   · 门（根系三界）/ 纲 / 目 —— 由 scripts/fill-backbone-zh.py
  *     离线配（Wikidata 主源，iNaturalist 补洞）。学名+阶元+界对不上的留空，
- *     界面显示拉丁名，排序会排到后面。
+ *     界面显示拉丁名，排序会排到后面。代号门（UBA10199 类）没有通行中译，
+ *     留空不编造。
  *
  * ── 键的形式 ────────────────────────────────────────────────
  * `"<rank序号>:<拉丁名>"`，与 backbone.json 的 id 一致。
@@ -42,6 +45,10 @@ export const BACKBONE_ZH: Record<string, string> = {
   "0:Fungi": "真菌界",
   "0:Chromista": "色藻界",
   "0:Protozoa": "原生动物界",
+  // 根系三界 2026-09-08 真数据入库（设计方案），中文名从 messages 退役键平移
+  "0:Bacteria": "细菌界",
+  "0:Archaea": "古菌界",
+  "0:Viruses": "病毒界",
 
   // ── 门 · 动物界（34）─────────────────────────────────────
   "1:Chordata": "脊索动物门",
@@ -345,17 +352,57 @@ export const BACKBONE_ZH: Record<string, string> = {
   "3:Ectocarpales": "褐毛藻目",
   "3:Dictyotales": "网地藻目",
   // ── 离线配表开始（Wikidata 主源，iNat 补洞；不覆盖上手填）──
+  // rank 1 · 门
+  "1:Acidobacteriota": "酸杆菌门",
+  "1:Actinobacteriota": "放线菌门",
+  "1:Aquificota": "产水菌门",
+  "1:Bacteroidota": "拟杆菌门",
+  "1:Chlamydiota": "衣原体门",
+  "1:Chloroflexota": "绿弯菌门",
+  "1:Chrysiogenota": "产金菌门",
+  "1:Cyanobacteria": "蓝菌门",
+  "1:Deferribacterota": "脱铁杆菌门",
+  "1:Deinococcota": "奇异球菌门",
+  "1:Desulfobacterota": "脱硫弧菌门",
+  "1:Fibrobacterota": "纤维杆菌门",
+  "1:Firmicutes": "厚壁菌门",
+  "1:Fusobacteriota": "梭杆菌门",
+  "1:Gemmatimonadota": "芽单胞菌门",
+  "1:Halobacteriota": "盐杆菌门",
+  "1:Methanobacteriota": "甲烷杆菌门",
+  "1:Nanoarchaeota": "纳古菌门",
+  "1:Nitrospirota": "硝化螺旋菌门",
+  "1:Planctomycetota": "浮霉菌门",
+  "1:Poribacteria": "海绵杆菌门",
+  "1:Proteobacteria": "变形菌门",
+  "1:Spirochaetota": "螺旋体门",
+  "1:Synergistota": "互养菌门",
+  "1:Thermoplasmatota": "热原体门",
+  "1:Thermoproteota": "热变形菌门",
+  "1:Thermotogota": "热袍菌门",
+  "1:Verrucomicrobiota": "疣微菌门",
   // rank 2 · 纲
   "2:Acantharia": "等辐骨虫纲",
+  "2:Acidimicrobiia": "酸微菌纲",
   "2:Aconoidasida": "无类锥体纲",
+  "2:Actinomycetia": "放线菌纲",
   "2:Agaricostilbomycetes": "伞型束梗孢菌纲",  // iNat
   "2:Allomalorhagida": "异平裂纲",  // iNat
+  "2:Alphaproteobacteria": "α-变形菌纲",
+  "2:Alsuviricetes": "阿尔法超群病毒纲",
+  "2:Amabiliviricetes": "二十病毒纲",
+  "2:Anaerolineae": "厌氧绳菌纲",
   "2:Andreaeopsida": "黑藓纲",  // iNat
   "2:Anthocerotopsida": "角苔纲",  // iNat
+  "2:Aquificae": "产水菌纲",
+  "2:Archaeoglobi": "古丸菌纲",
   "2:Archaeorhizomycetes": "古根菌纲",  // iNat
   "2:Archiacanthocephala": "原棘头虫纲",  // iNat
+  "2:Arfiviricetes": "精氨酸指针病毒纲",
   "2:Arthoniomycetes": "星裂菌纲",  // iNat
   "2:Atractiellomycetes": "小纺锤菌纲",  // iNat
+  "2:Bacilli": "芽孢杆菌纲",
+  "2:Bacteroidia": "拟杆菌纲",
   "2:Bigyromonadea": "双圆单壶菌纲",
   "2:Blastocladiomycetes": "芽枝霉纲",  // iNat
   "2:Bolidophyceae": "迅游藻纲",  // iNat
@@ -363,18 +410,25 @@ export const BACKBONE_ZH: Record<string, string> = {
   "2:Breviatea": "短根虫纲",  // iNat
   "2:Calcarea": "钙质海绵纲",  // iNat
   "2:Caudofoveata": "尾腔纲",  // iNat
+  "2:Caudoviricetes": "有尾噬菌体纲",
   "2:Cephalocarida": "头虾纲",  // iNat
   "2:Cestoda": "多节绦虫纲",  // iNat
   "2:Chlorarachniophyceae": "绿蜘藻纲",
+  "2:Chlorobia": "绿菌纲",
   "2:Chlorodendrophyceae": "四爿藻纲",
+  "2:Chloroflexia": "绿弯菌纲",
   "2:Chlorokybophyceae": "绿方藻纲",  // iNat
   "2:Chromadorea": "色矛纲",  // iNat
+  "2:Chrymotiviricetes": "金巨全病毒纲",
+  "2:Chunqiuviricetes": "春秋病毒纲",
   "2:Classiculomycetes": "舰担菌纲",  // iNat
+  "2:Clostridia": "梭菌纲",
   "2:Coleochaetophyceae": "鞘毛藻纲",  // iNat
   "2:Colpodea": "肾形虫纲",  // iNat
   "2:Compsopogonophyceae": "弯枝藻纲",  // iNat
   "2:Conoidasida": "类锥体纲",
   "2:Copepoda": "桡足纲",
+  "2:Coriobacteriia": "红蝽菌纲",
   "2:Craniata": "髑髅贝纲",  // iNat
   "2:Cristidiscoidea": "核形虫纲",  // iNat
   "2:Cryptophyceae": "隐藻纲",  // iNat
@@ -382,10 +436,13 @@ export const BACKBONE_ZH: Record<string, string> = {
   "2:Cyanidiophyceae": "温泉红藻纲",  // iNat
   "2:Cyclorhagida": "圆裂纲",  // iNat
   "2:Cystobasidiomycetes": "囊担菌纲",  // iNat
+  "2:Deinococci": "异常球菌纲",
+  "2:Desulfobacteria": "脱硫杆状菌纲",
   "2:Dictyochophyceae": "硅鞭藻纲",  // iNat
   "2:Dictyosteliomycetes": "网柄黏菌纲",  // iNat
   "2:Diphyllatea": "胶网虫纲",  // iNat
   "2:Diplonemea": "双丝纲",  // iNat
+  "2:Duplopiviricetes": "双链小双节RNA病毒纲",
   "2:Ellobiopsea": "耳形虫纲",  // iNat
   "2:Endohelea": "内阳虫纲",  // iNat
   "2:Enteropneusta": "肠鳃纲",  // iNat
@@ -396,56 +453,82 @@ export const BACKBONE_ZH: Record<string, string> = {
   "2:Eurotatoria": "真轮虫纲",  // iNat
   "2:Eutardigrada": "真缓步纲",  // iNat
   "2:Exobasidiomycetes": "外担菌纲",  // iNat
+  "2:Faserviricetes": "纤维噬菌体纲",
   "2:Filasterea": "蜷丝球虫纲",
+  "2:Flasuviricetes": "黄病毒纲",
   "2:Geoglossomycetes": "地舌菌纲",
   "2:Glaucophyceae": "灰藻纲",  // iNat
   "2:Globothalamea": "球室纲",  // iNat
   "2:Gordioida": "铁线虫纲",  // iNat
   "2:Gymnolaemata": "裸唇纲",  // iNat
   "2:Gymnostomatea": "裸口虫纲",
+  "2:Halobacteria": "盐杆菌纲",
   "2:Haplomitriopsida": "裸蒴苔纲",  // iNat
+  "2:Herviviricetes": "疱疹病毒纲",
   "2:Heterotardigrada": "异缓步纲",  // iNat
   "2:Heterotrichea": "异毛纲",  // iNat
   "2:Hexactinellida": "六放海绵纲",  // iNat
+  "2:Holophagae": "全噬菌纲",
   "2:Homoscleromorpha": "同骨海绵纲",  // iNat
   "2:Hoplonemertea": "针纽纲",  // iNat
+  "2:Howeltoviricetes": "豪厄尔镇病毒纲",
+  "2:Huolimaviricetes": "凌乱病毒纲",
   "2:Hypotrichea": "下毛纲",
   "2:Ichthyosporea": "鱼孢霉纲",  // iNat
+  "2:Insthoviricetes": "流感病毒纲",
   "2:Karyorelictea": "弃核纲",  // iNat
   "2:Kickxellomycetes": "梳霉纲",
   "2:Kinetofragminophora": "动基片纲",
   "2:Klebsormidiophyceae": "克里藻纲",  // iNat
+  "2:Ktedonobacteria": "纤线杆菌纲",
   "2:Laboulbeniomycetes": "虫囊菌纲",  // iNat
   "2:Labyrinthulea": "盘蜷纲",  // iNat
+  "2:Laserviricetes": "莱塞病毒纲",
   "2:Leiosporocerotopsida": "光孢角苔纲",  // iNat
+  "2:Leviviricetes": "光滑病毒纲",
   "2:Lichinomycetes": "异极衣纲",  // iNat
   "2:Lingulata": "舌形贝纲",  // iNat
+  "2:Magsaviricetes": "马贡埼玉病毒纲",
   "2:Malasseziomycetes": "马拉色菌纲",  // iNat
   "2:Malawimonadea": "马拉维单胞虫纲",
+  "2:Malgrandaviricetes": "小噬菌体纲",
   "2:Mamiellophyceae": "小豆藻纲",  // iNat
+  "2:Maveriviricetes": "奇异转座病毒纲",
   "2:Mediophyceae": "中型硅藻纲",
+  "2:Megaviricetes": "巨病毒纲",
   "2:Merostomata": "肢口纲",  // iNat
   "2:Mesostigmatophyceae": "中斑藻纲",  // iNat
   "2:Mesotardigrada": "中缓步纲",  // iNat
+  "2:Methanobacteria": "甲烷杆菌纲",
+  "2:Methanococci": "甲烷球菌纲",
+  "2:Methanomicrobia": "甲烷微菌纲",
+  "2:Methanopyri": "甲烷火菌纲",
+  "2:Miaviricetes": "孢病毒纲",
   "2:Microbotryomycetes": "微球黑粉菌纲",  // iNat
   "2:Micrognathozoa": "微颚纲",  // iNat
   "2:Microsporea": "微孢菌纲",
+  "2:Milneviricetes": "米尔涅病毒纲",
   "2:Mixiomycetes": "混合菌纲",  // iNat
   "2:Moniliellomycetes": "丛梗孢菌纲",  // iNat
+  "2:Monjiviricetes": "单荆病毒纲",
   "2:Monoblepharidomycetes": "单毛壶菌纲",
   "2:Monogenea": "单殖纲",  // iNat
   "2:Monoplacophora": "单板纲",  // iNat
   "2:Mortierellomycetes": "被孢霉纲",  // iNat
+  "2:Mouviricetes": "松弛病毒纲",
   "2:Myxomycetes": "黏菌纲",  // iNat
   "2:Myxozoa": "黏体动物纲",  // iNat
   "2:Nassophorea": "篮口纲",  // iNat
   "2:Nectonematoida": "游线虫纲",  // iNat
+  "2:Negativicutes": "厚壁菌纲",
   "2:Neocallimastigomycetes": "新丽鞭毛菌纲",
   "2:Neolectomycetes": "粒毛盘菌纲",  // iNat
   "2:Nephroselmidophyceae": "肾爿藻纲",  // iNat
+  "2:Oligoflexia": "寡弯曲菌纲",
   "2:Ostracoda": "介形虫纲",  // iNat
   "2:Palaeacanthocephala": "古棘头虫纲",  // iNat
   "2:Palaeonemertea": "古纽纲",  // iNat
+  "2:Papovaviricetes": "乳多空病毒纲",
   "2:Pararotatoria": "副轮虫纲",  // iNat
   "2:Pauropoda": "少足纲",  // iNat
   "2:Pavlovophyceae": "帕芙藻纲",  // iNat
@@ -462,6 +545,10 @@ export const BACKBONE_ZH: Record<string, string> = {
   "2:Picocystophyceae": "尘囊藻纲",  // iNat
   "2:Pilidiophora": "帽形幼生纲",  // iNat
   "2:Pinguiophyceae": "脂藻纲",  // iNat
+  "2:Pisoniviricetes": "小南嵌套病毒纲",
+  "2:Planctomycetia": "浮霉菌纲",
+  "2:Pokkesviricetes": "痘疹病毒纲",
+  "2:Polintoviricetes": "聚整合转座病毒纲",
   "2:Porphyridiophyceae": "紫球藻纲",  // iNat
   "2:Prasinophyceae": "葱藻纲",  // iNat
   "2:Prostomatea": "前口纲",  // iNat
@@ -470,11 +557,17 @@ export const BACKBONE_ZH: Record<string, string> = {
   "2:Pterobranchia": "羽鳃纲",
   "2:Pycnogonida": "海蛛纲",  // iNat
   "2:Pyramimonadophyceae": "塔胞藻纲",  // iNat
+  "2:Quintoviricetes": "第五病毒纲",
   "2:Remipedia": "桨足纲",  // iNat
+  "2:Repensiviricetes": "复单病毒纲",
+  "2:Resentoviricetes": "呼肠孤病毒纲",
+  "2:Revtraviricetes": "逆转录病毒纲",
   "2:Rhodellophyceae": "红球藻纲",  // iNat
+  "2:Rhodothermia": "红嗜热盐菌纲",
   "2:Rhombozoa": "菱形纲",  // iNat
   "2:Rhynchonellata": "小吻贝纲",  // iNat
   "2:Rostroconchia": "喙壳纲",
+  "2:Rubrobacteria": "红色杆菌纲",
   "2:Rudimicrosporea": "粗糙微孢菌纲",
   "2:Sagittoidea": "箭虫纲",  // iNat
   "2:Scaphopoda": "掘足纲",  // iNat
@@ -482,17 +575,28 @@ export const BACKBONE_ZH: Record<string, string> = {
   "2:Schizosaccharomycetes": "裂殖酵母纲",
   "2:Sipunculidea": "方格星虫纲",
   "2:Solenogastres": "沟腹纲",  // iNat
+  "2:Spirochaetia": "螺旋体纲",
   "2:Staurozoa": "十字水母纲",  // iNat
+  "2:Stelpaviricetes": "星状马铃薯病毒纲",
   "2:Stenolaemata": "窄唇纲",  // iNat
   "2:Stylonematophyceae": "茎丝藻纲",  // iNat
   "2:Symphyla": "综合纲",  // iNat
   "2:Synchromophyceae": "同色藻纲",  // iNat
   "2:Syndinea": "共甲藻纲",  // iNat
+  "2:Synergistia": "互养菌纲",
   "2:Synurophyceae": "黄群藻纲",
   "2:Takakiopsida": "藻藓纲",  // iNat
+  "2:Tectiliviricetes": "盖样病毒纲",
   "2:Telonemea": "网鞭虫纲",  // iNat
   "2:Tentaculata": "触手纲",  // iNat
   "2:Thecomonadea": "鞘单胞虫纲",
+  "2:Thermococci": "热球菌纲",
+  "2:Thermodesulfobacteria": "热脱硫杆菌纲",
+  "2:Thermoleophilia": "嗜热油菌纲",
+  "2:Thermoplasmata": "热原体纲",
+  "2:Thermotogae": "热袍菌纲",
+  "2:Tokiviricetes": "线状病毒纲",
+  "2:Tolucaviricetes": "番黄香病毒纲",
   "2:Trebouxiophyceae": "共球藻纲",  // iNat
   "2:Trematoda": "吸虫纲",  // iNat
   "2:Trepomonadea": "双滴纲",
@@ -502,15 +606,22 @@ export const BACKBONE_ZH: Record<string, string> = {
   "2:Tubothalamea": "管室纲",  // iNat
   "2:Turbellaria": "涡虫纲",
   "2:Variosea": "杂变形虫纲",  // iNat
+  "2:Vidaverviricetes": "维达弗病毒纲",
   "2:Wallemiomycetes": "节担菌纲",  // iNat
   "2:Xylobotryomycetes": "木簇菌纲",  // iNat
   "2:Xylonomycetes": "木菌纲",
+  "2:Yunchangviricetes": "允常病毒纲",
   "2:Zoopagomycetes": "捕虫霉纲",  // iNat
   "2:Zygnematophyceae": "接合藻纲",  // iNat
   "2:Zygomycetes": "接合菌纲",
   // rank 3 · 目
+  "3:Abditibacteriales": "遥远杆状菌目",
   "3:Abrothallales": "纤柔菌目",  // iNat
   "3:Acarosporales": "微孢衣目",  // iNat
+  "3:Acholeplasmatales": "无胆甾原体目",
+  "3:Acidimicrobiales": "酸微菌目",
+  "3:Acidithiobacillales": "酸硫杆菌目",
+  "3:Acidobacteriales": "酸杆菌目",
   "3:Acoela": "无肠目",  // iNat
   "3:Aconchulinida": "无壳目",
   "3:Acorales": "菖蒲目",  // iNat
@@ -519,6 +630,7 @@ export const BACKBONE_ZH: Record<string, string> = {
   "3:Acrosymphytales": "顶融藻目",  // iNat
   "3:Actiniaria": "海葵目",  // iNat
   "3:Actiniscales": "阿克丁藻目",
+  "3:Actinomycetales": "放线菌目",
   "3:Actinophryida": "太阳虫目",
   "3:Acytosteliales": "管柄菌目",  // iNat
   "3:Adapedonta": "贫齿蛤目",  // iNat
@@ -532,8 +644,10 @@ export const BACKBONE_ZH: Record<string, string> = {
   "3:Akentrogonida": "无刺胞幼体目",
   "3:Albuginales": "白锈菌目",  // iNat
   "3:Albuliformes": "北梭鱼目",  // iNat
+  "3:Algavirales": "藻类病毒目",
   "3:Alismatales": "泽泻目",  // iNat
   "3:Allogromiida": "异量杆虫目",  // iNat
+  "3:Amarillovirales": "黄热病毒目",
   "3:Amblypygi": "无鞭目",  // iNat
   "3:Amborellales": "无油樟目",  // iNat
   "3:Amiiformes": "弓鳍鱼目",  // iNat
@@ -546,6 +660,7 @@ export const BACKBONE_ZH: Record<string, string> = {
   "3:Amphipoda": "端足目",  // iNat
   "3:Amphisphaeriales": "圆孔壳目",  // iNat
   "3:Amylocorticiales": "淀粉伏革菌目",  // iNat
+  "3:Anaerolineales": "厌氧绳菌目",
   "3:Anaspidacea": "山虾目",  // iNat
   "3:Anaulales": "背沟藻目",
   "3:Andreaeales": "黑藓目",  // iNat
@@ -565,11 +680,13 @@ export const BACKBONE_ZH: Record<string, string> = {
   "3:Apterygiformes": "无翼目",  // iNat
   "3:Apusomonadida": "无根单胞虫目",
   "3:Apygophora": "无肛目",
+  "3:Aquificales": "产水菌目",
   "3:Aquifoliales": "冬青目",  // iNat
   "3:Arachnomycetales": "蜘蛛菌目",
   "3:Araeolaimida": "薄咽目",  // iNat
   "3:Arbacioida": "皇冠海胆目",  // iNat
   "3:Arcellinida": "表壳目",  // iNat
+  "3:Archaeoglobales": "古丸菌目",
   "3:Archaeognatha": "石蛃目",  // iNat
   "3:Archaeorhizomycetales": "古根菌目",
   "3:Archaeosporales": "原囊霉目",  // iNat
@@ -583,9 +700,11 @@ export const BACKBONE_ZH: Record<string, string> = {
   "3:Arthoniales": "星裂菌目",  // iNat
   "3:Arthracanthida": "节棘目",
   "3:Arthrotardigrada": "节水熊虫目",  // iNat
+  "3:Articulavirales": "分节段病毒目",
   "3:Asaphida": "栉虫目",  // iNat
   "3:Ascosphaerales": "囊球菌目",
   "3:Asellariales": "内孢毛霉目",
+  "3:Asfuvirales": "阿福病毒目",
   "3:Aspidodiadematoida": "针冠海胆目",  // iNat
   "3:Aspidogastrida": "楯腹目",
   "3:Aspidosiphoniformes": "盾管星虫目",
@@ -603,18 +722,25 @@ export const BACKBONE_ZH: Record<string, string> = {
   "3:Aulopiformes": "仙女鱼目",  // iNat
   "3:Austrobaileyales": "木兰藤目",  // iNat
   "3:Axinellida": "小轴海绵目",  // iNat
+  "3:Bacillales": "芽孢杆菌目",
   "3:Bacillariales": "杆状藻目",  // iNat
+  "3:Bacteriovoracales": "噬菌弧菌目",
+  "3:Bacteroidales": "拟杆菌目",
   "3:Baeomycetales": "羊角衣目",  // iNat
   "3:Balbianiales": "巴尔比亚藻目",  // iNat
   "3:Balliales": "巴利亚藻目",  // iNat
   "3:Bangiales": "红毛菜目",  // iNat
+  "3:Baphyvirales": "硅藻病毒目",
   "3:Bartramiales": "珠藓目",  // iNat
   "3:Basidiobolales": "蛙粪霉目",  // iNat
   "3:Bathynellacea": "地虾目",  // iNat
   "3:Bathyteuthida": "深海枪鱿目",  // iNat
   "3:Batrachoidiformes": "蟾鱼目",  // iNat
   "3:Batrachospermales": "串珠藻目",  // iNat
+  "3:Bdellovibrionales": "蛭弧菌目",
+  "3:Beggiatoales": "贝日阿托氏菌目",
   "3:Belemnitida": "箭石目",
+  "3:Belfryvirales": "塔钟病毒目",
   "3:Berberidopsidales": "红珊藤目",  // iNat
   "3:Beroida": "瓜水母目",  // iNat
   "3:Beryciformes": "金眼鲷目",  // iNat
@@ -624,6 +750,7 @@ export const BACKBONE_ZH: Record<string, string> = {
   "3:Blasiales": "壶苞苔目",  // iNat
   "3:Blastocladiales": "芽枝霉目",  // iNat
   "3:Blastodiniales": "囊沟藻目",  // iNat
+  "3:Blubervirales": "布隆伯病毒目",
   "3:Bochusacea": "博初目",
   "3:Bodonida": "波豆虫目",
   "3:Boliniales": "团壳菌目",  // iNat
@@ -635,6 +762,7 @@ export const BACKBONE_ZH: Record<string, string> = {
   "3:Botrydiales": "气球藻目",  // iNat
   "3:Botryosphaeriales": "葡萄座腔菌目",  // iNat
   "3:Branchiobdellida": "蛭蚓目",
+  "3:Brevinematales": "短螺旋体目",
   "3:Brisingida": "项链海星目",  // iNat
   "3:Bruniales": "绒球花目",  // iNat
   "3:Bryales": "真藓目",  // iNat
@@ -642,15 +770,18 @@ export const BACKBONE_ZH: Record<string, string> = {
   "3:Bryoxiphiales": "虾藓目",
   "3:Bubarida": "布巴海绵目",  // iNat
   "3:Bucerotiformes": "犀鸟目",  // iNat
+  "3:Burkholderiales": "伯克氏菌目",
   "3:Bursovaginoidea": "囊道目",  // iNat
   "3:Buxales": "黄杨目",  // iNat
   "3:Buxbaumiales": "烟杆藓目",  // iNat
   "3:Calanoida": "哲水蚤目",  // iNat
+  "3:Caldilineales": "暖绳菌目",
   "3:Caliciales": "粉衣目",  // iNat
   "3:Callipodida": "美肢马陆目",  // iNat
   "3:Calobryales": "裸蒴苔目",  // iNat
   "3:Calosphaeriales": "美球菌目",  // iNat
   "3:Camarodonta": "拱齿目",  // iNat
+  "3:Campylobacterales": "弯曲菌目",
   "3:Candelariales": "黄茶渍目",  // iNat
   "3:Canellales": "白樟目",  // iNat
   "3:Capnodiales": "煤炱目",  // iNat
@@ -658,6 +789,7 @@ export const BACKBONE_ZH: Record<string, string> = {
   "3:Capsalidea": "分室目",
   "3:Carcharhiniformes": "真鲨目",  // iNat
   "3:Cardiida": "鸟蛤目",  // iNat
+  "3:Cardiobacteriales": "心杆菌目",
   "3:Carditida": "心蛤目",  // iNat
   "3:Cariamiformes": "叫鹤目",  // iNat
   "3:Carterinida": "卡特虫目",
@@ -665,7 +797,9 @@ export const BACKBONE_ZH: Record<string, string> = {
   "3:Caryophyllidea": "鲤蠢目",
   "3:Casuariiformes": "鹤鸵目",  // iNat
   "3:Catoscopiales": "垂蒴藓目",  // iNat
+  "3:Caudovirales": "有尾噬菌体目",
   "3:Caulerpales": "蕨藻目",
+  "3:Caulobacterales": "柄杆菌目",
   "3:Celastrales": "卫矛目",  // iNat
   "3:Centrales": "中心硅藻目",
   "3:Centrohelida": "中阳虫目",  // iNat
@@ -693,11 +827,14 @@ export const BACKBONE_ZH: Record<string, string> = {
   "3:Chimaeriformes": "银鲛目",  // iNat
   "3:Chirodropida": "箱形水母目",  // iNat
   "3:Chitonida": "石鳖目",  // iNat
+  "3:Chitovirales": "束衣病毒目",
+  "3:Chlamydiales": "衣原体目",
   "3:Chlamydodontida": "齿管目",  // iNat
   "3:Chlamydomonadales": "衣藻目",  // iNat
   "3:Chloranthales": "金粟兰目",  // iNat
   "3:Chlorellales": "小球藻目",  // iNat
   "3:Chlorodendrales": "四爿藻目",  // iNat
+  "3:Chloroflexales": "绿弯菌目",
   "3:Chlorokybales": "绿方藻目",  // iNat
   "3:Choanoflagellida": "颌鞭目",
   "3:Chondrillida": "砂皮海绵目",  // iNat
@@ -706,18 +843,21 @@ export const BACKBONE_ZH: Record<string, string> = {
   "3:Chordeumatida": "泡马陆目",  // iNat
   "3:Choreotrichida": "环毛目",  // iNat
   "3:Chromadorida": "色矛目",  // iNat
+  "3:Chromatiales": "着色菌目",
   "3:Chromulinales": "色金藻目",  // iNat
   "3:Chrysosphaerales": "金球藻目",
   "3:Chytridiales": "壶菌目",  // iNat
   "3:Chytridiopsida": "壶双茎菌目",
   "3:Cidaroida": "头帕海胆目",  // iNat
   "3:Cingulata": "有甲目",  // iNat
+  "3:Cirlivirales": "圆环病毒目",
   "3:Cladochytriales": "歧壶菌目",
   "3:Cladophorales": "刚毛藻目",  // iNat
   "3:Classiculales": "舰担菌目",  // iNat
   "3:Clathrinida": "篓海绵目",  // iNat
   "3:Climacospheniales": "梯楔藻目",
   "3:Clionaida": "穿贝海绵目",  // iNat
+  "3:Clostridiales": "梭菌目",
   "3:Clymeniida": "海神石目",
   "3:Clypeasteroida": "楯海胆目",  // iNat
   "3:Coccolithales": "球石藻目",  // iNat
@@ -738,6 +878,7 @@ export const BACKBONE_ZH: Record<string, string> = {
   "3:Corallinales": "珊瑚藻目",  // iNat
   "3:Cordanales": "暗双孢目",
   "3:Corethrales": "棘冠藻目",
+  "3:Coriobacteriales": "红蝽菌目",
   "3:Cornales": "山茱萸目",  // iNat
   "3:Coronatae": "冠水母目",  // iNat
   "3:Coronophorales": "冠囊菌目",  // iNat
@@ -747,8 +888,10 @@ export const BACKBONE_ZH: Record<string, string> = {
   "3:Coscinodiscales": "圆筛藻目",  // iNat
   "3:Craniida": "髑髅贝目",  // iNat
   "3:Craterostigmomorpha": "杯蜈蚣科",  // iNat
+  "3:Cremevirales": "CRESS宏病毒目",
   "3:Cribrariales": "筛菌目",  // iNat
   "3:Crossosomatales": "缨子木目",  // iNat
+  "3:Cryppavirales": "板栗疫病真菌病毒菌目",
   "3:Cryptomonadales": "隐鞭藻目",  // iNat
   "3:Cryptomycocolacales": "隐团菌目",  // iNat
   "3:Cryptonemiales": "海罗目",
@@ -758,6 +901,7 @@ export const BACKBONE_ZH: Record<string, string> = {
   "3:Cumacea": "涟虫目",  // iNat
   "3:Cutleriales": "马鞭藻目",
   "3:Cyanidiales": "温泉红藻目",  // iNat
+  "3:Cyanobacteriales": "蓝菌目",
   "3:Cyatheales": "桫椤目",  // iNat
   "3:Cycadales": "苏铁目",  // iNat
   "3:Cycloneritida": "环蜑螺目",  // iNat
@@ -772,11 +916,13 @@ export const BACKBONE_ZH: Record<string, string> = {
   "3:Cystobasidiales": "囊担菌目",  // iNat
   "3:Cystofilobasidiales": "囊丝担菌目",  // iNat
   "3:Cystoporida": "胞孔目",
+  "3:Cytophagales": "噬纤维菌目",
   "3:Cyttariales": "瘿果盘菌目",
   "3:Dacrymycetales": "花耳目",  // iNat
   "3:Dactylogyridea": "指环目",
   "3:Dasycladales": "绒枝藻目",  // iNat
   "3:Dasyuromorphia": "袋鼬目",  // iNat
+  "3:Deinococcales": "奇异球菌目",
   "3:Dendroceratida": "枝角海绵目",  // iNat
   "3:Dendrocerotales": "树角苔目",  // iNat
   "3:Dendrochirotida": "枝手目",  // iNat
@@ -788,6 +934,11 @@ export const BACKBONE_ZH: Record<string, string> = {
   "3:Desmidiales": "鼓藻目",
   "3:Desmodorida": "链环目",  // iNat
   "3:Desmoscolecida": "带矛目",  // iNat
+  "3:Desulfobacterales": "脱硫杆菌目",
+  "3:Desulfovibrionales": "脱硫弧菌目",
+  "3:Desulfurellales": "硫还原菌目",
+  "3:Desulfurobacteriales": "硫还原小杆菌目",
+  "3:Desulfuromonadales": "除硫单胞菌目",
   "3:Diadematoida": "冠海胆目",  // iNat
   "3:Diaphanopterodea": "透翅目",
   "3:Diaporthales": "间座壳目",  // iNat
@@ -820,6 +971,7 @@ export const BACKBONE_ZH: Record<string, string> = {
   "3:Doliolida": "海樽目",  // iNat
   "3:Dorylaimida": "矛线目",  // iNat
   "3:Dothideales": "座囊菌目",  // iNat
+  "3:Durnavirales": "双链RNA病毒目",
   "3:Dyfrolomycetales": "大圆盾菌目",
   "3:Dysteriida": "偏体目",  // iNat
   "3:Ebriida": "艾鞭藻目",
@@ -840,6 +992,7 @@ export const BACKBONE_ZH: Record<string, string> = {
   "3:Encalyptales": "大帽藓目",  // iNat
   "3:Endogonales": "内生菌目",  // iNat
   "3:Enoplida": "刺嘴目",  // iNat
+  "3:Enterobacterales": "肠杆菌目",
   "3:Entomobryomorpha": "长角跳虫目",  // iNat
   "3:Entomophthorales": "虫霉目",  // iNat
   "3:Entorrhizales": "根肿黑粉菌目",  // iNat
@@ -853,6 +1006,7 @@ export const BACKBONE_ZH: Record<string, string> = {
   "3:Escalloniales": "南鼠刺目",  // iNat
   "3:Esociformes": "狗鱼目",
   "3:Ethmodiscales": "筛盘藻目",
+  "3:Eubacteriales": "真细菌目",
   "3:Eucoccidiorida": "真球虫目",  // iNat
   "3:Euglenales": "裸藻目",  // iNat
   "3:Eunicida": "矶沙蚕目",  // iNat
@@ -864,11 +1018,13 @@ export const BACKBONE_ZH: Record<string, string> = {
   "3:Eurypygiformes": "日𫛚目",  // iNat
   "3:Eustigmatales": "大眼藻目",
   "3:Eutreptiida": "双鞭藻目",
+  "3:Euzebyales": "尤泽比氏菌目",
   "3:Exobasidiales": "外担菌目",  // iNat
   "3:Fecampiida": "费康涡虫目",  // iNat
   "3:Fenestrida": "窗孔目",
   "3:Filobasidiales": "丝担菌目",
   "3:Filospermoidea": "丝精目",  // iNat
+  "3:Flavobacteriales": "黄杆菌目",
   "3:Florenciellales": "佛罗伦藻目",
   "3:Flosculariaceae": "簇轮虫目",
   "3:Forcipulatida": "钳棘目",  // iNat
@@ -876,6 +1032,7 @@ export const BACKBONE_ZH: Record<string, string> = {
   "3:Fragilariales": "脆杆藻目",  // iNat
   "3:Franziozymales": "弗朗茨酵母目",
   "3:Funariales": "葫芦藓目",  // iNat
+  "3:Fusobacteriales": "梭杆菌目",
   "3:Fusulinida": "䗴目",
   "3:Gadilida": "梭角贝目",  // iNat
   "3:Galeommatida": "鼬眼蛤目",  // iNat
@@ -891,7 +1048,9 @@ export const BACKBONE_ZH: Record<string, string> = {
   "3:Geoglossales": "地舌菌目",  // iNat
   "3:Geophilomorpha": "地蜈蚣目",  // iNat
   "3:Georgefischeriales": "乔氏黑粉菌目",  // iNat
+  "3:Geplafuvirales": "双植病毒目",
   "3:Geraniales": "牻牛儿苗目",  // iNat
+  "3:Ghabrivirales": "加布里埃尔病毒目",
   "3:Gigantorhynchida": "巨吻目",
   "3:Gigartinales": "杉藻目",  // iNat
   "3:Gigaspermales": "大蒴藓目",  // iNat
@@ -913,6 +1072,7 @@ export const BACKBONE_ZH: Record<string, string> = {
   "3:Gonorynchiformes": "鼠𬶮目",  // iNat
   "3:Gonyaulacales": "膝沟藻目",  // iNat
   "3:Gordioidea": "铁线虫目",  // iNat
+  "3:Goujianvirales": "勾践病毒目",
   "3:Gracilariales": "江蓠目",  // iNat
   "3:Graphidales": "文字衣目",
   "3:Grimmiales": "紫萼藓目",  // iNat
@@ -926,7 +1086,11 @@ export const BACKBONE_ZH: Record<string, string> = {
   "3:Gyrocotylidea": "旋缘目",
   "3:Gyrodactylidea": "三代虫目",
   "3:Haemospororida": "血孢子虫目",  // iNat
+  "3:Halanaerobiales": "盐厌氧菌目",
+  "3:Halobacteriales": "盐杆菌目",
   "3:Halocyprida": "海介虫目",  // iNat
+  "3:Halopanivirales": "西班牙盐盒菌病毒目",
+  "3:Haloruvirales": "盐沼病毒目",
   "3:Halosphaeriales": "海壳菌目",
   "3:Halteriida": "弹跳虫目",
   "3:Halymeniales": "海膜目",  // iNat
@@ -942,6 +1106,8 @@ export const BACKBONE_ZH: Record<string, string> = {
   "3:Helicobasidiales": "卷担子菌目",  // iNat
   "3:Helotiales": "柔膜菌目",  // iNat
   "3:Hemiaulales": "半管藻目",  // iNat
+  "3:Hepelivirales": "戊肝病毒目",
+  "3:Herpesvirales": "疱疹病毒目",
   "3:Heterodontiformes": "虎鲨目",  // iNat
   "3:Heterogastridiales": "异腹菌目",
   "3:Heterogloeales": "异囊藻目",
@@ -953,6 +1119,7 @@ export const BACKBONE_ZH: Record<string, string> = {
   "3:Hildenbrandiales": "胭脂藻目",  // iNat
   "3:Holasteroida": "全星海胆目",  // iNat
   "3:Holectypoida": "全雕海胆目",
+  "3:Holosporales": "全孢菌目",
   "3:Holothuriida": "海参目",  // iNat
   "3:Holothyrida": "巨螨目",  // iNat
   "3:Holtermanniales": "胶珊瑚菌目",  // iNat
@@ -972,6 +1139,7 @@ export const BACKBONE_ZH: Record<string, string> = {
   "3:Hysteriales": "纵裂菌目",  // iNat
   "3:Icacinales": "茶茱萸目",  // iNat
   "3:Idiosepida": "微鳍乌贼目",  // iNat
+  "3:Imitervirales": "模拟病毒目",
   "3:Involutinida": "包旋虫目",
   "3:Ishigeales": "铁钉菜目",
   "3:Isochrysidales": "等鞭藻目",
@@ -981,16 +1149,23 @@ export const BACKBONE_ZH: Record<string, string> = {
   "3:Ixodida": "蜱目",  // iNat
   "3:Jahnulales": "梭单隔孢菌目",
   "3:Jakobida": "雅各巴虫目",
+  "3:Jiangellales": "姜氏菌目",
+  "3:Jingchuvirales": "荆楚病毒目",
   "3:Julida": "姬马陆目",  // iNat
   "3:Jungermanniales": "叶苔目",  // iNat
+  "3:Kalamavirales": "卡拉马病毒目",
   "3:Kentrogonida": "有刺胞幼体目",
   "3:Kentrorhagata": "刺裂目",  // iNat
   "3:Kickxellales": "梳霉目",  // iNat
   "3:Kiitrichida": "凯毛目",  // iNat
+  "3:Kiloniellales": "基尔菌目",
   "3:Klebsormidiales": "克里藻目",  // iNat
   "3:Koralionastetales": "紧塞菌目",
+  "3:Ktedonobacterales": "纤线杆菌目",
   "3:Laboulbeniales": "虫囊菌目",  // iNat
   "3:Labyrinthulida": "迷宫虫目",  // iNat
+  "3:Lachnospirales": "毛螺菌目",
+  "3:Lactobacillales": "乳杆菌目",
   "3:Lagenida": "瓶虫目",
   "3:Lagenismatales": "链油壶菌目",
   "3:Lahmiales": "拉姆衣盘目",
@@ -1000,6 +1175,7 @@ export const BACKBONE_ZH: Record<string, string> = {
   "3:Laurida": "树囊虱目",  // iNat
   "3:Lecanicephalidea": "盘头目",
   "3:Lecideales": "网衣目",  // iNat
+  "3:Legionellales": "军团菌目",
   "3:Leiosporocerotales": "光孢角苔目",  // iNat
   "3:Leotiales": "锤舌菌目",  // iNat
   "3:Lepetellida": "小笠螺目",  // iNat
@@ -1018,6 +1194,7 @@ export const BACKBONE_ZH: Record<string, string> = {
   "3:Lichinales": "异极衣目",  // iNat
   "3:Licmophorales": "楔形藻目",  // iNat
   "3:Licnophorida": "丽壳目",  // iNat
+  "3:Ligamenvirales": "细带病毒目",
   "3:Limida": "锉蛤目",  // iNat
   "3:Limnognathida": "颚虫目",  // iNat
   "3:Limnomedusae": "淡水水母目",  // iNat
@@ -1049,6 +1226,7 @@ export const BACKBONE_ZH: Record<string, string> = {
   "3:Mantophasmatodea": "螳䗛目",
   "3:Marattiales": "合囊蕨目",  // iNat
   "3:Marchantiales": "地钱目",  // iNat
+  "3:Martellivirales": "马特利病毒目",
   "3:Mastogloiales": "曲壳藻目",  // iNat
   "3:Mazocraeidea": "钩铗虫目",
   "3:Mecoptera": "长翅目",  // iNat
@@ -1067,6 +1245,13 @@ export const BACKBONE_ZH: Record<string, string> = {
   "3:Mesostigmata": "中气门目",  // iNat
   "3:Mesostigmatales": "中斑藻目",  // iNat
   "3:Metchnikovellida": "小米奇里科夫菌目",
+  "3:Methanobacteriales": "甲烷杆菌目",
+  "3:Methanococcales": "甲烷球菌目",
+  "3:Methanomassiliicoccales": "甲烷马赛球菌目",
+  "3:Methanomicrobiales": "甲烷微菌目",
+  "3:Methanopyrales": "甲烷火菌目",
+  "3:Methanosarcinales": "甲烷八叠球菌目",
+  "3:Methylococcales": "甲基球菌目",
   "3:Metteniusales": "水螅花目",  // iNat
   "3:Metzgeriales": "叉苔目",  // iNat
   "3:Microascales": "小囊菌目",  // iNat
@@ -1077,6 +1262,7 @@ export const BACKBONE_ZH: Record<string, string> = {
   "3:Microthamniales": "小丛藻目",  // iNat
   "3:Microthyriales": "小盾壳目",
   "3:Miliolida": "粟虫目",  // iNat
+  "3:Mindivirales": "明迪奇病毒目",
   "3:Mischococcales": "杂球藻目",  // iNat
   "3:Misophrioida": "异水蚤目",  // iNat
   "3:Mixiales": "混合菌目",  // iNat
@@ -1086,16 +1272,21 @@ export const BACKBONE_ZH: Record<string, string> = {
   "3:Monoblastiales": "单芽菌目",  // iNat
   "3:Monoblepharidales": "单毛菌目",  // iNat
   "3:Mononchida": "单齿目",  // iNat
+  "3:Mononegavirales": "单股反链病毒目",
   "3:Monostilifera": "单针目",
   "3:Monotremata": "单孔目",  // iNat
   "3:Monstrilloida": "怪水蚤目",  // iNat
   "3:Mormonilloida": "摩门水蚤目",  // iNat
   "3:Mortierellales": "被孢霉目",  // iNat
   "3:Mucorales": "毛霉菌目",  // iNat
+  "3:Mulpavirales": "多基因病毒目",
   "3:Multivalvulida": "多壳目",  // iNat
   "3:Musophagiformes": "蕉鹃目",  // iNat
+  "3:Muvirales": "穆病毒目",
   "3:Myalinida": "肌束蛤目",
+  "3:Mycobacteriales": "分枝杆菌目",
   "3:Mycocaliciales": "粉菌衣目",  // iNat
+  "3:Mycoplasmatales": "支原体目",
   "3:Mycosphaerellales": "球腔菌目",  // iNat
   "3:Myctophiformes": "灯笼鱼目",  // iNat
   "3:Myida": "海螂目",  // iNat
@@ -1109,12 +1300,14 @@ export const BACKBONE_ZH: Record<string, string> = {
   "3:Mytilida": "贻贝目",  // iNat
   "3:Mytilinidiales": "贝壳菌目",
   "3:Myxiniformes": "盲鳗目",  // iNat
+  "3:Myxococcales": "黏球菌目",
   "3:Nanaloricida": "小铠甲虫目",  // iNat
   "3:Naohideales": "尚秀花耳目",  // iNat
   "3:Narcomedusae": "刚水母目",  // iNat
   "3:Nassellaria": "罩笼虫目",  // iNat
   "3:Nassulida": "篮口目",  // iNat
   "3:Natipusillales": "那提普斯壳目",
+  "3:Natranaerobiales": "盐碱厌氧菌目",
   "3:Nautilida": "鹦鹉螺目",  // iNat
   "3:Naviculales": "舟形藻目",  // iNat
   "3:Nectiopoda": "泳足目",  // iNat
@@ -1130,9 +1323,14 @@ export const BACKBONE_ZH: Record<string, string> = {
   "3:Neomphalida": "新脐螺目",  // iNat
   "3:Neopilinida": "新蝶贝目",  // iNat
   "3:Nephroselmidales": "肾爿藻目",  // iNat
+  "3:Nevskiales": "涅瓦菌目",
+  "3:Nidovirales": "嵌套病毒目",
   "3:Nippotaeniidea": "日带目",
+  "3:Nitriliruptorales": "腈基降解菌目",
   "3:Noctilucales": "夜光藻目",  // iNat
+  "3:Nodamuvirales": "野田村病毒目",
   "3:Nodosariida": "节房虫目",  // iNat
+  "3:Norzivirales": "诺津噬菌体目",
   "3:Notacanthiformes": "背棘鱼目",  // iNat
   "3:Notomyotida": "背肌海星目",
   "3:Notoryctemorphia": "袋鼹目",  // iNat
@@ -1151,6 +1349,7 @@ export const BACKBONE_ZH: Record<string, string> = {
   "3:Oedogoniales": "鞘藻目",  // iNat
   "3:Oegopsida": "开眼目",  // iNat
   "3:Oligacanthorhynchida": "少棘目",
+  "3:Oligoflexales": "寡弯曲菌目",
   "3:Olpidiales": "油壶菌目",  // iNat
   "3:Olpidiopsidales": "拟油壶菌目",
   "3:Oltmannsiellopsidales": "奥尔特藻目",
@@ -1167,16 +1366,21 @@ export const BACKBONE_ZH: Record<string, string> = {
   "3:Opiliones": "盲蛛目",  // iNat
   "3:Opisthocomiformes": "麝雉目",  // iNat
   "3:Opisthopora": "后孔寡毛目",
+  "3:Opitutales": "丰祐菌目",
   "3:Orbiliales": "圆盘菌目",  // iNat
   "3:Orectolobiformes": "须鲨目",  // iNat
+  "3:Ortervirales": "逆转录病毒目",
   "3:Orthocerida": "直角石目",
   "3:Orthodontiales": "直齿藓目",
+  "3:Orthopolintovirales": "正聚整合转座子病毒目",
   "3:Orthotrichales": "木灵藓目",  // iNat
+  "3:Oscillospirales": "颤螺旋菌目",
   "3:Osmeriformes": "胡瓜鱼目",  // iNat
   "3:Osmundales": "紫萁目",  // iNat
   "3:Ostreida": "牡蛎目",  // iNat
   "3:Ostropales": "厚顶盘菌目",  // iNat
   "3:Otidiformes": "鸨形目",  // iNat
+  "3:Ourlivirales": "孢病毒目",
   "3:Oxalidales": "酢浆草目",  // iNat
   "3:Oxymonadida": "锐滴虫目",
   "3:Oxyrrhinales": "尖尾藻目",  // iNat
@@ -1194,6 +1398,7 @@ export const BACKBONE_ZH: Record<string, string> = {
   "3:Paraglomerales": "类球囊霉目",  // iNat
   "3:Paraliales": "帕拉藻目",
   "3:Parathuramminida": "拟砂户虫目",
+  "3:Patatavirales": "马铃薯病毒目",
   "3:Patellariales": "胶皿菌目",  // iNat
   "3:Paucituberculata": "鼩负鼠目",  // iNat
   "3:Paxillosida": "桩海星目",  // iNat
@@ -1202,6 +1407,7 @@ export const BACKBONE_ZH: Record<string, string> = {
   "3:Pedinoida": "平海胆目",  // iNat
   "3:Pedinomonadales": "平藻目",  // iNat
   "3:Pedunculata": "有柄目",
+  "3:Pelagibacterales": "远洋杆菌目",
   "3:Pelagomonadales": "海胞藻目",
   "3:Pelliales": "溪苔目",  // iNat
   "3:Peltigerales": "地卷目",  // iNat
@@ -1217,6 +1423,7 @@ export const BACKBONE_ZH: Record<string, string> = {
   "3:Persiculida": "拟刺参目",  // iNat
   "3:Pertusariales": "鸡皮衣目",  // iNat
   "3:Petalomonadida": "瓣胞藻目",
+  "3:Petitvirales": "微噬菌体目",
   "3:Petromyzontiformes": "七鳃鳗目",  // iNat
   "3:Petrosaviales": "无叶莲目",  // iNat
   "3:Peyssonneliales": "耳壳藻目",  // iNat
@@ -1238,11 +1445,15 @@ export const BACKBONE_ZH: Record<string, string> = {
   "3:Phymosomatoida": "疣海胆目",
   "3:Physarales": "绒泡菌目",  // iNat
   "3:Phytodiniales": "植甲藻目",  // iNat
+  "3:Piccovirales": "小病毒目",
   "3:Picocystales": "尘囊藻目",  // iNat
+  "3:Picornavirales": "小核糖病毒目",
   "3:Picramniales": "美洲苦木目",  // iNat
   "3:Pihiellales": "纽扣藻目",  // iNat
   "3:Pilosa": "披毛目",  // iNat
+  "3:Pimascovirales": "阔虹马囊病毒目",
   "3:Piperales": "胡椒目",  // iNat
+  "3:Pirellulales": "小梨形菌目",
   "3:Piroplasmorida": "梨形虫目",
   "3:Plagiorchiida": "斜睾目",
   "3:Plasmodiophorida": "原质目",  // iNat
@@ -1265,6 +1476,7 @@ export const BACKBONE_ZH: Record<string, string> = {
   "3:Podocopida": "尾肢目",  // iNat
   "3:Poduromorpha": "原跳虫目",  // iNat
   "3:Poecilosclerida": "异骨海绵目",  // iNat
+  "3:Polivirales": "聚样病毒目",
   "3:Polyarthra": "小管水蚤目",  // iNat
   "3:Polydesmida": "带马陆目",  // iNat
   "3:Polymastiida": "多鞭海绵目",  // iNat
@@ -1284,11 +1496,14 @@ export const BACKBONE_ZH: Record<string, string> = {
   "3:Prasinococcales": "葱绿藻目",  // iNat
   "3:Prasiolales": "溪菜目",  // iNat
   "3:Priapulomorpha": "曳鳃目",  // iNat
+  "3:Priklausovirales": "依赖病毒目",
+  "3:Primavirales": "第一病毒目",
   "3:Pristiophoriformes": "锯鲨目",  // iNat
   "3:Procellariiformes": "鹱形目",  // iNat
   "3:Proetida": "砑头虫目",  // iNat
   "3:Prolecanitida": "前碟菊石目",
   "3:Prolecithophora": "原卵黄目",  // iNat
+  "3:Propionibacteriales": "丙酸杆菌目",
   "3:Prorhynchida": "卵黄上皮目",  // iNat
   "3:Prorocentrales": "原甲藻目",  // iNat
   "3:Prorodontida": "前管虫目",  // iNat
@@ -1301,6 +1516,8 @@ export const BACKBONE_ZH: Record<string, string> = {
   "3:Protosteliales": "原柱黏菌目",  // iNat
   "3:Protura": "原尾目",  // iNat
   "3:Prymnesiales": "土栖藻目",  // iNat
+  "3:Pseudanabaenales": "假鱼腥藻目",
+  "3:Pseudomonadales": "假单胞菌目",
   "3:Pseudoscorpiones": "拟蝎目",  // iNat
   "3:Psilotales": "松叶蕨目",  // iNat
   "3:Psocodea": "啮目",  // iNat
@@ -1318,7 +1535,9 @@ export const BACKBONE_ZH: Record<string, string> = {
   "3:Rajiformes": "鳐目",  // iNat
   "3:Ralfsiales": "褐壳藻目",  // iNat
   "3:Raphidioptera": "蛇蛉目",  // iNat
+  "3:Recrevirales": "环形CRESS病毒目",
   "3:Redlichiida": "莱得利基虫目",  // iNat
+  "3:Reovirales": "呼肠孤病毒目",
   "3:Rhabditida": "小杆线虫目",  // iNat
   "3:Rhabdocoela": "单肠目",  // iNat
   "3:Rhabdonematales": "杆线藻目",  // iNat
@@ -1327,6 +1546,7 @@ export const BACKBONE_ZH: Record<string, string> = {
   "3:Rhinebothriidea": "犁槽目",
   "3:Rhinopristiformes": "犁头鳐目",  // iNat
   "3:Rhipidiales": "囊轴霉目",  // iNat
+  "3:Rhizobiales": "根瘤菌目",
   "3:Rhizocarpales": "地图衣目",  // iNat
   "3:Rhizochloridales": "根黄藻目",  // iNat
   "3:Rhizochrysidales": "根金藻目",
@@ -1337,16 +1557,22 @@ export const BACKBONE_ZH: Record<string, string> = {
   "3:Rhizostomeae": "根口水母目",  // iNat
   "3:Rhodachlyales": "红迷藻目",  // iNat
   "3:Rhodellales": "红球藻目",  // iNat
+  "3:Rhodobacterales": "红杆菌目",
   "3:Rhodochaetales": "红刺藻目",  // iNat
   "3:Rhodogorgonales": "红女妖藻目",  // iNat
+  "3:Rhodospirillales": "红螺菌目",
+  "3:Rhodothermales": "红嗜热盐菌目",
   "3:Rhodymeniales": "红皮藻目",  // iNat
   "3:Rhopalodiales": "窗纹藻目",  // iNat
   "3:Rhynchobdellida": "吻蛭目",  // iNat
   "3:Rhynchonellida": "小嘴贝目",  // iNat
   "3:Rhytismatales": "斑痣盘菌目",  // iNat
   "3:Ricinulei": "蜱蛛目",  // iNat
+  "3:Rickettsiales": "立克次体目",
   "3:Rotaliida": "车轮虫目",  // iNat
+  "3:Rowavirales": "罗韦病毒目",
   "3:Rozellopsidales": "拟罗兹壶菌目",
+  "3:Rubrobacterales": "红色杆菌目",
   "3:Rufusiales": "树懒红藻目",  // iNat
   "3:Runcinida": "羽叶鳃目",  // iNat
   "3:Sabellida": "缨鳃虫目",  // iNat
@@ -1382,9 +1608,12 @@ export const BACKBONE_ZH: Record<string, string> = {
   "3:Seguenziida": "陀螺目",  // iNat
   "3:Seisonacea": "摇轮虫目",  // iNat
   "3:Selaginellales": "卷柏目",  // iNat
+  "3:Selenomonadales": "月形单孢菌目",
   "3:Semaeostomeae": "旗口水母目",  // iNat
   "3:Sepiida": "乌贼目",  // iNat
+  "3:Sepolyvirales": "多瘤病毒目",
   "3:Septobasidiales": "隔担菌目",  // iNat
+  "3:Serpentovirales": "蛇状病毒目",
   "3:Sessilia": "无柄目",
   "3:Siphonaptera": "蚤目",  // iNat
   "3:Siphonariida": "松螺目",  // iNat
@@ -1398,8 +1627,10 @@ export const BACKBONE_ZH: Record<string, string> = {
   "3:Sipunculiformes": "方格星虫目",
   "3:Sirenia": "海牛目",  // iNat
   "3:Sistotremastrales": "伏白齿菌目",
+  "3:Sobelivirales": "南方菜豆花叶病病毒目",
   "3:Solemyida": "蛏螂目",  // iNat
   "3:Solifugae": "避日目",  // iNat
+  "3:Solirubrobacterales": "土壤红杆菌目",
   "3:Sordariales": "粪壳目",  // iNat
   "3:Spatangoida": "心形海胆目",  // iNat
   "3:Spathebothriidea": "佛焰苞槽目",
@@ -1412,6 +1643,8 @@ export const BACKBONE_ZH: Record<string, string> = {
   "3:Sphaerotheriida": "圆马陆目",  // iNat
   "3:Sphagnales": "泥炭藓目",  // iNat
   "3:Sphenisciformes": "企鹅目",  // iNat
+  "3:Sphingobacteriales": "鞘氨醇杆菌目",
+  "3:Sphingomonadales": "鞘脂单胞菌目",
   "3:Spinulosida": "有棘目",  // iNat
   "3:Spirillinida": "盘旋虫目",
   "3:Spirobolida": "山蛩目",  // iNat
@@ -1428,6 +1661,7 @@ export const BACKBONE_ZH: Record<string, string> = {
   "3:Squatiniformes": "扁鲨目",  // iNat
   "3:Stauromedusae": "十字水母目",  // iNat
   "3:Steatornithiformes": "油鸱目",  // iNat
+  "3:Stellavirales": "星状病毒目",
   "3:Stemmiulida": "捷马陆目",  // iNat
   "3:Stemonitidales": "发网菌目",  // iNat
   "3:Stephanoberyciformes": "奇鲷目",
@@ -1439,6 +1673,8 @@ export const BACKBONE_ZH: Record<string, string> = {
   "3:Stomiiformes": "巨口鱼目",  // iNat
   "3:Stomopneustoida": "口鳃海胆目",  // iNat
   "3:Strepsiptera": "捻翅目",  // iNat
+  "3:Streptomycetales": "链霉菌目",
+  "3:Streptosporangiales": "孢囊菌目",
   "3:Striatellales": "条纹藻目",
   "3:Strigulales": "叶上衣目",  // iNat
   "3:Strombidiida": "急游目",  // iNat
@@ -1448,12 +1684,17 @@ export const BACKBONE_ZH: Record<string, string> = {
   "3:Suberitida": "皮海绵目",  // iNat
   "3:Suctorida": "吸管目",
   "3:Suessiales": "苏斯藻目",
+  "3:Sulfolobales": "硫化叶菌目",
   "3:Surirellales": "双菱藻目",  // iNat
   "3:Symbiida": "共生虫目",  // iNat
   "3:Symphypleona": "愈腹目",  // iNat
   "3:Synallactida": "楯手目",  // iNat
   "3:Synbranchiformes": "合鳃鱼目",  // iNat
   "3:Syndiniales": "共甲藻目",  // iNat
+  "3:Synechococcales": "聚球藻菌目",
+  "3:Synergistales": "互养菌目",
+  "3:Syntrophales": "共养菌目",
+  "3:Syntrophobacterales": "互营杆菌目",
   "3:Synurales": "黄群藻目",  // iNat
   "3:Syracosphaerales": "条结球藻目",
   "3:Syringodermatales": "思菱藻目",
@@ -1479,17 +1720,28 @@ export const BACKBONE_ZH: Record<string, string> = {
   "3:Thecideida": "鞘贝目",  // iNat
   "3:Thelebolales": "寡囊盘菌目",  // iNat
   "3:Thelephorales": "革菌目",  // iNat
+  "3:Thermoanaerobacterales": "热厌氧菌目",
+  "3:Thermococcales": "热球菌目",
+  "3:Thermodesulfobacteriales": "热脱硫杆菌目",
+  "3:Thermoplasmatales": "热原体目",
+  "3:Thermoproteales": "热变形菌目",
   "3:Thermosbaenacea": "温泉虾目",  // iNat
+  "3:Thermosediminibacterales": "热沉积物菌目",
+  "3:Thermotogales": "热袍菌目",
   "3:Thermozodia": "温泉水熊虫目",  // iNat
+  "3:Thiotrichales": "硫发菌目",
   "3:Thoracosphaerales": "胸球藻目",
   "3:Thoreales": "红索藻目",  // iNat
   "3:Thraustochytrida": "破囊壶菌目",  // iNat
   "3:Thysanoptera": "缨翅目",  // iNat
   "3:Tilletiales": "腥黑粉菌目",  // iNat
+  "3:Timlovirales": "蒂莫西病毒目",
   "3:Timmiales": "美姿藓目",  // iNat
   "3:Tinamiformes": "䳍形目",  // iNat
   "3:Tintinnida": "砂壳目",  // iNat
+  "3:Tissierellales": "泰氏菌目",
   "3:Titanoptera": "巨翅目",
+  "3:Tolivirales": "番茄丛矮病毒目",
   "3:Torpediniformes": "电鳐目",  // iNat
   "3:Toxariales": "托氏藻目",  // iNat
   "3:Trachycladida": "糙裂海绵目",  // iNat
@@ -1519,7 +1771,9 @@ export const BACKBONE_ZH: Record<string, string> = {
   "3:Trypanosomatida": "锥虫目",
   "3:Trypetheliales": "乳嘴衣目",  // iNat
   "3:Tubeufiales": "毛筒壳目",  // iNat
+  "3:Tubulavirales": "管噬菌体目",
   "3:Tubulidentata": "管齿目",  // iNat
+  "3:Tymovirales": "芜菁黄花叶病毒目",
   "3:Ulotrichales": "丝藻目",  // iNat
   "3:Ulvales": "石莼目",  // iNat
   "3:Umbilicariales": "石耳目",  // iNat
@@ -1533,16 +1787,21 @@ export const BACKBONE_ZH: Record<string, string> = {
   "3:Valvatida": "瓣海星目",  // iNat
   "3:Vampyromorpha": "幽灵蛸目",  // iNat
   "3:Vaucheriales": "无隔藻目",  // iNat
+  "3:Veillonellales": "韦荣氏菌目",
   "3:Velatida": "有缘目",  // iNat
   "3:Venerida": "帘蛤目",  // iNat
   "3:Venturiales": "黑星菌目",  // iNat
   "3:Verongiida": "真海绵目",  // iNat
   "3:Verrucariales": "瓶口衣目",  // iNat
+  "3:Verrucomicrobiales": "疣微菌目",
   "3:Vezdaeales": "维氏衣目",  // iNat
+  "3:Vinavirales": "比尼亚病毒目",
   "3:Vitales": "葡萄目",  // iNat
   "3:Volvocales": "团藻目",
   "3:Wallemiales": "节担菌目",  // iNat
   "3:Welwitschiales": "百岁兰目",  // iNat
+  "3:Wolframvirales": "元素病毒目",
+  "3:Xanthomonadales": "黄单胞菌目",
   "3:Xenosomata": "外动吻虫目",  // iNat
   "3:Xiphosurida": "剑尾目",  // iNat
   "3:Xylonales": "木菌目",  // iNat
@@ -1550,6 +1809,7 @@ export const BACKBONE_ZH: Record<string, string> = {
   "3:Zoantharia": "群海葵目",  // iNat
   "3:Zoopagales": "捕虫菌目",  // iNat
   "3:Zoraptera": "缺翅目",  // iNat
+  "3:Zurhausenvirales": "泽尔豪森病毒目",
   "3:Zygentoma": "衣鱼目",  // iNat
   "3:Zygnematales": "双星藻目",  // iNat
   "3:Zygodiscales": "接合藻目",
