@@ -257,8 +257,9 @@ const zhCore = {
   "tree3d.focusMeta": "{la} · {rank}",
   "tree3d.focusMetaPage": "{la} · {rank} · {cur}/{total}",
   "tree3d.batchIndex": "{cur}/{total}",
-  "tree3d.budNext": "下一批",
-  "tree3d.budPrev": "上一批",
+  // 翻批说「还剩多少」而不是「下一批」：说规模，不说翻页动作
+  "tree3d.budNext": "还有 {count} 个",
+  "tree3d.budPrev": "前 {count} 个",
 
   // dev fixture only：配置里 enabled:false，正式环境不加载；待分层重构时移出主表
   "volume.fixture_pipeline.title": "管道验收册",

@@ -19,6 +19,7 @@ Web dev server 起着的话直接开 `http://127.0.0.1:5173/proto/clear-tree/dev
 - 各层级：`http://127.0.0.1:5173/devpages/tree-levels.html`（右栏 v2，按 `?lv=` 同深度下钻）
 - 大扇出两案：`http://127.0.0.1:5173/devpages/tree-fanout.html`（A / B / v2 三栏，见
   [`结构议题 §4.4`](../../docs/wip/物种树-结构议题.md)）
+- 标签全留 vs 降圆点：`http://127.0.0.1:5173/devpages/tree-labels.html`（左全留叠瓦，右 `?labels=old`）
 
 两页都由 dev server 挂出，不必另起静态服务器。
 

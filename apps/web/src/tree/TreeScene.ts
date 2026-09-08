@@ -54,12 +54,16 @@ const FAN_NEW = FAN_MODE !== "off";
 const FAN_TWIG = [5, 4, 3, 2, 2];
 const FAN_BLADE = [3, 3, 2, 2, 1];
 /**
- * 一扇最多摆几根枝。超出才回到翻页 —— 分页是兜底，不是常态。
+ * 一页摆几根枝（`?cap=N` 可覆盖，走查用）。
  *
- * 64 是照真实骨架定的：`backbone.json` 最宽的一层（门下的纲、纲下的目）在
- * 60 上下。定成 64 意味着实测那几级都能一屏摆完，翻页只在异常宽的类群出现。
+ * 20 是按竖屏画面定的：再多，叠瓦上限就经常撞满、标签把树盖住。
+ * 翻页是常态（保穷尽性），不是骨架最宽 62 才出现的异常。
  */
-const FAN_CAP = 64;
+const FAN_CAP = (() => {
+  if (typeof location === "undefined") return 20;
+  const v = Number(new URLSearchParams(location.search).get("cap"));
+  return Number.isFinite(v) && v >= 2 ? Math.min(200, Math.round(v)) : 20;
+})();
 /**
  * 淡枝影的长度与混色（`?fanout=haze`，见 fanHaze）。
  *
@@ -68,6 +72,35 @@ const FAN_CAP = 64;
  */
 const HAZE_LEN = 0.54;
 const HAZE_MIX = 0.66;
+/** 展开态内容在画面里抬高多少（占包围盒竖跨度）。`?lift=` 可覆盖，走查用。 */
+const FAN_LIFT = (() => {
+  if (typeof location === "undefined") return 0.05;
+  const v = Number(new URLSearchParams(location.search).get("lift"));
+  return Number.isFinite(v) ? Math.max(-0.3, Math.min(0.3, v)) : 0.09;
+})();
+/**
+ * `?unlit=keep` 让展开态照样走 COLLECT_UNLIT（改造前的行为），留着并排比。
+ *
+ * 09-07 拍板「展开态不按收集褪色」时只撤了 a 案那档强褪色，漏了这条：叶是从
+ * 枝色提亮到接近白黄的，底色先被灰化、提亮后还是灰的，而画面上占面积的正是
+ * 叶。所以那次只落实了一半。见 §4.6。
+ */
+const FAN_UNLIT = typeof location !== "undefined"
+  && new URLSearchParams(location.search).get("unlit") === "keep";
+/** `?labels=old` 回到「碰撞就降成圆点」那套，留着并排比。见 layLabels。 */
+const LAB_OLD = typeof location !== "undefined"
+  && new URLSearchParams(location.search).get("labels") === "old";
+/**
+ * 标签叠瓦的步长与可挪范围（见 layLabels）。
+ *
+ * 26px 正好是一个 pill 的高度（0.76rem 字 + 5px 上下内边距），错开一步下层就
+ * 露出完整的上半条，够手指点 —— 错得比这少，被压住的那个就点不到了。
+ *
+ * 上限 ±78px（3 步）：同一处最多 7 个能排开。再放大就脱离自己的枝 —— 展开态
+ * 相邻枝尖在屏上只隔 30~60px，挪过百来像素标签就贴到邻居身上，比重叠更糟。
+ */
+const LAB_STEP = 26;
+const LAB_OFFS = [0, -26, 26, -52, 52, -78, 78];
 /** 往背景色混。混向 BG 而不是灰度均值，色相才留得住。 */
 function towardBg(c: V3, k: number): V3 {
   return [
@@ -495,13 +528,16 @@ export class TreeScene {
   private POOLN = 96;
   private lab: HTMLButtonElement[] = [];
   private ftitle!: HTMLDivElement;
+  private ftitleName!: HTMLElement;
+  private ftitleMeta!: HTMLElement;
   private budBtn!: HTMLButtonElement;
   private prevBtn!: HTMLButtonElement;
-  private nextBudP: V3 | null = null;
-  private nextBudBase: V3 | null = null;
-  private prevBudP: V3 | null = null;
-  private prevBudBase: V3 | null = null;
+  /** 焦点标题行已占的屏幕位置。类群标签排布时先把它们算进去。 */
+  private budSlots: { x: number; y: number; w: number; h: number }[] = [];
   private batchPage = 0;
+  /** 这一扇一共多少子级、每页几个。翻批按钮上的字要说「还剩多少」。 */
+  private batchTotal = 0;
+  private batchPer = FAN_BATCH;
   private batchFocusId = "";
   private batchPages = 1;
   private cardOpen = false;
@@ -925,7 +961,12 @@ export class TreeScene {
     return end;
   }
 
-  private branchColor(nd: TreeNode, depth: number): V3 {
+  /**
+   * @param litAll 不做「未收集收饱和度」那一步，拿满色。
+   *   展开态用它 —— 总览的灰是小点短枝上的色彩层次，展开后同一个目变成一根大
+   *   枝、连叶一起灰掉就是大面积死白。两处尺度不同，规则不通吃（§4.6）。
+   */
+  private branchColor(nd: TreeNode, depth: number, litAll = false): V3 {
     if (nd.lvl < 0) return [0.38, 0.33, 0.28];
     const v = kvis(nd.kingdom);
     const bright = Math.min(0.42, depth * 0.07);
@@ -945,7 +986,7 @@ export class TreeScene {
     }
     /* 点亮：界门纲不因收集变灰；目科属种没走过才收一层饱和度。
        拍板 2026-09-03，见 docs/wip/物种树-结构议题.md §4.6。 */
-    if (nd.lvl >= 3 && nd.got === 0) {
+    if (!litAll && nd.lvl >= 3 && nd.got === 0) {
       const gy = cr * 0.34 + cg * 0.5 + cb * 0.16;
       cr += (gy - cr) * COLLECT_UNLIT;
       cg += (gy - cg) * COLLECT_UNLIT;
@@ -1716,15 +1757,15 @@ export class TreeScene {
     const ordered = orderKids(kidsAll);
     if (!FAN_NEW) {
       return rel === 0
-        ? batchKids(kidsAll, this.batchPage)
-        : { shown: ordered.slice(0, FAN_BATCH), ordered, pages: 1, page: 0 };
+        ? { ...batchKids(kidsAll, this.batchPage), cap: FAN_BATCH }
+        : { shown: ordered.slice(0, FAN_BATCH), ordered, pages: 1, page: 0, cap: FAN_BATCH };
     }
     // 兜底：连一屏能读的量都超了，才回到翻页
     const cap = rel === 0 ? FAN_CAP : FAN_BATCH;
-    if (ordered.length <= cap) return { shown: ordered, ordered, pages: 1, page: 0 };
+    if (ordered.length <= cap) return { shown: ordered, ordered, pages: 1, page: 0, cap };
     const pages = Math.ceil(ordered.length / cap);
     const page = rel === 0 ? Math.min(this.batchPage, pages - 1) : 0;
-    return { shown: ordered.slice(page * cap, page * cap + cap), ordered, pages, page };
+    return { shown: ordered.slice(page * cap, page * cap + cap), ordered, pages, page, cap };
   }
 
   /**
@@ -1785,7 +1826,11 @@ export class TreeScene {
     const fC = add(A, scl(dir, L));
     const fB = add(add(A, scl(dir, L * 0.5)), scl(bend, L));
     const cs = g.selfVs * 3;
-    const col: V3 = [this.aCol[cs]!, this.aCol[cs + 1]!, this.aCol[cs + 2]!];
+    /* 拿满色重算，而不是读 aCol —— 那里存的是总览用的色，已经带了
+       COLLECT_UNLIT。叶从枝色提亮，底色灰了叶就跟着灰。 */
+    const col: V3 = FAN_UNLIT
+      ? [this.aCol[cs]!, this.aCol[cs + 1]!, this.aCol[cs + 2]!]
+      : this.branchColor(nd, g.depth, true);
     /* ⚠ 这里曾按「没点亮」把整枝往背景混（a 案）。09-07 撤掉，别再加回来。
        实测冷启动那一屏：鸟纲 42 个目一个都没点亮，整扇就是一片灰白、连标签
        都没有 —— 那不是雄伟，是荒凉。而这正是新用户点进来的第一眼。
@@ -1796,10 +1841,19 @@ export class TreeScene {
     g.bA = A; g.bB = fB; g.bC = fC;
     const end = fC;
     g.fp = end;
+    g.fbase = A;
     if (rel === 0) this.budOrigin = end;
     // 柄进取景。原先故意不进，扇形贴在上半屏、下面空一截。
     this.bbAdd(A);
     this.bbAdd(end);
+
+    /* 展开态只画这一层。每个子级一根枝 + 梢上叶丛，不再把科/属递归铺进
+       这一根的体积里 —— 鲈形目那种大目会在枝头挤成一团实心深蓝（09-08）。
+       下级进焦点之后才展开。rel===0 是柄，rel>=1 就是当页那些子级。 */
+    if (FAN_NEW && rel >= 1) {
+      this.fanFoliage(nd, L, rel, col);
+      return;
+    }
 
     const speciesAll = orderKids(nd.ch.filter((c) => c.lvl >= 6));
     const kidsAll = this.kidsOf(nd);
@@ -1813,6 +1867,8 @@ export class TreeScene {
       const n = species.length;
       if (rel === 0) {
         this.batchPages = speciesBat.pages;
+        this.batchTotal = speciesAll.length;
+        this.batchPer = FAN_BATCH;
         const v = kvis(nd.kingdom);
         const lcol: V3 = [
           v.c[0] + (0.99 - v.c[0]) * 0.3,
@@ -1840,9 +1896,6 @@ export class TreeScene {
           if (li != null) this.placeFanLeaf(li, p);
           lg.fp = p; lg.fbase = base;
           this.bbAdd(p); this.bbAdd(base);
-        }
-        if (this.exMode !== "retract" && speciesBat.pages > 1) {
-          this.placeBatchBuds(end, dir, L, w1, col, RB, UB, speciesBat.page, speciesBat.pages);
         }
         this.bbAdd(end);
         return;
@@ -1917,11 +1970,15 @@ export class TreeScene {
     const n = shownKids.length;
     if (rel === 0) {
       this.batchPages = kidBat.pages;
+      this.batchTotal = kidBat.ordered.length;
+      this.batchPer = kidBat.cap;
       /* 这一扇的枝数定叶丛密度与预览深度。放在 rel===0 定、深层沿用：一屏的
          段数预算是整扇共享的，按每层各自算会在门那种 62 路扇出上超支。 */
       // 深度已按扇宽压过（fanMaxRel），密度不必再压那么狠
       this.fanK = n <= 14 ? 1 : n <= 30 ? 0.85 : 0.7;
-      if (FAN_NEW) this.fanMaxRel = n > 24 ? 2 : n > 12 ? 3 : MAXREL;
+      /* 展开态不再预览下级（见 fanNode rel>=1 早退）。fanMaxRel=1 让子枝收到
+         近 0，梢上是叶丛而不是平切的水管。 */
+      if (FAN_NEW) this.fanMaxRel = 1;
     }
     const nl = FAN_LEN[Math.min(rel + 1, MAXREL)]!;
     // 竖屏收窄张角（见 spreadK），并让子级枝更长 —— 补回收窄损失的铺开感
@@ -1989,9 +2046,6 @@ export class TreeScene {
     }
     // 淡影用未收窄的张角：它要读作「外围还有一大片」，缩到亮枝那几路里就没了规模
     if (hazeAll.length > 0) this.fanHaze(hazeAll, nd, nl, w1, spRaw, lenK, col);
-    if (this.exMode !== "retract" && rel === 0 && kidBat.pages > 1) {
-      this.placeBatchBuds(end, dir, L, w1, col, RB, UB, kidBat.page, kidBat.pages);
-    }
   }
 
   private camDir(yaw: number, pitch: number): V3 {
@@ -2037,10 +2091,6 @@ export class TreeScene {
     this.exCount = 0;
     // 上一次焦点若是宽扇（压过深度），别让它带到这次窄扇上
     this.fanMaxRel = MAXREL;
-    this.nextBudP = null;
-    this.nextBudBase = null;
-    this.prevBudP = null;
-    this.prevBudBase = null;
     this.budOrigin = null;
     this.fanLeaf = [];
     this.exMode = keepView ? exMode : "open";
@@ -2111,9 +2161,11 @@ export class TreeScene {
     this.camGoal.dist = Math.max(S * 0.55, need / Math.tan(FOV / 2));
     const uMid = (bb.u0 + bb.u1) / 2;
     const uSpan = Math.max(1, bb.u1 - bb.u0);
+    /* 相机看向比包围盒中心略低的点，内容就落在画面偏上 —— 给下面的焦点大标题
+       留位。原先给到 0.16 太多：上方只剩一线、下方空掉一大截。 */
     this.camGoal.tgt = add(
       add(P, scl(RB, (bb.r0 + bb.r1) / 2)),
-      scl(UB, uMid - uSpan * 0.16),
+      scl(UB, uMid - uSpan * FAN_LIFT),
     );
     this.cam.spin = 0;
     this.setFocusFlags(nd);
@@ -2139,48 +2191,6 @@ export class TreeScene {
     this.bloomClock = 0;
     this.bloom = 0;
     this.applyFocus(this.focus, true, "retract");
-  }
-
-  private drawBudAt(
-    from: V3, dir: V3, L: number, w: number, col: V3, RB: V3, UB: V3,
-    slot: "next" | "prev",
-  ) {
-    /* 合着的鳞片，体量和枝梢叶簇同类，不是一根带棱的粗纺锤。 */
-    const n = slot === "next" ? 5 : 4;
-    const len = L * (slot === "next" ? 0.075 : 0.06);
-    let tip: V3 = from;
-    for (let i = 0; i < n; i++) {
-      const a = (i / n) * Math.PI * 2 + (slot === "prev" ? 0.5 : 0);
-      const side = nrm(add(scl(RB, Math.cos(a)), scl(UB, Math.sin(a))));
-      const d = nrm(add(dir, scl(side, 0.52)));
-      const C = add(from, scl(d, len * (0.82 + 0.18 * (i % 2))));
-      const B = add(add(from, scl(d, len * 0.38)), scl(side, len * 0.16));
-      this.pushExpand(from, from, from, 0, 0, from, B, C, w * 0.9, w * 2.1, col, true);
-      tip = C;
-    }
-    const label = add(from, scl(dir, len * 1.15));
-    if (slot === "next") {
-      this.nextBudP = label; this.nextBudBase = from;
-    } else {
-      this.prevBudP = label; this.prevBudBase = from;
-    }
-    this.bbAdd(tip);
-    this.bbAdd(from);
-  }
-
-  private placeBatchBuds(
-    end: V3, dir: V3, L: number, w: number, col: V3, RB: V3, UB: V3, page: number, pages: number,
-  ) {
-    if (pages <= 1) return;
-    /* 两颗芽都从同一簇顶梢长出：顶芽向前，侧芽略回。不要在柄根另造一截悬空桩。 */
-    if (page < pages - 1) {
-      const ndir = nrm(add(dir, scl(UB, 0.18)));
-      this.drawBudAt(end, ndir, L, w, col, RB, UB, "next");
-    }
-    if (page > 0) {
-      const pdir = nrm(add(add(scl(dir, -0.12), scl(RB, -0.72)), scl(UB, -0.22)));
-      this.drawBudAt(end, pdir, L, w, col, RB, UB, "prev");
-    }
   }
 
   private upload() {
@@ -2231,30 +2241,31 @@ export class TreeScene {
 
   // ═══════════════════════ 标签 ═══════════════════════
 
-  private mkBudBtn(slot: "next" | "prev") {
+  private mkPageBtn(slot: "next" | "prev") {
     const b = document.createElement("button");
     b.type = "button";
-    b.className = "tree3d-nb bud " + slot;
-    b.style.display = "none";
-    b.innerHTML = '<span class="pill"></span><span class="sub"></span>';
+    b.className = "tree3d-page " + slot;
+    b.style.visibility = "hidden";
     const next = slot === "next";
-    b.setAttribute("aria-label", t(next ? "tree3d.budNext" : "tree3d.budPrev"));
     b.addEventListener("click", (ev) => {
       ev.stopPropagation();
       this.turnBatch(next ? 1 : -1);
     });
-    this.labelHost.appendChild(b);
-    if (next) this.budBtn = b;
-    else this.prevBtn = b;
+    return b;
   }
 
   private buildLabels() {
     this.ftitle = document.createElement("div");
     this.ftitle.className = "tree3d-ftitle";
-    this.ftitle.innerHTML = "<b></b><span></span>";
+    const row = document.createElement("div");
+    row.className = "tree3d-ftitle-row";
+    this.prevBtn = this.mkPageBtn("prev");
+    this.budBtn = this.mkPageBtn("next");
+    this.ftitleName = document.createElement("b");
+    this.ftitleMeta = document.createElement("span");
+    row.append(this.prevBtn, this.ftitleName, this.budBtn);
+    this.ftitle.append(row, this.ftitleMeta);
     this.labelHost.appendChild(this.ftitle);
-    this.mkBudBtn("next");
-    this.mkBudBtn("prev");
     for (let i = 0; i < this.POOLN; i++) {
       const b = document.createElement("button");
       b.type = "button"; b.className = "tree3d-nb"; b.style.display = "none";
@@ -2357,6 +2368,10 @@ export class TreeScene {
       }
       items.push({ el, nd, s });
     }
+    /* 先摆焦点标题行（含翻批按钮），再摆类群标签。
+       标题行是翻批入口，找不到就等于那批子级永远看不到（"必须全留"），
+       所以它优先占位、由类群标签去避它。 */
+    if (!LAB_OLD) { this.tailLabels(VP); this.layLabels(items, op); return; }
 
     /* ── 标签取舍（label decluttering）──
        旧实现是「碰撞就 y+=54 往下顶」，结果 16 个子级就叠成一竖列、
@@ -2435,11 +2450,89 @@ export class TreeScene {
       const s2 = nd.got > 0 ? t("tree3d.gotCount", { count: nd.got }) : nd.lvl >= 6 ? nd.la : "";
       if (sub.textContent !== s2) sub.textContent = s2;
     }
+    this.tailLabels(VP);
+  }
 
-    this.pinBud(this.budBtn, this.nextBudP, this.nextBudBase, VP, op, t("tree3d.budNext"));
-    this.pinBud(this.prevBtn, this.prevBudP, this.prevBudBase, VP, op, t("tree3d.budPrev"));
+  /**
+   * 标签排布：**全部带字，撞了纵向叠瓦错开，错不开就重叠。**
+   *
+   * 09-07 拍板换掉「碰撞就降成圆点」。旧规则的三个毛病：
+   *
+   * 1. **降级等于不可达。** 几十个一模一样的圆点之间没有任何视觉线索，用户想找
+   *    某个属只能盲点。实测改造前一屏 8 根枝只给得出 1~2 个带字（`.shot/labels.mjs`
+   *    能复跑），其余全是点 —— 名义上"点圆点能出概要卡"，实际找不到该点哪个。
+   * 2. **碰撞盒写死 132×46,不看实际字宽。** 「鸟纲」实宽约 55px 却按 132 占位；
+   *    竖屏减掉左右边距只剩约 242px 可用，于是一行放不下两个。
+   * 3. **每帧重算谁留下 → 闪。** 镜头一直在微晃，谁降级谁不降级来回翻（§4.6 记的
+   *    "圆点忽隐忽现"就是它）。全都留，就没有可闪的东西。
+   *
+   * 只纵向挪：枝是横向排开的，横向挪一定挪到别人的枝上去。
+   */
+  private layLabels(
+    items: { el: HTMLButtonElement; nd: TreeNode; s: [number, number] }[],
+    op: number,
+  ) {
+    /* 先写字再量宽 —— 宽度取决于文字，而文字现在人人都有。
+       offsetWidth 会触发 reflow，所以按文字缓存，只在名字变了才重量。 */
+    for (const it of items) {
+      const { el, nd } = it;
+      el.style.display = "flex";
+      (el as HTMLButtonElement & { _n?: TreeNode })._n = nd;
+      const term = nd.ch.length === 0;
+      const cls = "tree3d-nb"
+        + (nd.lvl >= 6 ? " leaf" : term ? " term" : "")
+        + (nd.got > 0 ? " has" : "");
+      if (el.className !== cls) el.className = cls;
+      el.style.setProperty("--kc", kingdomHex(nd.kingdom));
+      const pill = el.children[0] as HTMLElement, sub = el.children[1] as HTMLElement;
+      const name = labelOf(nd);
+      if (pill.textContent !== name) pill.textContent = name;
+      const s2 = nd.got > 0 ? t("tree3d.gotCount", { count: nd.got }) : nd.lvl >= 6 ? nd.la : "";
+      if (sub.textContent !== s2) sub.textContent = s2;
+    }
+    const wOf = (el: HTMLButtonElement, key: string) => {
+      const e = el as HTMLButtonElement & { _wk?: string; _w?: number };
+      if (e._wk !== key || !e._w) { e._wk = key; e._w = el.offsetWidth || 70; }
+      return e._w;
+    };
 
-    // 焦点自身大标题：钉在柄的下端。概要卡开着时让位（卡里已有同样的名字）
+    /* 摆放顺序 = 当页排序，前面的先占原位、也叠在上层（拍板 09-07）。
+       不按「已收集优先」之类的权重排 —— 全都带字之后谁占原位没那么要紧，
+       而按页序走是可预测的：同一页每次进来长得一样。 */
+    const placed: { x: number; y: number; w: number; h?: number }[] = [...this.budSlots];
+    /* h = 这个占位的纵向禁区半高。类群标签之间用 LAB_STEP（叠瓦步长），
+       焦点标题行给得更厚 —— 被压住就是翻批入口没了。 */
+    const hit = (x: number, y: number, w: number) =>
+      placed.some((p) =>
+        Math.abs(p.y - y) < (p.h ?? LAB_STEP) && Math.abs(p.x - x) < (p.w + w) / 2 + 8);
+    const n = items.length;
+    for (let i = 0; i < n; i++) {
+      const it = items[i]!;
+      const w = wOf(it.el, labelOf(it.nd) + (it.nd.got > 0 ? "+" + it.nd.got : ""));
+      // 按实际半宽夹回画面。旧规则是贴边就降级，短名字明明放得下也被拒
+      const hw = w / 2 + 6;
+      const x = Math.max(hw, Math.min(this.W - hw, it.s[0]));
+      const y0 = Math.max(30, Math.min(this.H - 30, it.s[1]));
+      let y = y0;
+      for (const d of LAB_OFFS) {
+        const yd = Math.max(30, Math.min(this.H - 30, y0 + d));
+        if (!hit(x, yd, w)) { y = yd; break; }
+      }
+      placed.push({ x, y, w });
+      it.el.style.left = x.toFixed(1) + "px";
+      it.el.style.top = y.toFixed(1) + "px";
+      it.el.style.opacity = String(op);
+      // 页序靠前的压在上层，点击也就先落到它身上（拍板 09-07）
+      it.el.style.zIndex = String(this.POOLN - i);
+    }
+  }
+
+  private tailLabels(VP: Float32Array) {
+    this.budSlots.length = 0;
+    this.pinPage(this.budBtn, false, "");
+    this.pinPage(this.prevBtn, false, "");
+
+    // 焦点自身标题：钉在柄的下端。概要卡开着时让位（卡里已有同样的名字）
     if (this.focus !== this.root && this.morph > 0.3 && !this.cardOpen) {
       const g = this.G(this.focus);
       const s = this.project(g.bA, VP);
@@ -2449,9 +2542,9 @@ export class TreeScene {
         this.ftitle.style.left = x + "px";
         this.ftitle.style.top = y + "px";
         this.ftitle.style.opacity = String(Math.max(0, (this.morph - 0.3) / 0.7) * 0.95);
-        (this.ftitle.children[0] as HTMLElement).textContent = labelOf(this.focus);
+        this.ftitleName.textContent = labelOf(this.focus);
         const rank = formatRank(RANKS[this.focus.lvl] ?? "");
-        (this.ftitle.children[1] as HTMLElement).textContent = this.batchPages > 1
+        this.ftitleMeta.textContent = this.batchPages > 1
           ? t("tree3d.focusMetaPage", {
             la: this.focus.la,
             rank,
@@ -2459,52 +2552,32 @@ export class TreeScene {
             total: this.batchPages,
           })
           : t("tree3d.focusMeta", { la: this.focus.la, rank });
+        const vis = this.batchAnim === "in" ? this.bloom : this.morph;
+        if (this.batchPages > 1 && vis > 0.5 && this.batchAnim !== "out") {
+          const seen = (this.batchPage + 1) * this.batchPer;
+          const rest = Math.max(0, this.batchTotal - seen);
+          const before = this.batchPage * this.batchPer;
+          this.pinPage(this.budBtn, this.batchPage < this.batchPages - 1,
+            t("tree3d.budNext", { count: rest }));
+          this.pinPage(this.prevBtn, this.batchPage > 0,
+            t("tree3d.budPrev", { count: before }));
+        }
+        const rowW = Math.min(368, this.W - 16);
+        this.budSlots.push({ x, y, w: rowW, h: 48 });
       }
     } else this.ftitle.style.opacity = "0";
   }
 
-  private pinBud(
-    el: HTMLButtonElement,
-    tip: V3 | null,
-    base: V3 | null,
-    VP: Float32Array,
-    op: number,
-    text: string,
-  ) {
-    if (!tip || this.focus === this.root || this.batchAnim === "out") {
-      if (el.style.display !== "none") el.style.display = "none";
+  private pinPage(el: HTMLButtonElement, show: boolean, text: string) {
+    if (!show) {
+      el.style.visibility = "hidden";
+      el.style.pointerEvents = "none";
       return;
     }
-    const vis = this.batchAnim === "in" ? this.bloom : this.morph;
-    if (vis <= 0.5) {
-      if (el.style.display !== "none") el.style.display = "none";
-      return;
-    }
-    const s = this.project(tip, VP);
-    if (!s) {
-      if (el.style.display !== "none") el.style.display = "none";
-      return;
-    }
-    if (base) {
-      const b = this.project(base, VP);
-      if (b) {
-        const dx = s[0] - b[0], dy = s[1] - b[1];
-        const dl = Math.hypot(dx, dy) || 1;
-        s[0] += (dx / dl) * 28;
-        s[1] += (dy / dl) * 28;
-      }
-    }
-    s[0] = Math.max(78, Math.min(this.W - 78, s[0]));
-    s[1] = Math.max(52, Math.min(this.H - 52, s[1]));
-    el.style.display = "flex";
-    el.style.left = s[0].toFixed(1) + "px";
-    el.style.top = s[1].toFixed(1) + "px";
-    el.style.opacity = String(op);
-    el.style.setProperty("--kc", kingdomHex(this.focus.kingdom));
-    const pill = el.children[0] as HTMLElement;
-    if (pill.textContent !== text) pill.textContent = text;
-    const sub = el.children[1] as HTMLElement;
-    if (sub.textContent) sub.textContent = "";
+    el.style.visibility = "visible";
+    el.style.pointerEvents = "auto";
+    if (el.textContent !== text) el.textContent = text;
+    if (el.getAttribute("aria-label") !== text) el.setAttribute("aria-label", text);
   }
 
   // ═══════════════════════ 渲染 ═══════════════════════

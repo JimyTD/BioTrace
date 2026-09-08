@@ -1,0 +1,155 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>物种树 · 标签全留 vs 降圆点</title>
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    height: 100vh; display: flex; flex-direction: column; overflow: hidden;
+    background: #20262f; color: #e8edf4;
+    font: 14px/1.5 "Microsoft YaHei", "PingFang SC", system-ui, sans-serif;
+  }
+  header {
+    flex: none; display: flex; align-items: center; gap: 14px; flex-wrap: wrap;
+    padding: 9px 16px; background: #171c24; border-bottom: 1px solid #2c343f;
+  }
+  h1 { font-size: 15px; font-weight: 700; letter-spacing: .3px; }
+  h1 span { color: #8b97a8; font-weight: 400; margin-left: 8px; font-size: 12.5px; }
+  .grp { display: flex; align-items: center; gap: 6px; }
+  .grp b { font-size: 12px; color: #8b97a8; font-weight: 400; margin-right: 2px; }
+  .grp + .grp { margin-left: 6px; }
+  button {
+    background: #2a323d; color: #cfd8e4; border: 1px solid #3a4450;
+    border-radius: 6px; padding: 5px 11px; font-size: 12.5px; cursor: pointer;
+    font-family: inherit;
+  }
+  button:hover { background: #333d4a; }
+  button.on { background: #c46a3a; border-color: #c46a3a; color: #fff; font-weight: 700; }
+  main {
+    flex: 1; min-height: 0; overflow: hidden; display: flex;
+    justify-content: center; align-items: center; padding: 10px;
+  }
+  /* 竖屏是这个应用的真实形态：两栏各锁 390×844，整体等比缩放去适配窗口 */
+  #stage { flex: none; display: flex; gap: 14px; transform-origin: center center; }
+  .pane { display: flex; flex-direction: column; width: 390px; flex: none; }
+  .pane > .tag {
+    flex: none; padding: 6px 12px; font-size: 12.5px; font-weight: 700;
+    border-radius: 7px 7px 0 0; display: flex; align-items: baseline; gap: 8px;
+  }
+  .pane > .tag i { font-style: normal; font-weight: 400; font-size: 11.5px; opacity: .75; }
+  .now > .tag { background: #23422f; color: #96e3b4; }
+  .ref > .tag { background: #3a2f22; color: #e0b98a; }
+  .frame {
+    flex: none; height: 844px; background: #eef1f5; border-radius: 0 0 7px 7px;
+    overflow: hidden;
+  }
+  iframe { width: 390px; height: 844px; border: 0; display: block; }
+  .hint {
+    flex: none; padding: 7px 16px; background: #171c24; border-top: 1px solid #2c343f;
+    font-size: 12px; color: #8b97a8;
+  }
+  .hint code { background: #2a323d; padding: 1px 5px; border-radius: 3px; color: #cfd8e4; }
+  .hint b { color: #cfd8e4; font-weight: 600; }
+</style>
+</head>
+<body>
+  <header>
+    <h1>物种树 · 标签全留 vs 降圆点<span>两栏都是活的，可旋转、点击</span></h1>
+    <div class="grp"><b>焦点</b><span id="bL"></span></div>
+    <div class="grp"><b>一页</b><span id="bC"></span></div>
+    <div class="grp"><b>收集</b><span id="bM"></span></div>
+    <div class="grp"><b>未收集的枝叶</b><span id="bU"></span></div>
+    <div class="grp"><button id="bR">同时重载</button></div>
+  </header>
+
+  <main><div id="stage">
+    <div class="pane now">
+      <div class="tag">全留 · 叠瓦错开<i id="tA"></i></div>
+      <div class="frame"><iframe id="f1"></iframe></div>
+    </div>
+    <div class="pane ref">
+      <div class="tag">改造前 · 撞了降圆点<i id="tB"></i></div>
+      <div class="frame"><iframe id="f2"></iframe></div>
+    </div>
+  </div></main>
+
+  <div class="hint">
+    左栏：当页标签<b>全部带字</b>，碰撞时纵向叠瓦错开（步长 26px、上限 ±78px），错不开就重叠，
+    页序靠前的压在上层、点击也先落它。右栏 <code>?labels=old</code>：撞了就降成一个小圆点。
+    <b>「一页」那一组是在挑页容量</b> —— 42 是作废的旧上限（骨架最宽 62 才那么定的），
+    往小切能看出「标签读得清」和「树看得见」的平衡点在哪。
+    <b>「未收集的枝叶」</b>切「褪色」= 改造前：没走过的目连叶一起往灰里收（§4.6 那条
+    只管总览，漏进展开态了）。<code>?cap=</code> / <code>?labels=old</code> /
+    <code>?unlit=keep</code> / <code>?lift=</code> 都只是走查开关。
+  </div>
+
+<script>
+  const LEVELS = [
+    { zh: "纲·鸟纲", at: "2:Aves", wide: 0, tot: 42 },
+    { zh: "纲·硅藻", at: "2:Bacillariophyceae", wide: 0, tot: 49 },
+    { zh: "门·脊索", at: "1:Chordata", wide: 0, tot: 62 },
+    { zh: "界·动物", at: "0:Animalia", wide: 0, tot: 34 },
+    { zh: "科·菊科 61 属", at: "4:Asteraceae", wide: 60, tot: 61 },
+    { zh: "科·菊科 301 属", at: "4:Asteraceae", wide: 300, tot: 301 },
+  ];
+  const CAPS = [12, 16, 20, 28, 42];
+  let cur = 0, cap = 20, mock = 140, unlit = false;
+
+  function mkBtns(host, arr, label, pick) {
+    arr.forEach((v, i) => {
+      const b = document.createElement("button");
+      b.textContent = label(v, i);
+      b.onclick = () => { pick(v, i); sync(); };
+      host.appendChild(b);
+    });
+  }
+  const bL = document.getElementById("bL");
+  const bC = document.getElementById("bC");
+  const bM = document.getElementById("bM");
+  const bU = document.getElementById("bU");
+  mkBtns(bL, LEVELS, (v) => v.zh, (v, i) => { cur = i; });
+  mkBtns(bC, CAPS, (v) => v, (v) => { cap = v; });
+  mkBtns(bM, [0, 21, 140], (v) => (v === 0 ? "空" : v + " 项"), (v) => { mock = v; });
+  mkBtns(bU, [false, true], (v) => (v ? "褪色（改造前）" : "满色"), (v) => { unlit = v; });
+
+  function sync() {
+    [...bL.children].forEach((c, i) => c.classList.toggle("on", i === cur));
+    [...bC.children].forEach((c, i) => c.classList.toggle("on", CAPS[i] === cap));
+    [...bM.children].forEach((c, i) => c.classList.toggle("on", [0, 21, 140][i] === mock));
+    [...bU.children].forEach((c, i) => c.classList.toggle("on", !!i === unlit));
+    const L = LEVELS[cur];
+    const pages = Math.ceil(L.tot / cap);
+    const txt = `${L.tot} 个子级 · 一页 ${cap} · ${pages} 页`;
+    document.getElementById("tA").textContent = txt;
+    document.getElementById("tB").textContent = txt;
+    reload();
+  }
+
+  function reload() {
+    const L = LEVELS[cur], t = Date.now();
+    const w = L.wide ? `&wide=${L.wide}` : "";
+    const u = unlit ? "&unlit=keep" : "";
+    const q = `mock=${mock}${w}&at=${encodeURIComponent(L.at)}&cap=${cap}${u}`;
+    document.getElementById("f1").src = `/dev/tree?${q}&t=${t}`;
+    document.getElementById("f2").src = `/dev/tree?${q}&labels=old&t=${t}`;
+  }
+
+  const stage = document.getElementById("stage");
+  const main = document.querySelector("main");
+  function fit() {
+    const s = Math.min(
+      1,
+      (main.clientWidth - 20) / stage.scrollWidth,
+      (main.clientHeight - 20) / stage.scrollHeight,
+    );
+    stage.style.transform = `scale(${s})`;
+  }
+  addEventListener("resize", fit);
+  fit();
+  document.getElementById("bR").onclick = reload;
+  sync();
+</script>
+</body>
+</html>
