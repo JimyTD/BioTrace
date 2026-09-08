@@ -316,11 +316,13 @@ export default function ObservationDetailPage({ userId }: { userId?: string }) {
     return <p className="muted">{t("app.loading")}</p>;
   }
 
-  const notCollectible = isNotCollectibleError(obs?.error) || isKeepsakeError(obs?.error);
+  /** 不进图鉴：老硬拦码 + 留影（都不结算、不进图鉴）。软档不在内——软档的
+      物种是认出来的，只是不计入相遇，所以归在下面的 noCollection。 */
+  const noCatalogEntry = isNotCollectibleError(obs?.error) || isKeepsakeError(obs?.error);
   const softEncounter = isSoftEncounterError(obs?.error);
   const keepsake = isKeepsakeError(obs?.error);
   /** 软档、硬拦与留影都「不进图鉴」，但软档与留影都保留身份字段 */
-  const noCollection = notCollectible || softEncounter || keepsake;
+  const noCollection = noCatalogEntry || softEncounter || keepsake;
   /** 展示层统一取标题：留影档用 agent 短名，其余回落到物种名（见留影档设计方案 §5） */
   const title =
     obs?.commonName || obs?.scientificName || t("detail.unnamed");
@@ -328,13 +330,13 @@ export default function ObservationDetailPage({ userId }: { userId?: string }) {
   const busy = deleting || reidentifying || obs?.status === "analyzing";
   const failedCoarse =
     !!obs &&
-    !notCollectible &&
+    !noCatalogEntry &&
     !softEncounter &&
     (obs.error === "identify_too_coarse" ||
       (obs.status === "failed" && obs.settleTier === "none"));
   const showTaxonomy =
     !!obs &&
-    (obs.status === "settled" || (obs.status === "failed" && !notCollectible)) &&
+    (obs.status === "settled" || (obs.status === "failed" && !noCatalogEntry)) &&
     /* 留影档没有分类阶元（taxonomy 全 null），标题与理由已足够，不摆空表 */
     !keepsake;
   const failHint = obs?.status === "failed" ? identifyErrorHint(obs.error) : null;
@@ -359,7 +361,7 @@ export default function ObservationDetailPage({ userId }: { userId?: string }) {
       <>
       <header className="page-head">
         <h1 className="page-title">{title}</h1>
-        {!notCollectible && obs.scientificName ? (
+        {!noCatalogEntry && obs.scientificName ? (
           <p className="lede detail-scientific">{obs.scientificName}</p>
         ) : null}
         {acceptedSci ? (
@@ -373,7 +375,7 @@ export default function ObservationDetailPage({ userId }: { userId?: string }) {
               {t(`rarity.${obs.rarity}` as MessageKey)}
             </span>
           ) : null}
-          {!notCollectible && obs.finestReliableRank ? (
+          {!noCatalogEntry && obs.finestReliableRank ? (
             <span className="muted">
               {t("album.reliableTo", { rank: formatRank(obs.finestReliableRank) })}
             </span>
@@ -383,7 +385,9 @@ export default function ObservationDetailPage({ userId }: { userId?: string }) {
           ) : null}
           {obs.status === "failed" ? (
             <span className={isNotAFault(obs.error) ? "badge soft" : "badge danger"}>
-              {notCollectible
+              {/* 留影 status=settled 走不到这里；此处只管老硬拦码与太粗。
+                  留影的「不在册」由上面的 KeepsakeSeal 与 status.keepsake 承担 */}
+              {isNotCollectibleError(obs.error)
                 ? t("status.notCollectible")
                 : failedCoarse
                   ? t("status.tooCoarse")
@@ -421,7 +425,7 @@ export default function ObservationDetailPage({ userId }: { userId?: string }) {
           <p className="blurb">{keepsakeReasonText(obs)}</p>
           {obs.description ? <p className="muted detail-caption">{obs.description}</p> : null}
         </section>
-      ) : !notCollectible ? (
+      ) : !noCatalogEntry ? (
         <section className="detail-block">
           <h2 className="section-title">{t("detail.blurb")}</h2>
           {obs.blurb ? (
