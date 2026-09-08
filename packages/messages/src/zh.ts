@@ -165,7 +165,9 @@ const zhCore = {
   "status.keepsake": "留影",
 
   "detail.softSeal": "NC · 未收录",
+  "detail.softSealAlbum": "未收录",
   "detail.keepsakeSeal": "留影 · 不在册",
+  "detail.keepsakeReasonFallback": "这张里没找到可收集的生物，照片留下了。",
   "detail.softReasonTitle": "为何不进图鉴",
   "detail.softReasonDepiction": "认出它是{reason}。影像与印刷不是野外相遇，不计入图鉴。",
   "detail.softReasonSpecimen": "认出它是{reason}。馆藏标本不是野外相遇，不计入图鉴。",

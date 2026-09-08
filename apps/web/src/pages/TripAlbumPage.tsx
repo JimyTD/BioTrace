@@ -698,13 +698,23 @@ export default function TripAlbumPage({ userId }: { userId: string }) {
                 <span className="film-tile-mark-no">{tileNo(index)}</span>
               </span>
               <span className="film-tile-caption">
-                {obs.status === "settled" && isSoftEncounterError(obs.error) ? (
+                {obs.status === "settled" && isKeepsakeError(obs.error) ? (
                   <>
                     <strong className="film-tile-name">
                       {obs.commonName || obs.scientificName || t("detail.unnamed")}
                     </strong>
                     <span className="muted film-tile-rank">
-                      {t("detail.softSeal")}
+                      {t("detail.keepsakeSeal")}
+                    </span>
+                  </>
+                ) : obs.status === "settled" && isSoftEncounterError(obs.error) ? (
+                  <>
+                    <strong className="film-tile-name">
+                      {obs.commonName || obs.scientificName || t("detail.unnamed")}
+                    </strong>
+                    {/* 相册页没有稀有度章，软档只写「未收录」，不带 NC 前缀 */}
+                    <span className="muted film-tile-rank">
+                      {t("detail.softSealAlbum")}
                     </span>
                   </>
                 ) : obs.status === "settled" ? (

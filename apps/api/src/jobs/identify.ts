@@ -247,7 +247,9 @@ export function enqueueIdentify(opts: IdentifyOpts) {
             confidence: result.confidence_0_to_1,
             taxonomyJson,
             blurb: result.blurb_zh || null,
-            notes: result.notes || null,
+            /* 留影没有科普简介，但 agent 一定给了不合格理由；写进 notes
+               供详情页当这张照片的注——「看起来是个普通茶杯」那类话 */
+            notes: keepsake?.reasonZh || result.notes || null,
             error: "identify_soft_encounter",
             settleTier: "none",
             rarity: null,
@@ -290,7 +292,9 @@ export function enqueueIdentify(opts: IdentifyOpts) {
             confidence: result.confidence_0_to_1,
             taxonomyJson,
             blurb: result.blurb_zh || null,
-            notes: result.notes || null,
+            /* 留影没有科普简介，但 agent 一定给了不合格理由；写进 notes
+               供详情页当这张照片的注——「看起来是个普通茶杯」那类话 */
+            notes: keepsake?.reasonZh || result.notes || null,
             error: "identify_keepsake",
             settleTier: "none",
             rarity: null,

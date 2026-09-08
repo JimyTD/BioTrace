@@ -75,6 +75,18 @@ function softReasonText(obs: Observation): string {
   return generic;
 }
 
+/**
+ * 留影档的「简介」：这类照片没有科普短文，但识图 agent 一定给了
+ * 不合格理由（「看起来是个普通茶杯，没有找到生物」那类话），落库时
+ * 写进 notes 首段。这里回读出来当这张照片的注——总比「暂无简介」强。
+ * 万一 notes 空（老数据或 agent 真没给），回落到一句中性的兜底话。
+ */
+function keepsakeReasonText(obs: Observation): string {
+  const notes = (obs.notes ?? "").trim();
+  if (notes) return notes;
+  return t("detail.keepsakeReasonFallback");
+}
+
 function TaxonomyList({ taxonomy }: { taxonomy: Taxonomy }) {
   const rows = RANK_ORDER.map((rank) => {
     const node = taxonomy[rank];
@@ -304,7 +316,7 @@ export default function ObservationDetailPage({ userId }: { userId?: string }) {
     return <p className="muted">{t("app.loading")}</p>;
   }
 
-  const notCollectible = isNotCollectibleError(obs?.error);
+  const notCollectible = isNotCollectibleError(obs?.error) || isKeepsakeError(obs?.error);
   const softEncounter = isSoftEncounterError(obs?.error);
   const keepsake = isKeepsakeError(obs?.error);
   /** 软档、硬拦与留影都「不进图鉴」，但软档与留影都保留身份字段 */
@@ -321,7 +333,10 @@ export default function ObservationDetailPage({ userId }: { userId?: string }) {
     (obs.error === "identify_too_coarse" ||
       (obs.status === "failed" && obs.settleTier === "none"));
   const showTaxonomy =
-    !!obs && (obs.status === "settled" || (obs.status === "failed" && !notCollectible));
+    !!obs &&
+    (obs.status === "settled" || (obs.status === "failed" && !notCollectible)) &&
+    /* 留影档没有分类阶元（taxonomy 全 null），标题与理由已足够，不摆空表 */
+    !keepsake;
   const failHint = obs?.status === "failed" ? identifyErrorHint(obs.error) : null;
   const hasCoords = obs ? hasValidCoords(obs.lat, obs.lng) : false;
   const identifyName = obs ? identifyDisplayName(obs.identifyProvider, obs.identifyModel) : null;
@@ -399,7 +414,14 @@ export default function ObservationDetailPage({ userId }: { userId?: string }) {
         </div>
       ) : null}
 
-      {!notCollectible ? (
+      {keepsake ? (
+        <section className="detail-block">
+          <h2 className="section-title">{t("detail.blurb")}</h2>
+          {/* 留影没有科普简介，但识图 agent 一定给了不合格理由；那句话就是这张的注 */}
+          <p className="blurb">{keepsakeReasonText(obs)}</p>
+          {obs.description ? <p className="muted detail-caption">{obs.description}</p> : null}
+        </section>
+      ) : !notCollectible ? (
         <section className="detail-block">
           <h2 className="section-title">{t("detail.blurb")}</h2>
           {obs.blurb ? (
