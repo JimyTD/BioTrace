@@ -1,0 +1,198 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>物种树 · 星空皮肤预研</title>
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    height: 100vh; display: flex; flex-direction: column; overflow: hidden;
+    background: #05070d; color: #e8edf4;
+    font: 14px/1.5 "Microsoft YaHei", "PingFang SC", system-ui, sans-serif;
+  }
+  header {
+    flex: none; display: flex; align-items: center; gap: 16px;
+    padding: 9px 16px; background: rgba(10,14,22,.9);
+    border-bottom: 1px solid #1b2331;
+  }
+  h1 { font-size: 14.5px; font-weight: 700; }
+  h1 span { color: #7d8899; font-weight: 400; margin-left: 8px; font-size: 12px; }
+  .grp { display: flex; align-items: center; gap: 6px; margin-left: auto; }
+  .grp b { font-size: 12px; color: #7d8899; font-weight: 400; }
+  button {
+    background: #1b2331; color: #cfd8e4; border: 1px solid #2b3648;
+    border-radius: 6px; padding: 4px 11px; font-size: 12px; cursor: pointer;
+    font-family: inherit;
+  }
+  button:hover { background: #253044; }
+  button.on { background: #3d6ea8; border-color: #3d6ea8; color: #fff; font-weight: 700; }
+  main { flex: 1; min-height: 0; position: relative; }
+  #stage { position: absolute; inset: 0; }
+  #stage canvas { display: block; width: 100%; height: 100%; }
+  .lab {
+    position: absolute; transform: translate(-50%, 0); pointer-events: none;
+    font-size: 12px; color: #cfe0f5; text-shadow: 0 1px 4px #000;
+    white-space: nowrap; opacity: 0; transition: opacity .18s;
+  }
+  .lab.on { opacity: 1; }
+  #crumb {
+    position: absolute; left: 12px; top: 12px; display: flex; gap: 6px;
+    flex-wrap: wrap; max-width: 70%;
+  }
+  #crumb button { background: rgba(16,22,34,.85); }
+  .hint {
+    flex: none; padding: 6px 16px; background: rgba(10,14,22,.9);
+    border-top: 1px solid #1b2331; font-size: 11.5px; color: #7d8899;
+  }
+  .hint code { background: #1b2331; padding: 1px 5px; border-radius: 3px; color: #cfd8e4; }
+  #err {
+    position: absolute; inset: 0; display: none; place-items: center;
+    background: #05070d; color: #ff9b9b; font-size: 13px; padding: 40px;
+    text-align: center; white-space: pre-wrap;
+  }
+</style>
+</head>
+<body>
+  <header>
+    <h1>物种树 · 星空皮肤预研<span>八界 = 八个星系团，下钻 = 星系拉近</span></h1>
+    <div class="grp">
+      <b>收集量</b>
+      <span id="bK"></span>
+    </div>
+  </header>
+
+  <main>
+    <div id="stage"></div>
+    <div id="crumb"></div>
+    <div id="err"></div>
+  </main>
+
+  <div class="hint">
+    本页在 <code>apps/web/devpages/</code> 下，由 dev server 挂出（<code>/devpages</code>），
+    <b>进不了生产包</b>，也不依赖任何生产源码 —— 依赖全部拷在本目录。
+    数据用 <code>DevTreePage.tsx</code> 的同款 mock 路径（真实存在于骨架的类群）。
+    拖拽旋转，滚轮缩放，点星系团下钻。
+  </div>
+
+<script type="module">
+import { StarTreeScene } from "./StarTreeScene.js";
+import { buildSpeciesTree, chainOf, labelOf, toTreeCollectible } from "./treeModel.js";
+
+const errBox = document.getElementById("err");
+function fatal(msg) {
+  errBox.style.display = "grid";
+  errBox.textContent = msg;
+}
+window.addEventListener("error", (e) => fatal("运行出错：\n" + (e.message || e)));
+
+/** 与 DevTreePage.tsx 同源的 mock 路径：都是真实存在于骨架里的类群，否则挂不上树。 */
+const MOCK_PATHS = [
+  [["kingdom","Animalia"],["phylum","Chordata"],["class","Aves"],["order","Passeriformes"],["family","Corvidae"],["genus","Corvus"],["species","Corvus corax"]],
+  [["kingdom","Animalia"],["phylum","Chordata"],["class","Aves"],["order","Passeriformes"],["family","Paridae"],["genus","Parus"],["species","Parus major"]],
+  [["kingdom","Animalia"],["phylum","Chordata"],["class","Aves"],["order","Anseriformes"],["family","Anatidae"],["genus","Anas"],["species","Anas platyrhynchos"]],
+  [["kingdom","Animalia"],["phylum","Chordata"],["class","Mammalia"],["order","Carnivora"],["family","Felidae"],["genus","Felis"],["species","Felis catus"]],
+  [["kingdom","Animalia"],["phylum","Chordata"],["class","Mammalia"],["order","Rodentia"],["family","Sciuridae"],["genus","Sciurus"],["species","Sciurus vulgaris"]],
+  [["kingdom","Animalia"],["phylum","Arthropoda"],["class","Insecta"],["order","Lepidoptera"],["family","Papilionidae"],["genus","Papilio"],["species","Papilio machaon"]],
+  [["kingdom","Animalia"],["phylum","Arthropoda"],["class","Insecta"],["order","Odonata"],["family","Libellulidae"],["genus","Orthetrum"]],
+  [["kingdom","Animalia"],["phylum","Arthropoda"],["class","Insecta"],["order","Coleoptera"],["family","Coccinellidae"]],
+  [["kingdom","Animalia"],["phylum","Mollusca"],["class","Gastropoda"]],
+  [["kingdom","Plantae"],["phylum","Tracheophyta"],["class","Magnoliopsida"],["order","Rosales"],["family","Rosaceae"],["genus","Rosa"],["species","Rosa chinensis"]],
+  [["kingdom","Plantae"],["phylum","Tracheophyta"],["class","Magnoliopsida"],["order","Rosales"],["family","Rosaceae"],["genus","Prunus"],["species","Prunus serrulata"]],
+  [["kingdom","Plantae"],["phylum","Tracheophyta"],["class","Magnoliopsida"],["order","Asterales"],["family","Asteraceae"],["genus","Taraxacum"]],
+  [["kingdom","Plantae"],["phylum","Tracheophyta"],["class","Magnoliopsida"],["order","Fagales"],["family","Fagaceae"],["genus","Quercus"],["species","Quercus acutissima"]],
+  [["kingdom","Plantae"],["phylum","Tracheophyta"],["class","Liliopsida"],["order","Poales"],["family","Poaceae"],["genus","Phyllostachys"]],
+  [["kingdom","Plantae"],["phylum","Tracheophyta"],["class","Pinopsida"],["order","Pinales"],["family","Pinaceae"],["genus","Pinus"],["species","Pinus tabuliformis"]],
+  [["kingdom","Plantae"],["phylum","Bryophyta"],["class","Bryopsida"]],
+  [["kingdom","Fungi"],["phylum","Basidiomycota"],["class","Agaricomycetes"],["order","Agaricales"],["family","Amanitaceae"],["genus","Amanita"],["species","Amanita muscaria"]],
+  [["kingdom","Fungi"],["phylum","Basidiomycota"],["class","Agaricomycetes"],["order","Polyporales"],["family","Polyporaceae"]],
+  [["kingdom","Fungi"],["phylum","Ascomycota"],["class","Pezizomycetes"],["order","Pezizales"],["family","Morchellaceae"],["genus","Morchella"]],
+  [["kingdom","Chromista"],["phylum","Ochrophyta"],["class","Phaeophyceae"],["order","Laminariales"]],
+  [["kingdom","Protozoa"],["phylum","Mycetozoa"]],
+];
+
+const RANKS = ["kingdom","phylum","class","order","family","genus","species"];
+
+function emptyTax() {
+  const k = { name_la: null, name_zh: null };
+  return { kingdom:{...k}, phylum:{...k}, class:{...k}, order:{...k}, family:{...k}, genus:{...k}, species:{...k} };
+}
+
+function mockEntries(n) {
+  const out = [];
+  for (let i = 0; i < n; i++) {
+    const src = MOCK_PATHS[i % MOCK_PATHS.length];
+    const tax = emptyTax();
+    let deepest = "";
+    for (const [rank, la] of src) {
+      tax[rank] = { name_la: la, name_zh: null };
+      deepest = la;
+    }
+    out.push(toTreeCollectible({
+      id: "mock-" + i,
+      taxonKey: "mock-key-" + i,
+      commonName: null,
+      scientificName: deepest,
+      coverDisplayUrl: null,
+      taxonomy: tax,
+    }, "wild"));
+  }
+  return out;
+}
+
+let scene = null;
+let tree = null;
+
+const crumb = document.getElementById("crumb");
+function renderCrumb(focus) {
+  crumb.innerHTML = "";
+  if (!focus || !tree) return;
+  const chain = chainOf(focus);
+  const mk = (txt, fn) => {
+    const b = document.createElement("button");
+    b.textContent = txt;
+    b.onclick = fn;
+    return b;
+  };
+  crumb.appendChild(mk("全树", () => scene && scene.goTo(tree.root)));
+  chain.slice(-4).forEach((n) => {
+    crumb.appendChild(mk(labelOf(n), () => scene && scene.goTo(n)));
+  });
+}
+
+function boot(n) {
+  if (scene) { scene.destroy(); scene = null; }
+  const host = document.getElementById("stage");
+  host.innerHTML = "";
+  const built = buildSpeciesTree(mockEntries(n));
+  tree = built;
+  scene = new StarTreeScene(host, built.root, built, {
+    onPick: (node, canExpand) => { if (canExpand) scene.goTo(node); },
+    onBlank: () => {
+      const f = scene.getFocus();
+      if (f && f !== built.root) scene.goTo(f.parent ?? built.root);
+    },
+    onFocus: (node) => renderCrumb(node),
+  });
+  renderCrumb(built.root);
+}
+
+const MOCKS = [0, 6, 21, 60, 140];
+let mock = 0;
+const bK = document.getElementById("bK");
+MOCKS.forEach((m) => {
+  const b = document.createElement("button");
+  b.textContent = m === 0 ? "空" : m + " 项";
+  b.className = m === mock ? "on" : "";
+  b.onclick = () => {
+    mock = m;
+    [...bK.children].forEach((c, i) => c.classList.toggle("on", MOCKS[i] === m));
+    boot(mock);
+  };
+  bK.appendChild(b);
+});
+
+boot(mock);
+</script>
+</body>
+</html>
