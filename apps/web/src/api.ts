@@ -121,6 +121,8 @@ export type CollectionSighting = {
   tripId: string;
   tripTitle: string;
   occurredAt: string;
+  /** 驯养观察纠偏后的品种名；野生或品种不详为 null。 */
+  breedZh?: string | null;
 };
 
 export type CollectionEntry = {
@@ -139,14 +141,6 @@ export type CollectionEntry = {
   taxonomy?: Taxonomy | null;
 };
 
-export type PetBreedCell = {
-  id: string;
-  zh: string;
-  prevalence?: "common" | "uncommon" | "rare";
-  lit: boolean;
-  source?: "catalog" | "free";
-};
-
 export type PetCollectionEntry = {
   id: string;
   taxonKey: string;
@@ -161,8 +155,6 @@ export type PetCollectionEntry = {
   firstCollectedAt: string;
   updatedAt: string;
   taxonomy?: Taxonomy | null;
-  unregisteredLit: boolean;
-  breeds: PetBreedCell[];
 };
 
 export class ApiError extends Error {

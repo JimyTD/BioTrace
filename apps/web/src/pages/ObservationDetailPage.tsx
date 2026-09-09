@@ -463,6 +463,12 @@ export default function ObservationDetailPage({ userId }: { userId?: string }) {
             <dt>{t("detail.capturedAt")}</dt>
             <dd>{obs.capturedAt ? new Date(obs.capturedAt).toLocaleString() : "—"}</dd>
           </div>
+          {obs.domesticated && obs.breedZh ? (
+            <div className="detail-fact">
+              <dt>{t("detail.breed")}</dt>
+              <dd>{obs.breedZh}</dd>
+            </div>
+          ) : null}
           <div className="detail-fact">
             <dt>{t("detail.location")}</dt>
             <dd>

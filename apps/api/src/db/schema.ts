@@ -164,8 +164,9 @@ export const collectionEntries = sqliteTable(
 
 /**
  * 宠物图鉴：收录单位 = (userId, taxonKey)，只收 domesticated 观察。
- * 稀有度来自驯化卷（只升不降）；品种点亮写在 litBreedIdsJson，
- * 库外名字写在 litFreeBreedsJson，品种不详格独立布尔。
+ * 稀有度来自驯化卷（只升不降）。
+ * litBreedIdsJson / litFreeBreedsJson / unregisteredLit 是旧品种格留下的列，
+ * 卡上已不再展示；写入空值，避免改表。
  */
 export const petCollectionEntries = sqliteTable(
   "pet_collection_entries",

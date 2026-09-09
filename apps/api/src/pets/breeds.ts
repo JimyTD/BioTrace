@@ -20,11 +20,6 @@ export type BreedCatalog = {
   breeds: BreedDef[];
 };
 
-export type FreeBreedCell = {
-  id: string;
-  zh: string;
-};
-
 export type BreedResolve =
   | { kind: "empty" }
   | { kind: "discard" }
@@ -233,14 +228,6 @@ export function isDiscardName(raw: string | null | undefined): boolean {
   return false;
 }
 
-export function matchBreed(
-  taxonKey: string | null | undefined,
-  breedZh: string | null | undefined,
-): BreedDef | null {
-  const resolved = resolveBreed(taxonKey, breedZh);
-  return resolved.kind === "catalog" ? resolved.breed : null;
-}
-
 function uniqueContainment(needle: string, catalog: BreedCatalog): BreedDef | null {
   if (needle.length < minContainLen(needle)) return null;
   const hits = new Map<string, BreedDef>();
@@ -288,35 +275,13 @@ export function resolveBreed(
   return { kind: "free", zh: display, id: `free:${idKey}` };
 }
 
-export function parseBreedIdList(raw: string | null | undefined): string[] {
-  if (!raw) return [];
-  try {
-    const v = JSON.parse(raw) as unknown;
-    if (!Array.isArray(v)) return [];
-    return [...new Set(v.filter((id): id is string => typeof id === "string" && id.trim().length > 0))];
-  } catch {
-    return [];
-  }
-}
-
-export function parseFreeBreedList(raw: string | null | undefined): FreeBreedCell[] {
-  if (!raw) return [];
-  try {
-    const v = JSON.parse(raw) as unknown;
-    if (!Array.isArray(v)) return [];
-    const out: FreeBreedCell[] = [];
-    const seen = new Set<string>();
-    for (const item of v) {
-      if (!item || typeof item !== "object") continue;
-      const o = item as Record<string, unknown>;
-      const id = String(o.id ?? "").trim();
-      const zh = String(o.zh ?? "").trim();
-      if (!id || !zh || seen.has(id)) continue;
-      seen.add(id);
-      out.push({ id, zh });
-    }
-    return out;
-  } catch {
-    return [];
-  }
+/** 纠偏后给人看的名字。空 / 排除词不展示，不另开「品种不详」格。 */
+export function displayBreedLabel(
+  taxonKey: string | null | undefined,
+  breedZh: string | null | undefined,
+): string | null {
+  const resolved = resolveBreed(taxonKey, breedZh);
+  if (resolved.kind === "catalog") return resolved.breed.zh;
+  if (resolved.kind === "free") return resolved.zh;
+  return null;
 }

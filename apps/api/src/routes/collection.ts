@@ -8,6 +8,7 @@ import { sanitizeUserCollection } from "../services/collection.js";
 import { rebuildPetTaxonForUser } from "../services/pets.js";
 import { rebuildCollectionTaxonForUser } from "../services/shared-progress.js";
 import { listTripsForUser } from "../services/trip-share.js";
+import { displayBreedLabel } from "../pets/breeds.js";
 import {
   observationDisplayUrl,
   serializeCollectionEntry,
@@ -16,6 +17,7 @@ import {
 import { parseCollectionTaxonomy } from "../settle/taxon.js";
 
 export const collectionRoutes = new Hono<{ Variables: Variables }>();
+collectionRoutes.use("*", requireUser);
 
 async function introducedTaxonKeys(userId: string, domesticated: boolean): Promise<Set<string>> {
   const rows = await db.query.observations.findMany({
@@ -82,6 +84,7 @@ async function sightingsForTaxon(
       tripId: obs.tripId,
       tripTitle: tripTitle.get(obs.tripId) ?? "",
       occurredAt: when.toISOString(),
+      breedZh: domesticated ? displayBreedLabel(obs.taxonKey, obs.breedZh) : null,
     };
   });
 }

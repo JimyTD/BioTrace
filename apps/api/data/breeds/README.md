@@ -13,6 +13,6 @@
 | `horse.json` | `Equus caballus` | Wikidata horse breed Q1160573 |
 | `discard.json` | — | 「品种不详」排除词 |
 
-`listed` 字段忽略：曾经用来预印灰格，已废弃。对照表只做纠偏，卡上只显示点亮过的格子。
+`listed` / `prevalence` 不参与展示：曾经给卡上品种格用，已废弃。对照表只做纠偏，名字写在该次观察上。
 
 更新 Wikidata 合并：`python scripts/import-breed-wikidata.py`（可重复跑，保留已有 id / 别名）。

@@ -2493,41 +2493,6 @@ button.species-card-cover {
   gap: 8px;
 }
 
-.pet-breed-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(92px, 1fr));
-  gap: 8px;
-}
-
-.pet-breed-cell {
-  display: grid;
-  place-items: center;
-  min-height: 52px;
-  padding: 8px 6px;
-  border: 1px solid var(--line);
-  border-radius: var(--radius-md);
-  background: var(--card);
-  color: var(--muted);
-  font-size: 0.78rem;
-  text-align: center;
-  line-height: 1.25;
-}
-
-.pet-breed-cell.is-uncommon {
-  border-width: 2px;
-}
-
-.pet-breed-cell.is-rare {
-  border-width: 2px;
-  box-shadow: inset 0 0 0 1px var(--tint-3-ink);
-}
-
-.pet-breed-cell.is-lit {
-  color: var(--ink);
-  background: color-mix(in srgb, var(--tint-3-bg) 72%, var(--card));
-  border-color: var(--tint-3-ink);
-}
-
 .species-sightings {
   display: grid;
   grid-template-columns: repeat(2, minmax(0, 1fr));

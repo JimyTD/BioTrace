@@ -2,7 +2,7 @@ import { useEffect, useLayoutEffect, useRef, useState } from "react";
 import { flushSync } from "react-dom";
 import { matchPath, useLocation, useNavigate, useParams } from "react-router-dom";
 import { hasMessage, t, type MessageKey } from "@biotrace/messages";
-import { api, type CollectionSighting, type PetBreedCell, type PetCollectionEntry, type Rarity } from "../api";
+import { api, type CollectionSighting, type PetCollectionEntry, type Rarity } from "../api";
 import { ListTagRow } from "../components/ListTagRow";
 import { useBackClose } from "../androidBack";
 import { measureBox } from "../motion";
@@ -29,19 +29,6 @@ function rarityLabel(r: Rarity) {
 function treeReturnPath(state: unknown) {
   const from = (state as { from?: unknown } | null)?.from;
   return typeof from === "string" && from.startsWith("/collection/tree") ? from : null;
-}
-
-function prevalenceKey(p: NonNullable<PetBreedCell["prevalence"]>): MessageKey {
-  if (p === "uncommon") return "collection.prevalence.uncommon";
-  if (p === "rare") return "collection.prevalence.rare";
-  return "collection.prevalence.common";
-}
-
-function breedCellClass(breed: PetBreedCell): string {
-  const parts = ["pet-breed-cell"];
-  if (breed.prevalence) parts.push(`is-${breed.prevalence}`);
-  if (breed.lit) parts.push("is-lit");
-  return parts.join(" ");
 }
 
 export default function CollectionPetCardPage() {
@@ -206,32 +193,6 @@ export default function CollectionPetCardPage() {
           </div>
           <ListTagRow tags={entry.tags} />
 
-          {entry.unregisteredLit || entry.breeds.length > 0 ? (
-            <>
-              <h2 className="section-title">{t("collection.petsBreeds")}</h2>
-              <div className="pet-breed-grid">
-                {entry.unregisteredLit ? (
-                  <div className="pet-breed-cell is-lit" aria-label={t("collection.petsUnregistered")}>
-                    {t("collection.petsUnregistered")}
-                  </div>
-                ) : null}
-                {entry.breeds.map((breed) => (
-                  <div
-                    key={breed.id}
-                    className={breedCellClass(breed)}
-                    aria-label={
-                      breed.prevalence
-                        ? `${breed.zh} ${t(prevalenceKey(breed.prevalence))}`
-                        : breed.zh
-                    }
-                  >
-                    {breed.zh}
-                  </div>
-                ))}
-              </div>
-            </>
-          ) : null}
-
           <h2 className="section-title">{t("collection.speciesSightings")}</h2>
           {sightings.length === 0 ? (
             <p className="muted">{t("collection.petsEmpty")}</p>
@@ -263,6 +224,7 @@ export default function CollectionPetCardPage() {
                 >
                   <img className="species-sighting-photo" src={item.displayUrl} alt="" />
                   {item.tripTitle ? <strong>{item.tripTitle}</strong> : null}
+                  {item.breedZh ? <span className="muted">{item.breedZh}</span> : null}
                   <span className="muted">{shortDate(item.occurredAt)}</span>
                 </button>
               ))}

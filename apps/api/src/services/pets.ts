@@ -5,16 +5,13 @@ import {
   petCollectionEntries,
   sharedCollectionCredits,
   type Observation,
-  type PetCollectionEntry,
 } from "../db/schema.js";
 import { collectibleRankFromTier } from "../rarity/scale-rubric.js";
 import { collectionScientificName } from "../settle/taxon.js";
-import {
-  parseBreedIdList,
-  petDisplayCommonName,
-  resolveBreed,
-  type FreeBreedCell,
-} from "../pets/breeds.js";
+import { petDisplayCommonName } from "../pets/breeds.js";
+
+/** 旧品种格列，卡上已不展示；继续写空值以免改表。 */
+const EMPTY_BREED_JSON = "[]";
 
 function isDomesticated(obs: Pick<Observation, "domesticated">): boolean {
   return Boolean(obs.domesticated);
@@ -63,25 +60,6 @@ function bestRarity(sources: Observation[]): string {
   return best;
 }
 
-function breedProgress(sources: Observation[], taxonKey: string): {
-  litIds: string[];
-  free: FreeBreedCell[];
-  unregisteredLit: boolean;
-} {
-  const lit = new Set<string>();
-  const freeById = new Map<string, string>();
-  let unregisteredLit = false;
-  for (const obs of sources) {
-    const resolved = resolveBreed(taxonKey, obs.breedZh);
-    if (resolved.kind === "catalog") lit.add(resolved.breed.id);
-    else if (resolved.kind === "free") {
-      if (!freeById.has(resolved.id)) freeById.set(resolved.id, resolved.zh);
-    } else unregisteredLit = true;
-  }
-  const free = [...freeById].map(([id, zh]) => ({ id, zh }));
-  return { litIds: [...lit], free, unregisteredLit };
-}
-
 export async function rebuildPetTaxonForUser(userId: string, taxonKey: string) {
   const { own, credited } = await settledSourcesForTaxon(userId, taxonKey);
   const ownPet = own.filter(isDomesticated);
@@ -98,7 +76,6 @@ export async function rebuildPetTaxonForUser(userId: string, taxonKey: string) {
 
   const cover = ownPet[0] ?? sources[0]!;
   const nameSource = cover;
-  const { litIds, free, unregisteredLit } = breedProgress(sources, taxonKey);
   const now = new Date();
   const commonName = petDisplayCommonName(taxonKey, nameSource.commonName);
   const scientificName = collectionScientificName(nameSource);
@@ -113,9 +90,9 @@ export async function rebuildPetTaxonForUser(userId: string, taxonKey: string) {
       scientificName,
       rarity,
       coverObservationId: cover.id,
-      litBreedIdsJson: JSON.stringify(litIds),
-      litFreeBreedsJson: JSON.stringify(free),
-      unregisteredLit,
+      litBreedIdsJson: EMPTY_BREED_JSON,
+      litFreeBreedsJson: EMPTY_BREED_JSON,
+      unregisteredLit: false,
       firstCollectedAt: now,
       updatedAt: now,
     });
@@ -129,9 +106,9 @@ export async function rebuildPetTaxonForUser(userId: string, taxonKey: string) {
       scientificName: scientificName ?? existing.scientificName,
       rarity,
       coverObservationId: cover.id,
-      litBreedIdsJson: JSON.stringify(litIds),
-      litFreeBreedsJson: JSON.stringify(free),
-      unregisteredLit,
+      litBreedIdsJson: EMPTY_BREED_JSON,
+      litFreeBreedsJson: EMPTY_BREED_JSON,
+      unregisteredLit: false,
       updatedAt: now,
     })
     .where(eq(petCollectionEntries.id, existing.id));
@@ -166,6 +143,3 @@ export async function detachObservationFromPets(
   }
 }
 
-export function litBreedIdsOf(entry: PetCollectionEntry): string[] {
-  return parseBreedIdList(entry.litBreedIdsJson);
-}
