@@ -20,6 +20,11 @@ function shortDate(iso: string) {
   return new Date(iso).toLocaleDateString();
 }
 
+function treeReturnPath(state: unknown) {
+  const from = (state as { from?: unknown } | null)?.from;
+  return typeof from === "string" && from.startsWith("/collection/tree") ? from : null;
+}
+
 function prevalenceKey(p: PetCollectionEntry["breeds"][number]["prevalence"]): MessageKey {
   if (p === "uncommon") return "collection.prevalence.uncommon";
   if (p === "rare") return "collection.prevalence.rare";
@@ -32,8 +37,18 @@ export default function CollectionPetCardPage() {
   const location = useLocation();
   const real = useRealLocation();
   const onThisCard = Boolean(
-    real && matchPath("/collection/pets/:id", real.pathname)?.params.id === id,
+    real &&
+      (matchPath("/collection/pets/:id", real.pathname)?.params.id === id ||
+        matchPath("/collection/species/pet/:id", real.pathname)?.params.id === id),
   );
+  const fromTree = treeReturnPath(location.state);
+  const fromSpeciesIndex = Boolean(matchPath("/collection/species/pet/:id", location.pathname));
+  const backTo = fromTree ?? (fromSpeciesIndex ? "/collection/species" : "/collection/pets");
+  const backLabel = fromTree
+    ? t("collection.treeTitle")
+    : fromSpeciesIndex
+      ? t("collection.speciesTitle")
+      : t("collection.petsTitle");
   const [entry, setEntry] = useState<PetCollectionEntry | null>(null);
   const [sightings, setSightings] = useState<CollectionSighting[]>([]);
   const [error, setError] = useState<string | null>(null);
@@ -121,14 +136,14 @@ export default function CollectionPetCardPage() {
     navigate(`/observations/${observationId}`, { state: liftBackgroundState(location) });
   }
 
-  useBackClose(() => navigate("/collection/pets"));
+  useBackClose(() => navigate(backTo));
   const title = entry ? speciesEntryName(entry, t("detail.unnamed")) : t("collection.petsTitle");
 
   return (
     <div className="stack page-species-card" ref={pageRef}>
       <header className="page-head me-sub-head">
-        <button className="text-link" type="button" onClick={() => navigate("/collection/pets")}>
-          ← {t("collection.petsTitle")}
+        <button className="text-link" type="button" onClick={() => navigate(backTo)}>
+          ← {backLabel}
         </button>
         <h1 className="page-title">{title}</h1>
         {entry?.scientificName && entry.commonName ? (

@@ -2,15 +2,18 @@ import { useEffect, useLayoutEffect, useMemo, useRef, useState } from "react";
 import { Link, useMatch, useNavigate } from "react-router-dom";
 import { useBackClose } from "../androidBack";
 import { hasMessage, t, type MessageKey } from "@biotrace/messages";
-import { api, type CollectionEntry, type Rarity } from "../api";
+import { api, type Rarity } from "../api";
 import { ListTagRow } from "../components/ListTagRow";
 import {
   buildSpeciesFuse,
   filterSpecies,
   indexSpecies,
+  petToIndexRow,
   raritiesInEntries,
   sortSpecies,
   speciesEntryName,
+  wildToIndexRow,
+  type SpeciesIndexRow,
   type SpeciesSort,
 } from "../speciesSearch";
 import { restoreContentScroll, saveContentScroll } from "../scrollMemory";
@@ -20,15 +23,17 @@ function rarityLabel(r: Rarity) {
   return hasMessage(key) ? t(key as MessageKey) : r;
 }
 
-function entryName(entry: CollectionEntry) {
+function entryName(entry: SpeciesIndexRow) {
   return speciesEntryName(entry, t("detail.unnamed"));
 }
 
 export default function CollectionSpeciesPage() {
   const navigate = useNavigate();
-  const cardOpen = Boolean(useMatch("/collection/species/:id"));
+  const wildCardOpen = Boolean(useMatch({ path: "/collection/species/:id", end: true }));
+  const petCardOpen = Boolean(useMatch("/collection/species/pet/:id"));
+  const cardOpen = wildCardOpen || petCardOpen;
   useBackClose(() => navigate("/collection"), !cardOpen);
-  const [entries, setEntries] = useState<CollectionEntry[]>([]);
+  const [rows, setRows] = useState<SpeciesIndexRow[]>([]);
   const [query, setQuery] = useState("");
   const [rarityFilter, setRarityFilter] = useState<string | null>(null);
   const [sort, setSort] = useState<SpeciesSort>("recent");
@@ -37,9 +42,13 @@ export default function CollectionSpeciesPage() {
   const scrollRestored = useRef(false);
 
   useEffect(() => {
-    api
-      .listCollection()
-      .then((col) => setEntries(col.entries))
+    Promise.all([
+      api.listCollection(),
+      api.listPetCollection().catch(() => ({ entries: [] as const })),
+    ])
+      .then(([col, pets]) => {
+        setRows([...col.entries.map(wildToIndexRow), ...pets.entries.map(petToIndexRow)]);
+      })
       .catch((e) => setError(e instanceof Error ? e.message : t("collection.loadFailed")))
       .finally(() => setLoading(false));
   }, []);
@@ -56,9 +65,9 @@ export default function CollectionSpeciesPage() {
     }
   }, [loading, cardOpen]);
 
-  const indexed = useMemo(() => entries.map(indexSpecies), [entries]);
+  const indexed = useMemo(() => rows.map(indexSpecies), [rows]);
   const fuse = useMemo(() => (indexed.length ? buildSpeciesFuse(indexed) : null), [indexed]);
-  const rarityChips = useMemo(() => raritiesInEntries(entries), [entries]);
+  const rarityChips = useMemo(() => raritiesInEntries(rows), [rows]);
 
   const visible = useMemo(() => {
     const byName = filterSpecies(indexed, fuse, query);
@@ -87,11 +96,11 @@ export default function CollectionSpeciesPage() {
       {loading ? <p className="muted">{t("app.loading")}</p> : null}
       {error ? <p className="error">{error}</p> : null}
 
-      {!loading && entries.length === 0 ? (
+      {!loading && rows.length === 0 ? (
         <p className="muted">{t("collection.empty")}</p>
       ) : null}
 
-      {!loading && entries.length > 0 ? (
+      {!loading && rows.length > 0 ? (
         <>
           <div className="species-toolbar">
             <label className="sr-only" htmlFor="collection-species-q">
@@ -149,9 +158,9 @@ export default function CollectionSpeciesPage() {
             <div className="species-index">
               {visible.map((entry) => (
                 <Link
-                  key={entry.id}
+                  key={entry.rowKey}
                   className="species-index-row"
-                  to={`/collection/species/${entry.id}`}
+                  to={entry.href}
                   onClick={() => saveContentScroll("collection-species")}
                 >
                   {entry.coverDisplayUrl ? (
@@ -165,11 +174,16 @@ export default function CollectionSpeciesPage() {
                       <span className="muted species-index-sci">{entry.scientificName}</span>
                     ) : null}
                     <span className="species-index-marks">
-                      <span className={`rarity-badge rarity-${entry.rarity}`}>
-                        {rarityLabel(entry.rarity)}
-                      </span>
+                      {entry.track === "wild" && entry.rarity ? (
+                        <span className={`rarity-badge rarity-${entry.rarity}`}>
+                          {rarityLabel(entry.rarity)}
+                        </span>
+                      ) : null}
+                      {entry.track === "pet" ? (
+                        <span className="muted">{t("collection.petsTitle")}</span>
+                      ) : null}
                     </span>
-                    <ListTagRow tags={entry.tags} />
+                    {entry.track === "wild" ? <ListTagRow tags={entry.tags} /> : null}
                   </span>
                 </Link>
               ))}

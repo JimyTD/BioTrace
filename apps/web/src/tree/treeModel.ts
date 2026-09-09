@@ -3,13 +3,13 @@
  *
  * ── 节点来源（2026-09-08 起） ────────────────────────────────
  *   backbone  界→门→纲→目，来自 GBIF，人人相同，内置不查库，八界全导
- *   grown     科→属→种，从我的收集条目里长出来
+ *   grown     科→属→种，从我的收集条目里长出来（野生卡与宠物卡都挂；同一种不新开节点）
  *
  * 根系三界（细菌/古菌/病毒）的门/纲/目真数据已于 2026-09-08 入库，
  * 科属种照旧动态生长。历史上根系曾整段用 filler 假枝表达
  * （ROOT_KINGDOMS + growFiller），已删；总览的根区形态由渲染层
  * 写死参数接管（TreeScene rootBushOn，机制见
- * docs/wip/物种树-拍板铁律.md §6）。
+ * docs/features/物种树.md §6）。
  * 万一真拍到蓝藻水华：条目自带完整 taxonomy，会命中真骨架门枝。
  *
  * ── 节点 id 的形式：`<rank序号>:<拉丁名>` ───────────────────
@@ -19,14 +19,42 @@
  * 不带 rank 的话这些节点会自己当自己的父级 → 建树成环。
  */
 import { t } from "@biotrace/messages";
-import type { CollectionEntry, Taxonomy } from "../api";
+import type { Taxonomy } from "../api";
 import { BACKBONE_ZH } from "../data/backboneZh";
 import backboneRaw from "../data/backbone.json";
 
 export const RANKS = ["kingdom", "phylum", "class", "order", "family", "genus", "species"] as const;
 export type Rank = (typeof RANKS)[number];
 
-/** 三段式分区。见 docs/wip/物种树-结构议题.md §4.2「高度即可及性」。 */
+/** 树上挂的收集卡。野生 / 宠物同一种节点，不新开枝。 */
+export type TreeCollectible = {
+  id: string;
+  track: "wild" | "pet";
+  taxonKey: string;
+  commonName: string | null;
+  scientificName: string | null;
+  coverDisplayUrl: string | null;
+  taxonomy?: Taxonomy | null;
+};
+
+export type TreeCollectibleInput = Omit<TreeCollectible, "track"> & { track?: "wild" | "pet" };
+
+export function toTreeCollectible(
+  e: Omit<TreeCollectible, "track">,
+  track: "wild" | "pet",
+): TreeCollectible {
+  return {
+    id: e.id,
+    track,
+    taxonKey: e.taxonKey,
+    commonName: e.commonName,
+    scientificName: e.scientificName,
+    coverDisplayUrl: e.coverDisplayUrl,
+    taxonomy: e.taxonomy ?? null,
+  };
+}
+
+/** 三段式分区。见 docs/features/物种树.md「高度即可及性」相关附录。 */
 export type Zone = "crown" | "basal" | "root";
 
 export type TreeNode = {
@@ -43,8 +71,8 @@ export type TreeNode = {
   ch: TreeNode[];
   /** 该支下的收集条目数（自底向上累加） */
   got: number;
-  /** 住在这一级的条目（识别只到科时就住在科级） */
-  own: CollectionEntry[];
+  /** 住在这一级的条目（识别只到科时就住在科级；同种可同时有野生卡和宠物卡） */
+  own: TreeCollectible[];
   /** 代表照片 */
   coverUrl: string | null;
   /** 末端且非种：数据不再细分（如 filler 枝梢） */
@@ -155,7 +183,7 @@ export type SpeciesTree = {
  * 建树。
  * 骨架先铺开，再把收集条目挂上去；条目路径上缺失的层级即时补出（src="grown"）。
  */
-export function buildSpeciesTree(entries: CollectionEntry[]): SpeciesTree {
+export function buildSpeciesTree(entries: TreeCollectibleInput[]): SpeciesTree {
   const F: Record<string, number> = {};
   DOC.fields.forEach((f, i) => (F[f] = i));
   const byId = new Map<string, TreeNode>();
@@ -205,11 +233,14 @@ export function buildSpeciesTree(entries: CollectionEntry[]): SpeciesTree {
 
   const realCount = byId.size;
 
-  // ── 3. 挂收集条目 ──
+  // ── 3. 挂收集条目（野生 + 宠物都挂同一种节点） ──
   for (const e of entries) {
     if (!e.taxonomy) continue;
-    attachEntry(root, byId, e, e.taxonomy);
+    attachEntry(root, byId, { ...e, track: e.track ?? "wild" }, e.taxonomy);
   }
+
+  // 种级俗名：只养狗写「家犬」；有野狼则写「狼」。不新开节点。
+  applyCollectedSpeciesZh(root);
 
   // ── 4. 自底向上累加 got / 选封面 ──
   rollup(root);
@@ -299,7 +330,7 @@ function homeLvl(tax: Taxonomy): number {
 function attachEntry(
   root: TreeNode,
   byId: Map<string, TreeNode>,
-  e: CollectionEntry,
+  e: TreeCollectible,
   tax: Taxonomy,
 ) {
   const home = homeLvl(tax);
@@ -342,6 +373,21 @@ function attachEntry(
   cur.own.push(e);
 }
 
+/** 种级节点的中文名按收集来源选：宠物卡俗名优先于分类学父种名（狼/家犬）。 */
+function applyCollectedSpeciesZh(n: TreeNode) {
+  for (const c of n.ch) applyCollectedSpeciesZh(c);
+  if (n.lvl !== 6 || n.own.length === 0) return;
+  const wild = n.own.find((e) => e.track !== "pet");
+  const pet = n.own.find((e) => e.track === "pet");
+  if (wild) {
+    const name = wild.commonName?.trim();
+    if (name) n.zh = name;
+    return;
+  }
+  const name = pet?.commonName?.trim();
+  if (name) n.zh = name;
+}
+
 function rollup(n: TreeNode): number {
   let got = n.own.length;
   for (const c of n.ch) got += rollup(c);
@@ -373,8 +419,8 @@ export function chainOf(n: TreeNode): TreeNode[] {
 }
 
 /** 该级下所有收集条目（含后代），用于详情视图。 */
-export function collectEntries(n: TreeNode, cap = 400): CollectionEntry[] {
-  const out: CollectionEntry[] = [];
+export function collectEntries(n: TreeNode, cap = 400): TreeCollectible[] {
+  const out: TreeCollectible[] = [];
   const walk = (x: TreeNode) => {
     if (out.length >= cap) return;
     for (const e of x.own) {

@@ -11,10 +11,11 @@
  */
 import { formatRank, t } from "@biotrace/messages";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
-import type { CollectionEntry } from "../api";
 import { TreeScene } from "../tree/TreeScene";
 import {
   type SpeciesTree,
+  type TreeCollectible,
+  type TreeCollectibleInput,
   type TreeNode,
   RANKS,
   buildSpeciesTree,
@@ -31,11 +32,11 @@ function rankName(lvl: number) {
 }
 
 export type SpeciesTree3DProps = {
-  entries: CollectionEntry[];
+  entries: TreeCollectibleInput[];
   /** URL 里的节点 id（null = 全树） */
   focusId: string | null;
   onFocusChange: (id: string | null) => void;
-  onOpenEntry: (entry: CollectionEntry) => void;
+  onOpenEntry: (entry: TreeCollectible) => void;
   /** 离开 3D 树、回到图鉴。正式页才有；dev 预览不传。 */
   onLeave?: () => void;
 };
@@ -288,9 +289,9 @@ function TreeDetail({
   onOpenEntry,
 }: {
   node: TreeNode;
-  entries: CollectionEntry[];
+  entries: TreeCollectible[];
   onClose: () => void;
-  onOpenEntry: (e: CollectionEntry) => void;
+  onOpenEntry: (e: TreeCollectible) => void;
 }) {
   const chain = chainOf(node);
   return (
@@ -317,6 +318,7 @@ function TreeDetail({
               {e.coverDisplayUrl ? <img src={e.coverDisplayUrl} alt="" loading="lazy" /> : null}
             </div>
             <span className="nm">{e.commonName || e.scientificName || t("tree3d.unnamed")}</span>
+            {e.track === "pet" ? <span className="sci">{t("collection.petsTitle")}</span> : null}
             {e.scientificName && e.commonName ? <span className="sci">{e.scientificName}</span> : null}
           </button>
         ))}

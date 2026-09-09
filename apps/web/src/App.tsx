@@ -138,6 +138,14 @@ function AppShell({
             <Route path="/collection/species" element={<SpeciesListLayout />}>
               <Route index element={null} />
               <Route
+                path="pet/:id"
+                element={
+                  <PageOverlay className="is-species">
+                    <CollectionPetCardPage />
+                  </PageOverlay>
+                }
+              />
+              <Route
                 path=":id"
                 element={
                   <PageOverlay className="is-species">

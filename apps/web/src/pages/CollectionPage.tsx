@@ -2,7 +2,7 @@ import { useEffect, useLayoutEffect, useMemo, useRef, useState, type CSSProperti
 import { flushSync } from "react-dom";
 import { Link, useMatch, useNavigate } from "react-router-dom";
 import { hasMessage, t } from "@biotrace/messages";
-import { api, type CollectionEntry, type VolumeListItem } from "../api";
+import { api, type CollectionEntry, type PetCollectionEntry, type VolumeListItem } from "../api";
 import { pickCollectionFaces } from "../collectionFaces";
 import { MeRowIcon } from "../components/MeRowIcon";
 import { measureBox } from "../motion";
@@ -38,6 +38,9 @@ export default function CollectionPage() {
   const [petCount, setPetCount] = useState(() => peekCollection()?.petCount ?? 0);
   const [kingdomCount, setKingdomCount] = useState(() => peekCollection()?.kingdomCount ?? 0);
   const [entries, setEntries] = useState<CollectionEntry[]>(() => peekCollection()?.entries ?? []);
+  const [petEntries, setPetEntries] = useState<PetCollectionEntry[]>(
+    () => peekCollection()?.petEntries ?? [],
+  );
   const [petFaces, setPetFaces] = useState<string[]>([]);
   const [volumes, setVolumes] = useState<VolumeListItem[]>(() => peekCollection()?.volumes ?? []);
   const [error, setError] = useState<string | null>(null);
@@ -51,24 +54,29 @@ export default function CollectionPage() {
     Promise.all([
       api.listCollection(),
       api.listVolumes(),
-      api.listPetCollection().catch(() => ({ entries: [] as const })),
+      api.listPetCollection().catch(() => ({ entries: [] as PetCollectionEntry[] })),
     ])
       .then(([col, vol, pets]) => {
         const petCoverUrls = pets.entries
           .map((e) => e.coverDisplayUrl)
           .filter((u): u is string => Boolean(u))
           .slice(0, 4);
-        setEntryCount(col.entries.length);
+        const collected = [...col.entries, ...pets.entries];
+        const totalCount = collected.length;
+        const kingdoms = countTreeKingdoms(collected);
+        setEntryCount(totalCount);
         setPetCount(pets.entries.length);
-        setKingdomCount(countTreeKingdoms(col.entries));
+        setKingdomCount(kingdoms);
         setEntries(col.entries);
+        setPetEntries(pets.entries);
         setPetFaces(petCoverUrls);
         setVolumes(vol.volumes);
         rememberCollection({
-          entryCount: col.entries.length,
+          entryCount: totalCount,
           petCount: pets.entries.length,
-          kingdomCount: countTreeKingdoms(col.entries),
+          kingdomCount: kingdoms,
           entries: col.entries,
+          petEntries: pets.entries,
           volumes: vol.volumes,
         });
       })
@@ -130,7 +138,10 @@ export default function CollectionPage() {
     navigate(`/collection/volumes/${vol.id}`);
   }
 
-  const faces = useMemo(() => pickCollectionFaces(entries), [entries]);
+  const faces = useMemo(
+    () => pickCollectionFaces([...entries, ...petEntries]),
+    [entries, petEntries],
+  );
   const treeDoorUrl = collectionTreeDoorUrl();
 
   return (

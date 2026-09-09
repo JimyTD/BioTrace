@@ -1,6 +1,6 @@
 import Fuse from "fuse.js";
 import { match, pinyin } from "pinyin-pro";
-import type { CollectionEntry } from "./api";
+import type { CollectionEntry, PetCollectionEntry, StatusTag } from "./api";
 
 export type SpeciesSort = "recent" | "rarity" | "name";
 
@@ -34,13 +34,26 @@ function syllablesOf(name: string): string[] {
   return parts.map((s) => s.toLowerCase().replace(/[^a-z0-9]/g, "")).filter(Boolean);
 }
 
+export type SpeciesIndexRow = {
+  id: string;
+  rowKey: string;
+  href: string;
+  track: "wild" | "pet";
+  commonName: string | null;
+  scientificName: string | null;
+  coverDisplayUrl: string | null;
+  updatedAt: string;
+  rarity: string | null;
+  tags?: StatusTag[];
+};
+
 export type IndexedNamed<T extends { id: string; commonName: string | null; scientificName: string | null }> = T & {
   pinyin: string;
   pinyinCompact: string;
   initials: string;
 };
 
-export type IndexedSpecies = IndexedNamed<CollectionEntry>;
+export type IndexedSpecies = IndexedNamed<SpeciesIndexRow>;
 
 export function indexNamed<T extends { id: string; commonName: string | null; scientificName: string | null }>(
   entry: T,
@@ -54,8 +67,37 @@ export function indexNamed<T extends { id: string; commonName: string | null; sc
   };
 }
 
-export function indexSpecies(entry: CollectionEntry): IndexedSpecies {
+export function indexSpecies(entry: SpeciesIndexRow): IndexedSpecies {
   return indexNamed(entry);
+}
+
+export function wildToIndexRow(entry: CollectionEntry): SpeciesIndexRow {
+  return {
+    id: entry.id,
+    rowKey: `wild:${entry.id}`,
+    href: `/collection/species/${entry.id}`,
+    track: "wild",
+    commonName: entry.commonName,
+    scientificName: entry.scientificName,
+    coverDisplayUrl: entry.coverDisplayUrl,
+    updatedAt: entry.updatedAt,
+    rarity: entry.rarity,
+    tags: entry.tags,
+  };
+}
+
+export function petToIndexRow(entry: PetCollectionEntry): SpeciesIndexRow {
+  return {
+    id: entry.id,
+    rowKey: `pet:${entry.id}`,
+    href: `/collection/species/pet/${entry.id}`,
+    track: "pet",
+    commonName: entry.commonName,
+    scientificName: entry.scientificName,
+    coverDisplayUrl: entry.coverDisplayUrl,
+    updatedAt: entry.updatedAt,
+    rarity: null,
+  };
 }
 
 function haystack(entry: {
@@ -146,7 +188,7 @@ export function sortSpecies(entries: IndexedSpecies[], sort: SpeciesSort): Index
   }
   if (sort === "rarity") {
     copy.sort((a, b) => {
-      const d = rarityCollectibleRank(b.rarity) - rarityCollectibleRank(a.rarity);
+      const d = rarityCollectibleRank(b.rarity ?? "") - rarityCollectibleRank(a.rarity ?? "");
       if (d !== 0) return d;
       return speciesEntryName(a).localeCompare(speciesEntryName(b), "zh");
     });
@@ -163,8 +205,10 @@ export function speciesEntryName(
   return entry.commonName || entry.scientificName || entry.taxonKey || unnamed;
 }
 
-export function raritiesInEntries(entries: CollectionEntry[]): string[] {
-  const present = new Set(entries.map((e) => e.rarity));
+export function raritiesInEntries(entries: { rarity?: string | null }[]): string[] {
+  const present = new Set(
+    entries.map((e) => e.rarity).filter((r): r is string => Boolean(r)),
+  );
   const known = RARITY_CHIP_ORDER.filter((r) => present.has(r));
   const extra = [...present].filter((r) => !known.includes(r as (typeof RARITY_CHIP_ORDER)[number]));
   extra.sort();

@@ -5,7 +5,7 @@
  * 物种树改为 3D 场景后那套逐层宫格全部废弃，节点模型见
  * `src/tree/treeModel.ts`。这里只留下别处仍在用的判据。
  */
-import type { CollectionEntry, Taxonomy } from "./api";
+import type { Taxonomy } from "./api";
 
 /** 连「界」都没识别出来的条目：不属于任何枝，在 3D 树里没有位置。 */
 export const UNPLACED_LATIN = "__unplaced__";
@@ -15,7 +15,7 @@ function latinKey(value: string | null | undefined) {
 }
 
 /** 有没有落在分类骨架上 —— 判据是有没有 kingdom。 */
-export function isPlaced(entry: CollectionEntry) {
+export function isPlaced(entry: { taxonomy?: Taxonomy | null }) {
   return Boolean(latinKey(entry.taxonomy?.kingdom?.name_la));
 }
 
@@ -25,7 +25,10 @@ export function isPlaced(entry: CollectionEntry) {
  * 识别不总能到种：只到科时 finestReliableRank = "family"，
  * 它就是科级的一个叶子。所以同一层可以同时有可下钻的枝和到此为止的叶。
  */
-export function homeRank(entry: CollectionEntry): keyof Taxonomy | null {
+export function homeRank(entry: {
+  taxonKey: string;
+  taxonomy?: Taxonomy | null;
+}): keyof Taxonomy | null {
   const key = latinKey(entry.taxonKey);
   if (!key || !entry.taxonomy) return null;
   const ranks: (keyof Taxonomy)[] = [
@@ -38,7 +41,7 @@ export function homeRank(entry: CollectionEntry): keyof Taxonomy | null {
 }
 
 /** 收集覆盖了几个界。用在图鉴首页的「物种树」入口上。 */
-export function countTreeKingdoms(entries: CollectionEntry[]) {
+export function countTreeKingdoms(entries: { taxonomy?: Taxonomy | null }[]) {
   const seen = new Set<string>();
   for (const entry of entries) {
     const key = latinKey(entry.taxonomy?.kingdom?.name_la);

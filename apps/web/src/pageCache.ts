@@ -1,4 +1,4 @@
-import type { CollectionEntry, Observation, Trip, VolumeListItem } from "./api";
+import type { CollectionEntry, PetCollectionEntry, Observation, Trip, VolumeListItem } from "./api";
 
 type AlbumSnap = { trip: Trip; observations: Observation[] };
 type CollectionSnap = {
@@ -6,6 +6,7 @@ type CollectionSnap = {
   petCount?: number;
   kingdomCount?: number;
   entries?: CollectionEntry[];
+  petEntries?: PetCollectionEntry[];
   volumes: VolumeListItem[];
 };
 
