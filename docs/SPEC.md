@@ -3,7 +3,7 @@
 > **本文件是功能真源**：已做 / 本期要做 / 明确后置。查「某能力做没做」以此为准。  
 > 部署与线上现状看 [`OPS.md`](./OPS.md)；专题手册在 [`features/`](./features/)；当初的取舍理由在 [`planning/`](./planning/)。  
 > 变更历史看 git log，本文不留手抄变更记录。  
-> 更新日期：2026-08-31
+> 更新日期：2026-09-09
 
 ## 0. 当前阶段
 
@@ -22,6 +22,7 @@
 | 旅途元数据 | 已完成 | 列表/相册时间·地点摘要；自动聚合 + 可选手填覆盖（见 §1.5） |
 | 识图护栏 | 已收口 | 账号日额度 + 自备 OpenAI 兼容 Key；手册 [`features/识图护栏.md`](./features/识图护栏.md) |
 | 共享旅途 | 已收口 | 邀请码共享相册（≤10）；手册 [`features/共享旅途.md`](./features/共享旅途.md) |
+| 宠物图鉴 | 已收口 | 驯养分轨 + 品种格；手册 [`features/宠物图鉴.md`](./features/宠物图鉴.md) |
 | 后置 | 未做 | 全量灌库、iOS/上架；更多套册策展；好友/Feed |
 
 本机：`pnpm.cmd dev` → Web `http://127.0.0.1:5173/` · API `http://127.0.0.1:8787`
@@ -37,14 +38,14 @@ apps/web     Vite + React + MapLibre
   src/styles.css  结构与组件样式（只用语义 var(--*)）
 apps/mobile  Capacitor Android 薄壳（WebView → 线上站点）
 packages/messages   统一 UI/术语文案（默认 zh）
-apps/api/data/      cn-protected / cn-sanyou / cn-extinct 名录 + introduced-index（GRIIS）/ introduced-seed（补丁）
+apps/api/data/      cn-protected / cn-sanyou / cn-extinct 名录 + introduced-index（GRIIS）/ introduced-seed（补丁）+ breeds（品种对照表）
 apps/api/src/rarity/  稀有度主路径（12 题原子量表 + 名录 → scoreFromScale）
 apps/api/src/identify/  识图编排（健康状态 / Gemini / TokenHub 视觉链回退）
 data/        本地 DB 与 uploads（gitignore）
 docs/        筹划 + 本实现规格
 ```
 
-数据对象：`User` / `Trip` / `TripMember` / `Observation` / `CollectionEntry` / `SharedCollectionCredit` / `rarity_cache`。
+数据对象：`User` / `Trip` / `TripMember` / `Observation` / `CollectionEntry` / `PetCollectionEntry` / `SharedCollectionCredit` / `rarity_cache`。
 
 **表现层五分离（加功能时勿搅在一起）：**
 
@@ -73,7 +74,7 @@ docs/        筹划 + 本实现规格
 相遇 / 未相遇（软档）/ 留影，**不再有「不可收集」硬拦**（旧码仅兼容历史数据）。
 
 - Prompt 要求模型声明 `subject_kind` / `subject_living` / `eligibility`；有坐标时带上离线判定的国家中文名作分布先验（不打天地图）；代码：[`eligibility.ts`](../apps/api/src/identify/eligibility.ts)、[`prompt.ts`](../apps/api/src/identify/prompt.ts)。
-- **相遇**：`living_organism` + `collectible` + 有界（死活不限；含饲养；空壳/海胆壳/完整蟹蜕按该动物；寄居蟹收蟹）→ 正常结算、开包、进图鉴。
+- **相遇**：`living_organism` + `collectible` + 有界（死活不限；含饲养；空壳/海胆壳/完整蟹蜕按该动物；寄居蟹收蟹）→ 正常结算、开包、进图鉴（驯养进宠物图鉴，见 §1.9）。
 - **未相遇**（软档，2026-09-07）：真生物但非野外相遇——影像/印刷（海报、画布、屏幕、直播里的真牛）与馆藏标本（`specimen`）。有身份+有界 → `settled` + `identify_soft_encounter`：识别放行、全套字段保留（含保护级别标签），但**不进**结算/图鉴/套册/物种树；详情页「NC · 未收录」印章占稀有度徽章位（置首），相册格灰徽章「未相遇」。
 - **留影**（2026-09-08）：其余全部——无生物、仅背景、不明、人、器物、没界。`settled` + `identify_keepsake`，复用软档结构故**身份字段不清空**；标题走 `subject_title_zh`（agent 短名），无稀有度/学名/taxonomy，不进图鉴套册树，重识别可翻身。相册中性灰徽章「留影」+ 留影印章「留影 · 不在册」。
 - **硬拦红字只留给真故障**：`identify_unavailable` / `identify_quota` / `identify_daily_limit` / `identify_user_key_incomplete`。非故障类（留影/软档/太粗）一律中性灰 `badge.soft` + 陈述句。
@@ -133,6 +134,17 @@ docs/        筹划 + 本实现规格
 - 谁传谁额度；只能删自己的；团员共看、可代开包；开包全员图鉴/套册加点；入伙补算、离团收回。
 - 解散：各自同名私有旅途承接自己的观察。
 
+## 1.9 驯化位与宠物图鉴（已收口）
+
+家犬折叠键仍是 `Canis lupus`。驯化位拆开家犬与狼，避免名录冒领、缓存共座、图鉴同卡。**手册：[`features/宠物图鉴.md`](./features/宠物图鉴.md)**。
+
+- 识图：`domesticated` / `breed_zh` / `dom_evidence_zh`。只认生物本体；`null` 折野生。
+- `domesticated=true` 进 `pet_collection_entries`，不进 `collectionEntries`。已收录混排两表；「已收录 N」= 两表之和。
+- 树上挂种级节点，不新开家犬枝。套册照常点，狼和狗同一格。
+- 判卷键 `(taxonKey, dom)`，缓存 `|dom` 分键，不升 `scale3`。驯养豁免保护名录；引入警报按种照报。
+- 品种库只纠偏。空 / 排除词 → 品种不详；其余非空 → 卡上自由格。呈现见 [`wip/品种格呈现.md`](./wip/品种格呈现.md)。
+- 更新前已拍的照片不回刷。
+
 ---
 
 ## 2. Cut 2（已收口）
@@ -186,7 +198,7 @@ docs/        筹划 + 本实现规格
 
 保护级四项（一级 / 二级 / 三有 / 灭绝）**只查名录不问模型**，见 [`cn-status.ts`](../apps/api/src/rarity/cn-status.ts)。  
 驯化观察的身份三题（`domesticated` / `indoor` / `often_absent`）由识图身份注入，不问模型；短窗口、分布窄不锁。  
-观察 / 图鉴序列化时把命中项（可多枚）与引入种拼成 `tags` 给前端，稀有度下一行芯片；**评分仍只算最高档**。待开包 `tags: []`。
+观察 / 图鉴序列化时把命中项（可多枚）与引入种拼成 `tags` 给前端，稀有度下一行芯片；驯养另挂 `domesticated`；**评分仍只算最高档**。待开包 `tags: []`。驯养查名录时保护级四项豁免（家犬不领狼的二级保护）。
 
 | 键 | 问的是 | 权重 |
 |----|--------|------|
@@ -354,7 +366,7 @@ Prompt 里的 `country` 已按观察点国家传，没有写死中国。
 
 ### 3.5 引入/关注种警示（与稀有度分通道）
 
-产品原则（见 [`planning/05-技术方案.md`](./planning/05-技术方案.md) C.4）：结算揭示；文案「当地引入/关注种」；国家级；无国家不警示；**仅种/亚种可靠鉴定**才警示；**不**折进稀有度。  
+产品原则（见 [`planning/05-技术方案.md`](./planning/05-技术方案.md) C.4）：结算揭示；文案「当地引入/关注种」；国家级；无国家不警示；**仅种/亚种可靠鉴定**才警示；**不**折进稀有度。驯养不另开例外：按折叠后的种查表（家犬 = `Canis lupus`）。  
 （相对 05 旧表述「弱结算能对上名录仍可警示」：已废止，以本节与代码种级闸门为准。）
 
 ```text
@@ -375,7 +387,7 @@ computeSettle
 | `scripts/smoke-introduced.mjs` | 命中/不命中冒烟（含 JP/US 样例） |
 
 名录口径：保留 Compendium 全部引入/外来记录（**不**仅 `isInvasive`）。TW/HK/MO 源行（若有）并入 `CN`，与结算 `iso3166` 一致。  
-图鉴：`GET /api/collection` 对每种聚合「任意已结算观察曾 `alertIntroduced`」→ 并进该种 `tags`（与保护名录同一行）。  
+图鉴：`GET /api/collection` 对野生种聚合「任意已结算**野生**观察曾 `alertIntroduced`」；宠物卡对驯养观察做同样聚合。驯养**不豁免**引入提示：家犬与狼同种，当地不产这种就亮。  
 相册：已结算且本条 `alertIntroduced` → 格内更小一档轻标（字段已有，不改 API）。开包/详情不再用整条横幅。
 
 验收锚点（种级 + 有国家）：CN 红耳龟 / 福寿螺 / 非洲大蜗牛类 → 警示；JP 牛蛙、US 斑马贻贝 → 警示；无 GPS、仅科/属、麻雀等本土常见 → 不警示。

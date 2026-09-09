@@ -17,7 +17,36 @@ import { parseCollectionTaxonomy } from "../settle/taxon.js";
 
 export const collectionRoutes = new Hono<{ Variables: Variables }>();
 
-collectionRoutes.use("*", requireUser);
+async function introducedTaxonKeys(userId: string, domesticated: boolean): Promise<Set<string>> {
+  const rows = await db.query.observations.findMany({
+    where: and(
+      eq(observations.userId, userId),
+      eq(observations.status, "settled"),
+      eq(observations.alertIntroduced, true),
+      eq(observations.domesticated, domesticated),
+    ),
+    columns: { taxonKey: true },
+  });
+  return new Set(rows.map((o) => o.taxonKey).filter((k): k is string => Boolean(k)));
+}
+
+async function taxonHasIntroducedAlert(
+  userId: string,
+  taxonKey: string,
+  domesticated: boolean,
+): Promise<boolean> {
+  const row = await db.query.observations.findFirst({
+    where: and(
+      eq(observations.userId, userId),
+      eq(observations.taxonKey, taxonKey),
+      eq(observations.status, "settled"),
+      eq(observations.alertIntroduced, true),
+      eq(observations.domesticated, domesticated),
+    ),
+    columns: { id: true },
+  });
+  return Boolean(row);
+}
 
 async function sightingsForTaxon(
   userId: string,
@@ -65,18 +94,7 @@ collectionRoutes.get("/", async (c) => {
     orderBy: [desc(collectionEntries.updatedAt)],
   });
 
-  const alertedObs = await db.query.observations.findMany({
-    where: and(
-      eq(observations.userId, user.id),
-      eq(observations.status, "settled"),
-      eq(observations.alertIntroduced, true),
-      eq(observations.domesticated, false),
-    ),
-    columns: { taxonKey: true },
-  });
-  const alertedTaxa = new Set(
-    alertedObs.map((o) => o.taxonKey).filter((k): k is string => Boolean(k)),
-  );
+  const alertedTaxa = await introducedTaxonKeys(user.id, false);
 
   const payload = await Promise.all(
     rows.map(async (entry) => {
@@ -110,6 +128,7 @@ collectionRoutes.get("/pets", async (c) => {
     orderBy: [desc(petCollectionEntries.updatedAt)],
   });
 
+  const alertedTaxa = await introducedTaxonKeys(user.id, true);
   const payload = await Promise.all(
     rows.map(async (entry) => {
       let coverUrl: string | null = null;
@@ -123,7 +142,10 @@ collectionRoutes.get("/pets", async (c) => {
           taxonomy = parseCollectionTaxonomy(obs);
         }
       }
-      return serializePetCollectionEntry(entry, coverUrl, { taxonomy });
+      return serializePetCollectionEntry(entry, coverUrl, {
+        taxonomy,
+        alertIntroduced: alertedTaxa.has(entry.taxonKey),
+      });
     }),
   );
 
@@ -163,7 +185,10 @@ collectionRoutes.get("/pets/:id", async (c) => {
   }
 
   return c.json({
-    entry: serializePetCollectionEntry(entry, coverUrl, { taxonomy }),
+    entry: serializePetCollectionEntry(entry, coverUrl, {
+      taxonomy,
+      alertIntroduced: await taxonHasIntroducedAlert(user.id, entry.taxonKey, true),
+    }),
     sightings: await sightingsForTaxon(user.id, entry.taxonKey, true),
   });
 });
@@ -200,16 +225,7 @@ collectionRoutes.get("/:id", async (c) => {
     }
   }
 
-  const alerted = await db.query.observations.findFirst({
-    where: and(
-      eq(observations.userId, user.id),
-      eq(observations.taxonKey, entry.taxonKey),
-      eq(observations.status, "settled"),
-      eq(observations.alertIntroduced, true),
-      eq(observations.domesticated, false),
-    ),
-    columns: { id: true },
-  });
+  const alerted = await taxonHasIntroducedAlert(user.id, entry.taxonKey, false);
 
   return c.json({
     entry: serializeCollectionEntry(entry, coverUrl, {

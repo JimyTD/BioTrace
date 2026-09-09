@@ -11,7 +11,7 @@ console.log(
 
 const cases = [
   {
-    name: "红耳龟 CN species → alert",
+    name: "红耳龟 CN species → alert（驯养不豁免）",
     input: {
       countryCode: "CN",
       finestReliableRank: "species",

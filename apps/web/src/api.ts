@@ -153,6 +153,8 @@ export type PetCollectionEntry = {
   commonName: string | null;
   scientificName: string | null;
   rarity: Rarity;
+  /** 该种任意已结算驯养观察曾命中引入警示。 */
+  alertIntroduced?: boolean;
   tags?: StatusTag[];
   coverObservationId: string | null;
   coverDisplayUrl: string | null;

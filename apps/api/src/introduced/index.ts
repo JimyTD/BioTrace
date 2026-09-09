@@ -12,6 +12,7 @@ export type IntroducedResolution = {
  * - No country → no alert
  * - Only species / subspecies reliable ranks
  * - Exact / binomial match against public index + seed overlay (no genus-only fuzzy)
+ * - 驯养不另开例外：家犬与狼同种，当地不产这种就该提示
  */
 export function resolveIntroducedAlert(input: {
   countryCode: string | null | undefined;
@@ -19,10 +20,7 @@ export function resolveIntroducedAlert(input: {
   scientificName?: string | null;
   taxonKey?: string | null;
   matchNames?: string[];
-  /** 家养个体跟着人走，不是「引入野生种群」。 */
-  domesticated?: boolean;
 }): IntroducedResolution {
-  if (input.domesticated) return { alert: false, source: "none", matchedName: null };
   const cc = input.countryCode?.trim().toUpperCase();
   if (!cc) return { alert: false, source: "none", matchedName: null };
   if (!isSpeciesRank(input.finestReliableRank)) {

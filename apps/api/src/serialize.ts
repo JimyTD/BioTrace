@@ -14,17 +14,18 @@ function tagsForNames(
   },
   introduced: boolean,
 ): StatusTag[] {
-  if (input.domesticated) {
-    return statusTagsFrom(EMPTY_CN_STATUS, false);
-  }
-  return statusTagsFrom(
-    lookupListed({
-      scientificName: input.scientificName,
-      taxonKey: input.taxonKey,
-      label: input.commonName,
-    }),
+  const tags = statusTagsFrom(
+    input.domesticated
+      ? EMPTY_CN_STATUS
+      : lookupListed({
+          scientificName: input.scientificName,
+          taxonKey: input.taxonKey,
+          label: input.commonName,
+        }),
     introduced,
   );
+  if (input.domesticated) tags.push("domesticated");
+  return tags;
 }
 
 export function serializeUser(user: User) {
@@ -161,7 +162,7 @@ export function serializeCollectionEntry(
 export function serializePetCollectionEntry(
   entry: PetCollectionEntry,
   coverDisplayUrl?: string | null,
-  opts?: { taxonomy?: Taxonomy | null },
+  opts?: { taxonomy?: Taxonomy | null; alertIntroduced?: boolean },
 ) {
   const catalog = catalogForTaxon(entry.taxonKey);
   const lit = new Set(parseBreedIdList(entry.litBreedIdsJson));
@@ -187,7 +188,8 @@ export function serializePetCollectionEntry(
     commonName: petDisplayCommonName(entry.taxonKey, entry.commonName),
     scientificName: entry.scientificName,
     rarity: entry.rarity,
-    tags: ["domesticated"],
+    alertIntroduced: Boolean(opts?.alertIntroduced),
+    tags: tagsForNames({ ...entry, domesticated: true }, Boolean(opts?.alertIntroduced)),
     coverObservationId: entry.coverObservationId,
     coverDisplayUrl: coverDisplayUrl ?? null,
     firstCollectedAt: entry.firstCollectedAt.toISOString(),

@@ -113,7 +113,6 @@ export async function computeSettle(input: {
     scientificName: input.scientificName,
     taxonKey,
     matchNames,
-    domesticated: input.domesticated,
   });
 
   return {
