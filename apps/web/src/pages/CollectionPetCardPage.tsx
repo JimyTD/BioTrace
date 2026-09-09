@@ -1,8 +1,9 @@
 import { useEffect, useLayoutEffect, useRef, useState } from "react";
 import { flushSync } from "react-dom";
 import { matchPath, useLocation, useNavigate, useParams } from "react-router-dom";
-import { t, type MessageKey } from "@biotrace/messages";
-import { api, type CollectionSighting, type PetCollectionEntry } from "../api";
+import { hasMessage, t, type MessageKey } from "@biotrace/messages";
+import { api, type CollectionSighting, type PetCollectionEntry, type Rarity } from "../api";
+import { ListTagRow } from "../components/ListTagRow";
 import { useBackClose } from "../androidBack";
 import { measureBox } from "../motion";
 import { playPhotoLift } from "../photoLift";
@@ -18,6 +19,11 @@ import { speciesEntryName } from "../speciesSearch";
 
 function shortDate(iso: string) {
   return new Date(iso).toLocaleDateString();
+}
+
+function rarityLabel(r: Rarity) {
+  const key = `rarity.${r}`;
+  return hasMessage(key) ? t(key as MessageKey) : r;
 }
 
 function treeReturnPath(state: unknown) {
@@ -184,10 +190,14 @@ export default function CollectionPetCardPage() {
           ) : null}
 
           <div className="species-card-marks">
+            {entry.rarity ? (
+              <span className={`rarity-badge rarity-${entry.rarity}`}>{rarityLabel(entry.rarity)}</span>
+            ) : null}
             <span className="muted">
               {t("collection.speciesFirstCollected", { date: shortDate(entry.firstCollectedAt) })}
             </span>
           </div>
+          <ListTagRow tags={entry.tags} />
 
           <h2 className="section-title">{t("collection.petsBreeds")}</h2>
           <div className="pet-breed-grid">

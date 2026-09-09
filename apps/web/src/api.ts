@@ -60,7 +60,7 @@ export type ObsStatus = "analyzing" | "pending_settle" | "settled" | "failed";
 export type SettleTier = "full" | "weak" | "none";
 /** Tier codes from API (default N/R/SR/UR; may grow via config). */
 export type Rarity = string;
-export type StatusTag = "extinct" | "class_i" | "class_ii" | "sanyou" | "introduced";
+export type StatusTag = "extinct" | "class_i" | "class_ii" | "sanyou" | "introduced" | "domesticated";
 
 export type Observation = {
   id: string;
@@ -151,6 +151,8 @@ export type PetCollectionEntry = {
   taxonKey: string;
   commonName: string | null;
   scientificName: string | null;
+  rarity: Rarity;
+  tags?: StatusTag[];
   coverObservationId: string | null;
   coverDisplayUrl: string | null;
   firstCollectedAt: string;

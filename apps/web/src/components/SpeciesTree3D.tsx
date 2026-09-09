@@ -318,7 +318,9 @@ function TreeDetail({
               {e.coverDisplayUrl ? <img src={e.coverDisplayUrl} alt="" loading="lazy" /> : null}
             </div>
             <span className="nm">{e.commonName || e.scientificName || t("tree3d.unnamed")}</span>
-            {e.track === "pet" ? <span className="sci">{t("collection.petsTitle")}</span> : null}
+            {e.track === "pet" ? (
+              <span className="list-tag list-tag-domesticated">{t("listTag.domesticated")}</span>
+            ) : null}
             {e.scientificName && e.commonName ? <span className="sci">{e.scientificName}</span> : null}
           </button>
         ))}

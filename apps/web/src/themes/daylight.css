@@ -123,6 +123,8 @@
   --list-tag-sanyou-fg: #eef8f4;
   --list-tag-extinct-bg: #3d3f3c;
   --list-tag-extinct-fg: #f4f2ec;
+  --list-tag-domesticated-bg: #4a5c32;
+  --list-tag-domesticated-fg: #f6f3e8;
 
   --rarity-LR-badge: linear-gradient(135deg, #e0c4ff 0%, #ffe566 48%, #ffb0d8 100%);
   --rarity-LR-seal-rainbow: conic-gradient(

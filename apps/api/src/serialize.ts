@@ -170,6 +170,8 @@ export function serializePetCollectionEntry(
     taxonKey: entry.taxonKey,
     commonName: petDisplayCommonName(entry.taxonKey, entry.commonName),
     scientificName: entry.scientificName,
+    rarity: entry.rarity,
+    tags: ["domesticated"],
     coverObservationId: entry.coverObservationId,
     coverDisplayUrl: coverDisplayUrl ?? null,
     firstCollectedAt: entry.firstCollectedAt.toISOString(),

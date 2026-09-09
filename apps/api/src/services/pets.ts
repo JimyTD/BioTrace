@@ -7,6 +7,7 @@ import {
   type Observation,
   type PetCollectionEntry,
 } from "../db/schema.js";
+import { collectibleRankFromTier } from "../rarity/scale-rubric.js";
 import { collectionScientificName } from "../settle/taxon.js";
 import { matchBreed, parseBreedIdList, petDisplayCommonName } from "../pets/breeds.js";
 
@@ -48,6 +49,15 @@ async function settledSourcesForTaxon(userId: string, taxonKey: string): Promise
   return { own, credited };
 }
 
+function bestRarity(sources: Observation[]): string {
+  let best = sources[0]?.rarity ?? "N";
+  for (const o of sources) {
+    const tier = o.rarity ?? "N";
+    if (collectibleRankFromTier(tier) > collectibleRankFromTier(best)) best = tier;
+  }
+  return best;
+}
+
 function breedProgress(sources: Observation[], taxonKey: string): {
   litIds: string[];
   unregisteredLit: boolean;
@@ -82,6 +92,7 @@ export async function rebuildPetTaxonForUser(userId: string, taxonKey: string) {
   const now = new Date();
   const commonName = petDisplayCommonName(taxonKey, nameSource.commonName);
   const scientificName = collectionScientificName(nameSource);
+  const rarity = bestRarity(sources);
 
   if (!existing) {
     await db.insert(petCollectionEntries).values({
@@ -90,6 +101,7 @@ export async function rebuildPetTaxonForUser(userId: string, taxonKey: string) {
       taxonKey,
       commonName,
       scientificName,
+      rarity,
       coverObservationId: cover.id,
       litBreedIdsJson: JSON.stringify(litIds),
       unregisteredLit,
@@ -104,6 +116,7 @@ export async function rebuildPetTaxonForUser(userId: string, taxonKey: string) {
     .set({
       commonName: commonName ?? existing.commonName,
       scientificName: scientificName ?? existing.scientificName,
+      rarity,
       coverObservationId: cover.id,
       litBreedIdsJson: JSON.stringify(litIds),
       unregisteredLit,

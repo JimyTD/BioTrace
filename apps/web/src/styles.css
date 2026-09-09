@@ -1220,6 +1220,10 @@ button.film-tile-link {
   --list-tag-bg: var(--list-tag-extinct-bg);
   --list-tag-fg: var(--list-tag-extinct-fg);
 }
+.list-tag-domesticated {
+  --list-tag-bg: var(--list-tag-domesticated-bg);
+  --list-tag-fg: var(--list-tag-domesticated-fg);
+}
 
 .detail-marks + .list-tag-row,
 .species-card-marks + .list-tag-row {

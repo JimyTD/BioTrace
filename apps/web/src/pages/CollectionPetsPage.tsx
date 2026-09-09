@@ -1,7 +1,8 @@
 import { useEffect, useLayoutEffect, useMemo, useRef, useState } from "react";
 import { Link, useMatch, useNavigate } from "react-router-dom";
-import { t } from "@biotrace/messages";
-import { api, type PetCollectionEntry } from "../api";
+import { hasMessage, t, type MessageKey } from "@biotrace/messages";
+import { api, type PetCollectionEntry, type Rarity } from "../api";
+import { ListTagRow } from "../components/ListTagRow";
 import { useBackClose } from "../androidBack";
 import {
   buildNamedFuse,
@@ -13,6 +14,11 @@ import { restoreContentScroll, saveContentScroll } from "../scrollMemory";
 
 function entryName(entry: PetCollectionEntry) {
   return speciesEntryName(entry, t("detail.unnamed"));
+}
+
+function rarityLabel(r: Rarity) {
+  const key = `rarity.${r}`;
+  return hasMessage(key) ? t(key as MessageKey) : r;
 }
 
 export default function CollectionPetsPage() {
@@ -133,6 +139,14 @@ export default function CollectionPetsPage() {
                     {entry.scientificName && entry.commonName ? (
                       <span className="muted species-index-sci">{entry.scientificName}</span>
                     ) : null}
+                    <span className="species-index-marks">
+                      {entry.rarity ? (
+                        <span className={`rarity-badge rarity-${entry.rarity}`}>
+                          {rarityLabel(entry.rarity)}
+                        </span>
+                      ) : null}
+                    </span>
+                    <ListTagRow tags={entry.tags} />
                   </span>
                 </Link>
               ))}

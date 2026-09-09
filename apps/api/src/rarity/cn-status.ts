@@ -8,7 +8,7 @@ export type CnProtectLevel = "class_i" | "class_ii";
 export type CnExtinctStatus = "EX" | "EW" | "FE";
 export type CnListLevel = "extinct" | "class_i" | "class_ii" | "sanyou" | null;
 export type CnMatchBy = "scientificName" | "alias" | "taxon" | "zh" | null;
-export type StatusTag = "extinct" | "class_i" | "class_ii" | "sanyou" | "introduced";
+export type StatusTag = "extinct" | "class_i" | "class_ii" | "sanyou" | "introduced" | "domesticated";
 
 export type CnStatus = {
   extinct: boolean;

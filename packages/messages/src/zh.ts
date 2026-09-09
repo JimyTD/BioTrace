@@ -204,10 +204,12 @@ const zhCore = {
   "listTag.class_ii": "二级保护",
   "listTag.sanyou": "三有动物",
   "listTag.extinct": "已灭绝",
+  "listTag.domesticated": "驯养物种",
   "listTag.class_i.hint": "国家重点保护野生动物（一级）",
   "listTag.class_ii.hint": "国家重点保护野生动物（二级）",
   "listTag.sanyou.hint": "国家保护的有益的或者有重要经济、科学研究价值的陆生野生动物",
   "listTag.extinct.hint": "野外已难见到（IUCN 灭绝轴）",
+  "listTag.domesticated.hint": "家养型物种，与野生同种分开收录",
 
   "identify.by": "鉴定：{name}",
   "identify.provider.gemini": "Gemini",

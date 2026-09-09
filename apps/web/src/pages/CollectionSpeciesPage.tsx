@@ -174,16 +174,13 @@ export default function CollectionSpeciesPage() {
                       <span className="muted species-index-sci">{entry.scientificName}</span>
                     ) : null}
                     <span className="species-index-marks">
-                      {entry.track === "wild" && entry.rarity ? (
+                      {entry.rarity ? (
                         <span className={`rarity-badge rarity-${entry.rarity}`}>
                           {rarityLabel(entry.rarity)}
                         </span>
                       ) : null}
-                      {entry.track === "pet" ? (
-                        <span className="muted">{t("collection.petsTitle")}</span>
-                      ) : null}
                     </span>
-                    {entry.track === "wild" ? <ListTagRow tags={entry.tags} /> : null}
+                    <ListTagRow tags={entry.tags} />
                   </span>
                 </Link>
               ))}

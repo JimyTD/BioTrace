@@ -96,7 +96,8 @@ export function petToIndexRow(entry: PetCollectionEntry): SpeciesIndexRow {
     scientificName: entry.scientificName,
     coverDisplayUrl: entry.coverDisplayUrl,
     updatedAt: entry.updatedAt,
-    rarity: null,
+    rarity: entry.rarity,
+    tags: entry.tags,
   };
 }
 

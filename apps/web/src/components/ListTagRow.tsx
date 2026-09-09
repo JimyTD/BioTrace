@@ -7,6 +7,7 @@ const LABEL: Record<StatusTag, MessageKey> = {
   class_ii: "listTag.class_ii",
   sanyou: "listTag.sanyou",
   introduced: "settle.alertIntroduced",
+  domesticated: "listTag.domesticated",
 };
 
 const HINT: Record<StatusTag, MessageKey> = {
@@ -15,6 +16,7 @@ const HINT: Record<StatusTag, MessageKey> = {
   class_ii: "listTag.class_ii.hint",
   sanyou: "listTag.sanyou.hint",
   introduced: "settle.alertHint",
+  domesticated: "listTag.domesticated.hint",
 };
 
 export function ListTagRow({ tags }: { tags?: StatusTag[] | null }) {
