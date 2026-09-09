@@ -82,7 +82,7 @@ export function h01(a: number, b: number, c: number, d: number) {
  * 界的视觉定义。
  *
  * 三段式「高度即可及性」：越往上越容易拍到，越往下越隐微。
- * 见 docs/wip/物种树-结构议题.md §4.2。
+ * 见 docs/features/物种树.md「高度即可及性」相关附录。
  * 顺序即主枝的排布顺序，不要随意改动。
  */
 export const KINGDOM_VIS: Record<

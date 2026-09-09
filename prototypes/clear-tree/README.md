@@ -6,7 +6,8 @@
 > 这里的东西留着有两个用途：**视觉基准**（正式实现照它调）和
 > **快速试错场**（改渲染参数不必启动整个前端）。
 >
-> 还没拍板的（标签圆点 / 竖屏取景 / 中文补表）：[`docs/wip/物种树-3D落地与临时决策.md`](../../docs/wip/物种树-3D落地与临时决策.md)
+> 还没拍板的（标签圆点 / 竖屏取景 / 中文补表）：见 docs/wip/ 下的物种树结构议题（仍在讨论）。
+> 已拍板与已落地的：见 [`docs/features/物种树.md`](../../../docs/features/物种树.md)。
 
 ## 怎么看
 
@@ -18,7 +19,7 @@ Web dev server 起着的话直接开 `http://127.0.0.1:5173/proto/clear-tree/dev
 - 总览：`http://127.0.0.1:5173/devpages/tree-2up.html`（右栏 v1 参照）
 - 各层级：`http://127.0.0.1:5173/devpages/tree-levels.html`（右栏 v2，按 `?lv=` 同深度下钻）
 - 大扇出两案：`http://127.0.0.1:5173/devpages/tree-fanout.html`（A / B / v2 三栏，见
-  [`结构议题 §4.4`](../../docs/wip/物种树-结构议题.md)）
+[`结构议题附录`](../../../docs/features/物种树.md)）
 - 标签全留 vs 降圆点：`http://127.0.0.1:5173/devpages/tree-labels.html`（左全留叠瓦，右 `?labels=old`）
 
 两页都由 dev server 挂出，不必另起静态服务器。

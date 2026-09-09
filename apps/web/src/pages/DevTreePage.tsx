@@ -75,7 +75,7 @@ function mockEntries(n: number): CollectionEntry[] {
 
 /**
  * 造「一个科下收集出 N 个属」的假收集，用来构造大扇出的**情况 3**
- * （[结构议题 §4.4](../../../../docs/wip/物种树-结构议题.md)：总数超出、
+ * （物种树结构议题附录（docs/features/物种树.md）：总数超出、
  * 已收集也超出）。
  *
  * 为什么非得单开一档：`mockEntries` 那 21 条路径是循环用的，`mock` 调到 400

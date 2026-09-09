@@ -2,7 +2,7 @@
  * 物种树的 WebGL 场景。框架无关 —— React 只负责挂容器、传数据、接回调。
  *
  * 从 prototypes/clear-tree/v2-roots.html 移植。原型里踩过的坑记在
- * docs/wip/物种树-结构议题.md §5，改参数前先读那张表。
+ * docs/features/物种树.md「冠为什么不圆」等附录，改参数前先读那张表。
  *
  * ── 两套顶点缓冲 ────────────────────────────────────────────
  * tree 态（全树）与 fan 态（展开某一支）同时写进顶点属性，
@@ -31,7 +31,7 @@ const FAN_LEN = [0, S * 0.5, S * 0.255, S * 0.15, S * 0.088];
 const FAN_SPREAD = [0, 1.0, 0.72, 0.58, 0.5];
 const MAXREL = 4;
 /**
- * 大扇出的展开态怎么摆（见 docs/wip/物种树-结构议题.md §4.4）。
+ * 大扇出的展开态怎么摆（见 docs/features/物种树.md 结构议题附录）。
  *
  * - **`on`（缺省）** 全部子级都成枝、枝端补叶丛、**不按收集褪色**、标签照摆。
  * - **`off`** 改造前：`FAN_BATCH = 8` 分页 + 枝梢「上一批 / 下一批」。留着并排比。
@@ -1038,7 +1038,7 @@ export class TreeScene {
       cr += (1 - cr) * lift; cg += (1 - cg) * lift; cb += (1 - cb) * lift;
     }
     /* 点亮：界门纲不因收集变灰；目科属种没走过才收一层饱和度。
-       拍板 2026-09-03，见 docs/wip/物种树-结构议题.md §4.6。 */
+       拍板 2026-09-03，见 docs/features/物种树.md。 */
     if (!litAll && nd.lvl >= 3 && nd.got === 0) {
       const gy = cr * 0.34 + cg * 0.5 + cb * 0.16;
       cr += (gy - cr) * COLLECT_UNLIT;

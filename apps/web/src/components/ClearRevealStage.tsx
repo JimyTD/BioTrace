@@ -5,8 +5,8 @@ import { themeSlot, type SettleStageProps } from "../themes/slots";
 /**
  * 四拍节奏：拿起 → 显影 → 定色 → 落章。
  * 拿起、显影、落章三拍定长；定色拍按时长逐档拉长——戏码多的档位定色就久
- * （XR 1350ms，N 380ms）。这套节奏出自 docs/wip/settle-rarity-spotlight-demo.html
- * 的 v4（稀有度当主角），2026-09 逐档拍板后移植进产品。
+ * （XR 1350ms，N 380ms）。这套四拍节奏 2026-09 逐档拍板后移植进产品，
+ * 规格见 docs/features/皮肤主题.md 开包段落（视觉基准原型在 docs/wip/ 保留）。
  */
 const LIFT_MS = 260;
 const DEV_MS = 640;
