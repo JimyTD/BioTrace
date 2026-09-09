@@ -13,8 +13,7 @@
  * （`apps/api/src/identify/prompt.ts:65`）。这张表遵守同一条原则：
  *
  *   · 界（8）、门（树冠五界 76）—— 全覆盖，都有通行中译
- *     （根系三界 Bacteria / Archaea / Viruses 2026-09-08 入库，见
- *     docs/wip/物种树-根系三界真数据-设计方案.md）
+ *     （根系三界 Bacteria / Archaea / Viruses 2026-09-08 入库）
  *   · 门（根系三界）/ 纲 / 目 —— 由 scripts/fill-backbone-zh.py
  *     离线配（Wikidata 主源，iNaturalist 补洞）。学名+阶元+界对不上的留空，
  *     界面显示拉丁名，排序会排到后面。代号门（UBA10199 类）没有通行中译，
