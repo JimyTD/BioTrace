@@ -3,25 +3,1033 @@
   "taxonKey": "Felis catus",
   "commonNameZh": "家猫",
   "breeds": [
-    { "id": "british-shorthair", "zh": "英国短毛猫", "en": "British Shorthair", "aliases": ["英短"], "prevalence": "common" },
-    { "id": "golden-shaded", "zh": "金渐层", "en": "Golden Shaded", "aliases": ["金渐层英短"], "prevalence": "common" },
-    { "id": "silver-shaded", "zh": "银渐层", "en": "Silver Shaded", "aliases": ["银渐层英短"], "prevalence": "common" },
-    { "id": "american-shorthair", "zh": "美国短毛猫", "en": "American Shorthair", "aliases": ["美短"], "prevalence": "common" },
-    { "id": "exotic-shorthair", "zh": "异国短毛猫", "en": "Exotic Shorthair", "aliases": ["加菲", "加菲猫"], "prevalence": "common" },
-    { "id": "ragdoll", "zh": "布偶猫", "en": "Ragdoll", "aliases": ["布偶"], "prevalence": "common" },
-    { "id": "siamese", "zh": "暹罗猫", "en": "Siamese", "aliases": ["暹罗"], "prevalence": "uncommon" },
-    { "id": "persian", "zh": "波斯猫", "en": "Persian", "aliases": ["波斯"], "prevalence": "uncommon" },
-    { "id": "scottish-fold", "zh": "苏格兰折耳猫", "en": "Scottish Fold", "aliases": ["折耳", "苏格兰折耳"], "prevalence": "common" },
-    { "id": "maine-coon", "zh": "缅因猫", "en": "Maine Coon", "aliases": ["缅因"], "prevalence": "uncommon" },
-    { "id": "russian-blue", "zh": "俄罗斯蓝猫", "en": "Russian Blue", "aliases": ["俄蓝"], "prevalence": "uncommon" },
-    { "id": "bengal", "zh": "孟加拉猫", "en": "Bengal", "aliases": ["孟加拉"], "prevalence": "uncommon" },
-    { "id": "sphynx", "zh": "斯芬克斯猫", "en": "Sphynx", "aliases": ["无毛猫", "斯芬克斯"], "prevalence": "rare" },
-    { "id": "norwegian-forest", "zh": "挪威森林猫", "en": "Norwegian Forest Cat", "aliases": ["挪威森林"], "prevalence": "uncommon" },
-    { "id": "abyssinian", "zh": "阿比西尼亚猫", "en": "Abyssinian", "aliases": ["阿比"], "prevalence": "rare" },
-    { "id": "devon-rex", "zh": "德文卷毛猫", "en": "Devon Rex", "aliases": ["德文卷毛"], "prevalence": "rare" },
-    { "id": "cornish-rex", "zh": "康沃尔卷毛猫", "en": "Cornish Rex", "aliases": ["康沃尔卷毛"], "prevalence": "rare" },
-    { "id": "birman", "zh": "伯曼猫", "en": "Birman", "aliases": ["伯曼"], "prevalence": "uncommon" },
-    { "id": "turkish-angora", "zh": "土耳其安哥拉猫", "en": "Turkish Angora", "aliases": ["安哥拉"], "prevalence": "rare" },
-    { "id": "oriental", "zh": "东方短毛猫", "en": "Oriental Shorthair", "aliases": ["东方短毛"], "prevalence": "uncommon" }
+    {
+      "id": "british-shorthair",
+      "zh": "英国短毛猫",
+      "en": "British Shorthair",
+      "aliases": [
+        "英短",
+        "英國短毛貓"
+      ],
+      "prevalence": "common"
+    },
+    {
+      "id": "golden-shaded",
+      "zh": "金渐层",
+      "en": "Golden Shaded",
+      "aliases": [
+        "金渐层英短"
+      ],
+      "prevalence": "common"
+    },
+    {
+      "id": "silver-shaded",
+      "zh": "银渐层",
+      "en": "Silver Shaded",
+      "aliases": [
+        "银渐层英短"
+      ],
+      "prevalence": "common"
+    },
+    {
+      "id": "american-shorthair",
+      "zh": "美国短毛猫",
+      "en": "American Shorthair",
+      "aliases": [
+        "美短"
+      ],
+      "prevalence": "common"
+    },
+    {
+      "id": "exotic-shorthair",
+      "zh": "异国短毛猫",
+      "en": "Exotic Shorthair",
+      "aliases": [
+        "加菲",
+        "加菲猫"
+      ],
+      "prevalence": "common"
+    },
+    {
+      "id": "ragdoll",
+      "zh": "布偶猫",
+      "en": "Ragdoll",
+      "aliases": [
+        "布偶",
+        "布偶貓"
+      ],
+      "prevalence": "common"
+    },
+    {
+      "id": "siamese",
+      "zh": "暹罗猫",
+      "en": "Siamese",
+      "aliases": [
+        "暹罗"
+      ],
+      "prevalence": "uncommon"
+    },
+    {
+      "id": "persian",
+      "zh": "波斯猫",
+      "en": "Persian",
+      "aliases": [
+        "波斯"
+      ],
+      "prevalence": "uncommon"
+    },
+    {
+      "id": "scottish-fold",
+      "zh": "苏格兰折耳猫",
+      "en": "Scottish Fold",
+      "aliases": [
+        "折耳",
+        "苏格兰折耳",
+        "蘇格蘭摺耳貓"
+      ],
+      "prevalence": "common"
+    },
+    {
+      "id": "maine-coon",
+      "zh": "缅因猫",
+      "en": "Maine Coon",
+      "aliases": [
+        "缅因",
+        "緬因貓",
+        "Maine coon"
+      ],
+      "prevalence": "uncommon"
+    },
+    {
+      "id": "russian-blue",
+      "zh": "俄罗斯蓝猫",
+      "en": "Russian Blue",
+      "aliases": [
+        "俄蓝",
+        "俄羅斯藍貓"
+      ],
+      "prevalence": "uncommon"
+    },
+    {
+      "id": "bengal",
+      "zh": "孟加拉猫",
+      "en": "Bengal",
+      "aliases": [
+        "孟加拉"
+      ],
+      "prevalence": "uncommon"
+    },
+    {
+      "id": "sphynx",
+      "zh": "斯芬克斯猫",
+      "en": "Sphynx",
+      "aliases": [
+        "无毛猫",
+        "斯芬克斯",
+        "斯芬克斯貓"
+      ],
+      "prevalence": "rare"
+    },
+    {
+      "id": "norwegian-forest",
+      "zh": "挪威森林猫",
+      "en": "Norwegian Forest Cat",
+      "aliases": [
+        "挪威森林",
+        "挪威森林貓"
+      ],
+      "prevalence": "uncommon"
+    },
+    {
+      "id": "abyssinian",
+      "zh": "阿比西尼亚猫",
+      "en": "Abyssinian",
+      "aliases": [
+        "阿比"
+      ],
+      "prevalence": "rare"
+    },
+    {
+      "id": "devon-rex",
+      "zh": "德文卷毛猫",
+      "en": "Devon Rex",
+      "aliases": [
+        "德文卷毛",
+        "德文帝王貓"
+      ],
+      "prevalence": "rare"
+    },
+    {
+      "id": "cornish-rex",
+      "zh": "康沃尔卷毛猫",
+      "en": "Cornish Rex",
+      "aliases": [
+        "康沃尔卷毛",
+        "柯尼斯卷毛貓"
+      ],
+      "prevalence": "rare"
+    },
+    {
+      "id": "birman",
+      "zh": "伯曼猫",
+      "en": "Birman",
+      "aliases": [
+        "伯曼"
+      ],
+      "prevalence": "uncommon"
+    },
+    {
+      "id": "turkish-angora",
+      "zh": "土耳其安哥拉猫",
+      "en": "Turkish Angora",
+      "aliases": [
+        "安哥拉",
+        "土耳其安哥拉貓"
+      ],
+      "prevalence": "rare"
+    },
+    {
+      "id": "oriental",
+      "zh": "东方短毛猫",
+      "en": "Oriental Shorthair",
+      "aliases": [
+        "东方短毛",
+        "東方短毛貓"
+      ],
+      "prevalence": "uncommon"
+    },
+    {
+      "id": "egyptian-mau",
+      "zh": "埃及貓",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Egyptian Mau"
+    },
+    {
+      "id": "donskoy-cat",
+      "zh": "顿斯科伊猫",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Donskoy cat"
+    },
+    {
+      "id": "serengeti-cat",
+      "zh": "塞伦盖蒂猫",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Serengeti cat"
+    },
+    {
+      "id": "toyger",
+      "zh": "玩具虎貓",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Toyger"
+    },
+    {
+      "id": "dragon-li",
+      "zh": "狸花猫",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Dragon Li"
+    },
+    {
+      "id": "kurilian-bobtail",
+      "zh": "千島短尾貓",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Kurilian Bobtail"
+    },
+    {
+      "id": "american-bobtail",
+      "zh": "美國短尾貓",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "American Bobtail"
+    },
+    {
+      "id": "bengal-cat",
+      "zh": "孟加拉貓",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Bengal cat"
+    },
+    {
+      "id": "chartreux",
+      "zh": "沙特爾貓",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Chartreux"
+    },
+    {
+      "id": "neva-masquerade",
+      "zh": "Neva Masquerade",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Neva Masquerade"
+    },
+    {
+      "id": "persian-cat",
+      "zh": "波斯貓",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Persian cat"
+    },
+    {
+      "id": "aegean-cat",
+      "zh": "愛琴貓",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Aegean cat"
+    },
+    {
+      "id": "siberian",
+      "zh": "西伯利亞貓",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Siberian"
+    },
+    {
+      "id": "snowshoe",
+      "zh": "雪鞋貓",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "snowshoe"
+    },
+    {
+      "id": "antipodean",
+      "zh": "Antipodean",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Antipodean"
+    },
+    {
+      "id": "arabian-mau",
+      "zh": "Arabian Mau",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Arabian Mau"
+    },
+    {
+      "id": "asian",
+      "zh": "亞洲貓",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Asian"
+    },
+    {
+      "id": "tiffanie",
+      "zh": "亞洲半長毛貓",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Tiffanie"
+    },
+    {
+      "id": "australian-mist",
+      "zh": "澳大利亞霧貓",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Australian Mist"
+    },
+    {
+      "id": "laperm",
+      "zh": "拉邦貓",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "LaPerm"
+    },
+    {
+      "id": "ragamuffin",
+      "zh": "褴褛猫",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Ragamuffin"
+    },
+    {
+      "id": "american-curl",
+      "zh": "美國反耳貓",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "American Curl"
+    },
+    {
+      "id": "american-wirehair",
+      "zh": "美国钢毛猫",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "American Wirehair"
+    },
+    {
+      "id": "selkirk-rex",
+      "zh": "塞爾凱克鬈毛貓",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Selkirk Rex"
+    },
+    {
+      "id": "ojos-azules",
+      "zh": "欧斯亚史烈斯猫",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Ojos Azules"
+    },
+    {
+      "id": "havana-brown",
+      "zh": "哈瓦那棕猫",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Havana Brown"
+    },
+    {
+      "id": "bambino",
+      "zh": "巴比諾貓",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Bambino"
+    },
+    {
+      "id": "balinese-cat",
+      "zh": "巴釐貓",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Balinese cat"
+    },
+    {
+      "id": "domestic-short-haired-cat",
+      "zh": "混種貓",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "domestic short-haired cat"
+    },
+    {
+      "id": "nebelung",
+      "zh": "尼比龙猫",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Nebelung"
+    },
+    {
+      "id": "brazilian-shorthair",
+      "zh": "巴西短毛貓",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Brazilian Shorthair"
+    },
+    {
+      "id": "british-semi-longhair",
+      "zh": "British Semi-longhair",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "British Semi-longhair"
+    },
+    {
+      "id": "anatoli",
+      "zh": "Anatoli",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Anatoli"
+    },
+    {
+      "id": "peterbald",
+      "zh": "彼得秃猫",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Peterbald"
+    },
+    {
+      "id": "javanese",
+      "zh": "爪哇猫",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Javanese"
+    },
+    {
+      "id": "savannah",
+      "zh": "萨凡纳猫",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Savannah"
+    },
+    {
+      "id": "japanese-bobtail",
+      "zh": "日本短尾貓",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Japanese Bobtail"
+    },
+    {
+      "id": "european-shorthair",
+      "zh": "欧洲短毛猫",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "European Shorthair"
+    },
+    {
+      "id": "burmilla",
+      "zh": "波米拉貓",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Burmilla"
+    },
+    {
+      "id": "british-longhair",
+      "zh": "英國長毛貓",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "British Longhair"
+    },
+    {
+      "id": "california-spangled",
+      "zh": "加州閃亮貓",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "California Spangled"
+    },
+    {
+      "id": "birman-cat",
+      "zh": "伯曼貓",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Birman cat"
+    },
+    {
+      "id": "manx",
+      "zh": "馬恩島貓",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Manx"
+    },
+    {
+      "id": "singapura",
+      "zh": "新加坡貓",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Singapura"
+    },
+    {
+      "id": "oregon-rex",
+      "zh": "俄勒冈卷毛猫",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Oregon Rex"
+    },
+    {
+      "id": "bombay",
+      "zh": "孟買貓",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Bombay"
+    },
+    {
+      "id": "burmese",
+      "zh": "緬甸貓",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Burmese"
+    },
+    {
+      "id": "pixie-bob",
+      "zh": "北美洲短毛猫",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Pixie-bob"
+    },
+    {
+      "id": "khao-manee",
+      "zh": "Khao Manee",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Khao Manee"
+    },
+    {
+      "id": "safari",
+      "zh": "Safari",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Safari"
+    },
+    {
+      "id": "chausie",
+      "zh": "獅子貓",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Chausie"
+    },
+    {
+      "id": "german-rex",
+      "zh": "德国卷毛猫",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "German Rex"
+    },
+    {
+      "id": "domestic-long-haired-cat",
+      "zh": "混種長毛貓",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "domestic long-haired cat"
+    },
+    {
+      "id": "chantilly",
+      "zh": "查达利猫",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Chantilly"
+    },
+    {
+      "id": "munchkin-cat",
+      "zh": "曼切堪貓",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Munchkin cat"
+    },
+    {
+      "id": "cymric",
+      "zh": "威爾斯貓",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Cymric"
+    },
+    {
+      "id": "ocicat",
+      "zh": "歐西貓",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Ocicat"
+    },
+    {
+      "id": "korat",
+      "zh": "科拉特貓",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Korat"
+    },
+    {
+      "id": "ural-rex",
+      "zh": "Ural rex",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Ural rex"
+    },
+    {
+      "id": "somali",
+      "zh": "索马里猫",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Somali"
+    },
+    {
+      "id": "bohemian-rex",
+      "zh": "Bohemian Rex",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Bohemian Rex"
+    },
+    {
+      "id": "american-burmese",
+      "zh": "American burmese",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "American burmese"
+    },
+    {
+      "id": "european-burmese",
+      "zh": "European Burmese",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "European Burmese"
+    },
+    {
+      "id": "ceylon",
+      "zh": "Ceylon",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Ceylon"
+    },
+    {
+      "id": "minskin",
+      "zh": "Minskin",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Minskin"
+    },
+    {
+      "id": "seychellois",
+      "zh": "Seychellois",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Seychellois"
+    },
+    {
+      "id": "skookum",
+      "zh": "Skookum",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Skookum"
+    },
+    {
+      "id": "kohona",
+      "zh": "Kohona",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Kohona"
+    },
+    {
+      "id": "colorpoint-shorthair",
+      "zh": "Colorpoint Shorthair",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Colorpoint Shorthair"
+    },
+    {
+      "id": "karelian-bobtail",
+      "zh": "Karelian Bobtail",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Karelian Bobtail"
+    },
+    {
+      "id": "aphrodite-s-giant",
+      "zh": "塞浦路斯短毛貓",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Aphrodite's Giant"
+    },
+    {
+      "id": "tonkinese",
+      "zh": "東奇尼貓",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Tonkinese"
+    },
+    {
+      "id": "turkish-van",
+      "zh": "土耳其梵貓",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Turkish Van"
+    },
+    {
+      "id": "foreign-white",
+      "zh": "外国白猫",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Foreign White"
+    },
+    {
+      "id": "thai",
+      "zh": "傳統暹羅貓",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Thai"
+    },
+    {
+      "id": "rex-mutation",
+      "zh": "Rex mutation",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Rex mutation"
+    },
+    {
+      "id": "himalayan",
+      "zh": "喜马拉雅猫",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Himalayan"
+    },
+    {
+      "id": "minuet-cat",
+      "zh": "拿破仑猫",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Minuet cat"
+    },
+    {
+      "id": "oriental-bicolour",
+      "zh": "东方双色猫",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Oriental Bicolour"
+    },
+    {
+      "id": "squitten",
+      "zh": "squitten",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "squitten"
+    },
+    {
+      "id": "traditional-persian",
+      "zh": "Traditional Persian",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Traditional Persian"
+    },
+    {
+      "id": "ussuri",
+      "zh": "Ussuri",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Ussuri"
+    },
+    {
+      "id": "chinchilla-persian",
+      "zh": "chinchilla Persian",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "chinchilla Persian"
+    },
+    {
+      "id": "modern-siamese",
+      "zh": "Modern Siamese",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Modern Siamese"
+    },
+    {
+      "id": "russian-white-black-and-tabby",
+      "zh": "俄羅斯白貓、黑貓和虎斑貓",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Russian White, Black and Tabby"
+    },
+    {
+      "id": "kinkalow",
+      "zh": "Kinkalow",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Kinkalow"
+    },
+    {
+      "id": "elf-cat",
+      "zh": "Elf cat",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Elf cat"
+    },
+    {
+      "id": "mekong-bobtail",
+      "zh": "湄公河短尾貓",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Mekong Bobtail"
+    },
+    {
+      "id": "dwelf",
+      "zh": "dwelf",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "dwelf"
+    },
+    {
+      "id": "lykoi-cat",
+      "zh": "Lykoi Cat",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Lykoi Cat"
+    },
+    {
+      "id": "kanaani-cat",
+      "zh": "Kanaani cat",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Kanaani cat"
+    },
+    {
+      "id": "moggy",
+      "zh": "雜種貓",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "moggy"
+    },
+    {
+      "id": "jianzhou-cat",
+      "zh": "简州猫",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Jianzhou cat"
+    },
+    {
+      "id": "suffolk",
+      "zh": "Suffolk",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Suffolk"
+    },
+    {
+      "id": "altai",
+      "zh": "Altai",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Altai"
+    },
+    {
+      "id": "pantherina",
+      "zh": "Pantherina",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Pantherina"
+    },
+    {
+      "id": "deutsche-langhaarkatze",
+      "zh": "Deutsche Langhaarkatze",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Deutsche Langhaarkatze"
+    },
+    {
+      "id": "ashera",
+      "zh": "Ashera",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Ashera"
+    },
+    {
+      "id": "sokoke",
+      "zh": "肯尼亚猫",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Sokoke"
+    },
+    {
+      "id": "oriental-longhair",
+      "zh": "東方長毛貓",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Oriental Longhair"
+    },
+    {
+      "id": "york-chocolate",
+      "zh": "约克巧克力猫",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "York Chocolate"
+    },
+    {
+      "id": "ukrainian-levkoy",
+      "zh": "烏克蘭勒夫科伊貓",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Ukrainian Levkoy"
+    },
+    {
+      "id": "raas",
+      "zh": "Raas",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Raas"
+    },
+    {
+      "id": "foldex-cat",
+      "zh": "FoldEx cat",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "FoldEx cat"
+    },
+    {
+      "id": "american-ringtail",
+      "zh": "American Ringtail",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "American Ringtail"
+    },
+    {
+      "id": "suphalak",
+      "zh": "Suphalak",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Suphalak"
+    },
+    {
+      "id": "mandalay",
+      "zh": "Mandalay",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Mandalay"
+    },
+    {
+      "id": "tennessee-rex",
+      "zh": "Tennessee Rex",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Tennessee Rex"
+    },
+    {
+      "id": "owyhee-bob",
+      "zh": "Owyhee Bob",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Owyhee Bob"
+    },
+    {
+      "id": "california-rex",
+      "zh": "California Rex",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "California Rex"
+    },
+    {
+      "id": "kashmir-cat",
+      "zh": "Kashmir cat",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Kashmir cat"
+    },
+    {
+      "id": "highlander-cat",
+      "zh": "Highlander cat",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Highlander cat"
+    },
+    {
+      "id": "toybob",
+      "zh": "Toybob",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Toybob"
+    },
+    {
+      "id": "lambkin",
+      "zh": "Lambkin",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Lambkin"
+    },
+    {
+      "id": "genetta",
+      "zh": "genetta",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "genetta"
+    },
+    {
+      "id": "himalayan-persian",
+      "zh": "Himalayan Persian",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Himalayan Persian"
+    },
+    {
+      "id": "kohana",
+      "zh": "Kohana",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Kohana"
+    },
+    {
+      "id": "mixed-breed-cat",
+      "zh": "mixed breed cat",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "mixed breed cat"
+    },
+    {
+      "id": "thai-lilac",
+      "zh": "Thai Lilac",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Thai Lilac"
+    }
   ]
 }

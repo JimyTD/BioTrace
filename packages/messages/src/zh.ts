@@ -237,7 +237,7 @@ const zhCore = {
   "collection.petsTitle": "宠物",
   "collection.petsCount": "{count} 种",
   "collection.petsEmpty": "还没有宠物收录。拍到家养动物就会出现在这里。",
-  "collection.petsUnregistered": "未认证",
+  "collection.petsUnregistered": "品种不详",
   "collection.petsBreeds": "品种",
   "collection.petsLoadFailed": "加载这种失败",
   "collection.prevalence.common": "常见",

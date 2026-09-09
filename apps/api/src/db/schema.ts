@@ -164,7 +164,8 @@ export const collectionEntries = sqliteTable(
 
 /**
  * 宠物图鉴：收录单位 = (userId, taxonKey)，只收 domesticated 观察。
- * 稀有度来自驯化卷（只升不降）；品种点亮写在 litBreedIdsJson，未认证格独立布尔。
+ * 稀有度来自驯化卷（只升不降）；品种点亮写在 litBreedIdsJson，
+ * 库外名字写在 litFreeBreedsJson，品种不详格独立布尔。
  */
 export const petCollectionEntries = sqliteTable(
   "pet_collection_entries",
@@ -179,6 +180,7 @@ export const petCollectionEntries = sqliteTable(
     rarity: text("rarity").notNull(),
     coverObservationId: text("cover_observation_id"),
     litBreedIdsJson: text("lit_breed_ids_json").notNull(),
+    litFreeBreedsJson: text("lit_free_breeds_json").notNull(),
     unregisteredLit: integer("unregistered_lit", { mode: "boolean" }).notNull(),
     firstCollectedAt: integer("first_collected_at", { mode: "timestamp_ms" }).notNull(),
     updatedAt: integer("updated_at", { mode: "timestamp_ms" }).notNull(),

@@ -3,35 +3,6594 @@
   "taxonKey": "Canis lupus",
   "commonNameZh": "家犬",
   "breeds": [
-    { "id": "chinese-rural", "zh": "中华田园犬", "en": "Chinese Rural Dog", "aliases": ["田园犬", "土狗", "中华田园"], "prevalence": "common" },
-    { "id": "poodle", "zh": "贵宾犬", "en": "Poodle", "aliases": ["泰迪", "贵宾", "泰迪犬"], "prevalence": "common" },
-    { "id": "corgi", "zh": "柯基", "en": "Pembroke Welsh Corgi", "aliases": ["威尔士柯基", "彭布罗克柯基"], "prevalence": "common" },
-    { "id": "golden-retriever", "zh": "金毛寻回犬", "en": "Golden Retriever", "aliases": ["金毛"], "prevalence": "common" },
-    { "id": "labrador", "zh": "拉布拉多寻回犬", "en": "Labrador Retriever", "aliases": ["拉布拉多", "拉布"], "prevalence": "common" },
-    { "id": "bichon", "zh": "比熊", "en": "Bichon Frise", "aliases": ["比熊犬"], "prevalence": "common" },
-    { "id": "pomeranian", "zh": "博美", "en": "Pomeranian", "aliases": ["博美犬"], "prevalence": "common" },
-    { "id": "husky", "zh": "西伯利亚雪橇犬", "en": "Siberian Husky", "aliases": ["哈士奇", "二哈"], "prevalence": "common" },
-    { "id": "alaskan-malamute", "zh": "阿拉斯加雪橇犬", "en": "Alaskan Malamute", "aliases": ["阿拉斯加"], "prevalence": "uncommon" },
-    { "id": "border-collie", "zh": "边境牧羊犬", "en": "Border Collie", "aliases": ["边牧"], "prevalence": "common" },
-    { "id": "german-shepherd", "zh": "德国牧羊犬", "en": "German Shepherd", "aliases": ["德牧", "黑背"], "prevalence": "common" },
-    { "id": "shiba", "zh": "柴犬", "en": "Shiba Inu", "aliases": ["柴"], "prevalence": "common" },
-    { "id": "akita", "zh": "秋田犬", "en": "Akita", "aliases": ["秋田"], "prevalence": "uncommon" },
-    { "id": "french-bulldog", "zh": "法国斗牛犬", "en": "French Bulldog", "aliases": ["法斗"], "prevalence": "common" },
-    { "id": "english-bulldog", "zh": "英国斗牛犬", "en": "English Bulldog", "aliases": ["英斗"], "prevalence": "uncommon" },
-    { "id": "schnauzer", "zh": "雪纳瑞", "en": "Schnauzer", "aliases": ["迷你雪纳瑞"], "prevalence": "common" },
-    { "id": "samoyed", "zh": "萨摩耶", "en": "Samoyed", "aliases": ["萨摩"], "prevalence": "uncommon" },
-    { "id": "cocker-spaniel", "zh": "可卡", "en": "Cocker Spaniel", "aliases": ["可卡犬"], "prevalence": "uncommon" },
-    { "id": "beagle", "zh": "比格", "en": "Beagle", "aliases": ["比格犬"], "prevalence": "uncommon" },
-    { "id": "dachshund", "zh": "腊肠犬", "en": "Dachshund", "aliases": ["腊肠"], "prevalence": "common" },
-    { "id": "chihuahua", "zh": "吉娃娃", "en": "Chihuahua", "aliases": ["芝娃娃"], "prevalence": "common" },
-    { "id": "maltese", "zh": "马尔济斯", "en": "Maltese", "aliases": ["玛尔济斯"], "prevalence": "uncommon" },
-    { "id": "yorkshire", "zh": "约克夏", "en": "Yorkshire Terrier", "aliases": ["约克夏梗"], "prevalence": "uncommon" },
-    { "id": "shih-tzu", "zh": "西施犬", "en": "Shih Tzu", "aliases": ["西施"], "prevalence": "uncommon" },
-    { "id": "poodle-standard", "zh": "标准贵宾", "en": "Standard Poodle", "aliases": ["大型贵宾"], "prevalence": "uncommon" },
-    { "id": "rottweiler", "zh": "罗威纳", "en": "Rottweiler", "aliases": ["罗威那"], "prevalence": "uncommon" },
-    { "id": "doberman", "zh": "杜宾", "en": "Doberman Pinscher", "aliases": ["杜宾犬"], "prevalence": "uncommon" },
-    { "id": "great-dane", "zh": "大丹", "en": "Great Dane", "aliases": ["大丹犬"], "prevalence": "rare" },
-    { "id": "chow-chow", "zh": "松狮", "en": "Chow Chow", "aliases": ["松狮犬"], "prevalence": "uncommon" },
-    { "id": "shar-pei", "zh": "沙皮", "en": "Shar Pei", "aliases": ["沙皮犬"], "prevalence": "uncommon" }
+    {
+      "id": "chinese-rural",
+      "zh": "中华田园犬",
+      "en": "Chinese Rural Dog",
+      "aliases": [
+        "田园犬",
+        "土狗",
+        "中华田园"
+      ],
+      "prevalence": "common"
+    },
+    {
+      "id": "poodle",
+      "zh": "贵宾犬",
+      "en": "Poodle",
+      "aliases": [
+        "泰迪",
+        "贵宾",
+        "泰迪犬",
+        "貴婦犬",
+        "poodle"
+      ],
+      "prevalence": "common"
+    },
+    {
+      "id": "corgi",
+      "zh": "柯基",
+      "en": "Pembroke Welsh Corgi",
+      "aliases": [
+        "威尔士柯基",
+        "彭布罗克柯基",
+        "潘布魯克威爾斯柯基犬"
+      ],
+      "prevalence": "common"
+    },
+    {
+      "id": "golden-retriever",
+      "zh": "金毛寻回犬",
+      "en": "Golden Retriever",
+      "aliases": [
+        "金毛"
+      ],
+      "prevalence": "common"
+    },
+    {
+      "id": "labrador",
+      "zh": "拉布拉多寻回犬",
+      "en": "Labrador Retriever",
+      "aliases": [
+        "拉布拉多",
+        "拉布",
+        "拉布拉多犬"
+      ],
+      "prevalence": "common"
+    },
+    {
+      "id": "bichon",
+      "zh": "比熊",
+      "en": "Bichon Frise",
+      "aliases": [
+        "比熊犬",
+        "Bichon Frisé"
+      ],
+      "prevalence": "common"
+    },
+    {
+      "id": "pomeranian",
+      "zh": "博美",
+      "en": "Pomeranian",
+      "aliases": [
+        "博美犬"
+      ],
+      "prevalence": "common"
+    },
+    {
+      "id": "husky",
+      "zh": "西伯利亚雪橇犬",
+      "en": "Siberian Husky",
+      "aliases": [
+        "哈士奇",
+        "二哈",
+        "西伯利亞哈士奇"
+      ],
+      "prevalence": "common"
+    },
+    {
+      "id": "alaskan-malamute",
+      "zh": "阿拉斯加雪橇犬",
+      "en": "Alaskan Malamute",
+      "aliases": [
+        "阿拉斯加"
+      ],
+      "prevalence": "uncommon"
+    },
+    {
+      "id": "border-collie",
+      "zh": "边境牧羊犬",
+      "en": "Border Collie",
+      "aliases": [
+        "边牧",
+        "border collie"
+      ],
+      "prevalence": "common"
+    },
+    {
+      "id": "german-shepherd",
+      "zh": "德国牧羊犬",
+      "en": "German Shepherd",
+      "aliases": [
+        "德牧",
+        "黑背",
+        "德國牧羊犬"
+      ],
+      "prevalence": "common"
+    },
+    {
+      "id": "shiba",
+      "zh": "柴犬",
+      "en": "Shiba Inu",
+      "aliases": [
+        "柴"
+      ],
+      "prevalence": "common"
+    },
+    {
+      "id": "akita",
+      "zh": "秋田犬",
+      "en": "Akita",
+      "aliases": [
+        "秋田"
+      ],
+      "prevalence": "uncommon"
+    },
+    {
+      "id": "french-bulldog",
+      "zh": "法国斗牛犬",
+      "en": "French Bulldog",
+      "aliases": [
+        "法斗",
+        "法國鬥牛犬"
+      ],
+      "prevalence": "common"
+    },
+    {
+      "id": "english-bulldog",
+      "zh": "英国斗牛犬",
+      "en": "English Bulldog",
+      "aliases": [
+        "英斗"
+      ],
+      "prevalence": "uncommon"
+    },
+    {
+      "id": "schnauzer",
+      "zh": "雪纳瑞",
+      "en": "Schnauzer",
+      "aliases": [
+        "迷你雪纳瑞"
+      ],
+      "prevalence": "common"
+    },
+    {
+      "id": "samoyed",
+      "zh": "萨摩耶",
+      "en": "Samoyed",
+      "aliases": [
+        "萨摩",
+        "薩摩耶犬"
+      ],
+      "prevalence": "uncommon"
+    },
+    {
+      "id": "cocker-spaniel",
+      "zh": "可卡",
+      "en": "Cocker Spaniel",
+      "aliases": [
+        "可卡犬",
+        "美卡犬",
+        "cocker spaniel"
+      ],
+      "prevalence": "uncommon"
+    },
+    {
+      "id": "beagle",
+      "zh": "比格",
+      "en": "Beagle",
+      "aliases": [
+        "比格犬",
+        "米格魯獵兔犬",
+        "beagle"
+      ],
+      "prevalence": "uncommon"
+    },
+    {
+      "id": "dachshund",
+      "zh": "腊肠犬",
+      "en": "Dachshund",
+      "aliases": [
+        "腊肠",
+        "dachshund"
+      ],
+      "prevalence": "common"
+    },
+    {
+      "id": "chihuahua",
+      "zh": "吉娃娃",
+      "en": "Chihuahua",
+      "aliases": [
+        "芝娃娃"
+      ],
+      "prevalence": "common"
+    },
+    {
+      "id": "maltese",
+      "zh": "马尔济斯",
+      "en": "Maltese",
+      "aliases": [
+        "玛尔济斯",
+        "馬爾濟斯"
+      ],
+      "prevalence": "uncommon"
+    },
+    {
+      "id": "yorkshire",
+      "zh": "约克夏",
+      "en": "Yorkshire Terrier",
+      "aliases": [
+        "约克夏梗",
+        "約克夏㹴"
+      ],
+      "prevalence": "uncommon"
+    },
+    {
+      "id": "shih-tzu",
+      "zh": "西施犬",
+      "en": "Shih Tzu",
+      "aliases": [
+        "西施"
+      ],
+      "prevalence": "uncommon"
+    },
+    {
+      "id": "poodle-standard",
+      "zh": "标准贵宾",
+      "en": "Standard Poodle",
+      "aliases": [
+        "大型贵宾"
+      ],
+      "prevalence": "uncommon"
+    },
+    {
+      "id": "rottweiler",
+      "zh": "罗威纳",
+      "en": "Rottweiler",
+      "aliases": [
+        "罗威那",
+        "羅威那"
+      ],
+      "prevalence": "uncommon"
+    },
+    {
+      "id": "doberman",
+      "zh": "杜宾",
+      "en": "Doberman Pinscher",
+      "aliases": [
+        "杜宾犬"
+      ],
+      "prevalence": "uncommon"
+    },
+    {
+      "id": "great-dane",
+      "zh": "大丹",
+      "en": "Great Dane",
+      "aliases": [
+        "大丹犬"
+      ],
+      "prevalence": "rare"
+    },
+    {
+      "id": "chow-chow",
+      "zh": "松狮",
+      "en": "Chow Chow",
+      "aliases": [
+        "松狮犬",
+        "鬆獅犬"
+      ],
+      "prevalence": "uncommon"
+    },
+    {
+      "id": "shar-pei",
+      "zh": "沙皮",
+      "en": "Shar Pei",
+      "aliases": [
+        "沙皮犬",
+        "沙皮狗"
+      ],
+      "prevalence": "uncommon"
+    },
+    {
+      "id": "barbado-da-terceira",
+      "zh": "Barbado da Terceira",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Barbado da Terceira"
+    },
+    {
+      "id": "c-o-de-gado-transmontano",
+      "zh": "Cão de gado transmontano",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Cão de gado transmontano"
+    },
+    {
+      "id": "agassin",
+      "zh": "Agassin",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Agassin"
+    },
+    {
+      "id": "american-leopard-hound",
+      "zh": "American Leopard Hound",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "American Leopard Hound"
+    },
+    {
+      "id": "jeju-dog",
+      "zh": "濟州犬",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Jeju dog"
+    },
+    {
+      "id": "africanis",
+      "zh": "Africanis",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Africanis"
+    },
+    {
+      "id": "afghan-mastiff",
+      "zh": "Afghan mastiff",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Afghan mastiff"
+    },
+    {
+      "id": "english-pointer",
+      "zh": "指標犬",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "English Pointer"
+    },
+    {
+      "id": "german-spitz-mittel",
+      "zh": "German Spitz Mittel",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "German Spitz Mittel"
+    },
+    {
+      "id": "farm-collie",
+      "zh": "Farm collie",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Farm collie"
+    },
+    {
+      "id": "boxador",
+      "zh": "Boxador",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Boxador"
+    },
+    {
+      "id": "tarsus-atalburuns",
+      "zh": "Tarsus Çatalburuns",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Tarsus Çatalburuns"
+    },
+    {
+      "id": "zerdava",
+      "zh": "澤爾達瓦犬",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Zerdava"
+    },
+    {
+      "id": "fuegian-dog",
+      "zh": "雅加犬",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Fuegian dog"
+    },
+    {
+      "id": "levriero-meridionale",
+      "zh": "Levriero meridionale",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Levriero meridionale"
+    },
+    {
+      "id": "majestic-tree-hound",
+      "zh": "Majestic Tree Hound",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Majestic Tree Hound"
+    },
+    {
+      "id": "miniature-american-shepherd",
+      "zh": "迷你美國牧羊犬",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Miniature American Shepherd"
+    },
+    {
+      "id": "miniature-fox-terrier",
+      "zh": "迷你狐狸㹴",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Miniature Fox Terrier"
+    },
+    {
+      "id": "moscow-water-dog",
+      "zh": "莫斯科水犬",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Moscow Water Dog"
+    },
+    {
+      "id": "white-shepherd-dog",
+      "zh": "白牧羊犬",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "White Shepherd Dog"
+    },
+    {
+      "id": "lobito-herre-o",
+      "zh": "Lobito Herreño",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Lobito Herreño"
+    },
+    {
+      "id": "greyster",
+      "zh": "格雷斯特犬",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Greyster"
+    },
+    {
+      "id": "toy-poodle",
+      "zh": "Toy Poodle",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Toy Poodle"
+    },
+    {
+      "id": "adirondack-pointing-dog",
+      "zh": "Adirondack Pointing Dog",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Adirondack Pointing Dog"
+    },
+    {
+      "id": "australian-staghound",
+      "zh": "Australian Staghound",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Australian Staghound"
+    },
+    {
+      "id": "borneo-dog",
+      "zh": "Borneo dog",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Borneo dog"
+    },
+    {
+      "id": "podengo-galego",
+      "zh": "Podengo Galego",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Podengo Galego"
+    },
+    {
+      "id": "inn-kwe",
+      "zh": "Inn kwe",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Inn kwe"
+    },
+    {
+      "id": "labrit",
+      "zh": "Labrit",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Labrit"
+    },
+    {
+      "id": "m-tin",
+      "zh": "Mâtin",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Mâtin"
+    },
+    {
+      "id": "white-greek-sheepdog",
+      "zh": "White Greek sheepdog",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "White Greek sheepdog"
+    },
+    {
+      "id": "westfal-terrier",
+      "zh": "Westfal Terrier",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Westfal Terrier"
+    },
+    {
+      "id": "wurttemberg-pointer",
+      "zh": "Wurttemberg Pointer",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Wurttemberg Pointer"
+    },
+    {
+      "id": "basset-d-artois",
+      "zh": "basset d'Artois",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "basset d'Artois"
+    },
+    {
+      "id": "savoy-sheepdog",
+      "zh": "Savoy Sheepdog",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Savoy Sheepdog"
+    },
+    {
+      "id": "welsh-corgi",
+      "zh": "威爾斯柯基犬",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Welsh Corgi"
+    },
+    {
+      "id": "bolonka-franzuska",
+      "zh": "Bolonka Franzuska",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Bolonka Franzuska"
+    },
+    {
+      "id": "belgian-pointer",
+      "zh": "Belgian Pointer",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Belgian Pointer"
+    },
+    {
+      "id": "xiasi-dog",
+      "zh": "下司犬",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Xiasi Dog"
+    },
+    {
+      "id": "treeing-feist",
+      "zh": "樹獵費斯特犬",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Treeing Feist"
+    },
+    {
+      "id": "kumi",
+      "zh": "Kumiş",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Kumiş"
+    },
+    {
+      "id": "old-time-farm-shepherd",
+      "zh": "Old Time Farm Shepherd",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Old Time Farm Shepherd"
+    },
+    {
+      "id": "old-welsh-grey-sheepdog",
+      "zh": "Old Welsh Grey Sheepdog",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Old Welsh Grey Sheepdog"
+    },
+    {
+      "id": "piccolo-segugio-dell-appennino",
+      "zh": "Piccolo Segugio dell'Appennino",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Piccolo Segugio dell'Appennino"
+    },
+    {
+      "id": "rare-breed",
+      "zh": "Rare breed",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Rare breed"
+    },
+    {
+      "id": "segugio-cravin",
+      "zh": "Segugio Cravin",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Segugio Cravin"
+    },
+    {
+      "id": "sporting-lucas-terrier",
+      "zh": "Sporting Lucas Terrier",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Sporting Lucas Terrier"
+    },
+    {
+      "id": "illyrian-shepherd",
+      "zh": "Illyrian Shepherd",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Illyrian Shepherd"
+    },
+    {
+      "id": "patagonian-sheepdog",
+      "zh": "巴塔哥尼亞牧羊犬",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Patagonian Sheepdog"
+    },
+    {
+      "id": "argentine-polar-dog",
+      "zh": "Argentine Polar Dog",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Argentine Polar Dog"
+    },
+    {
+      "id": "chorkie",
+      "zh": "Chorkie",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Chorkie"
+    },
+    {
+      "id": "techichi",
+      "zh": "Techichi",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Techichi"
+    },
+    {
+      "id": "barrocal-algarvio",
+      "zh": "Barrocal Algarvio",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Barrocal Algarvio"
+    },
+    {
+      "id": "pyrenean-sheepdog-long-haired",
+      "zh": "Pyrenean Sheepdog Long-haired",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Pyrenean Sheepdog Long-haired"
+    },
+    {
+      "id": "mantiqueira-shepherd",
+      "zh": "Mantiqueira Shepherd",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Mantiqueira Shepherd"
+    },
+    {
+      "id": "pomsky",
+      "zh": "Pomsky",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Pomsky"
+    },
+    {
+      "id": "shropshre-terrier",
+      "zh": "Shropshre Terrier",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Shropshre Terrier"
+    },
+    {
+      "id": "shilluk-greyhound",
+      "zh": "Shilluk Greyhound",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Shilluk Greyhound"
+    },
+    {
+      "id": "strathdoon-dingo-killer",
+      "zh": "Strathdoon dingo killer",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Strathdoon dingo killer"
+    },
+    {
+      "id": "sparta-sheepdog",
+      "zh": "Sparta Sheepdog",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Sparta Sheepdog"
+    },
+    {
+      "id": "sioux-dog",
+      "zh": "Sioux Dog",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Sioux Dog"
+    },
+    {
+      "id": "st-domingo-dog",
+      "zh": "St. Domingo Dog",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "St. Domingo Dog"
+    },
+    {
+      "id": "st-hubert-jura-hound",
+      "zh": "St. Hubert Jura Hound",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "St. Hubert Jura Hound"
+    },
+    {
+      "id": "tumbler",
+      "zh": "不倒翁犬",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "tumbler"
+    },
+    {
+      "id": "timon-s-biter",
+      "zh": "Timon's Biter",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Timon's Biter"
+    },
+    {
+      "id": "timber-wolf-dog",
+      "zh": "Timber-wolf Dog",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Timber-wolf Dog"
+    },
+    {
+      "id": "terry",
+      "zh": "Terry",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Terry"
+    },
+    {
+      "id": "dinka-greyhound",
+      "zh": "Dinka Greyhound",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Dinka Greyhound"
+    },
+    {
+      "id": "denmark-feist",
+      "zh": "DenMark Feist",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "DenMark Feist",
+      "aliases": [
+        "Denmark Feist"
+      ]
+    },
+    {
+      "id": "toy-bull-terrier",
+      "zh": "Toy Bull Terrier",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Toy Bull Terrier"
+    },
+    {
+      "id": "toy-munchkin",
+      "zh": "Toy Munchkin",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Toy Munchkin"
+    },
+    {
+      "id": "toy-mi-ki",
+      "zh": "Toy Mi-Ki",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Toy Mi-Ki"
+    },
+    {
+      "id": "tripuri-dog",
+      "zh": "Tripuri Dog",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Tripuri Dog"
+    },
+    {
+      "id": "trailhound",
+      "zh": "Trailhound",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Trailhound"
+    },
+    {
+      "id": "dropper",
+      "zh": "dropper",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "dropper"
+    },
+    {
+      "id": "naga-dog",
+      "zh": "Naga Dog",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Naga Dog"
+    },
+    {
+      "id": "zande-dog",
+      "zh": "Zande Dog",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Zande Dog"
+    },
+    {
+      "id": "nootka-dog",
+      "zh": "Nootka Dog",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Nootka Dog"
+    },
+    {
+      "id": "indian-husky",
+      "zh": "Indian Husky",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Indian Husky"
+    },
+    {
+      "id": "kurdish-mastiff",
+      "zh": "Kurdish Mastiff",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Kurdish Mastiff"
+    },
+    {
+      "id": "polish-hunting-spaniel",
+      "zh": "Polish Hunting Spaniel",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Polish Hunting Spaniel"
+    },
+    {
+      "id": "tuvinskaya-ovcharka",
+      "zh": "Tuvinskaya ovcharka",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Tuvinskaya ovcharka"
+    },
+    {
+      "id": "branchiero-siciliano",
+      "zh": "Branchiero siciliano",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Branchiero siciliano"
+    },
+    {
+      "id": "american-wolfdog",
+      "zh": "American Wolfdog",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "American Wolfdog"
+    },
+    {
+      "id": "calupoh",
+      "zh": "Calupoh",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Calupoh"
+    },
+    {
+      "id": "original-fila-brasileiro",
+      "zh": "Original Fila Brasileiro",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Original Fila Brasileiro"
+    },
+    {
+      "id": "bullbras",
+      "zh": "Bullbras",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Bullbras"
+    },
+    {
+      "id": "pit-monster",
+      "zh": "Pit Monster",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Pit Monster"
+    },
+    {
+      "id": "bulgarian-shepherd-dog",
+      "zh": "Bulgarian Shepherd Dog",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Bulgarian Shepherd Dog"
+    },
+    {
+      "id": "working-pit-bulldog",
+      "zh": "Working Pit Bulldog",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Working Pit Bulldog"
+    },
+    {
+      "id": "american-working-red",
+      "zh": "American Working Red",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "American Working Red"
+    },
+    {
+      "id": "chuandong-hound",
+      "zh": "Chuandong Hound",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Chuandong Hound"
+    },
+    {
+      "id": "ramanathapuram-mandai-dog",
+      "zh": "Ramanathapuram mandai dog",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Ramanathapuram mandai dog"
+    },
+    {
+      "id": "faroese-sheepdog",
+      "zh": "Faroese Sheepdog",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Faroese Sheepdog"
+    },
+    {
+      "id": "australian-cobberdog",
+      "zh": "Australian Cobberdog",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Australian Cobberdog"
+    },
+    {
+      "id": "zlatiborski-ov-ar",
+      "zh": "Zlatiborski ovčar",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Zlatiborski ovčar"
+    },
+    {
+      "id": "pariah-dog",
+      "zh": "流浪犬",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Pariah dog"
+    },
+    {
+      "id": "australian-stock-dog",
+      "zh": "Australian stock dog",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Australian stock dog"
+    },
+    {
+      "id": "erbi-txakur",
+      "zh": "Erbi Txakur",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Erbi Txakur"
+    },
+    {
+      "id": "field-labrador",
+      "zh": "Field labrador",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Field labrador"
+    },
+    {
+      "id": "gollie",
+      "zh": "Gollie",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Gollie"
+    },
+    {
+      "id": "guicho",
+      "zh": "Guicho",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Guicho"
+    },
+    {
+      "id": "dong-gyeong",
+      "zh": "東慶犬",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Dong-gyeong"
+    },
+    {
+      "id": "bulgae",
+      "zh": "火狗 (妖怪)",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Bulgae"
+    },
+    {
+      "id": "miniature-dachshund",
+      "zh": "迷你臘腸犬",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "miniature dachshund"
+    },
+    {
+      "id": "macedonian-karaman",
+      "zh": "Macedonian Karaman",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Macedonian Karaman"
+    },
+    {
+      "id": "molossian-hound",
+      "zh": "摩洛斯犬",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Molossian hound"
+    },
+    {
+      "id": "art-sien-normand",
+      "zh": "artésien-normand",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "artésien-normand"
+    },
+    {
+      "id": "capheaton-terrier",
+      "zh": "Capheaton Terrier",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Capheaton Terrier"
+    },
+    {
+      "id": "odis",
+      "zh": "odis",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "odis"
+    },
+    {
+      "id": "murcian-ratter",
+      "zh": "穆爾西亞捕鼠犬",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Murcian Ratter"
+    },
+    {
+      "id": "irish-staffordshire-bull-terrier",
+      "zh": "Irish Staffordshire Bull Terrier",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Irish Staffordshire Bull Terrier"
+    },
+    {
+      "id": "sila-shepherd",
+      "zh": "Sila Shepherd",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Sila Shepherd"
+    },
+    {
+      "id": "ameri-indian-alaskan-husky",
+      "zh": "Ameri-Indian Alaskan Husky",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Ameri-Indian Alaskan Husky"
+    },
+    {
+      "id": "carea-castellano-manchego",
+      "zh": "Carea Castellano Manchego",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Carea Castellano Manchego"
+    },
+    {
+      "id": "dogo-espa-ol",
+      "zh": "Dogo español",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Dogo español"
+    },
+    {
+      "id": "anatolian-greyhound",
+      "zh": "Anatolian Greyhound",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Anatolian Greyhound"
+    },
+    {
+      "id": "badger-dog",
+      "zh": "badger dog",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "badger dog"
+    },
+    {
+      "id": "griffon-bruxellois",
+      "zh": "Griffon Bruxellois",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Griffon Bruxellois",
+      "aliases": [
+        "布魯塞爾格林芬犬"
+      ]
+    },
+    {
+      "id": "pulin",
+      "zh": "Pulin",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Pulin"
+    },
+    {
+      "id": "auvergne-shepherd",
+      "zh": "Auvergne Shepherd",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Auvergne Shepherd"
+    },
+    {
+      "id": "tahitian-dog",
+      "zh": "Tahitian Dog",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Tahitian Dog"
+    },
+    {
+      "id": "polynesian-dog",
+      "zh": "玻里尼西亞犬",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Polynesian Dog"
+    },
+    {
+      "id": "medelyan",
+      "zh": "梅德良犬",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Medelyan"
+    },
+    {
+      "id": "lessinia-and-lagorai-shepherd",
+      "zh": "Lessinia and Lagorai Shepherd",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Lessinia and Lagorai Shepherd"
+    },
+    {
+      "id": "spino-siciliano",
+      "zh": "Spino siciliano",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Spino siciliano"
+    },
+    {
+      "id": "cane-pecoraio-varbutu",
+      "zh": "Cane Pecoraio Varbutu",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Cane Pecoraio Varbutu"
+    },
+    {
+      "id": "chinese-happa-dog",
+      "zh": "Chinese Happa Dog",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Chinese Happa Dog"
+    },
+    {
+      "id": "african-village-dog",
+      "zh": "非洲村犬",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "African village dog"
+    },
+    {
+      "id": "new-zealand-heading-dog",
+      "zh": "New Zealand Heading Dog",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "New Zealand Heading Dog"
+    },
+    {
+      "id": "petit-braban-on",
+      "zh": "Petit brabançon",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Petit brabançon"
+    },
+    {
+      "id": "grand-gascon-saintongeois",
+      "zh": "Grand Gascon Saintongeois",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Grand Gascon Saintongeois"
+    },
+    {
+      "id": "miniature-shar-pei",
+      "zh": "Miniature Shar Pei",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Miniature Shar Pei"
+    },
+    {
+      "id": "bone-mouth",
+      "zh": "傳統中國沙皮犬",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Bone-mouth"
+    },
+    {
+      "id": "perdigueiro-galego",
+      "zh": "Perdigueiro Galego",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Perdigueiro Galego"
+    },
+    {
+      "id": "american-blue-gascon-hound",
+      "zh": "American Blue Gascon Hound",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "American Blue Gascon Hound"
+    },
+    {
+      "id": "french-pointing-dog-pyrenean-type",
+      "zh": "French Pointing Dog - Pyrenean type",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "French Pointing Dog - Pyrenean type"
+    },
+    {
+      "id": "leavitt-bulldog",
+      "zh": "Leavitt Bulldog",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Leavitt Bulldog"
+    },
+    {
+      "id": "lucas-terrier",
+      "zh": "Lucas Terrier",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Lucas Terrier"
+    },
+    {
+      "id": "alano",
+      "zh": "Alano",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Alano"
+    },
+    {
+      "id": "briquet-de-provence",
+      "zh": "Briquet de Provence",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Briquet de Provence"
+    },
+    {
+      "id": "pampas-deerhound",
+      "zh": "Pampas Deerhound",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Pampas Deerhound"
+    },
+    {
+      "id": "national-deerhound",
+      "zh": "National Deerhound",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "National Deerhound"
+    },
+    {
+      "id": "anglo-russian-hound",
+      "zh": "Anglo-Russian Hound",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Anglo-Russian Hound"
+    },
+    {
+      "id": "berger-de-crau",
+      "zh": "Berger de Crau",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Berger de Crau"
+    },
+    {
+      "id": "serrano-bulldog",
+      "zh": "Serrano Bulldog",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Serrano Bulldog"
+    },
+    {
+      "id": "hedehund",
+      "zh": "Hedehund",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Hedehund"
+    },
+    {
+      "id": "greek-shepherd",
+      "zh": "Greek Shepherd",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Greek Shepherd"
+    },
+    {
+      "id": "molossus-of-epirus",
+      "zh": "Molossus of Epirus",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Molossus of Epirus"
+    },
+    {
+      "id": "russian-hound",
+      "zh": "Russian Hound",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Russian Hound"
+    },
+    {
+      "id": "serbian-sheep-dog",
+      "zh": "Serbian sheep dog",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Serbian sheep dog"
+    },
+    {
+      "id": "xigou",
+      "zh": "細犬",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Xigou"
+    },
+    {
+      "id": "gr-hund",
+      "zh": "gråhund",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "gråhund"
+    },
+    {
+      "id": "u-s-state-dogs",
+      "zh": "U.S. state dogs",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "U.S. state dogs"
+    },
+    {
+      "id": "french-hound",
+      "zh": "French Hound",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "French Hound"
+    },
+    {
+      "id": "steinbracke",
+      "zh": "Steinbracke",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Steinbracke"
+    },
+    {
+      "id": "schwarzer",
+      "zh": "Schwarzer",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Schwarzer"
+    },
+    {
+      "id": "silken-windsprite",
+      "zh": "Silken Windsprite",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Silken Windsprite"
+    },
+    {
+      "id": "beskydsk-bund",
+      "zh": "Beskydský bundáš",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Beskydský bundáš"
+    },
+    {
+      "id": "aquarius",
+      "zh": "aquarius",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "aquarius"
+    },
+    {
+      "id": "izcuintli-itzcuintli",
+      "zh": "Izcuintli, itzcuintli",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Izcuintli, itzcuintli"
+    },
+    {
+      "id": "indian-tailles-dog",
+      "zh": "Indian Tailles Dog",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Indian Tailles Dog"
+    },
+    {
+      "id": "west-greenland-dog",
+      "zh": "West Greenland Dog",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "West Greenland Dog"
+    },
+    {
+      "id": "welsh-hillman",
+      "zh": "Welsh Hillman",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Welsh Hillman"
+    },
+    {
+      "id": "egyptian-hairless-dog",
+      "zh": "Egyptian Hairless Dog",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Egyptian Hairless Dog"
+    },
+    {
+      "id": "oriental-shar-pei",
+      "zh": "Oriental Shar Pei",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Oriental Shar Pei"
+    },
+    {
+      "id": "australian-barb",
+      "zh": "Australian Barb",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Australian Barb"
+    },
+    {
+      "id": "aurora-husky",
+      "zh": "Aurora Husky",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Aurora Husky"
+    },
+    {
+      "id": "catahoula-leopard-dog",
+      "zh": "卡塔胡拉豹犬",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Catahoula Leopard Dog"
+    },
+    {
+      "id": "canis-panther",
+      "zh": "Canis Panther",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Canis Panther"
+    },
+    {
+      "id": "camas-cur",
+      "zh": "Camas Cur",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Camas Cur"
+    },
+    {
+      "id": "comforter",
+      "zh": "Comforter",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Comforter"
+    },
+    {
+      "id": "cyprus-poodle",
+      "zh": "Cyprus Poodle",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Cyprus Poodle"
+    },
+    {
+      "id": "klamath-indian-dog",
+      "zh": "Klamath-Indian Dog",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Klamath-Indian Dog"
+    },
+    {
+      "id": "clallam-indian-dog",
+      "zh": "Clallam-Indian Dog",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Clallam-Indian Dog"
+    },
+    {
+      "id": "gredin-spaniel",
+      "zh": "Gredin Spaniel",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Gredin Spaniel"
+    },
+    {
+      "id": "kentucky-shell-heap-dog",
+      "zh": "Kentucky Shell Heap Dog",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Kentucky Shell Heap Dog"
+    },
+    {
+      "id": "common-indian-dog",
+      "zh": "Common Indian Dog",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Common Indian Dog"
+    },
+    {
+      "id": "colima-dog",
+      "zh": "Colima Dog",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Colima Dog"
+    },
+    {
+      "id": "gorskaja",
+      "zh": "Gorskaja",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Gorskaja"
+    },
+    {
+      "id": "circassian-orloff-wolfhound",
+      "zh": "Circassian Orloff Wolfhound",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Circassian Orloff Wolfhound"
+    },
+    {
+      "id": "zanzibar-greyhound",
+      "zh": "Zanzibar Greyhound",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Zanzibar Greyhound"
+    },
+    {
+      "id": "shakhi",
+      "zh": "Shakhi",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Shakhi"
+    },
+    {
+      "id": "braque-charles-x",
+      "zh": "Braque Charles X",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Braque Charles X"
+    },
+    {
+      "id": "griffon",
+      "zh": "griffon",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "griffon"
+    },
+    {
+      "id": "belgian-mastiff",
+      "zh": "Belgian Mastiff",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Belgian Mastiff"
+    },
+    {
+      "id": "carpathian-shepherd-dog",
+      "zh": "Carpathian Shepherd Dog",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Carpathian Shepherd Dog"
+    },
+    {
+      "id": "bull-arab",
+      "zh": "牛阿拉伯犬",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Bull Arab"
+    },
+    {
+      "id": "nureongi",
+      "zh": "高丽黄狐狸犬",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "nureongi"
+    },
+    {
+      "id": "collie",
+      "zh": "柯利犬",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "collie"
+    },
+    {
+      "id": "kintamani",
+      "zh": "金塔馬尼犬",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Kintamani"
+    },
+    {
+      "id": "turkmen-alabai",
+      "zh": "Turkmen Alabai",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Turkmen Alabai"
+    },
+    {
+      "id": "segugio-maremmano",
+      "zh": "Segugio Maremmano",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Segugio Maremmano"
+    },
+    {
+      "id": "segugio-dell-appennino",
+      "zh": "Segugio dell'Appennino",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Segugio dell'Appennino"
+    },
+    {
+      "id": "bakhmull",
+      "zh": "Bakhmull",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Bakhmull"
+    },
+    {
+      "id": "danish-spitz",
+      "zh": "丹麥尖嘴犬",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Danish Spitz"
+    },
+    {
+      "id": "hairless-khala",
+      "zh": "Hairless Khala",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Hairless Khala"
+    },
+    {
+      "id": "dogue-brasileiro",
+      "zh": "巴西杜哥犬",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Dogue Brasileiro"
+    },
+    {
+      "id": "k-nigsberger-paukenhund",
+      "zh": "Königsberger Paukenhund",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Königsberger Paukenhund"
+    },
+    {
+      "id": "han-dog",
+      "zh": "Han Dog",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Han Dog"
+    },
+    {
+      "id": "baganda-dog",
+      "zh": "Baganda Dog",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Baganda Dog"
+    },
+    {
+      "id": "batak-dog",
+      "zh": "Batak Dog",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Batak Dog"
+    },
+    {
+      "id": "bisharin-greyhound",
+      "zh": "Bisharin Greyhound",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Bisharin Greyhound"
+    },
+    {
+      "id": "bichon-yorkie",
+      "zh": "Bichon Yorkie",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Bichon Yorkie"
+    },
+    {
+      "id": "pit-bullmastiff",
+      "zh": "Pit Bullmastiff",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Pit Bullmastiff"
+    },
+    {
+      "id": "fell-hound",
+      "zh": "Fell Hound",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Fell Hound"
+    },
+    {
+      "id": "black-pointer",
+      "zh": "Black Pointer",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Black Pointer"
+    },
+    {
+      "id": "brittany-spaniel",
+      "zh": "Brittany Spaniel",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Brittany Spaniel"
+    },
+    {
+      "id": "bullnese",
+      "zh": "Bullnese",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Bullnese"
+    },
+    {
+      "id": "bull-boxer",
+      "zh": "Bull Boxer",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Bull Boxer"
+    },
+    {
+      "id": "prapsos",
+      "zh": "Prapsos",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Prapsos"
+    },
+    {
+      "id": "plains-indian-dog",
+      "zh": "Plains-Indian Dog",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Plains-Indian Dog"
+    },
+    {
+      "id": "bajan-toy-terrier",
+      "zh": "Bajan Toy Terrier",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Bajan Toy Terrier"
+    },
+    {
+      "id": "belgian-griffons",
+      "zh": "Belgian Griffons",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Belgian Griffons"
+    },
+    {
+      "id": "peruvian-inca-orchid",
+      "zh": "Peruvian Inca Orchid",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Peruvian Inca Orchid"
+    },
+    {
+      "id": "powinder-dog",
+      "zh": "Powinder Dog",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Powinder Dog"
+    },
+    {
+      "id": "poltalloch-terrier",
+      "zh": "Poltalloch Terrier",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Poltalloch Terrier"
+    },
+    {
+      "id": "maltese-little-lion-dog",
+      "zh": "Maltese Little Lion-dog",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Maltese Little Lion-dog"
+    },
+    {
+      "id": "maltese-pocket-dog",
+      "zh": "Maltese Pocket Dog",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Maltese Pocket Dog"
+    },
+    {
+      "id": "miniature-siberian-husky",
+      "zh": "Miniature Siberian Husky",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Miniature Siberian Husky"
+    },
+    {
+      "id": "yakki-dog",
+      "zh": "Yakki Dog",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Yakki Dog"
+    },
+    {
+      "id": "latvian-hound",
+      "zh": "Latvian Hound",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Latvian Hound"
+    },
+    {
+      "id": "ruby-spaniel",
+      "zh": "Ruby Spaniel",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Ruby Spaniel"
+    },
+    {
+      "id": "llewellin-setter",
+      "zh": "Llewellin Setter",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Llewellin Setter"
+    },
+    {
+      "id": "red-decoy-dog",
+      "zh": "Red Decoy Dog",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Red Decoy Dog"
+    },
+    {
+      "id": "rothbury-terrier",
+      "zh": "Rothbury Terrier",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Rothbury Terrier"
+    },
+    {
+      "id": "lottatore-brindisino",
+      "zh": "Lottatore Brindisino",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Lottatore Brindisino"
+    },
+    {
+      "id": "koyun-dog",
+      "zh": "Koyun dog",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Koyun dog"
+    },
+    {
+      "id": "lapponian-shepherd",
+      "zh": "Lapponian Shepherd",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Lapponian Shepherd"
+    },
+    {
+      "id": "chamuco",
+      "zh": "Chamuco",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Chamuco"
+    },
+    {
+      "id": "cesky-wire-haired-pointing-griffon",
+      "zh": "Cesky Wire-haired Pointing Griffon",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Cesky Wire-haired Pointing Griffon"
+    },
+    {
+      "id": "running-walker-coonhound",
+      "zh": "Running Walker Coonhound",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Running Walker Coonhound"
+    },
+    {
+      "id": "brazilian-bull-mastiff",
+      "zh": "Brazilian Bull-mastiff",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Brazilian Bull-mastiff"
+    },
+    {
+      "id": "shorty-bull",
+      "zh": "Shorty Bull",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Shorty Bull"
+    },
+    {
+      "id": "zuchon",
+      "zh": "Zuchon",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Zuchon"
+    },
+    {
+      "id": "vaghari-dog",
+      "zh": "Vaghari Dog",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Vaghari Dog"
+    },
+    {
+      "id": "poochon",
+      "zh": "Poochon",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Poochon"
+    },
+    {
+      "id": "north-easthrly-haaling-laika",
+      "zh": "North-Easthrly Haaling Laika",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "North-Easthrly Haaling Laika"
+    },
+    {
+      "id": "sarabi-mastiff",
+      "zh": "Sarabi Mastiff",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Sarabi Mastiff"
+    },
+    {
+      "id": "american-squirrel-dog",
+      "zh": "American Squirrel Dog",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "American Squirrel Dog"
+    },
+    {
+      "id": "pueblo-dog",
+      "zh": "Pueblo Dog",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Pueblo Dog"
+    },
+    {
+      "id": "dait-inu",
+      "zh": "Daitō Inu",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Daitō Inu"
+    },
+    {
+      "id": "yakushima-inu",
+      "zh": "Yakushima Inu",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Yakushima Inu"
+    },
+    {
+      "id": "san-in-shiba-inu",
+      "zh": "San'in Shiba Inu",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "San'in Shiba Inu"
+    },
+    {
+      "id": "iwate-inu",
+      "zh": "Iwate Inu",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Iwate Inu"
+    },
+    {
+      "id": "kawakami-ken",
+      "zh": "Kawakami Ken",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Kawakami Ken"
+    },
+    {
+      "id": "koshikiyama-inu",
+      "zh": "Koshikiyama Inu",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Koshikiyama Inu"
+    },
+    {
+      "id": "j-mon-dog",
+      "zh": "繩文犬",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Jōmon Dog"
+    },
+    {
+      "id": "satsuma-dog",
+      "zh": "薩摩犬",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Satsuma Dog"
+    },
+    {
+      "id": "koshi",
+      "zh": "Koshi",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Koshi"
+    },
+    {
+      "id": "awa-ken",
+      "zh": "Awa Ken",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Awa Ken"
+    },
+    {
+      "id": "takayasu-inu",
+      "zh": "Takayasu Inu",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Takayasu Inu"
+    },
+    {
+      "id": "hertha-pointer",
+      "zh": "Hertha pointer",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Hertha pointer"
+    },
+    {
+      "id": "pyrenean-sheepdog-smooth-faced",
+      "zh": "Pyrenean Sheepdog Smooth-faced",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Pyrenean Sheepdog Smooth-faced"
+    },
+    {
+      "id": "aksaray-malaklisi-dog",
+      "zh": "Aksaray Malaklisi dog",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Aksaray Malaklisi dog"
+    },
+    {
+      "id": "decker-terrier",
+      "zh": "Decker Terrier",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Decker Terrier"
+    },
+    {
+      "id": "gro-spitz",
+      "zh": "Großspitz",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Großspitz"
+    },
+    {
+      "id": "seskar-seal-dog",
+      "zh": "Seskar Seal Dog",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Seskar Seal Dog"
+    },
+    {
+      "id": "smithfield-dog",
+      "zh": "Smithfield (dog)",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Smithfield (dog)"
+    },
+    {
+      "id": "tibetan-kyi-apso",
+      "zh": "西藏奇阿普索犬",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Tibetan kyi apso"
+    },
+    {
+      "id": "terceira-mastiff",
+      "zh": "Terceira Mastiff",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Terceira Mastiff"
+    },
+    {
+      "id": "beaglier",
+      "zh": "Beaglier",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Beaglier"
+    },
+    {
+      "id": "tong-gau",
+      "zh": "唐狗",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Tong gau"
+    },
+    {
+      "id": "albanian-wolfdog",
+      "zh": "Albanian Wolfdog",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Albanian Wolfdog"
+    },
+    {
+      "id": "anglo-spanish-greyhound",
+      "zh": "Anglo-Spanish Greyhound",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Anglo-Spanish Greyhound"
+    },
+    {
+      "id": "perro-fino-colombiano",
+      "zh": "Perro fino Colombiano",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Perro fino Colombiano"
+    },
+    {
+      "id": "segugio-italiano",
+      "zh": "Segugio Italiano",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Segugio Italiano"
+    },
+    {
+      "id": "valdueza",
+      "zh": "Valdueza",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Valdueza"
+    },
+    {
+      "id": "assyrian-mastiff",
+      "zh": "Assyrian Mastiff",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Assyrian Mastiff"
+    },
+    {
+      "id": "b-c-h-dog",
+      "zh": "北河犬",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Bắc Hà dog"
+    },
+    {
+      "id": "l-i-dog",
+      "zh": "Lài dog",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Lài dog"
+    },
+    {
+      "id": "hmong-bobtail-dog",
+      "zh": "赫蒙族短尾犬",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Hmong bobtail dog"
+    },
+    {
+      "id": "multi-colored-poodle",
+      "zh": "Multi-Colored Poodle",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Multi-Colored Poodle"
+    },
+    {
+      "id": "black-and-tan-terrier",
+      "zh": "Black and Tan Terrier",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Black and Tan Terrier"
+    },
+    {
+      "id": "abyssinian-sand-terrier",
+      "zh": "Abyssinian Sand Terrier",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Abyssinian Sand Terrier"
+    },
+    {
+      "id": "levesque",
+      "zh": "Levesque",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Levesque"
+    },
+    {
+      "id": "hairless-dog",
+      "zh": "無毛犬",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "hairless dog"
+    },
+    {
+      "id": "pandikona",
+      "zh": "Pandikona",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Pandikona"
+    },
+    {
+      "id": "sulimov-dog",
+      "zh": "Sulimov dog",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Sulimov dog"
+    },
+    {
+      "id": "sanshu",
+      "zh": "Sanshu",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Sanshu"
+    },
+    {
+      "id": "strobel",
+      "zh": "Strobel",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Strobel"
+    },
+    {
+      "id": "pastore-fonnese",
+      "zh": "Pastore Fonnese",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Pastore Fonnese"
+    },
+    {
+      "id": "boerenfox-terrier",
+      "zh": "Boerenfox terrier",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Boerenfox terrier"
+    },
+    {
+      "id": "marxdorfer-wolfshund",
+      "zh": "Marxdorfer Wolfshund",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Marxdorfer Wolfshund"
+    },
+    {
+      "id": "bulgarian-hound",
+      "zh": "Bulgarian Hound",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Bulgarian Hound"
+    },
+    {
+      "id": "english-bull-terrier",
+      "zh": "English bull terrier",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "English bull terrier"
+    },
+    {
+      "id": "grand-fauve-de-bretagne",
+      "zh": "Grand Fauve de Bretagne",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Grand Fauve de Bretagne"
+    },
+    {
+      "id": "westiepoo",
+      "zh": "westiepoo",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "westiepoo"
+    },
+    {
+      "id": "gerberian-shepsky",
+      "zh": "Gerberian Shepsky",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Gerberian Shepsky"
+    },
+    {
+      "id": "kars-dog",
+      "zh": "Kars dog",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Kars dog"
+    },
+    {
+      "id": "lakeland-foxhound",
+      "zh": "Lakeland Foxhound",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Lakeland Foxhound"
+    },
+    {
+      "id": "welsh-harrier",
+      "zh": "Welsh Harrier",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Welsh Harrier"
+    },
+    {
+      "id": "ratonero-palmero",
+      "zh": "Ratonero Palmero",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Ratonero Palmero"
+    },
+    {
+      "id": "shepweiler",
+      "zh": "Shepweiler",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Shepweiler"
+    },
+    {
+      "id": "mi-ki",
+      "zh": "Mi-Ki",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Mi-Ki"
+    },
+    {
+      "id": "buckhound",
+      "zh": "Buckhound",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Buckhound"
+    },
+    {
+      "id": "perro-pampa-argentino",
+      "zh": "Perro pampa argentino",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Perro pampa argentino"
+    },
+    {
+      "id": "chilean-dogo",
+      "zh": "Chilean Dogo",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Chilean Dogo"
+    },
+    {
+      "id": "staghound",
+      "zh": "獵鹿犬",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Staghound"
+    },
+    {
+      "id": "chien-blanc-du-roi",
+      "zh": "Chien Blanc du Roi",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Chien Blanc du Roi"
+    },
+    {
+      "id": "norman-hound",
+      "zh": "Norman Hound",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Norman Hound"
+    },
+    {
+      "id": "west-country-harrier",
+      "zh": "West Country Harrier",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "West Country Harrier"
+    },
+    {
+      "id": "sarail-hound",
+      "zh": "Sarail hound",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Sarail hound"
+    },
+    {
+      "id": "aussiedoodle",
+      "zh": "Aussiedoodle",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Aussiedoodle"
+    },
+    {
+      "id": "frenchton",
+      "zh": "Frenchton",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Frenchton"
+    },
+    {
+      "id": "taimyr",
+      "zh": "Taimyr",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Taimyr"
+    },
+    {
+      "id": "tonya-finosu",
+      "zh": "Tonya Finosu",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Tonya Finosu"
+    },
+    {
+      "id": "silky-spitz",
+      "zh": "Silky Spitz",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Silky Spitz"
+    },
+    {
+      "id": "tatransk-duri",
+      "zh": "Tatranský durič",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Tatranský durič"
+    },
+    {
+      "id": "liangshan-dog",
+      "zh": "涼山犬",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Liangshan Dog"
+    },
+    {
+      "id": "french-pointing-dog-gascogne-type",
+      "zh": "French Pointing Dog Gascogne Type",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "French Pointing Dog Gascogne Type"
+    },
+    {
+      "id": "native-irish-pedigree-dog-breeds",
+      "zh": "Native Irish Pedigree Dog Breeds",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Native Irish Pedigree Dog Breeds"
+    },
+    {
+      "id": "ramanadhapuram-mandai",
+      "zh": "Ramanadhapuram Mandai",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Ramanadhapuram Mandai"
+    },
+    {
+      "id": "turkish-greyhound",
+      "zh": "Turkish Greyhound",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Turkish Greyhound"
+    },
+    {
+      "id": "basati-alaunt",
+      "zh": "Basati alaunt",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Basati alaunt"
+    },
+    {
+      "id": "laizhou-red-dog",
+      "zh": "萊州紅犬",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Laizhou Red Dog"
+    },
+    {
+      "id": "podenco-palmero",
+      "zh": "podenco palmero",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "podenco palmero"
+    },
+    {
+      "id": "patti",
+      "zh": "Patti",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Patti"
+    },
+    {
+      "id": "fu-quan",
+      "zh": "福犬",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Fu Quan"
+    },
+    {
+      "id": "mojee",
+      "zh": "黑狼犬",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Mojee"
+    },
+    {
+      "id": "medium-sized-anglo-french-hound",
+      "zh": "Medium-sized Anglo-French Hound",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Medium-sized Anglo-French Hound"
+    },
+    {
+      "id": "st-hubert",
+      "zh": "St. Hubert",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "St. Hubert"
+    },
+    {
+      "id": "black-norrlandshund",
+      "zh": "Black Norrlandshund",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Black Norrlandshund"
+    },
+    {
+      "id": "long-haired-inca-dog",
+      "zh": "Long-haired Inca Dog",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Long-haired Inca Dog"
+    },
+    {
+      "id": "inca-dog",
+      "zh": "Inca Dog",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Inca Dog"
+    },
+    {
+      "id": "poligar-hound",
+      "zh": "Poligar Hound",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Poligar Hound"
+    },
+    {
+      "id": "walker-foxhound",
+      "zh": "Walker Foxhound",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Walker Foxhound"
+    },
+    {
+      "id": "pocket-beagle",
+      "zh": "pocket beagle",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "pocket beagle"
+    },
+    {
+      "id": "albanian-mountain-dog",
+      "zh": "Albanian Mountain Dog",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Albanian Mountain Dog"
+    },
+    {
+      "id": "tibetan-hound",
+      "zh": "Tibetan Hound",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Tibetan Hound"
+    },
+    {
+      "id": "camus-cur",
+      "zh": "Camus cur",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Camus cur"
+    },
+    {
+      "id": "kemmer-stock-cur",
+      "zh": "Kemmer stock cur",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Kemmer stock cur"
+    },
+    {
+      "id": "wire-haired-beagle",
+      "zh": "Wire-haired Beagle",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Wire-haired Beagle"
+    },
+    {
+      "id": "shelburne-terrier",
+      "zh": "Shelburne Terrier",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Shelburne Terrier"
+    },
+    {
+      "id": "canadian-cur",
+      "zh": "Canadian cur",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Canadian cur"
+    },
+    {
+      "id": "mullins-feist",
+      "zh": "Mullins' feist",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Mullins' feist"
+    },
+    {
+      "id": "original-cajun-squirrel-dog",
+      "zh": "Original Cajun Squirrel Dog",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Original Cajun Squirrel Dog"
+    },
+    {
+      "id": "chinese-hound",
+      "zh": "Chinese Hound",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Chinese Hound"
+    },
+    {
+      "id": "russian-setter",
+      "zh": "Russian Setter",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Russian Setter"
+    },
+    {
+      "id": "transcaucasian-mountain-dog",
+      "zh": "Transcaucasian Mountain Dog",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Transcaucasian Mountain Dog"
+    },
+    {
+      "id": "bangara-mastiff",
+      "zh": "Bangara Mastiff",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Bangara Mastiff"
+    },
+    {
+      "id": "victorian-bulldog",
+      "zh": "Victorian Bulldog",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Victorian Bulldog"
+    },
+    {
+      "id": "karelo-finnish-laika",
+      "zh": "卡累利阿-芬蘭萊卡犬",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Karelo-Finnish Laika"
+    },
+    {
+      "id": "basset",
+      "zh": "巴吉度犬",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "basset"
+    },
+    {
+      "id": "borador",
+      "zh": "Borador",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Borador"
+    },
+    {
+      "id": "small-me-imurje-dog",
+      "zh": "Small Međimurje Dog",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Small Međimurje Dog"
+    },
+    {
+      "id": "french-charnaigre-dog",
+      "zh": "French Charnaigre Dog",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "French Charnaigre Dog"
+    },
+    {
+      "id": "argentine-pila-dog",
+      "zh": "Argentine Pila Dog",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Argentine Pila Dog"
+    },
+    {
+      "id": "laob",
+      "zh": "Laobé",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Laobé"
+    },
+    {
+      "id": "bohemian-spotted-dog",
+      "zh": "Bohemian Spotted Dog",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Bohemian Spotted Dog"
+    },
+    {
+      "id": "grecian-greyhound",
+      "zh": "Grecian Greyhound",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Grecian Greyhound"
+    },
+    {
+      "id": "can-de-palleiro",
+      "zh": "Can de Palleiro",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Can de Palleiro"
+    },
+    {
+      "id": "morkie",
+      "zh": "Morkie",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Morkie"
+    },
+    {
+      "id": "buryat-mongolian-wolfhound",
+      "zh": "蒙古獒",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Buryat-Mongolian Wolfhound"
+    },
+    {
+      "id": "welsh-hound",
+      "zh": "Welsh Hound",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Welsh Hound"
+    },
+    {
+      "id": "valley-bulldog",
+      "zh": "Valley Bulldog",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Valley Bulldog"
+    },
+    {
+      "id": "nenets-herding-laika",
+      "zh": "涅涅茨馴鹿萊卡犬",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Nenets Herding Laika"
+    },
+    {
+      "id": "long-haired-dachshund",
+      "zh": "Long haired dachshund",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Long haired dachshund"
+    },
+    {
+      "id": "wire-haired-dachshund",
+      "zh": "wire-haired dachshund",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "wire-haired dachshund"
+    },
+    {
+      "id": "celtic-hounds",
+      "zh": "Celtic Hounds",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Celtic Hounds"
+    },
+    {
+      "id": "can-de-chira",
+      "zh": "Can de Chira",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Can de Chira"
+    },
+    {
+      "id": "bulgarian-scenthound",
+      "zh": "Bulgarian Scenthound",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Bulgarian Scenthound"
+    },
+    {
+      "id": "alopekis",
+      "zh": "Alopekis",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Alopekis"
+    },
+    {
+      "id": "sicilian-sheepdog",
+      "zh": "Sicilian Sheepdog",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Sicilian Sheepdog"
+    },
+    {
+      "id": "pardog",
+      "zh": "Pardog",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Pardog"
+    },
+    {
+      "id": "dumfriesshire-hound",
+      "zh": "Dumfriesshire Hound",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Dumfriesshire Hound"
+    },
+    {
+      "id": "ryukyu-inu",
+      "zh": "琉球犬",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Ryukyu Inu"
+    },
+    {
+      "id": "glenwherry-collie",
+      "zh": "Glenwherry Collie",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Glenwherry Collie"
+    },
+    {
+      "id": "cur-dog",
+      "zh": "Cur dog",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Cur dog"
+    },
+    {
+      "id": "welsh-black-and-tan-sheepdog",
+      "zh": "Welsh Black-and-Tan Sheepdog",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Welsh Black-and-Tan Sheepdog"
+    },
+    {
+      "id": "welsh-blue-grey",
+      "zh": "Welsh Blue-Grey",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Welsh Blue-Grey"
+    },
+    {
+      "id": "water-drawer",
+      "zh": "Water drawer",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Water drawer"
+    },
+    {
+      "id": "philippines-islands-dog",
+      "zh": "Philippines Islands Dog",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Philippines Islands Dog"
+    },
+    {
+      "id": "lyme-mastiff",
+      "zh": "Lyme Mastiff",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Lyme Mastiff"
+    },
+    {
+      "id": "kanawar-dog",
+      "zh": "Kanawar Dog",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Kanawar Dog"
+    },
+    {
+      "id": "ukrainian-sheepdog",
+      "zh": "Ukrainian Sheepdog",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Ukrainian Sheepdog"
+    },
+    {
+      "id": "huslia-husky",
+      "zh": "Huslia Husky",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Huslia Husky"
+    },
+    {
+      "id": "targhee-hound",
+      "zh": "Targhee Hound)",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Targhee Hound)"
+    },
+    {
+      "id": "juan-fern-ndez-sheepdog",
+      "zh": "Juan Fernández Sheepdog",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Juan Fernández Sheepdog"
+    },
+    {
+      "id": "pomeranian-wolf-dog",
+      "zh": "Pomeranian Wolf-dog",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Pomeranian Wolf-dog"
+    },
+    {
+      "id": "afghan-spaniel",
+      "zh": "Afghan Spaniel",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Afghan Spaniel"
+    },
+    {
+      "id": "alicant-dog",
+      "zh": "Alicant Dog",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Alicant Dog"
+    },
+    {
+      "id": "siberian-sheepdog",
+      "zh": "Siberian Sheepdog",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Siberian Sheepdog"
+    },
+    {
+      "id": "appalachian-sighthound",
+      "zh": "Appalachian Sighthound",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Appalachian Sighthound"
+    },
+    {
+      "id": "kurdistan-greyhound",
+      "zh": "Kurdistan Greyhound",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Kurdistan Greyhound"
+    },
+    {
+      "id": "friesian-windhund",
+      "zh": "Friesian Windhund",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Friesian Windhund"
+    },
+    {
+      "id": "carolina-cur",
+      "zh": "Carolina cur",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Carolina cur"
+    },
+    {
+      "id": "german-silky-pinscher",
+      "zh": "German Silky Pinscher",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "German Silky Pinscher"
+    },
+    {
+      "id": "maltese-fox-terrier",
+      "zh": "Maltese Fox Terrier",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Maltese Fox Terrier"
+    },
+    {
+      "id": "northern-terrier",
+      "zh": "Northern terrier",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Northern terrier"
+    },
+    {
+      "id": "balla-terrier",
+      "zh": "Balla Terrier",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Balla Terrier"
+    },
+    {
+      "id": "creeper-terrier",
+      "zh": "Creeper Terrier",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Creeper Terrier"
+    },
+    {
+      "id": "northwest-farm-terrier",
+      "zh": "Northwest farm terrier",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Northwest farm terrier"
+    },
+    {
+      "id": "laconian-hound",
+      "zh": "Laconian Hound",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Laconian Hound"
+    },
+    {
+      "id": "patagonian-bearded-greyhound",
+      "zh": "Patagonian Bearded Greyhound",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Patagonian Bearded Greyhound"
+    },
+    {
+      "id": "laconian",
+      "zh": "Laconian",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Laconian"
+    },
+    {
+      "id": "mountain-feist",
+      "zh": "Mountain Feist",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Mountain Feist"
+    },
+    {
+      "id": "south-african-mastiff",
+      "zh": "South African Mastiff",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "South African Mastiff"
+    },
+    {
+      "id": "seppala-siberian-sleddog",
+      "zh": "塞佩萊西伯利亞雪橇犬",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Seppala Siberian Sleddog"
+    },
+    {
+      "id": "h-lleforshund",
+      "zh": "Hälleforshund",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Hälleforshund"
+    },
+    {
+      "id": "gotland-hound",
+      "zh": "Gotland Hound",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Gotland Hound"
+    },
+    {
+      "id": "ecuadorian-hairless-dog",
+      "zh": "Ecuadorian Hairless Dog",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Ecuadorian Hairless Dog"
+    },
+    {
+      "id": "gaucho-sheepdog",
+      "zh": "Gaucho sheepdog",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Gaucho sheepdog"
+    },
+    {
+      "id": "double-nosed-andean-tiger-hound",
+      "zh": "Double-nosed Andean tiger hound",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Double-nosed Andean tiger hound"
+    },
+    {
+      "id": "svensk-vit-lghund",
+      "zh": "Svensk vit älghund",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Svensk vit älghund"
+    },
+    {
+      "id": "cane-toccatore",
+      "zh": "Cane Toccatore",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Cane Toccatore"
+    },
+    {
+      "id": "continental-toy-spaniel",
+      "zh": "Continental Toy Spaniel",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Continental Toy Spaniel"
+    },
+    {
+      "id": "deltari-ilir",
+      "zh": "Deltari ilir",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Deltari ilir"
+    },
+    {
+      "id": "saint-usuge-spaniel",
+      "zh": "Saint-Usuge Spaniel",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Saint-Usuge Spaniel"
+    },
+    {
+      "id": "polish-greyhound",
+      "zh": "Polish Greyhound",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Polish Greyhound"
+    },
+    {
+      "id": "american-bully",
+      "zh": "美國惡霸犬",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "American Bully"
+    },
+    {
+      "id": "affenpinscher",
+      "zh": "猴绠",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Affenpinscher"
+    },
+    {
+      "id": "austrian-black-and-tan-hound",
+      "zh": "Austrian Black and Tan Hound",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Austrian Black and Tan Hound"
+    },
+    {
+      "id": "dalmatian",
+      "zh": "大麥町",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Dalmatian"
+    },
+    {
+      "id": "west-highland-white-terrier",
+      "zh": "西高地白㹴",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "West Highland White Terrier"
+    },
+    {
+      "id": "wetterhoun",
+      "zh": "維特荷恩犬",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Wetterhoun"
+    },
+    {
+      "id": "abruzzo-maremma-sheepdog",
+      "zh": "馬瑞馬牧羊犬",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Abruzzo-Maremma Sheepdog"
+    },
+    {
+      "id": "afghan-hound",
+      "zh": "阿富汗獵狗",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Afghan Hound"
+    },
+    {
+      "id": "cane-corso",
+      "zh": "Cane Corso",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Cane Corso"
+    },
+    {
+      "id": "bloodhound",
+      "zh": "血𤟥",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "bloodhound"
+    },
+    {
+      "id": "normand-poitevin",
+      "zh": "Normand-Poitevin",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Normand-Poitevin"
+    },
+    {
+      "id": "hokkaido-inu",
+      "zh": "北海道犬",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Hokkaido inu"
+    },
+    {
+      "id": "kitler",
+      "zh": "Kitler",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Kitler"
+    },
+    {
+      "id": "sertanejo-dog",
+      "zh": "Sertanejo Dog",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Sertanejo Dog"
+    },
+    {
+      "id": "gegar",
+      "zh": "Gegar",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Gegar"
+    },
+    {
+      "id": "english-springer-spaniel",
+      "zh": "史賓格犬",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "English Springer Spaniel"
+    },
+    {
+      "id": "combai",
+      "zh": "Combai",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Combai"
+    },
+    {
+      "id": "canadian-eskimo-dog",
+      "zh": "加拿大愛斯基摩犬",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Canadian Eskimo Dog"
+    },
+    {
+      "id": "cantabrian-water-dog",
+      "zh": "坎塔布里亞水犬",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Cantabrian Water Dog"
+    },
+    {
+      "id": "catalan-sheepdog",
+      "zh": "Catalan Sheepdog",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Catalan Sheepdog"
+    },
+    {
+      "id": "cardigan-welsh-corgi",
+      "zh": "卡提根威爾斯柯基犬",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Cardigan Welsh Corgi"
+    },
+    {
+      "id": "chesapeake-bay-retriever",
+      "zh": "乞沙比克獵犬",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Chesapeake Bay Retriever"
+    },
+    {
+      "id": "damchi",
+      "zh": "Damchi",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Damchi"
+    },
+    {
+      "id": "dutch-shepherd",
+      "zh": "Dutch Shepherd",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Dutch Shepherd"
+    },
+    {
+      "id": "danish-swedish-farmdog",
+      "zh": "丹麥–瑞典農場犬",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Danish Swedish Farmdog"
+    },
+    {
+      "id": "french-spaniel",
+      "zh": "法國獚",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "French Spaniel"
+    },
+    {
+      "id": "korean-jindo-dog",
+      "zh": "珍島犬",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Korean Jindo Dog"
+    },
+    {
+      "id": "pungsan",
+      "zh": "豐山狗",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Pungsan"
+    },
+    {
+      "id": "sapsali",
+      "zh": "狮子狗",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Sapsali",
+      "aliases": [
+        "Pekingese"
+      ]
+    },
+    {
+      "id": "field-spaniel",
+      "zh": "田野猎犬",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Field Spaniel"
+    },
+    {
+      "id": "finnish-lapphund",
+      "zh": "芬蘭拉普犬",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Finnish Lapphund"
+    },
+    {
+      "id": "finnish-spitz",
+      "zh": "芬兰狐狸犬",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Finnish Spitz"
+    },
+    {
+      "id": "flat-coated-retriever",
+      "zh": "平滑毛寻回犬",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Flat-Coated Retriever"
+    },
+    {
+      "id": "formosan-mountain-dog",
+      "zh": "台灣犬",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Formosan Mountain Dog"
+    },
+    {
+      "id": "telomian",
+      "zh": "Telomian",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Telomian"
+    },
+    {
+      "id": "american-staghound",
+      "zh": "美國獵鹿犬",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "American Staghound"
+    },
+    {
+      "id": "beagle-harrier",
+      "zh": "Beagle-Harrier",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Beagle-Harrier"
+    },
+    {
+      "id": "ari-geois",
+      "zh": "Ariégeois",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Ariégeois"
+    },
+    {
+      "id": "bernese-hound",
+      "zh": "Bernese hound",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Bernese hound"
+    },
+    {
+      "id": "alapaha-blue-blood-bulldog",
+      "zh": "阿拉帕哈藍血鬥牛犬",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Alapaha Blue Blood Bulldog"
+    },
+    {
+      "id": "old-danish-pointer",
+      "zh": "古丹麥指示犬",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Old Danish Pointer"
+    },
+    {
+      "id": "alpine-dachsbracke",
+      "zh": "阿尔卑斯达克斯布拉克犬",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Alpine Dachsbracke"
+    },
+    {
+      "id": "australian-stumpy-tail-cattle-dog",
+      "zh": "澳洲無尾牧牛犬",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Australian Stumpy Tail Cattle Dog"
+    },
+    {
+      "id": "toy-fox-terrier",
+      "zh": "玩具狐狸㹴",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Toy Fox Terrier"
+    },
+    {
+      "id": "american-hairless-terrier",
+      "zh": "美國無毛㹴",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "American Hairless Terrier"
+    },
+    {
+      "id": "american-foxhound",
+      "zh": "美國獵狐犬",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "American foxhound"
+    },
+    {
+      "id": "australian-kelpie",
+      "zh": "澳洲凱皮犬",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Australian Kelpie"
+    },
+    {
+      "id": "australian-silky-terrier",
+      "zh": "澳洲絲毛梗",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Australian Silky Terrier"
+    },
+    {
+      "id": "australian-terrier",
+      "zh": "澳洲梗",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Australian Terrier"
+    },
+    {
+      "id": "mexican-lapdog",
+      "zh": "Mexican lapdog",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Mexican lapdog"
+    },
+    {
+      "id": "renascence-bulldogge",
+      "zh": "Renascence Bulldogge",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Renascence Bulldogge"
+    },
+    {
+      "id": "kattai-dog",
+      "zh": "Kattai dog",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Kattai dog"
+    },
+    {
+      "id": "burmese-spitz-dog",
+      "zh": "Burmese Spitz Dog",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Burmese Spitz Dog"
+    },
+    {
+      "id": "kunma-dog",
+      "zh": "昆馬犬",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Kunma Dog"
+    },
+    {
+      "id": "agassaei",
+      "zh": "Agassaei",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Agassaei"
+    },
+    {
+      "id": "serbian-yellow-hound",
+      "zh": "Serbian Yellow Hound",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Serbian Yellow Hound"
+    },
+    {
+      "id": "black-spitz",
+      "zh": "Black Spitz",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Black Spitz"
+    },
+    {
+      "id": "meitei-hui",
+      "zh": "Meitei Hui",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Meitei Hui"
+    },
+    {
+      "id": "cojack",
+      "zh": "Cojack",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Cojack"
+    },
+    {
+      "id": "pashmi-hound",
+      "zh": "Pashmi hound",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Pashmi hound"
+    },
+    {
+      "id": "bisben",
+      "zh": "Bisben",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Bisben"
+    },
+    {
+      "id": "boston-terrier",
+      "zh": "波士顿㹴",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Boston Terrier"
+    },
+    {
+      "id": "basset-bleu-de-gascogne",
+      "zh": "Basset Bleu de Gascogne",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Basset Bleu de Gascogne"
+    },
+    {
+      "id": "american-akita",
+      "zh": "American Akita",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "American Akita"
+    },
+    {
+      "id": "black-and-tan-coonhound",
+      "zh": "黑褐猎浣熊犬",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Black and Tan Coonhound"
+    },
+    {
+      "id": "anatolian-shepherd",
+      "zh": "Anatolian Shepherd",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Anatolian Shepherd"
+    },
+    {
+      "id": "border-terrier",
+      "zh": "邊境㹴",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Border Terrier"
+    },
+    {
+      "id": "basset-art-sien-normand",
+      "zh": "Basset Artésien Normand",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Basset Artésien Normand"
+    },
+    {
+      "id": "bolognese",
+      "zh": "博洛尼亞比熊犬",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Bolognese"
+    },
+    {
+      "id": "bluetick-coonhound",
+      "zh": "Bluetick Coonhound",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Bluetick Coonhound"
+    },
+    {
+      "id": "fawn-brittany-basset",
+      "zh": "Fawn Brittany Basset",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Fawn Brittany Basset"
+    },
+    {
+      "id": "serbian-hound",
+      "zh": "Serbian Hound",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Serbian Hound"
+    },
+    {
+      "id": "biewer-terrier",
+      "zh": "比沃爾㹴犬",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Biewer Terrier"
+    },
+    {
+      "id": "perro-majorero",
+      "zh": "Perro majorero",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Perro majorero"
+    },
+    {
+      "id": "bavarian-mountain-hound",
+      "zh": "Bavarian Mountain Hound",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Bavarian Mountain Hound"
+    },
+    {
+      "id": "american-english-coonhound",
+      "zh": "American English Coonhound",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "American English Coonhound"
+    },
+    {
+      "id": "blue-lacy",
+      "zh": "藍雷西犬",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Blue Lacy"
+    },
+    {
+      "id": "bedlington-terrier",
+      "zh": "貝林登㹴",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Bedlington Terrier"
+    },
+    {
+      "id": "barbet",
+      "zh": "巴貝犬",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Barbet"
+    },
+    {
+      "id": "american-bulldog",
+      "zh": "美國鬥牛犬",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "American Bulldog"
+    },
+    {
+      "id": "bernese-mountain-dog",
+      "zh": "伯恩山犬",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Bernese Mountain Dog"
+    },
+    {
+      "id": "boerboel",
+      "zh": "Boerboel",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Boerboel"
+    },
+    {
+      "id": "australian-cattle-dog",
+      "zh": "澳洲牧牛犬",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Australian Cattle Dog"
+    },
+    {
+      "id": "american-pit-bull-terrier",
+      "zh": "美國比特鬥牛犬",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "American Pit Bull Terrier"
+    },
+    {
+      "id": "airedale-terrier",
+      "zh": "万能㹴",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Airedale Terrier"
+    },
+    {
+      "id": "bearded-collie",
+      "zh": "古代长须牧羊犬",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Bearded Collie"
+    },
+    {
+      "id": "belgian-shepherd",
+      "zh": "比利时特弗伦犬",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Belgian Shepherd",
+      "aliases": [
+        "Tervuren"
+      ]
+    },
+    {
+      "id": "australian-shepherd",
+      "zh": "澳洲牧羊犬",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Australian Shepherd"
+    },
+    {
+      "id": "picardy-shepherd",
+      "zh": "伯格·德·皮卡第犬",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Picardy Shepherd"
+    },
+    {
+      "id": "braque-du-bourbonnais",
+      "zh": "Braque du Bourbonnais",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Braque du Bourbonnais"
+    },
+    {
+      "id": "billy",
+      "zh": "Billy",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Billy"
+    },
+    {
+      "id": "cimarr-n-uruguayo",
+      "zh": "Cimarrón Uruguayo",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Cimarrón Uruguayo"
+    },
+    {
+      "id": "briquet-griffon-vend-en",
+      "zh": "Briquet Griffon Vendéen",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Briquet Griffon Vendéen"
+    },
+    {
+      "id": "dunker",
+      "zh": "Dunker",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Dunker"
+    },
+    {
+      "id": "majorca-shepherd-dog",
+      "zh": "皮罗·德·巴斯特·马罗奎因犬",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Majorca Shepherd Dog"
+    },
+    {
+      "id": "bakharwal-dog",
+      "zh": "Bakharwal Dog",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Bakharwal Dog"
+    },
+    {
+      "id": "braque-du-puy",
+      "zh": "Braque du Puy",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Braque du Puy"
+    },
+    {
+      "id": "mallorcan-ratter",
+      "zh": "馬略卡捕鼠犬",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Mallorcan ratter"
+    },
+    {
+      "id": "braque-saint-germain",
+      "zh": "Braque Saint-Germain",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Braque Saint-Germain"
+    },
+    {
+      "id": "cesky-fousek",
+      "zh": "Cesky Fousek",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Cesky Fousek"
+    },
+    {
+      "id": "chippiparai",
+      "zh": "Chippiparai",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Chippiparai"
+    },
+    {
+      "id": "ariege-pointer",
+      "zh": "阿里埃日向导犬",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Ariege Pointer"
+    },
+    {
+      "id": "mudhol-hound",
+      "zh": "Mudhol Hound",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Mudhol Hound"
+    },
+    {
+      "id": "chinese-chongqing-dog",
+      "zh": "川東獵犬",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Chinese Chongqing Dog"
+    },
+    {
+      "id": "chortai",
+      "zh": "霍爾泰獵犬",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Chortai"
+    },
+    {
+      "id": "perro-de-presa-mallorquin",
+      "zh": "Perro de Presa Mallorquin",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Perro de Presa Mallorquin"
+    },
+    {
+      "id": "bully-kutta",
+      "zh": "Bully Kutta",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Bully Kutta"
+    },
+    {
+      "id": "american-staffordshire-terrier",
+      "zh": "美国史特富郡梗",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "American Staffordshire Terrier"
+    },
+    {
+      "id": "alano-espa-ol",
+      "zh": "Alano Español",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Alano Español"
+    },
+    {
+      "id": "barak-hound",
+      "zh": "Barak hound",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Barak hound"
+    },
+    {
+      "id": "appenzeller-sennenhund",
+      "zh": "阿彭策尔山犬",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Appenzeller Sennenhund"
+    },
+    {
+      "id": "american-eskimo-dog",
+      "zh": "美國愛斯基摩犬",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "American Eskimo Dog"
+    },
+    {
+      "id": "old-english-sheepdog",
+      "zh": "英國古代牧羊犬",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Old English sheepdog"
+    },
+    {
+      "id": "ratonero-basco",
+      "zh": "比利亞努科捕鼠犬",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Ratonero Basco"
+    },
+    {
+      "id": "basset-hound",
+      "zh": "巴吉度獵犬",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "basset hound"
+    },
+    {
+      "id": "beauceron",
+      "zh": "博斯牧羊犬",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Beauceron"
+    },
+    {
+      "id": "chinook",
+      "zh": "奇努克犬",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Chinook"
+    },
+    {
+      "id": "carolina-dog",
+      "zh": "卡罗莱纳犬",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Carolina Dog"
+    },
+    {
+      "id": "braque-d-auvergne",
+      "zh": "Braque d'Auvergne",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Braque d'Auvergne"
+    },
+    {
+      "id": "braque-fran-ais",
+      "zh": "Braque Français",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Braque Français"
+    },
+    {
+      "id": "azores-cattle-dog",
+      "zh": "亚述尔群岛牧牛犬",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Azores Cattle Dog"
+    },
+    {
+      "id": "portuguese-sheepdog",
+      "zh": "Portuguese Sheepdog",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Portuguese Sheepdog"
+    },
+    {
+      "id": "broholmer",
+      "zh": "丹麦布罗荷马獒",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Broholmer"
+    },
+    {
+      "id": "bouvier-des-ardennes",
+      "zh": "阿登牧牛犬",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Bouvier des Ardennes"
+    },
+    {
+      "id": "bohemian-shepherd",
+      "zh": "Bohemian Shepherd",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Bohemian Shepherd"
+    },
+    {
+      "id": "presa-canario",
+      "zh": "加那利獒犬",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Presa Canario"
+    },
+    {
+      "id": "ibizan-hound",
+      "zh": "依比沙猎犬",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Ibizan Hound"
+    },
+    {
+      "id": "artois-hound",
+      "zh": "Artois Hound",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Artois Hound"
+    },
+    {
+      "id": "coonhound",
+      "zh": "浣熊獵犬",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Coonhound"
+    },
+    {
+      "id": "continental-bulldog",
+      "zh": "大陸鬥牛犬",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "continental bulldog"
+    },
+    {
+      "id": "cursinu",
+      "zh": "Cursinu",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Cursinu"
+    },
+    {
+      "id": "great-gascony-blue",
+      "zh": "加斯科涅大蓝犬",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Great Gascony Blue"
+    },
+    {
+      "id": "drever",
+      "zh": "Drever",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Drever"
+    },
+    {
+      "id": "stichelhaar",
+      "zh": "Stichelhaar",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Stichelhaar"
+    },
+    {
+      "id": "english-toy-terrier",
+      "zh": "英國玩具㹴",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "English Toy Terrier"
+    },
+    {
+      "id": "serbian-tricolour-hound",
+      "zh": "Serbian Tricolour Hound",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Serbian Tricolour Hound"
+    },
+    {
+      "id": "pyrenean-shepherd",
+      "zh": "比利牛斯山牧羊犬",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Pyrenean Shepherd"
+    },
+    {
+      "id": "english-foxhound",
+      "zh": "英国猎狐犬",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "English Foxhound"
+    },
+    {
+      "id": "german-wirehaired-pointer",
+      "zh": "德国硬毛指示猎犬",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "German Wirehaired Pointer"
+    },
+    {
+      "id": "fila-brasileiro",
+      "zh": "非拉犬",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Fila Brasileiro"
+    },
+    {
+      "id": "laekenois",
+      "zh": "Laekenois",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Laekenois"
+    },
+    {
+      "id": "romanian-raven-shepherd-dog",
+      "zh": "Romanian Raven Shepherd Dog",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Romanian Raven Shepherd Dog"
+    },
+    {
+      "id": "german-pinscher",
+      "zh": "德國平雪犬",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "German Pinscher"
+    },
+    {
+      "id": "blue-picardy-spaniel",
+      "zh": "蓝色匹卡迪档猎犬",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Blue Picardy Spaniel"
+    },
+    {
+      "id": "pyrenean-mountain-dog",
+      "zh": "大白熊犬",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Pyrenean Mountain Dog"
+    },
+    {
+      "id": "german-longhaired-pointer",
+      "zh": "German Longhaired Pointer",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "German Longhaired Pointer"
+    },
+    {
+      "id": "mioritic",
+      "zh": "Mioritic",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Mioritic"
+    },
+    {
+      "id": "deutsche-bracke",
+      "zh": "Deutsche Bracke",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Deutsche Bracke"
+    },
+    {
+      "id": "finnish-hound",
+      "zh": "Finnish Hound",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Finnish Hound"
+    },
+    {
+      "id": "briard",
+      "zh": "伯瑞犬",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Briard"
+    },
+    {
+      "id": "drentse-patrijshond",
+      "zh": "Drentse Patrijshond",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Drentse Patrijshond"
+    },
+    {
+      "id": "german-spaniel",
+      "zh": "German Spaniel",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "German Spaniel"
+    },
+    {
+      "id": "english-shepherd",
+      "zh": "英國牧羊犬",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "English Shepherd"
+    },
+    {
+      "id": "azawakh",
+      "zh": "阿扎瓦克犬",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Azawakh"
+    },
+    {
+      "id": "borzoi",
+      "zh": "苏俄牧羊犬",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Borzoi"
+    },
+    {
+      "id": "basenji",
+      "zh": "巴辛吉犬",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Basenji"
+    },
+    {
+      "id": "pont-audemer-spaniel",
+      "zh": "蓬托德梅尔猎犬",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Pont-Audemer Spaniel"
+    },
+    {
+      "id": "clumber-spaniel",
+      "zh": "西班牙小猎犬",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Clumber Spaniel"
+    },
+    {
+      "id": "boykin-spaniel",
+      "zh": "Boykin Spaniel",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Boykin Spaniel"
+    },
+    {
+      "id": "american-water-spaniel",
+      "zh": "美国水猎犬",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "American Water Spaniel"
+    },
+    {
+      "id": "jagdterrier",
+      "zh": "Jagdterrier",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Jagdterrier"
+    },
+    {
+      "id": "aidi",
+      "zh": "Aidi",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Aidi"
+    },
+    {
+      "id": "dogo-argentino",
+      "zh": "阿根廷杜告犬",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Dogo Argentino"
+    },
+    {
+      "id": "cairn-terrier",
+      "zh": "凯安梗",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Cairn Terrier"
+    },
+    {
+      "id": "chinese-crested-dog",
+      "zh": "中國冠毛犬",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Chinese Crested Dog"
+    },
+    {
+      "id": "bouvier-des-flandres",
+      "zh": "法兰德斯牧牛犬",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Bouvier des Flandres"
+    },
+    {
+      "id": "armant-dog",
+      "zh": "Armant dog",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Armant dog"
+    },
+    {
+      "id": "dogue-de-bordeaux",
+      "zh": "Dogue de Bordeaux",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Dogue de Bordeaux"
+    },
+    {
+      "id": "thai-bangkaew-dog",
+      "zh": "泰國邦考犬",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Thai Bangkaew Dog"
+    },
+    {
+      "id": "bucovina-shepherd-dog",
+      "zh": "Bucovina Shepherd Dog",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Bucovina Shepherd Dog"
+    },
+    {
+      "id": "galgo-espa-ol",
+      "zh": "西班牙靈緹",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Galgo Español"
+    },
+    {
+      "id": "sloughi",
+      "zh": "Sloughi",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Sloughi"
+    },
+    {
+      "id": "scottish-deerhound",
+      "zh": "勒車犬",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Scottish Deerhound"
+    },
+    {
+      "id": "eurasier",
+      "zh": "Eurasier",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Eurasier"
+    },
+    {
+      "id": "karelian-bear-dog",
+      "zh": "卡累利阿熊犬",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Karelian Bear Dog"
+    },
+    {
+      "id": "karst-shepherd",
+      "zh": "Karst Shepherd",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Karst Shepherd"
+    },
+    {
+      "id": "mucuchies",
+      "zh": "Mucuchies",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Mucuchies"
+    },
+    {
+      "id": "miniature-bull-terrier",
+      "zh": "迷你牛頭㹴",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Miniature Bull Terrier"
+    },
+    {
+      "id": "lucernese-hound",
+      "zh": "Lucernese Hound",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Lucernese Hound"
+    },
+    {
+      "id": "dutch-smoushond",
+      "zh": "荷蘭斯毛斯犬",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Dutch Smoushond"
+    },
+    {
+      "id": "kerry-beagle",
+      "zh": "Kerry Beagle",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Kerry Beagle"
+    },
+    {
+      "id": "lancashire-heeler",
+      "zh": "Lancashire Heeler",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Lancashire Heeler"
+    },
+    {
+      "id": "japanese-terrier",
+      "zh": "日本㹴",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Japanese Terrier"
+    },
+    {
+      "id": "white-swiss-shepherd",
+      "zh": "白色瑞士牧羊犬",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "White Swiss Shepherd"
+    },
+    {
+      "id": "spanish-mastiff",
+      "zh": "Spanish Mastiff",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Spanish Mastiff"
+    },
+    {
+      "id": "grand-griffon-vend-en",
+      "zh": "Grand Griffon Vendéen",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Grand Griffon Vendéen"
+    },
+    {
+      "id": "fawn-brittany-griffon",
+      "zh": "Fawn Brittany Griffon",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Fawn Brittany Griffon"
+    },
+    {
+      "id": "gascon-saintongeois",
+      "zh": "桑通日加斯科涅犬",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Gascon Saintongeois"
+    },
+    {
+      "id": "large-vendeen-griffon-basset",
+      "zh": "Large Vendeen Griffon Basset",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Large Vendeen Griffon Basset"
+    },
+    {
+      "id": "griffon-poil-laineux",
+      "zh": "Griffon à poil laineux",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Griffon à poil laineux"
+    },
+    {
+      "id": "harlequin-pinscher",
+      "zh": "Harlequin Pinscher",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Harlequin Pinscher"
+    },
+    {
+      "id": "miniature-australian-shepherd",
+      "zh": "Miniature Australian Shepherd",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Miniature Australian Shepherd"
+    },
+    {
+      "id": "dutch-tulip-dog",
+      "zh": "Dutch Tulip Dog",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Dutch Tulip Dog"
+    },
+    {
+      "id": "jonangi",
+      "zh": "Jonangi",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Jonangi"
+    },
+    {
+      "id": "hygen-hound",
+      "zh": "Hygen Hound",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Hygen Hound"
+    },
+    {
+      "id": "hamiltonst-vare",
+      "zh": "Hamiltonstövare",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Hamiltonstövare"
+    },
+    {
+      "id": "halden-hound",
+      "zh": "Halden Hound",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Halden Hound"
+    },
+    {
+      "id": "entlebucher-mountain-dog",
+      "zh": "恩特布山犬",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Entlebucher Mountain Dog"
+    },
+    {
+      "id": "blue-gascony-griffon",
+      "zh": "Blue Gascony Griffon",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Blue Gascony Griffon"
+    },
+    {
+      "id": "lupo-italiano",
+      "zh": "Lupo Italiano",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Lupo Italiano"
+    },
+    {
+      "id": "yakutian-laika",
+      "zh": "雅庫特萊卡犬",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Yakutian Laika"
+    },
+    {
+      "id": "l-wchen",
+      "zh": "小獅子犬",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Löwchen"
+    },
+    {
+      "id": "kerry-blue-terrier",
+      "zh": "凯利蓝㹴",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Kerry Blue Terrier"
+    },
+    {
+      "id": "picardy-spaniel",
+      "zh": "Picardy Spaniel",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Picardy Spaniel"
+    },
+    {
+      "id": "leopard-tree-dog",
+      "zh": "Leopard Tree Dog",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Leopard Tree Dog"
+    },
+    {
+      "id": "bruno-jura-hound",
+      "zh": "Bruno Jura Hound",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Bruno Jura Hound"
+    },
+    {
+      "id": "small-m-nsterl-nder",
+      "zh": "Small Münsterländer",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Small Münsterländer"
+    },
+    {
+      "id": "hanover-hound",
+      "zh": "Hanover Hound",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Hanover Hound"
+    },
+    {
+      "id": "soft-coated-wheaten-terrier",
+      "zh": "爱尔兰软毛梗",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Soft-coated Wheaten Terrier"
+    },
+    {
+      "id": "longhaired-whippet",
+      "zh": "Longhaired Whippet",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Longhaired Whippet"
+    },
+    {
+      "id": "polish-hunting-dog",
+      "zh": "Polish Hunting Dog",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Polish Hunting Dog"
+    },
+    {
+      "id": "griffon-belge",
+      "zh": "Griffon Belge",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Griffon Belge"
+    },
+    {
+      "id": "american-cocker-spaniel",
+      "zh": "美国可卡犬",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "American Cocker Spaniel"
+    },
+    {
+      "id": "german-shorthaired-pointer",
+      "zh": "德国短毛指示犬",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "German Shorthaired Pointer"
+    },
+    {
+      "id": "st-bernard",
+      "zh": "聖伯納犬",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "St. Bernard"
+    },
+    {
+      "id": "cretan-hound",
+      "zh": "克里特獵犬",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Cretan Hound"
+    },
+    {
+      "id": "cavalier-king-charles-spaniel",
+      "zh": "查理斯王小獵犬",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Cavalier King Charles Spaniel"
+    },
+    {
+      "id": "bullmastiff",
+      "zh": "鬥牛獒",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Bullmastiff"
+    },
+    {
+      "id": "harrier",
+      "zh": "Harrier",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Harrier"
+    },
+    {
+      "id": "j-mthund",
+      "zh": "Jämthund",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Jämthund"
+    },
+    {
+      "id": "lakeland-terrier",
+      "zh": "湖畔梗",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Lakeland Terrier"
+    },
+    {
+      "id": "papillon",
+      "zh": "蝴蝶犬",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Papillon"
+    },
+    {
+      "id": "kazakh-tazy",
+      "zh": "Kazakh tazy",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Kazakh tazy"
+    },
+    {
+      "id": "portuguese-cattle-dog",
+      "zh": "卡斯特罗拉博雷罗犬",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Portuguese Cattle Dog"
+    },
+    {
+      "id": "estrela-mountain-dog",
+      "zh": "埃什特雷拉山犬",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Estrela Mountain Dog"
+    },
+    {
+      "id": "slovensk-kopov",
+      "zh": "Slovenský kopov",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Slovenský kopov"
+    },
+    {
+      "id": "maneto",
+      "zh": "馬內托犬",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Maneto"
+    },
+    {
+      "id": "greater-swiss-mountain-dog",
+      "zh": "大瑞士山犬",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Greater Swiss Mountain Dog"
+    },
+    {
+      "id": "japanese-spitz",
+      "zh": "银狐犬",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Japanese Spitz"
+    },
+    {
+      "id": "antebellum-bulldog",
+      "zh": "Antebellum Bulldog",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Antebellum Bulldog"
+    },
+    {
+      "id": "king-charles-spaniel",
+      "zh": "查理士王小猎犬",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "King Charles Spaniel"
+    },
+    {
+      "id": "japanese-chin",
+      "zh": "日本狆",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Japanese Chin"
+    },
+    {
+      "id": "american-alsatian",
+      "zh": "American Alsatian",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "American Alsatian"
+    },
+    {
+      "id": "alaskan-klee-kai",
+      "zh": "Alaskan Klee Kai",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Alaskan Klee Kai"
+    },
+    {
+      "id": "brittany",
+      "zh": "布列塔尼猎犬",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Brittany"
+    },
+    {
+      "id": "irish-water-spaniel",
+      "zh": "爱尔兰水猎犬",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Irish Water Spaniel"
+    },
+    {
+      "id": "portuguese-pointer",
+      "zh": "葡萄牙指示犬",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Portuguese Pointer"
+    },
+    {
+      "id": "olde-english-bulldogge",
+      "zh": "復刻版英國鬥牛犬",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Olde English Bulldogge"
+    },
+    {
+      "id": "akbash",
+      "zh": "土耳其阿卡巴士犬",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Akbash"
+    },
+    {
+      "id": "rampur-greyhound",
+      "zh": "拉姆普爾靈𤟥犬",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Rampur Greyhound"
+    },
+    {
+      "id": "petit-bleu-de-gascogne",
+      "zh": "Petit Bleu de Gascogne",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Petit Bleu de Gascogne"
+    },
+    {
+      "id": "perro-de-pastor-garafiano",
+      "zh": "Perro de pastor garafiano",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Perro de pastor garafiano"
+    },
+    {
+      "id": "poitevin-hound",
+      "zh": "Poitevin hound",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Poitevin hound"
+    },
+    {
+      "id": "glen-of-imaal-terrier",
+      "zh": "峡谷梗",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Glen of Imaal Terrier"
+    },
+    {
+      "id": "american-mastiff",
+      "zh": "American Mastiff",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "American Mastiff"
+    },
+    {
+      "id": "burgos-retriever",
+      "zh": "Burgos Retriever",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Burgos Retriever"
+    },
+    {
+      "id": "volpino-italiano",
+      "zh": "義大利狐狸犬",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Volpino Italiano"
+    },
+    {
+      "id": "rastreador-brasileiro",
+      "zh": "Rastreador-brasileiro",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Rastreador-brasileiro"
+    },
+    {
+      "id": "gos-rater-valenci",
+      "zh": "瓦倫西亞捕鼠㹴",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Gos Rater Valencià"
+    },
+    {
+      "id": "istrian-coarse-haired-hound",
+      "zh": "Istrian Coarse-haired Hound",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Istrian Coarse-haired Hound"
+    },
+    {
+      "id": "ratonero-bodeguero-andaluz-cooper",
+      "zh": "安達盧西亞㹴",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Ratonero Bodeguero Andaluz COOPER"
+    },
+    {
+      "id": "armenian-gampr-dog",
+      "zh": "Armenian Gampr dog",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Armenian Gampr dog"
+    },
+    {
+      "id": "polish-hound",
+      "zh": "Polish Hound",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Polish Hound"
+    },
+    {
+      "id": "kai-ken",
+      "zh": "甲斐犬",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Kai Ken"
+    },
+    {
+      "id": "greek-harehound",
+      "zh": "希腊猎犬",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Greek Harehound"
+    },
+    {
+      "id": "bergamasco-shepherd",
+      "zh": "貝加馬斯科牧羊犬",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Bergamasco Shepherd"
+    },
+    {
+      "id": "bracco-italiano",
+      "zh": "義大利布拉科犬",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Bracco Italiano"
+    },
+    {
+      "id": "cirneco-dell-etna",
+      "zh": "埃特納獵兔犬",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Cirneco dell'Etna"
+    },
+    {
+      "id": "russkaya-tsvetnaya-bolonka",
+      "zh": "俄羅斯彩色波隆卡犬",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Russkaya tsvetnaya bolonka"
+    },
+    {
+      "id": "jack-russell-terrier",
+      "zh": "傑克羅素㹴",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Jack Russell Terrier"
+    },
+    {
+      "id": "irish-red-and-white-setter",
+      "zh": "爱尔兰红白塞特犬",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Irish Red and White Setter"
+    },
+    {
+      "id": "coton-de-tulear",
+      "zh": "Coton de Tulear",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Coton de Tulear"
+    },
+    {
+      "id": "gordon-setter",
+      "zh": "哥顿塞特犬",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Gordon Setter"
+    },
+    {
+      "id": "english-setter",
+      "zh": "英国塞特犬",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "English Setter"
+    },
+    {
+      "id": "rajapalayam",
+      "zh": "Rajapalayam",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Rajapalayam"
+    },
+    {
+      "id": "bull-terrier",
+      "zh": "牛头㹴",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Bull Terrier"
+    },
+    {
+      "id": "dandie-dinmont-terrier",
+      "zh": "丹迪丁蒙㹴",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Dandie Dinmont Terrier"
+    },
+    {
+      "id": "kishu",
+      "zh": "紀州犬",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Kishu"
+    },
+    {
+      "id": "lapponian-herder",
+      "zh": "拉普蘭牧犬",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Lapponian Herder"
+    },
+    {
+      "id": "hovawart",
+      "zh": "Hovawart",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Hovawart"
+    },
+    {
+      "id": "curly-coated-retriever",
+      "zh": "卷毛寻回犬",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Curly Coated Retriever"
+    },
+    {
+      "id": "lhasa-apso",
+      "zh": "拉薩犬",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Lhasa Apso"
+    },
+    {
+      "id": "black-and-tan-virginia-foxhound",
+      "zh": "Black and Tan Virginia Foxhound",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Black and Tan Virginia Foxhound"
+    },
+    {
+      "id": "dobermann",
+      "zh": "杜賓犬",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Dobermann"
+    },
+    {
+      "id": "bulldog",
+      "zh": "斗牛犬",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Bulldog"
+    },
+    {
+      "id": "manchester-terrier",
+      "zh": "曼彻斯特梗",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Manchester Terrier"
+    },
+    {
+      "id": "transylvanian-hound",
+      "zh": "Transylvanian hound",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Transylvanian hound"
+    },
+    {
+      "id": "groenendael",
+      "zh": "比利时牧羊犬",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Groenendael"
+    },
+    {
+      "id": "kromfohrl-nder",
+      "zh": "Kromfohrländer",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Kromfohrländer"
+    },
+    {
+      "id": "griffon-nivernais",
+      "zh": "Griffon Nivernais",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Griffon Nivernais"
+    },
+    {
+      "id": "english-mastiff",
+      "zh": "英國獒犬",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "English Mastiff"
+    },
+    {
+      "id": "east-siberian-laika",
+      "zh": "東西伯利亞萊卡犬",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "East Siberian Laika"
+    },
+    {
+      "id": "austrian-pinscher",
+      "zh": "奧地利平雪犬",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Austrian Pinscher"
+    },
+    {
+      "id": "huntaway",
+      "zh": "Huntaway",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Huntaway"
+    },
+    {
+      "id": "rat-terrier",
+      "zh": "捕鼠㹴",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Rat Terrier"
+    },
+    {
+      "id": "schafpudel",
+      "zh": "Schafpudel",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Schafpudel"
+    },
+    {
+      "id": "guatemalan-dogo",
+      "zh": "瓜地馬拉杜告犬",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Guatemalan Dogo"
+    },
+    {
+      "id": "treeing-tennessee-brindle",
+      "zh": "田納西樹獵虎斑犬",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Treeing Tennessee Brindle"
+    },
+    {
+      "id": "chukotka-sled-dog",
+      "zh": "楚科奇雪橇犬",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Chukotka sled dog"
+    },
+    {
+      "id": "havanese",
+      "zh": "哈威那犬",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Havanese"
+    },
+    {
+      "id": "australasian-bosdog",
+      "zh": "Australasian Bosdog",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Australasian Bosdog"
+    },
+    {
+      "id": "karakachan-dog",
+      "zh": "保加利亞牧羊犬",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Karakachan Dog"
+    },
+    {
+      "id": "dogo-sardesco",
+      "zh": "Dogo Sardesco",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Dogo Sardesco"
+    },
+    {
+      "id": "kuvasz",
+      "zh": "库瓦兹犬",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Kuvasz"
+    },
+    {
+      "id": "chien-fran-ais-blanc-et-noir",
+      "zh": "法國黑白獵犬",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Chien Français Blanc et Noir"
+    },
+    {
+      "id": "fran-ais-blanc-et-orange",
+      "zh": "Français Blanc et Orange",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Français Blanc et Orange"
+    },
+    {
+      "id": "french-tricolour-hound",
+      "zh": "French Tricolour Hound",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "French Tricolour Hound"
+    },
+    {
+      "id": "norwegian-buhund",
+      "zh": "Norwegian Buhund",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Norwegian Buhund"
+    },
+    {
+      "id": "leonberger",
+      "zh": "Leonberger",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Leonberger"
+    },
+    {
+      "id": "east-european-shepherd",
+      "zh": "東歐牧羊犬",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "East-European Shepherd"
+    },
+    {
+      "id": "bull-and-terrier",
+      "zh": "牛頭犬—㹴犬型",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Bull and Terrier"
+    },
+    {
+      "id": "kangal-shepherd-dog",
+      "zh": "坎高犬",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Kangal Shepherd Dog"
+    },
+    {
+      "id": "campeiro-bulldog",
+      "zh": "Campeiro Bulldog",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Campeiro Bulldog"
+    },
+    {
+      "id": "belgian-malinois",
+      "zh": "比利時瑪連萊犬",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Belgian Malinois"
+    },
+    {
+      "id": "boxer",
+      "zh": "拳師犬",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Boxer"
+    },
+    {
+      "id": "italian-greyhound",
+      "zh": "義大利靈𤟥",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Italian Greyhound"
+    },
+    {
+      "id": "greenland-dog",
+      "zh": "格陵蘭犬",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Greenland Dog"
+    },
+    {
+      "id": "moscow-watchdog",
+      "zh": "Moscow Watchdog",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Moscow Watchdog"
+    },
+    {
+      "id": "black-slovakian-shepherd",
+      "zh": "Black Slovakian Shepherd",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Black Slovakian Shepherd"
+    },
+    {
+      "id": "neapolitan-mastiff",
+      "zh": "那不勒斯獒犬",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Neapolitan Mastiff"
+    },
+    {
+      "id": "english-water-spaniel",
+      "zh": "英国水犬",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "English Water Spaniel"
+    },
+    {
+      "id": "portuguese-water-dog",
+      "zh": "葡萄牙水犬",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Portuguese water dog"
+    },
+    {
+      "id": "black-mouth-cur",
+      "zh": "黑口柯犬",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Black Mouth Cur"
+    },
+    {
+      "id": "chilean-fox-terrier",
+      "zh": "Chilean Fox Terrier",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Chilean Fox Terrier"
+    },
+    {
+      "id": "chinese-imperial-dog",
+      "zh": "Chinese Imperial Dog",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Chinese Imperial Dog"
+    },
+    {
+      "id": "cordoba-fighting-dog",
+      "zh": "科多巴斗犬",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Cordoba Fighting Dog"
+    },
+    {
+      "id": "english-cocker-spaniel",
+      "zh": "英国可卡犬",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "English Cocker Spaniel"
+    },
+    {
+      "id": "croatian-sheepdog",
+      "zh": "Croatian Sheepdog",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Croatian Sheepdog"
+    },
+    {
+      "id": "ukrainian-vivcharka",
+      "zh": "Ukrainian Vivcharka",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Ukrainian Vivcharka"
+    },
+    {
+      "id": "central-asian-shepherd-dog",
+      "zh": "中亞牧羊犬",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Central Asian Shepherd Dog"
+    },
+    {
+      "id": "greyhound",
+      "zh": "灵𤟥",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "greyhound"
+    },
+    {
+      "id": "caucasian-shepherd-dog",
+      "zh": "高加索犬",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Caucasian Shepherd Dog"
+    },
+    {
+      "id": "dingo",
+      "zh": "丁格犬",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "dingo"
+    },
+    {
+      "id": "canaan-dog",
+      "zh": "迦南犬",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Canaan Dog"
+    },
+    {
+      "id": "molossian",
+      "zh": "獒犬",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Molossian"
+    },
+    {
+      "id": "brazilian-terrier",
+      "zh": "巴西㹴",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Brazilian Terrier"
+    },
+    {
+      "id": "montenegrin-mountain-hound",
+      "zh": "Montenegrin Mountain Hound",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Montenegrin Mountain Hound"
+    },
+    {
+      "id": "black-russian-terrier",
+      "zh": "俄羅斯黑爹利",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Black Russian Terrier"
+    },
+    {
+      "id": "istrian-shorthaired-hound",
+      "zh": "Istrian Shorthaired Hound",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Istrian Shorthaired Hound"
+    },
+    {
+      "id": "cesky-terrier",
+      "zh": "Cesky Terrier",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Cesky Terrier"
+    },
+    {
+      "id": "irish-terrier",
+      "zh": "爱尔兰㹴",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Irish Terrier"
+    },
+    {
+      "id": "rough-collie",
+      "zh": "Rough Collie",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Rough Collie"
+    },
+    {
+      "id": "czechoslovakian-wolfdog",
+      "zh": "捷克狼犬",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Czechoslovakian Wolfdog"
+    },
+    {
+      "id": "german-spitz",
+      "zh": "德國施皮茨",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "German Spitz"
+    },
+    {
+      "id": "basque-shepherd-dog",
+      "zh": "Basque Shepherd Dog",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Basque Shepherd Dog"
+    },
+    {
+      "id": "irish-wolfhound",
+      "zh": "愛爾蘭獵狼犬",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Irish wolfhound"
+    },
+    {
+      "id": "komondor",
+      "zh": "可蒙犬",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Komondor"
+    },
+    {
+      "id": "mudi",
+      "zh": "Mudi",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Mudi"
+    },
+    {
+      "id": "georgian-shepherd",
+      "zh": "Georgian Shepherd",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Georgian Shepherd"
+    },
+    {
+      "id": "giant-schnauzer",
+      "zh": "巨型雪纳瑞犬",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Giant Schnauzer"
+    },
+    {
+      "id": "pug",
+      "zh": "巴哥犬",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "pug"
+    },
+    {
+      "id": "newfoundland-dog",
+      "zh": "纽芬兰犬",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Newfoundland dog"
+    },
+    {
+      "id": "icelandic-sheepdog",
+      "zh": "冰島牧羊犬",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Icelandic Sheepdog"
+    },
+    {
+      "id": "kooikerhondje",
+      "zh": "科克尔犬",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Kooikerhondje"
+    },
+    {
+      "id": "great-anglo-french-white-and-black-hound",
+      "zh": "Great Anglo-French White and Black Hound",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Great Anglo-French White and Black Hound"
+    },
+    {
+      "id": "great-anglo-french-tricolour-hound",
+      "zh": "Great Anglo-French Tricolour Hound",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Great Anglo-French Tricolour Hound"
+    },
+    {
+      "id": "schillerst-vare",
+      "zh": "Schillerstövare",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Schillerstövare"
+    },
+    {
+      "id": "estonian-hound",
+      "zh": "Estonian Hound",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Estonian Hound"
+    },
+    {
+      "id": "schweizerischer-niederlaufhund",
+      "zh": "Schweizerischer Niederlaufhund",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Schweizerischer Niederlaufhund"
+    },
+    {
+      "id": "great-anglo-french-white-and-orange-hound",
+      "zh": "Great Anglo-French White and Orange Hound",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Great Anglo-French White and Orange Hound"
+    },
+    {
+      "id": "smaland-hound",
+      "zh": "Smaland Hound",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Smaland Hound"
+    },
+    {
+      "id": "gull-terr",
+      "zh": "Gull Terr",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Gull Terr"
+    },
+    {
+      "id": "gran-mast-n-de-bor-nquen",
+      "zh": "Gran Mastín de Borínquen",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Gran Mastín de Borínquen"
+    },
+    {
+      "id": "gull-dong",
+      "zh": "Gull Dong",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Gull Dong"
+    },
+    {
+      "id": "irish-setter",
+      "zh": "爱尔兰长毛猎犬",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Irish Setter"
+    },
+    {
+      "id": "pyrenean-mastiff",
+      "zh": "Pyrenean Mastiff",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Pyrenean Mastiff"
+    },
+    {
+      "id": "berner-laufhund",
+      "zh": "Berner Laufhund",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Berner Laufhund"
+    },
+    {
+      "id": "large-m-nsterl-nder",
+      "zh": "Large Münsterländer",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Large Münsterländer"
+    },
+    {
+      "id": "smooth-fox-terrier",
+      "zh": "短毛猎狐梗",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Smooth Fox Terrier"
+    },
+    {
+      "id": "kleinspitz",
+      "zh": "Kleinspitz",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Kleinspitz"
+    },
+    {
+      "id": "smooth-collie",
+      "zh": "Smooth Collie",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Smooth Collie"
+    },
+    {
+      "id": "tibetan-terrier",
+      "zh": "西藏梗",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Tibetan Terrier"
+    },
+    {
+      "id": "norwegian-elkhound",
+      "zh": "挪威猎鹿犬",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Norwegian Elkhound"
+    },
+    {
+      "id": "patterdale-terrier",
+      "zh": "Patterdale Terrier",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Patterdale Terrier"
+    },
+    {
+      "id": "pharaoh-hound",
+      "zh": "東京迪士尼度假區 MY MAP!",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Pharaoh Hound"
+    },
+    {
+      "id": "vizsla",
+      "zh": "维斯拉犬",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Vizsla"
+    },
+    {
+      "id": "redbone-coonhound",
+      "zh": "紅骨浣熊獵犬",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Redbone Coonhound"
+    },
+    {
+      "id": "nova-scotia-duck-tolling-retriever",
+      "zh": "新斯科舍诱鸭寻回犬",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Nova Scotia Duck Tolling Retriever"
+    },
+    {
+      "id": "polish-lowland-sheepdog",
+      "zh": "波蘭低地牧羊犬",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Polish Lowland Sheepdog"
+    },
+    {
+      "id": "keeshond",
+      "zh": "荷兰卷尾狮毛狗",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Keeshond"
+    },
+    {
+      "id": "xoloitzcuintle",
+      "zh": "墨西哥無毛犬",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Xoloitzcuintle"
+    },
+    {
+      "id": "peruvian-hairless-dog",
+      "zh": "Peruvian Hairless Dog",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Peruvian Hairless Dog"
+    },
+    {
+      "id": "parson-russell-terrier",
+      "zh": "帕森羅素㹴",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Parson Russell Terrier"
+    },
+    {
+      "id": "new-guinea-singing-dog",
+      "zh": "紐幾內亞唱犬",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "New Guinea singing dog"
+    },
+    {
+      "id": "puli",
+      "zh": "波利犬",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Puli"
+    },
+    {
+      "id": "hungarian-sheepdog",
+      "zh": "Hungarian sheepdog",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Hungarian sheepdog"
+    },
+    {
+      "id": "magyar-ag-r",
+      "zh": "Magyar agár",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Magyar agár"
+    },
+    {
+      "id": "wirehaired-pointing-griffon",
+      "zh": "刚毛指示格里芬犬",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Wirehaired Pointing Griffon"
+    },
+    {
+      "id": "mountain-view-cur",
+      "zh": "Mountain View Cur",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Mountain View Cur"
+    },
+    {
+      "id": "norwegian-lundehund",
+      "zh": "Norwegian Lundehund",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Norwegian Lundehund"
+    },
+    {
+      "id": "mountain-cur",
+      "zh": "山地柯犬",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Mountain Cur"
+    },
+    {
+      "id": "king-shepherd",
+      "zh": "國王牧羊犬",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "King Shepherd"
+    },
+    {
+      "id": "lithuanian-hound",
+      "zh": "Lithuanian Hound",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Lithuanian Hound"
+    },
+    {
+      "id": "pra-sk-krysa-k",
+      "zh": "Pražský Krysařík",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Pražský Krysařík"
+    },
+    {
+      "id": "lagotto-romagnolo",
+      "zh": "拉戈托羅馬閣挪露犬",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Lagotto Romagnolo"
+    },
+    {
+      "id": "pumi",
+      "zh": "波密犬",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Pumi"
+    },
+    {
+      "id": "otterhound",
+      "zh": "奥达猎犬",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Otterhound"
+    },
+    {
+      "id": "indian-spitz",
+      "zh": "印度尖嘴犬",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Indian Spitz"
+    },
+    {
+      "id": "korean-mastiff",
+      "zh": "Korean Mastiff",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Korean Mastiff"
+    },
+    {
+      "id": "norrbottenspets",
+      "zh": "北博滕尖嘴犬",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Norrbottenspets"
+    },
+    {
+      "id": "pudelpointer",
+      "zh": "Pudelpointer",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Pudelpointer"
+    },
+    {
+      "id": "norwich-terrier",
+      "zh": "诺里奇梗",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Norwich Terrier"
+    },
+    {
+      "id": "podenco-canario",
+      "zh": "加那利波登科犬",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Podenco Canario"
+    },
+    {
+      "id": "himalayan-sheepdog",
+      "zh": "喜馬拉雅牧羊犬",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Himalayan Sheepdog"
+    },
+    {
+      "id": "norfolk-terrier",
+      "zh": "诺福克梗",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Norfolk Terrier"
+    },
+    {
+      "id": "mongrel",
+      "zh": "混種狗",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "mongrel"
+    },
+    {
+      "id": "landseer",
+      "zh": "蘭西爾犬",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Landseer"
+    },
+    {
+      "id": "kunming-wolfdog",
+      "zh": "昆明犬",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Kunming wolfdog"
+    },
+    {
+      "id": "koolie",
+      "zh": "Koolie",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Koolie"
+    },
+    {
+      "id": "kanni",
+      "zh": "Kanni",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Kanni"
+    },
+    {
+      "id": "slovak-cuvac",
+      "zh": "Slovak Cuvac",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Slovak Cuvac"
+    },
+    {
+      "id": "black-norwegian-elkhound",
+      "zh": "Black Norwegian Elkhound",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Black Norwegian Elkhound"
+    },
+    {
+      "id": "weimaraner",
+      "zh": "威瑪犬",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Weimaraner"
+    },
+    {
+      "id": "schweizer-laufhund",
+      "zh": "Schweizer Laufhund",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Schweizer Laufhund"
+    },
+    {
+      "id": "paisley-terrier",
+      "zh": "Paisley Terrier",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Paisley Terrier"
+    },
+    {
+      "id": "miniature-pinscher",
+      "zh": "迷你品犬",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Miniature Pinscher"
+    },
+    {
+      "id": "tosa",
+      "zh": "土佐鬥犬",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Tosa"
+    },
+    {
+      "id": "miniature-schnauzer",
+      "zh": "迷你雪納瑞",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Miniature Schnauzer"
+    },
+    {
+      "id": "scottish-terrier",
+      "zh": "蘇格蘭㹴",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Scottish Terrier"
+    },
+    {
+      "id": "welsh-terrier",
+      "zh": "威爾斯㹴",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Welsh Terrier"
+    },
+    {
+      "id": "schipperke",
+      "zh": "史其派克犬",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Schipperke"
+    },
+    {
+      "id": "rhodesian-ridgeback",
+      "zh": "罗得西亚背脊犬",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Rhodesian Ridgeback"
+    },
+    {
+      "id": "welsh-springer-spaniel",
+      "zh": "威尔斯激飞猎犬",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Welsh Springer Spaniel"
+    },
+    {
+      "id": "murray-river-curly-coated-retriever",
+      "zh": "墨累河尋回犬",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Murray River Curly Coated Retriever"
+    },
+    {
+      "id": "skye-terrier",
+      "zh": "斯凯㹴",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Skye Terrier"
+    },
+    {
+      "id": "shetland-sheepdog",
+      "zh": "喜樂蒂牧羊犬",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Shetland Sheepdog"
+    },
+    {
+      "id": "portuguese-podengo",
+      "zh": "葡萄牙波登科犬",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Portuguese Podengo"
+    },
+    {
+      "id": "sealyham-terrier",
+      "zh": "西里汉梗",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Sealyham Terrier"
+    },
+    {
+      "id": "swedish-vallhund",
+      "zh": "瑞典牧羊犬",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Swedish Vallhund"
+    },
+    {
+      "id": "rafeiro-do-alentejo",
+      "zh": "阿连特茹獒犬",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Rafeiro do Alentejo"
+    },
+    {
+      "id": "posavac-hound",
+      "zh": "Posavac Hound",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Posavac Hound"
+    },
+    {
+      "id": "porcelaine",
+      "zh": "瓷器犬",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Porcelaine"
+    },
+    {
+      "id": "petit-basset-griffon-vend-en",
+      "zh": "迷你贝吉格里芬凡丁犬",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Petit Basset Griffon Vendéen"
+    },
+    {
+      "id": "tyrolean-hound",
+      "zh": "Tyrolean Hound",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Tyrolean Hound"
+    },
+    {
+      "id": "westphalian-dachsbracke",
+      "zh": "威斯特法伦达克斯布拉克犬",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Westphalian Dachsbracke"
+    },
+    {
+      "id": "tatra-shepherd-dog",
+      "zh": "Tatra Shepherd Dog",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Tatra Shepherd Dog"
+    },
+    {
+      "id": "russian-spaniel",
+      "zh": "Russian Spaniel",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Russian Spaniel"
+    },
+    {
+      "id": "sabueso-espa-ol",
+      "zh": "Sabueso Español",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Sabueso Español"
+    },
+    {
+      "id": "swedish-lapphund",
+      "zh": "Swedish Lapphund",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Swedish Lapphund"
+    },
+    {
+      "id": "tornjak",
+      "zh": "Tornjak",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Tornjak"
+    },
+    {
+      "id": "saluki",
+      "zh": "薩路基獵犬",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Saluki"
+    },
+    {
+      "id": "northern-inuit-dog",
+      "zh": "Northern Inuit Dog",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Northern Inuit Dog"
+    },
+    {
+      "id": "old-croatian-sighthound",
+      "zh": "Old Croatian Sighthound",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Old Croatian Sighthound"
+    },
+    {
+      "id": "phu-quoc-ridgeback-dog",
+      "zh": "富國狗",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Phu Quoc ridgeback dog"
+    },
+    {
+      "id": "whippet",
+      "zh": "惠比特犬",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Whippet"
+    },
+    {
+      "id": "sussex-spaniel",
+      "zh": "Sussex Spaniel",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Sussex Spaniel"
+    },
+    {
+      "id": "stephens-cur",
+      "zh": "史蒂芬斯柯犬",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Stephens Cur"
+    },
+    {
+      "id": "shikoku-ken",
+      "zh": "四國犬",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Shikoku Ken"
+    },
+    {
+      "id": "treeing-cur",
+      "zh": "樹獵柯犬",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Treeing Cur"
+    },
+    {
+      "id": "segugio-italiano-a-pelo-raso",
+      "zh": "Segugio Italiano a Pelo Raso",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Segugio Italiano a Pelo Raso"
+    },
+    {
+      "id": "schapendoes",
+      "zh": "Schapendoes",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Schapendoes"
+    },
+    {
+      "id": "spinone-italiano",
+      "zh": "Spinone Italiano",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Spinone Italiano"
+    },
+    {
+      "id": "thai-ridgeback",
+      "zh": "Thai Ridgeback",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Thai Ridgeback"
+    },
+    {
+      "id": "russkiy-toy",
+      "zh": "俄羅斯玩具犬",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Russkiy Toy"
+    },
+    {
+      "id": "tibetan-spaniel",
+      "zh": "西藏猎犬",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Tibetan Spaniel"
+    },
+    {
+      "id": "taigan",
+      "zh": "Taigan",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Taigan"
+    },
+    {
+      "id": "treeing-walker-coonhound",
+      "zh": "Treeing Walker Coonhound",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Treeing Walker Coonhound"
+    },
+    {
+      "id": "villano-de-las-encartaciones",
+      "zh": "Villano de las Encartaciones",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Villano de las Encartaciones"
+    },
+    {
+      "id": "phal-ne",
+      "zh": "垂耳蝴蝶犬",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Phalène"
+    },
+    {
+      "id": "esk-horsk-pes",
+      "zh": "Český horský pes",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Český horský pes"
+    },
+    {
+      "id": "andalusian-hound",
+      "zh": "安達盧西亞波登科犬",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Andalusian Hound"
+    },
+    {
+      "id": "waeller",
+      "zh": "Waeller",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Waeller"
+    },
+    {
+      "id": "italian-rough-haired-segugio",
+      "zh": "Italian Rough-haired Segugio",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Italian Rough-haired Segugio"
+    },
+    {
+      "id": "welsh-sheepdog",
+      "zh": "威爾斯牧羊犬",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Welsh Sheepdog"
+    },
+    {
+      "id": "kokoni-dog",
+      "zh": "Kokoni (dog)",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Kokoni (dog)"
+    },
+    {
+      "id": "tenterfield-terrier",
+      "zh": "Tenterfield Terrier",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Tenterfield Terrier"
+    },
+    {
+      "id": "plott-hound",
+      "zh": "Plott Hound",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Plott Hound"
+    },
+    {
+      "id": "stabijhoun",
+      "zh": "斯塔比嚎犬",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Stabijhoun"
+    },
+    {
+      "id": "spanish-water-dog",
+      "zh": "西班牙水獵犬",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Spanish Water Dog"
+    },
+    {
+      "id": "silken-windhound",
+      "zh": "絲綢獵犬",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Silken Windhound"
+    },
+    {
+      "id": "limer",
+      "zh": "Limer",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Limer"
+    },
+    {
+      "id": "schwyz-hound",
+      "zh": "Schwyz Hound",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Schwyz Hound"
+    },
+    {
+      "id": "staffordshire-bull-terrier",
+      "zh": "斯塔福郡鬥牛㹴",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Staffordshire Bull Terrier"
+    },
+    {
+      "id": "slovakian-rough-haired-pointer",
+      "zh": "斯洛伐克剛毛指示犬",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Slovakian Rough-haired Pointer"
+    },
+    {
+      "id": "styrian-coarse-haired-hound",
+      "zh": "Styrian Coarse-haired Hound",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Styrian Coarse-haired Hound"
+    },
+    {
+      "id": "fox-terrier",
+      "zh": "獵狐㹴",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Fox Terrier"
+    },
+    {
+      "id": "shiloh-shepherd",
+      "zh": "Shiloh Shepherd",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Shiloh Shepherd"
+    },
+    {
+      "id": "saarloos-wolfdog",
+      "zh": "Saarloos wolfdog",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Saarloos wolfdog"
+    },
+    {
+      "id": "tibetan-mastiff",
+      "zh": "藏獒",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Tibetan Mastiff"
+    },
+    {
+      "id": "petit-gascon-saintongeois",
+      "zh": "Petit Gascon Saintongeois",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Petit Gascon Saintongeois"
+    },
+    {
+      "id": "pach-n-navarro",
+      "zh": "Pachón Navarro",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Pachón Navarro"
+    },
+    {
+      "id": "russo-european-laika",
+      "zh": "俄歐拉伊卡犬",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Russo-European Laika"
+    },
+    {
+      "id": "talbot",
+      "zh": "Talbot",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Talbot"
+    },
+    {
+      "id": "toy-manchester-terrier",
+      "zh": "玩具曼徹斯特㹴",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Toy Manchester Terrier"
+    },
+    {
+      "id": "white-english-bulldog",
+      "zh": "White English Bulldog",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "White English Bulldog"
+    },
+    {
+      "id": "yugoslavian-shepherd-dog",
+      "zh": "薩普蘭尼那克犬",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Yugoslavian Shepherd Dog"
+    },
+    {
+      "id": "teddy-roosevelt-terrier",
+      "zh": "Teddy Roosevelt Terrier",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Teddy Roosevelt Terrier"
+    },
+    {
+      "id": "west-siberian-laika",
+      "zh": "West Siberian Laika",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "West Siberian Laika"
+    },
+    {
+      "id": "wirehaired-vizsla",
+      "zh": "匈牙利剛毛維茲拉",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Wirehaired Vizsla"
+    },
+    {
+      "id": "pastor-americano",
+      "zh": "Pastor Americano",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Pastor Americano"
+    },
+    {
+      "id": "ca-de-conills",
+      "zh": "梅諾卡獵兔犬",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Ca de Conills"
+    },
+    {
+      "id": "gos-d-atura-aran-s",
+      "zh": "Gos d'atura aranès",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Gos d'atura aranès"
+    },
+    {
+      "id": "ca-m-mallorqu",
+      "zh": "Ca Mè Mallorquí",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Ca Mè Mallorquí"
+    },
+    {
+      "id": "xarnego-valenciano",
+      "zh": "Xarnego Valenciano",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Xarnego Valenciano"
+    },
+    {
+      "id": "wire-fox-terrier",
+      "zh": "刚毛猎狐犬",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Wire Fox Terrier"
+    },
+    {
+      "id": "scotch-collie",
+      "zh": "苏格兰牧羊犬",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Scotch collie"
+    },
+    {
+      "id": "standard-schnauzer",
+      "zh": "标准型雪纳瑞",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Standard Schnauzer"
+    }
   ]
 }

@@ -1,0 +1,3619 @@
+{
+  "id": "cow",
+  "taxonKey": "Bos taurus",
+  "taxonKeys": [
+    "Bos taurus",
+    "Bos indicus"
+  ],
+  "commonNameZh": "家牛",
+  "source": "wikidata + 国家级畜禽遗传资源保护名录（牛，摘录常见）",
+  "breeds": [
+    {
+      "id": "holstein",
+      "zh": "荷斯坦",
+      "en": "Holstein",
+      "aliases": [
+        "荷斯坦牛",
+        "黑白花",
+        "黑白花牛",
+        "Holstein Friesian",
+        "荷尔斯泰因牛"
+      ],
+      "prevalence": "common",
+      "listed": true
+    },
+    {
+      "id": "jersey",
+      "zh": "娟姗牛",
+      "en": "Jersey",
+      "aliases": [
+        "娟姗",
+        "泽西牛"
+      ],
+      "prevalence": "uncommon",
+      "listed": true
+    },
+    {
+      "id": "simmental",
+      "zh": "西门塔尔",
+      "en": "Simmental",
+      "aliases": [
+        "西门塔尔牛",
+        "Simmental cattle"
+      ],
+      "prevalence": "common",
+      "listed": true
+    },
+    {
+      "id": "angus",
+      "zh": "安格斯",
+      "en": "Angus",
+      "aliases": [
+        "安格斯牛",
+        "Aberdeen Angus"
+      ],
+      "prevalence": "uncommon",
+      "listed": true
+    },
+    {
+      "id": "hereford",
+      "zh": "海福特",
+      "en": "Hereford",
+      "aliases": [
+        "海福特牛"
+      ],
+      "prevalence": "uncommon",
+      "listed": true
+    },
+    {
+      "id": "charolais",
+      "zh": "夏洛来",
+      "en": "Charolais",
+      "aliases": [
+        "夏洛来牛",
+        "Charolais cattle"
+      ],
+      "prevalence": "uncommon",
+      "listed": true
+    },
+    {
+      "id": "qinchuan",
+      "zh": "秦川牛",
+      "aliases": [
+        "秦川"
+      ],
+      "prevalence": "common",
+      "listed": true
+    },
+    {
+      "id": "nanyang",
+      "zh": "南阳牛",
+      "aliases": [
+        "南阳"
+      ],
+      "prevalence": "common",
+      "listed": true
+    },
+    {
+      "id": "luxi",
+      "zh": "鲁西牛",
+      "aliases": [
+        "鲁西"
+      ],
+      "prevalence": "uncommon",
+      "listed": true
+    },
+    {
+      "id": "jinnan",
+      "zh": "晋南牛",
+      "aliases": [
+        "晋南"
+      ],
+      "prevalence": "uncommon",
+      "listed": true
+    },
+    {
+      "id": "mongolian-cattle",
+      "zh": "蒙古牛",
+      "aliases": [
+        "蒙古",
+        "Mongolian cattle"
+      ],
+      "prevalence": "common",
+      "listed": true,
+      "en": "Mongolian cattle"
+    },
+    {
+      "id": "yanbian",
+      "zh": "延边牛",
+      "aliases": [
+        "延边",
+        "Yanbian cattle"
+      ],
+      "prevalence": "uncommon",
+      "listed": true,
+      "en": "Yanbian cattle"
+    },
+    {
+      "id": "bohai-black",
+      "zh": "渤海黑牛",
+      "prevalence": "uncommon",
+      "listed": true
+    },
+    {
+      "id": "fuzhou",
+      "zh": "复州牛",
+      "prevalence": "uncommon",
+      "listed": true
+    },
+    {
+      "id": "wenling",
+      "zh": "温岭高峰牛",
+      "prevalence": "rare",
+      "listed": true
+    },
+    {
+      "id": "red-mingrelian",
+      "zh": "Red Mingrelian",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Red Mingrelian"
+    },
+    {
+      "id": "holando-argentino",
+      "zh": "Holando-Argentino",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Holando-Argentino"
+    },
+    {
+      "id": "beefalo",
+      "zh": "皮弗娄牛",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "beefalo"
+    },
+    {
+      "id": "latvian-brown",
+      "zh": "拉脱维亚褐牛",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Latvian Brown"
+    },
+    {
+      "id": "normande-cattle",
+      "zh": "Normande Cattle",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Normande Cattle"
+    },
+    {
+      "id": "tharparkar",
+      "zh": "Tharparkar",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Tharparkar"
+    },
+    {
+      "id": "abondance",
+      "zh": "abondance",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "abondance"
+    },
+    {
+      "id": "glan-cattle",
+      "zh": "Glan Cattle",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Glan Cattle"
+    },
+    {
+      "id": "texas-longhorn",
+      "zh": "得克萨斯长角牛",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Texas Longhorn"
+    },
+    {
+      "id": "achham",
+      "zh": "Achham",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Achham"
+    },
+    {
+      "id": "adamawa-cattle",
+      "zh": "Adamawa cattle",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Adamawa cattle"
+    },
+    {
+      "id": "africangus",
+      "zh": "Africangus",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Africangus"
+    },
+    {
+      "id": "japanese-brown",
+      "zh": "Japanese Brown",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Japanese Brown"
+    },
+    {
+      "id": "alambadi",
+      "zh": "Alambadi",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Alambadi"
+    },
+    {
+      "id": "albanian",
+      "zh": "Albanian",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Albanian"
+    },
+    {
+      "id": "alderney-cattle",
+      "zh": "Alderney cattle",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Alderney cattle"
+    },
+    {
+      "id": "aleutian-wild-cattle",
+      "zh": "Aleutian wild cattle",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Aleutian wild cattle"
+    },
+    {
+      "id": "allmogekor",
+      "zh": "Allmogekor",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Allmogekor"
+    },
+    {
+      "id": "american-white-park",
+      "zh": "American White Park",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "American White Park"
+    },
+    {
+      "id": "amsterdam-island-cattle",
+      "zh": "Amsterdam Island cattle",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Amsterdam Island cattle"
+    },
+    {
+      "id": "anatolian-black",
+      "zh": "Anatolian Black",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Anatolian Black"
+    },
+    {
+      "id": "argentine-criollo",
+      "zh": "Argentine Criollo",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Argentine Criollo"
+    },
+    {
+      "id": "australian-braford",
+      "zh": "Australian Braford",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Australian Braford"
+    },
+    {
+      "id": "australian-brangus",
+      "zh": "Australian Brangus",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Australian Brangus"
+    },
+    {
+      "id": "baggara-cattle",
+      "zh": "Baggara cattle",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Baggara cattle"
+    },
+    {
+      "id": "baherie-cattle",
+      "zh": "Baherie cattle",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Baherie cattle"
+    },
+    {
+      "id": "bakosi-cattle",
+      "zh": "Bakosi cattle",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Bakosi cattle"
+    },
+    {
+      "id": "balancer",
+      "zh": "Balancer",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Balancer"
+    },
+    {
+      "id": "barros-cattle",
+      "zh": "Barrosã Cattle",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Barrosã Cattle"
+    },
+    {
+      "id": "belarus-red",
+      "zh": "Belarus Red",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Belarus Red"
+    },
+    {
+      "id": "black-baldy",
+      "zh": "Black Baldy",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Black Baldy"
+    },
+    {
+      "id": "black-hereford",
+      "zh": "Black Hereford",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Black Hereford"
+    },
+    {
+      "id": "blue-grey",
+      "zh": "Blue Grey",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Blue Grey"
+    },
+    {
+      "id": "butana-and-kenana-cattle",
+      "zh": "Butana and Kenana cattle",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Butana and Kenana cattle"
+    },
+    {
+      "id": "campbell-island-cattle",
+      "zh": "Campbell Island cattle",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Campbell Island cattle"
+    },
+    {
+      "id": "pajuna-cattle",
+      "zh": "Pajuna Cattle",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Pajuna Cattle"
+    },
+    {
+      "id": "yurino",
+      "zh": "Yurino",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Yurino"
+    },
+    {
+      "id": "luing-cattle",
+      "zh": "Luing cattle",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Luing cattle"
+    },
+    {
+      "id": "shorthorn",
+      "zh": "短角牛",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Shorthorn"
+    },
+    {
+      "id": "limpurger",
+      "zh": "Limpurger",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Limpurger"
+    },
+    {
+      "id": "kazakh-whiteheaded",
+      "zh": "哈薩克白頭牛",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Kazakh Whiteheaded"
+    },
+    {
+      "id": "caucasian-brown",
+      "zh": "Caucasian Brown",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Caucasian Brown"
+    },
+    {
+      "id": "salers",
+      "zh": "萨莱尔牛",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Salers"
+    },
+    {
+      "id": "wagyu",
+      "zh": "和牛",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Wagyu"
+    },
+    {
+      "id": "romagnola",
+      "zh": "Romagnola",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Romagnola"
+    },
+    {
+      "id": "alatau-cattle",
+      "zh": "Alatau cattle",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Alatau cattle"
+    },
+    {
+      "id": "german-red-pied",
+      "zh": "German Red Pied",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "German Red Pied"
+    },
+    {
+      "id": "nelore",
+      "zh": "Nelore",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Nelore"
+    },
+    {
+      "id": "d-lafe",
+      "zh": "Dølafe",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Dølafe"
+    },
+    {
+      "id": "red-sindhi-cattle",
+      "zh": "Red Sindhi cattle",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Red Sindhi cattle"
+    },
+    {
+      "id": "kurgan",
+      "zh": "Kurgan",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Kurgan"
+    },
+    {
+      "id": "ringam-la-cattle",
+      "zh": "Ringamåla cattle",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Ringamåla cattle"
+    },
+    {
+      "id": "icelandic-cattle",
+      "zh": "Icelandic cattle",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Icelandic cattle"
+    },
+    {
+      "id": "western-finncattle",
+      "zh": "Western Finncattle",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Western Finncattle"
+    },
+    {
+      "id": "eastern-finncattle",
+      "zh": "Eastern Finncattle",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Eastern Finncattle"
+    },
+    {
+      "id": "northern-finncattle",
+      "zh": "Northern Finncattle",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Northern Finncattle"
+    },
+    {
+      "id": "angeln-cattle",
+      "zh": "安格林牛",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Angeln cattle"
+    },
+    {
+      "id": "tux",
+      "zh": "Tux",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Tux"
+    },
+    {
+      "id": "herens",
+      "zh": "Herens",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Herens"
+    },
+    {
+      "id": "german-black-pied-cattle",
+      "zh": "弗里斯荷兰牛",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "German Black Pied Cattle"
+    },
+    {
+      "id": "heck-cattle",
+      "zh": "赫克奶牛",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Heck cattle"
+    },
+    {
+      "id": "maine-anjou",
+      "zh": "Maine-Anjou",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Maine-Anjou"
+    },
+    {
+      "id": "glamorgan-cattle",
+      "zh": "Glamorgan cattle",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Glamorgan cattle"
+    },
+    {
+      "id": "hungarian-spotted",
+      "zh": "Hungarian Spotted",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Hungarian Spotted"
+    },
+    {
+      "id": "ansbach-triesdorfer",
+      "zh": "Ansbach-Triesdorfer",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Ansbach-Triesdorfer"
+    },
+    {
+      "id": "terre-a",
+      "zh": "Terreña",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Terreña"
+    },
+    {
+      "id": "limousin",
+      "zh": "利木赞牛",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Limousin"
+    },
+    {
+      "id": "north-devon-cattle",
+      "zh": "北德溫牛",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "North Devon cattle"
+    },
+    {
+      "id": "dwarf-lulu",
+      "zh": "Dwarf Lulu",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Dwarf Lulu"
+    },
+    {
+      "id": "estonian-red-cattle",
+      "zh": "愛沙尼亞紅牛",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Estonian red cattle"
+    },
+    {
+      "id": "fribourgeoise",
+      "zh": "Fribourgeoise",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Fribourgeoise"
+    },
+    {
+      "id": "australian-friesian-sahiwal",
+      "zh": "Australian Friesian Sahiwal",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Australian Friesian Sahiwal"
+    },
+    {
+      "id": "froment-du-l-on",
+      "zh": "Froment du Léon",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Froment du Léon"
+    },
+    {
+      "id": "garfagnina",
+      "zh": "Garfagnina",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Garfagnina"
+    },
+    {
+      "id": "gascon-cattle",
+      "zh": "Gascon cattle",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Gascon cattle"
+    },
+    {
+      "id": "lithuanian-light-grey",
+      "zh": "lithuanian light grey",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "lithuanian light grey"
+    },
+    {
+      "id": "murray-grey",
+      "zh": "墨瑞灰牛",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Murray Grey"
+    },
+    {
+      "id": "north-bengal-gray",
+      "zh": "North Bengal gray",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "North Bengal gray"
+    },
+    {
+      "id": "guelmoise",
+      "zh": "Guelmoise",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Guelmoise"
+    },
+    {
+      "id": "hariana-cattle",
+      "zh": "Hariana cattle",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Hariana cattle"
+    },
+    {
+      "id": "n-dama",
+      "zh": "N'Dama",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "N'Dama"
+    },
+    {
+      "id": "inra-95",
+      "zh": "INRA 95",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "INRA 95"
+    },
+    {
+      "id": "vol-ne",
+      "zh": "Évolène",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Évolène"
+    },
+    {
+      "id": "fleckvieh-cattle",
+      "zh": "斑牛",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Fleckvieh cattle"
+    },
+    {
+      "id": "tudanca-cattle",
+      "zh": "Tudanca cattle",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Tudanca cattle"
+    },
+    {
+      "id": "braunvieh",
+      "zh": "布勞恩牛",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Braunvieh"
+    },
+    {
+      "id": "ukrainian-grey-cattle",
+      "zh": "Ukrainian Grey cattle",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Ukrainian Grey cattle"
+    },
+    {
+      "id": "arouquesa-cattle",
+      "zh": "Arouquesa cattle",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Arouquesa cattle"
+    },
+    {
+      "id": "hanu",
+      "zh": "韓牛",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Hanu"
+    },
+    {
+      "id": "carora-cattle",
+      "zh": "Carora cattle",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Carora cattle"
+    },
+    {
+      "id": "channel-island-cattle",
+      "zh": "Channel Island cattle",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Channel Island cattle"
+    },
+    {
+      "id": "chinese-holstein",
+      "zh": "中国荷斯坦牛",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Chinese Holstein"
+    },
+    {
+      "id": "criollo-cattle",
+      "zh": "Criollo cattle",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Criollo cattle"
+    },
+    {
+      "id": "crioulo-lageano",
+      "zh": "Crioulo Lageano",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Crioulo Lageano"
+    },
+    {
+      "id": "deoni",
+      "zh": "Deoni",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Deoni"
+    },
+    {
+      "id": "doayo-cattle",
+      "zh": "Doayo cattle",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Doayo cattle"
+    },
+    {
+      "id": "droughtmaster",
+      "zh": "Droughtmaster",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Droughtmaster"
+    },
+    {
+      "id": "enderby-island-cattle",
+      "zh": "Enderby Island cattle",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Enderby Island cattle"
+    },
+    {
+      "id": "finncattle",
+      "zh": "Finncattle",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Finncattle"
+    },
+    {
+      "id": "finnish-ayrshire",
+      "zh": "Finnish Ayrshire",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Finnish Ayrshire"
+    },
+    {
+      "id": "florida-cracker-cattle",
+      "zh": "Florida Cracker cattle",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Florida Cracker cattle"
+    },
+    {
+      "id": "frankeston",
+      "zh": "Frankeston",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Frankeston"
+    },
+    {
+      "id": "girolando",
+      "zh": "Girolando",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Girolando"
+    },
+    {
+      "id": "greek-shorthorn",
+      "zh": "Greek Shorthorn",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Greek Shorthorn"
+    },
+    {
+      "id": "greyman-cattle",
+      "zh": "Greyman cattle",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Greyman cattle"
+    },
+    {
+      "id": "brangus-beef-cattle",
+      "zh": "Brangus beef cattle",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Brangus beef cattle"
+    },
+    {
+      "id": "clavel-cattle",
+      "zh": "Clavel cattle",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Clavel cattle"
+    },
+    {
+      "id": "mantequera-leonesa",
+      "zh": "Mantequera leonesa",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Mantequera leonesa"
+    },
+    {
+      "id": "indo-brazilian",
+      "zh": "印度-巴西牛",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Indo-Brazilian"
+    },
+    {
+      "id": "istoben-cattle",
+      "zh": "Istoben cattle",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Istoben cattle"
+    },
+    {
+      "id": "jamaica-hope",
+      "zh": "Jamaica Hope",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Jamaica Hope"
+    },
+    {
+      "id": "niata-cattle",
+      "zh": "Niata cattle",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Niata cattle"
+    },
+    {
+      "id": "jarmelista-cattle",
+      "zh": "Jarmelista cattle",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Jarmelista cattle"
+    },
+    {
+      "id": "junqueira-cow",
+      "zh": "Junqueira cow",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Junqueira cow"
+    },
+    {
+      "id": "kangeyam-cattle",
+      "zh": "Kangeyam cattle",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Kangeyam cattle"
+    },
+    {
+      "id": "polish-red-cattle",
+      "zh": "Polish Red cattle",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Polish Red cattle"
+    },
+    {
+      "id": "illawarra-cattle",
+      "zh": "Illawarra cattle",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Illawarra cattle"
+    },
+    {
+      "id": "bo-karin",
+      "zh": "Boškarin",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Boškarin"
+    },
+    {
+      "id": "jutland-cattle",
+      "zh": "Jutland cattle",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Jutland cattle"
+    },
+    {
+      "id": "kerry-cattle",
+      "zh": "Kerry cattle",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Kerry cattle"
+    },
+    {
+      "id": "kuri",
+      "zh": "Kuri",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Kuri"
+    },
+    {
+      "id": "lincoln-red",
+      "zh": "Lincoln Red",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Lincoln Red"
+    },
+    {
+      "id": "lineback",
+      "zh": "Lineback",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Lineback"
+    },
+    {
+      "id": "hybridmaster",
+      "zh": "Hybridmaster",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Hybridmaster"
+    },
+    {
+      "id": "english-longhorn",
+      "zh": "英国长角牛",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "English Longhorn"
+    },
+    {
+      "id": "lourdais",
+      "zh": "Lourdais",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Lourdais"
+    },
+    {
+      "id": "mara-chine-cattle",
+      "zh": "普瓦图沼泽牛",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Maraîchine cattle"
+    },
+    {
+      "id": "marine-landaise",
+      "zh": "Marine landaise",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Marine landaise"
+    },
+    {
+      "id": "mateba",
+      "zh": "Mateba",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Mateba"
+    },
+    {
+      "id": "mertolenga",
+      "zh": "Mertolenga",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Mertolenga"
+    },
+    {
+      "id": "meuse-rhine-issel",
+      "zh": "默兹-莱茵-艾瑟尔牛",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Meuse-Rhine-Issel"
+    },
+    {
+      "id": "milking-devon",
+      "zh": "Milking Devon",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Milking Devon"
+    },
+    {
+      "id": "minhota",
+      "zh": "Minhota",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Minhota"
+    },
+    {
+      "id": "mirandaise",
+      "zh": "Mirandaise",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Mirandaise"
+    },
+    {
+      "id": "mirandesa-cattle",
+      "zh": "Mirandesa cattle",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Mirandesa cattle"
+    },
+    {
+      "id": "chillingham-cattle",
+      "zh": "Chillingham Cattle",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Chillingham Cattle"
+    },
+    {
+      "id": "red-angus",
+      "zh": "Red Angus",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Red Angus"
+    },
+    {
+      "id": "guzerat-cattle",
+      "zh": "古泽拉牛",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Guzerat cattle"
+    },
+    {
+      "id": "welsh-black",
+      "zh": "Welsh Black",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Welsh Black"
+    },
+    {
+      "id": "gyr-cattle",
+      "zh": "吉尔牛",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Gyr Cattle"
+    },
+    {
+      "id": "vechur-cow",
+      "zh": "维丘奶牛",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Vechur cow"
+    },
+    {
+      "id": "south-devon-cattle",
+      "zh": "南德温牛",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "South Devon cattle"
+    },
+    {
+      "id": "corriente-cattle",
+      "zh": "Corriente cattle",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Corriente cattle"
+    },
+    {
+      "id": "swedish-polled",
+      "zh": "Swedish Polled",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Swedish Polled"
+    },
+    {
+      "id": "bruna-dels-pirineus",
+      "zh": "Bruna dels Pirineus",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Bruna dels Pirineus"
+    },
+    {
+      "id": "kuchinoshima-cattle",
+      "zh": "Kuchinoshima cattle",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Kuchinoshima cattle"
+    },
+    {
+      "id": "japanese-shorthorn",
+      "zh": "Japanese Shorthorn",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Japanese Shorthorn"
+    },
+    {
+      "id": "japanese-polled",
+      "zh": "無角和種",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Japanese Polled"
+    },
+    {
+      "id": "japanese-black",
+      "zh": "黑毛和牛",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Japanese Black"
+    },
+    {
+      "id": "albera",
+      "zh": "Albera",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Albera"
+    },
+    {
+      "id": "volyn-meat-cattle",
+      "zh": "Volyn meat cattle",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Volyn meat cattle"
+    },
+    {
+      "id": "frieresa-cattle",
+      "zh": "Frieresa cattle",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Frieresa cattle"
+    },
+    {
+      "id": "slovenian-cika-cattle",
+      "zh": "Slovenian Cika Cattle",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Slovenian Cika Cattle"
+    },
+    {
+      "id": "kasaragod-dwarf-cattle",
+      "zh": "Kasaragod Dwarf Cattle",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Kasaragod Dwarf Cattle"
+    },
+    {
+      "id": "javari-cattle",
+      "zh": "Javari Cattle",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Javari Cattle"
+    },
+    {
+      "id": "tajima-cattle",
+      "zh": "但马牛",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Tajima cattle"
+    },
+    {
+      "id": "taurus-cattle",
+      "zh": "Taurus cattle",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Taurus cattle"
+    },
+    {
+      "id": "krishna-valley-cattle",
+      "zh": "黑天谷牛",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Krishna Valley cattle"
+    },
+    {
+      "id": "khillari-cattle",
+      "zh": "Khillari cattle",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Khillari cattle"
+    },
+    {
+      "id": "improved-red-and-white-meat-breed",
+      "zh": "Improved red-and-white meat breed",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Improved red-and-white meat breed"
+    },
+    {
+      "id": "latvian-blue",
+      "zh": "Latvian blue",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Latvian blue"
+    },
+    {
+      "id": "belgian-blue",
+      "zh": "比利时蓝牛",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Belgian Blue"
+    },
+    {
+      "id": "danish-red-cattle",
+      "zh": "丹麦红牛",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Danish Red cattle"
+    },
+    {
+      "id": "afrikaner-cattle",
+      "zh": "Afrikaner cattle",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Afrikaner cattle"
+    },
+    {
+      "id": "maronesa",
+      "zh": "Maronesa",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Maronesa"
+    },
+    {
+      "id": "murboden-cattle",
+      "zh": "Murboden Cattle",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Murboden Cattle"
+    },
+    {
+      "id": "beef-shorthorn",
+      "zh": "Beef Shorthorn",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Beef Shorthorn"
+    },
+    {
+      "id": "la-reina",
+      "zh": "La Reina",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "La Reina"
+    },
+    {
+      "id": "latvian-danish-red",
+      "zh": "Latvian Danish Red",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Latvian Danish Red"
+    },
+    {
+      "id": "lineback-cattle",
+      "zh": "Lineback cattle",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Lineback cattle"
+    },
+    {
+      "id": "lucerna",
+      "zh": "Lucerna",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Lucerna"
+    },
+    {
+      "id": "mahesana",
+      "zh": "Mahesana",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Mahesana"
+    },
+    {
+      "id": "dairy-shorthorn",
+      "zh": "Dairy Shorthorn",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Dairy Shorthorn"
+    },
+    {
+      "id": "miniature-texas-longhorn",
+      "zh": "Miniature Texas Longhorn",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Miniature Texas Longhorn"
+    },
+    {
+      "id": "mishima-cattle",
+      "zh": "Mishima cattle",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Mishima cattle"
+    },
+    {
+      "id": "mocho-nacional",
+      "zh": "Mocho Nacional",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Mocho Nacional"
+    },
+    {
+      "id": "murha",
+      "zh": "Murha",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Murha"
+    },
+    {
+      "id": "nagori",
+      "zh": "Nagori",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Nagori"
+    },
+    {
+      "id": "nagpuri",
+      "zh": "Nagpuri",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Nagpuri"
+    },
+    {
+      "id": "ongole-cattle",
+      "zh": "昂戈尔牛",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Ongole Cattle"
+    },
+    {
+      "id": "pantaneiro-cattle",
+      "zh": "Pantaneiro cattle",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Pantaneiro cattle"
+    },
+    {
+      "id": "pembroke-cattle",
+      "zh": "Pembroke cattle",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Pembroke cattle"
+    },
+    {
+      "id": "pineywoods",
+      "zh": "Pineywoods",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Pineywoods"
+    },
+    {
+      "id": "preta-cattle",
+      "zh": "Preta cattle",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Preta cattle"
+    },
+    {
+      "id": "punganur-cow",
+      "zh": "Punganur Cow",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Punganur Cow"
+    },
+    {
+      "id": "romosinuano-cattle",
+      "zh": "Romosinuano cattle",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Romosinuano cattle"
+    },
+    {
+      "id": "russian-black-pied",
+      "zh": "Russian Black Pied",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Russian Black Pied"
+    },
+    {
+      "id": "sanga-cattle",
+      "zh": "Sanga cattle",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Sanga cattle"
+    },
+    {
+      "id": "selembu",
+      "zh": "Selembu",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Selembu"
+    },
+    {
+      "id": "siboney-de-cuba",
+      "zh": "Siboney de Cuba",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Siboney de Cuba"
+    },
+    {
+      "id": "square-meater",
+      "zh": "Square Meater",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Square Meater"
+    },
+    {
+      "id": "tabapuan",
+      "zh": "Tabapuan",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Tabapuan"
+    },
+    {
+      "id": "tasmanian-grey",
+      "zh": "Tasmanian Grey",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Tasmanian Grey"
+    },
+    {
+      "id": "guernsey-cattle",
+      "zh": "更賽牛",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Guernsey cattle"
+    },
+    {
+      "id": "brahman-cattle",
+      "zh": "婆罗门牛",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Brahman cattle"
+    },
+    {
+      "id": "abigar",
+      "zh": "Abigar",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Abigar"
+    },
+    {
+      "id": "galloway-cattle",
+      "zh": "Galloway cattle",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Galloway cattle"
+    },
+    {
+      "id": "pinzgauer-cattle",
+      "zh": "Pinzgauer Cattle",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Pinzgauer Cattle"
+    },
+    {
+      "id": "fj-ll",
+      "zh": "Fjäll",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Fjäll"
+    },
+    {
+      "id": "pezzata-rossa-d-oropa",
+      "zh": "Pezzata Rossa d'Oropa",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Pezzata Rossa d'Oropa"
+    },
+    {
+      "id": "red-fulani-cattle",
+      "zh": "Red Fulani cattle",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Red Fulani cattle"
+    },
+    {
+      "id": "reggiana",
+      "zh": "Reggiana",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Reggiana"
+    },
+    {
+      "id": "vaca-retinta",
+      "zh": "Vaca retinta",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Vaca retinta"
+    },
+    {
+      "id": "belmont-red",
+      "zh": "Belmont Red",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Belmont Red"
+    },
+    {
+      "id": "red-polled-eastland",
+      "zh": "Red polled eastland",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Red polled eastland"
+    },
+    {
+      "id": "swedish-red-polled",
+      "zh": "特羅斯牛",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Swedish Red Polled"
+    },
+    {
+      "id": "rouge-flamande",
+      "zh": "Rouge flamande",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Rouge flamande"
+    },
+    {
+      "id": "sanganer",
+      "zh": "Sanganer",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Sanganer"
+    },
+    {
+      "id": "saosnoise-cattle",
+      "zh": "Saosnoise cattle",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Saosnoise cattle"
+    },
+    {
+      "id": "sardo-modicana",
+      "zh": "Sardo Modicana",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Sardo Modicana"
+    },
+    {
+      "id": "french-simmental",
+      "zh": "French Simmental",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "French Simmental"
+    },
+    {
+      "id": "canadian-speckle-park",
+      "zh": "Canadian Speckle Park",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Canadian Speckle Park"
+    },
+    {
+      "id": "tulim",
+      "zh": "Tulim",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Tulim"
+    },
+    {
+      "id": "aosta-black-pied",
+      "zh": "Aosta Black Pied",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Aosta Black Pied"
+    },
+    {
+      "id": "aosta-red-pied",
+      "zh": "Aosta Red Pied",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Aosta Red Pied"
+    },
+    {
+      "id": "villard-de-lans-cattle",
+      "zh": "Villard de Lans cattle",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Villard de Lans cattle"
+    },
+    {
+      "id": "waldviertler-blondvieh",
+      "zh": "Waldviertler blondvieh",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Waldviertler blondvieh"
+    },
+    {
+      "id": "australian-milking-zebu",
+      "zh": "Australian Milking Zebu",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Australian Milking Zebu"
+    },
+    {
+      "id": "asturian-mountain",
+      "zh": "Asturian Mountain",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Asturian Mountain"
+    },
+    {
+      "id": "danish-jersey",
+      "zh": "Danish Jersey",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Danish Jersey"
+    },
+    {
+      "id": "rendena",
+      "zh": "Rendena",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Rendena"
+    },
+    {
+      "id": "palmera",
+      "zh": "Palmera",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Palmera"
+    },
+    {
+      "id": "romanian-b-l-ata",
+      "zh": "Romanian Bălțata",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Romanian Bălțata"
+    },
+    {
+      "id": "podolian-cattle",
+      "zh": "Podolian cattle",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Podolian cattle"
+    },
+    {
+      "id": "northern-dairy-shorthorn",
+      "zh": "Northern Dairy Shorthorn",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Northern Dairy Shorthorn"
+    },
+    {
+      "id": "traditional-hereford",
+      "zh": "Traditional Hereford",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Traditional Hereford"
+    },
+    {
+      "id": "siri-cattle",
+      "zh": "Siri cattle",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Siri cattle"
+    },
+    {
+      "id": "red-kandhari-cattle",
+      "zh": "Red Kandhari cattle",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Red Kandhari cattle"
+    },
+    {
+      "id": "kenkatha-cattle",
+      "zh": "Kenkatha cattle",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Kenkatha cattle"
+    },
+    {
+      "id": "dangi-cattle",
+      "zh": "Dangi cattle",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Dangi cattle"
+    },
+    {
+      "id": "bachaur",
+      "zh": "Bachaur",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Bachaur"
+    },
+    {
+      "id": "mewati-cattle",
+      "zh": "Mewati cattle",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Mewati cattle"
+    },
+    {
+      "id": "ponwar-cattle",
+      "zh": "Ponwar cattle",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Ponwar cattle"
+    },
+    {
+      "id": "kherigarh-cattle",
+      "zh": "Kherigarh cattle",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Kherigarh cattle"
+    },
+    {
+      "id": "nadudana",
+      "zh": "Nadudana",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Nadudana"
+    },
+    {
+      "id": "miniature-jersey-cattle",
+      "zh": "Miniature Jersey cattle",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Miniature Jersey cattle"
+    },
+    {
+      "id": "raramuri-criollo-cattle",
+      "zh": "Raramuri Criollo cattle",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Raramuri Criollo cattle"
+    },
+    {
+      "id": "andalusian-black-cattle",
+      "zh": "Andalusian Black cattle",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Andalusian Black cattle"
+    },
+    {
+      "id": "berrenda-cattle",
+      "zh": "贝伦达牛",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Berrenda cattle"
+    },
+    {
+      "id": "twinner",
+      "zh": "Twinner",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Twinner"
+    },
+    {
+      "id": "wakwa",
+      "zh": "Wakwa",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Wakwa"
+    },
+    {
+      "id": "swedish-red-pied",
+      "zh": "Swedish Red Pied",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Swedish Red Pied"
+    },
+    {
+      "id": "sychevka-cattle",
+      "zh": "Sychevka cattle",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Sychevka cattle"
+    },
+    {
+      "id": "aosta-chestnut",
+      "zh": "Aosta Chestnut",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Aosta Chestnut"
+    },
+    {
+      "id": "swiss-holstein",
+      "zh": "Swiss Holstein",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Swiss Holstein"
+    },
+    {
+      "id": "polled-holsteins",
+      "zh": "Polled Holsteins",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Polled Holsteins"
+    },
+    {
+      "id": "pulikulam-cattle",
+      "zh": "Pulikulam cattle",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Pulikulam cattle"
+    },
+    {
+      "id": "drakensberger",
+      "zh": "Drakensberger",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Drakensberger"
+    },
+    {
+      "id": "vogelsberger-rind",
+      "zh": "Vogelsberger Rind",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Vogelsberger Rind"
+    },
+    {
+      "id": "f-meline",
+      "zh": "Fémeline",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Fémeline"
+    },
+    {
+      "id": "pie-rouge-de-carhaix",
+      "zh": "Pie rouge de Carhaix",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Pie rouge de Carhaix"
+    },
+    {
+      "id": "got-cattle",
+      "zh": "Gotō cattle",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Gotō cattle"
+    },
+    {
+      "id": "sibi-bhagnari",
+      "zh": "Sibi bhagnari",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Sibi bhagnari"
+    },
+    {
+      "id": "cheurfa-cattle",
+      "zh": "Cheurfa cattle",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Cheurfa cattle"
+    },
+    {
+      "id": "red-brangus",
+      "zh": "Red Brangus",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Red Brangus"
+    },
+    {
+      "id": "watusi",
+      "zh": "Watusi",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Watusi"
+    },
+    {
+      "id": "ankole",
+      "zh": "Ankole",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Ankole"
+    },
+    {
+      "id": "abergele-cattle",
+      "zh": "Abergele cattle",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Abergele cattle"
+    },
+    {
+      "id": "afar-cattle",
+      "zh": "Afar cattle",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Afar cattle"
+    },
+    {
+      "id": "arado-cattle",
+      "zh": "Arado cattle",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Arado cattle"
+    },
+    {
+      "id": "begayt-cattle",
+      "zh": "Begayt cattle",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Begayt cattle"
+    },
+    {
+      "id": "droimeann",
+      "zh": "Droimeann",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Droimeann"
+    },
+    {
+      "id": "fogera-cattle",
+      "zh": "Fogera cattle",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Fogera cattle"
+    },
+    {
+      "id": "encaste-albaserrada",
+      "zh": "Encaste Albaserrada",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Encaste Albaserrada"
+    },
+    {
+      "id": "gallardo-s-breed",
+      "zh": "Gallardo's Breed",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Gallardo's Breed"
+    },
+    {
+      "id": "encaste-urcola",
+      "zh": "Encaste Urcola",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Encaste Urcola"
+    },
+    {
+      "id": "vistahermosa-caste",
+      "zh": "Vistahermosa Caste",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Vistahermosa Caste"
+    },
+    {
+      "id": "v-zquez-breed",
+      "zh": "Vázquez Breed",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Vázquez Breed"
+    },
+    {
+      "id": "cabrera-s-breed",
+      "zh": "Cabrera's Breed",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Cabrera's Breed"
+    },
+    {
+      "id": "morucho-castellana-breed",
+      "zh": "Morucho-Castellana Breed",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Morucho-Castellana Breed"
+    },
+    {
+      "id": "jijona-s-breed",
+      "zh": "Jijona's Breed",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Jijona's Breed"
+    },
+    {
+      "id": "yuanxing",
+      "zh": "源興牛",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Yuanxing"
+    },
+    {
+      "id": "casta-navarra",
+      "zh": "Casta Navarra",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Casta Navarra"
+    },
+    {
+      "id": "encaste-santa-coloma",
+      "zh": "Encaste Santa Coloma",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Encaste Santa Coloma"
+    },
+    {
+      "id": "encaste-atanasio-fern-ndez",
+      "zh": "Encaste Atanasio Fernández",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Encaste Atanasio Fernández"
+    },
+    {
+      "id": "encaste-juan-pedro-domecq",
+      "zh": "Encaste Juan Pedro Domecq",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Encaste Juan Pedro Domecq"
+    },
+    {
+      "id": "saltillo-s-breed",
+      "zh": "Saltillo's Breed",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Saltillo's Breed"
+    },
+    {
+      "id": "vistahermosa-s-breed",
+      "zh": "Vistahermosa's breed",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Vistahermosa's breed"
+    },
+    {
+      "id": "portuguese-cattle",
+      "zh": "Portuguese Cattle",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Portuguese Cattle"
+    },
+    {
+      "id": "mirkadim-cattle",
+      "zh": "Mirkadim cattle",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Mirkadim cattle"
+    },
+    {
+      "id": "b-uf-moka",
+      "zh": "Bœuf Moka",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Bœuf Moka"
+    },
+    {
+      "id": "r-gnar-dsko",
+      "zh": "Rögnarödsko",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Rögnarödsko"
+    },
+    {
+      "id": "american-angus",
+      "zh": "American Angus",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "American Angus"
+    },
+    {
+      "id": "madura-cattle",
+      "zh": "Madura cattle",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Madura cattle"
+    },
+    {
+      "id": "hawaiian-wild-cattle",
+      "zh": "Hawaiian wild cattle",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Hawaiian wild cattle"
+    },
+    {
+      "id": "czech-fleckvieh",
+      "zh": "Czech Fleckvieh",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Czech Fleckvieh"
+    },
+    {
+      "id": "jeju-black-cattle",
+      "zh": "Jeju black cattle",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Jeju black cattle"
+    },
+    {
+      "id": "southern-yellow",
+      "zh": "Southern Yellow",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Southern Yellow"
+    },
+    {
+      "id": "northern-yellow",
+      "zh": "Northern Yellow",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Northern Yellow"
+    },
+    {
+      "id": "central-plains-yellow",
+      "zh": "Central Plains Yellow",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Central Plains Yellow"
+    },
+    {
+      "id": "north-american-piedmontese-cattle",
+      "zh": "North American Piedmontese cattle",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "North American Piedmontese cattle"
+    },
+    {
+      "id": "vaynol-cattle",
+      "zh": "Vaynol cattle",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Vaynol cattle"
+    },
+    {
+      "id": "mallorquina-cattle",
+      "zh": "Mallorquina cattle",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Mallorquina cattle"
+    },
+    {
+      "id": "swedish-friesian",
+      "zh": "Swedish Friesian",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Swedish Friesian"
+    },
+    {
+      "id": "horro-cattle",
+      "zh": "Horro cattle",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Horro cattle"
+    },
+    {
+      "id": "lohani-cattle",
+      "zh": "Lohani cattle",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Lohani cattle"
+    },
+    {
+      "id": "hallikar",
+      "zh": "Hallikar",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Hallikar"
+    },
+    {
+      "id": "gangatiri-cattle",
+      "zh": "Gangatiri cattle",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Gangatiri cattle"
+    },
+    {
+      "id": "rathi-cattle",
+      "zh": "Rathi cattle",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Rathi cattle"
+    },
+    {
+      "id": "caquete-o",
+      "zh": "Caqueteño",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Caqueteño"
+    },
+    {
+      "id": "chino-santandereano",
+      "zh": "Chino santandereano",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Chino santandereano"
+    },
+    {
+      "id": "v-neko",
+      "zh": "Väneko",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Väneko"
+    },
+    {
+      "id": "jersey-cattle",
+      "zh": "娟珊牛",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Jersey cattle"
+    },
+    {
+      "id": "brown-swiss",
+      "zh": "瑞士褐牛",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Brown Swiss"
+    },
+    {
+      "id": "bushuyev",
+      "zh": "Bushuyev",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Bushuyev"
+    },
+    {
+      "id": "bu-a-cattle",
+      "zh": "Buša cattle",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Buša cattle"
+    },
+    {
+      "id": "cachena-cattle",
+      "zh": "Cachena cattle",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Cachena cattle"
+    },
+    {
+      "id": "gulya",
+      "zh": "gulya",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "gulya"
+    },
+    {
+      "id": "gaolao-cattle",
+      "zh": "Gaolao cattle",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Gaolao cattle"
+    },
+    {
+      "id": "bargur",
+      "zh": "Bargur",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Bargur"
+    },
+    {
+      "id": "nimari-cattle",
+      "zh": "Nimari cattle",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Nimari cattle"
+    },
+    {
+      "id": "malnad-gidda",
+      "zh": "Malnad Gidda",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Malnad Gidda"
+    },
+    {
+      "id": "malvi",
+      "zh": "摩腊婆語",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Malvi"
+    },
+    {
+      "id": "kankrej",
+      "zh": "康古拉牛",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Kankrej"
+    },
+    {
+      "id": "alistana-sanabresa",
+      "zh": "Alistana sanabresa",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Alistana sanabresa"
+    },
+    {
+      "id": "sunandini",
+      "zh": "Sunandini",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Sunandini"
+    },
+    {
+      "id": "sarda",
+      "zh": "Sarda",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Sarda"
+    },
+    {
+      "id": "sardo-bruna",
+      "zh": "Sardo Bruna",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Sardo Bruna"
+    },
+    {
+      "id": "varzese-ottonese-tortonese",
+      "zh": "Varzese-Ottonese-Tortonese",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Varzese-Ottonese-Tortonese"
+    },
+    {
+      "id": "pezzata-rossa-italiana",
+      "zh": "Pezzata Rossa Italiana",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Pezzata Rossa Italiana"
+    },
+    {
+      "id": "hays-converter",
+      "zh": "Hays Converter",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Hays Converter"
+    },
+    {
+      "id": "marisme-a",
+      "zh": "Marismeña",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Marismeña"
+    },
+    {
+      "id": "murcian",
+      "zh": "Murcian",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Murcian"
+    },
+    {
+      "id": "marinhoa-cattle",
+      "zh": "Marinhoa cattle",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Marinhoa cattle"
+    },
+    {
+      "id": "abruzzese-cattle",
+      "zh": "Abruzzese cattle",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Abruzzese cattle"
+    },
+    {
+      "id": "blue-albion",
+      "zh": "Blue Albion",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Blue Albion"
+    },
+    {
+      "id": "shetland-cattle",
+      "zh": "Shetland cattle",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Shetland cattle"
+    },
+    {
+      "id": "philippine-cattle",
+      "zh": "Philippine cattle",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Philippine cattle"
+    },
+    {
+      "id": "pasundan-cattle",
+      "zh": "Pasundan cattle",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Pasundan cattle"
+    },
+    {
+      "id": "poda-thurpu",
+      "zh": "Poda Thurpu",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Poda Thurpu"
+    },
+    {
+      "id": "dutch-belted",
+      "zh": "Dutch Belted",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Dutch Belted"
+    },
+    {
+      "id": "tory-island-cattle",
+      "zh": "Tory Island Cattle",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Tory Island Cattle"
+    },
+    {
+      "id": "cotentine",
+      "zh": "Cotentine",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Cotentine"
+    },
+    {
+      "id": "arsi",
+      "zh": "Arsi",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Arsi"
+    },
+    {
+      "id": "granem-la-cow",
+      "zh": "Granemåla cow",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Granemåla cow"
+    },
+    {
+      "id": "dajal-cattle",
+      "zh": "Dajal cattle",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Dajal cattle"
+    },
+    {
+      "id": "katerini",
+      "zh": "Katerini",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Katerini"
+    },
+    {
+      "id": "sykia",
+      "zh": "Sykia",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Sykia"
+    },
+    {
+      "id": "tauros",
+      "zh": "tauros",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "tauros"
+    },
+    {
+      "id": "inyambo",
+      "zh": "Inyambo",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Inyambo"
+    },
+    {
+      "id": "piedmontese",
+      "zh": "Piedmontese",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Piedmontese"
+    },
+    {
+      "id": "murnau-werdenfels-cattle",
+      "zh": "Murnau-Werdenfels Cattle",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Murnau-Werdenfels Cattle"
+    },
+    {
+      "id": "highland-cattle",
+      "zh": "高地牛",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Highland cattle"
+    },
+    {
+      "id": "canchim",
+      "zh": "Canchim",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Canchim"
+    },
+    {
+      "id": "chianina",
+      "zh": "契安尼娜牛",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Chianina"
+    },
+    {
+      "id": "maremmana",
+      "zh": "Maremmana",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Maremmana"
+    },
+    {
+      "id": "harz-red-mountain-cattle",
+      "zh": "Harz red mountain cattle",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Harz red mountain cattle"
+    },
+    {
+      "id": "pirenaica",
+      "zh": "Pirenaica",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Pirenaica"
+    },
+    {
+      "id": "german-angus",
+      "zh": "German Angus",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "German Angus"
+    },
+    {
+      "id": "dexter-cattle",
+      "zh": "德克斯特牛",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Dexter cattle"
+    },
+    {
+      "id": "beef-cattle",
+      "zh": "肉用牛",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "beef cattle"
+    },
+    {
+      "id": "whitebred-shorthorn",
+      "zh": "Whitebred Shorthorn",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Whitebred Shorthorn"
+    },
+    {
+      "id": "caldelana",
+      "zh": "Caldelana",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Caldelana"
+    },
+    {
+      "id": "menorquina",
+      "zh": "Menorquina",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Menorquina"
+    },
+    {
+      "id": "cholistani",
+      "zh": "Cholistani",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Cholistani"
+    },
+    {
+      "id": "dhanni",
+      "zh": "Dhanni",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Dhanni"
+    },
+    {
+      "id": "sarlabot",
+      "zh": "Sarlabot",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Sarlabot"
+    },
+    {
+      "id": "chikso",
+      "zh": "Chikso",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Chikso"
+    },
+    {
+      "id": "umblachery-cattle",
+      "zh": "Umblachery cattle",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Umblachery cattle"
+    },
+    {
+      "id": "garvonesa",
+      "zh": "Garvonesa",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Garvonesa"
+    },
+    {
+      "id": "b-arnaise-cattle",
+      "zh": "Béarnaise cattle",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Béarnaise cattle"
+    },
+    {
+      "id": "cabannina",
+      "zh": "Cabannina",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Cabannina"
+    },
+    {
+      "id": "calvana",
+      "zh": "Calvana",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Calvana"
+    },
+    {
+      "id": "camargue-cattle",
+      "zh": "Camargue cattle",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Camargue cattle"
+    },
+    {
+      "id": "canaria-cattle",
+      "zh": "Canaria cattle",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Canaria cattle"
+    },
+    {
+      "id": "caracu",
+      "zh": "Caracu",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Caracu"
+    },
+    {
+      "id": "limiana",
+      "zh": "Limiana",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Limiana"
+    },
+    {
+      "id": "channi",
+      "zh": "Channi",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Channi"
+    },
+    {
+      "id": "australian-charbray",
+      "zh": "Australian Charbray",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Australian Charbray"
+    },
+    {
+      "id": "red-chittagong",
+      "zh": "Red chittagong",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Red chittagong"
+    },
+    {
+      "id": "cinisara",
+      "zh": "Cinisara",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Cinisara"
+    },
+    {
+      "id": "corsican-cattle",
+      "zh": "Corsican Cattle",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Corsican Cattle"
+    },
+    {
+      "id": "cr-ole-cattle",
+      "zh": "Créole cattle",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Créole cattle"
+    },
+    {
+      "id": "spanish-fighting-bull",
+      "zh": "西班牙斗牛",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Spanish Fighting Bull"
+    },
+    {
+      "id": "norwegian-red",
+      "zh": "Norwegian Red",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Norwegian Red"
+    },
+    {
+      "id": "ennstal-mountain-pied-cattle",
+      "zh": "Ennstal Mountain Pied cattle",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Ennstal Mountain Pied cattle"
+    },
+    {
+      "id": "tyrolean-grey",
+      "zh": "Tyrolean grey",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Tyrolean grey"
+    },
+    {
+      "id": "kalmyk",
+      "zh": "卡尔梅茨牛",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Kalmyk"
+    },
+    {
+      "id": "swedish-red-and-white",
+      "zh": "瑞典红牛",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Swedish Red-and-White"
+    },
+    {
+      "id": "estonian-native-cattle",
+      "zh": "Estonian native cattle",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Estonian native cattle"
+    },
+    {
+      "id": "r-tisches-grauvieh",
+      "zh": "Rätisches Grauvieh",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Rätisches Grauvieh"
+    },
+    {
+      "id": "kostroma",
+      "zh": "Kostroma",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Kostroma"
+    },
+    {
+      "id": "gelbvieh",
+      "zh": "德国黄牛",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Gelbvieh"
+    },
+    {
+      "id": "bazadese",
+      "zh": "Bazadese",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Bazadese"
+    },
+    {
+      "id": "beefmaster",
+      "zh": "肉主牛",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Beefmaster"
+    },
+    {
+      "id": "berrenda-en-colorado",
+      "zh": "Berrenda en colorado",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Berrenda en colorado"
+    },
+    {
+      "id": "betizu",
+      "zh": "Betizu",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Betizu"
+    },
+    {
+      "id": "blanca-cacere-a",
+      "zh": "Blanca cacereña",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Blanca cacereña"
+    },
+    {
+      "id": "bleue-du-nord",
+      "zh": "Bleue du Nord",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Bleue du Nord"
+    },
+    {
+      "id": "bohuskulla",
+      "zh": "Bohuskulla",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Bohuskulla"
+    },
+    {
+      "id": "bonsmara",
+      "zh": "Bonsmara",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Bonsmara"
+    },
+    {
+      "id": "boran-cattle",
+      "zh": "Boran cattle",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Boran cattle"
+    },
+    {
+      "id": "bordelais-cattle",
+      "zh": "Bordelais cattle",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Bordelais cattle"
+    },
+    {
+      "id": "brava",
+      "zh": "Brava",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Brava"
+    },
+    {
+      "id": "bretonne-pie-noir",
+      "zh": "Bretonne Pie Noir",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Bretonne Pie Noir"
+    },
+    {
+      "id": "british-white",
+      "zh": "British White",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "British White"
+    },
+    {
+      "id": "atlas-brunette",
+      "zh": "Atlas brunette",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Atlas brunette"
+    },
+    {
+      "id": "bruna-alpina",
+      "zh": "Bruna Alpina",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Bruna Alpina"
+    },
+    {
+      "id": "buelingo",
+      "zh": "BueLingo",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "BueLingo"
+    },
+    {
+      "id": "white-fulani",
+      "zh": "White Fulani",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "White Fulani"
+    },
+    {
+      "id": "burlina-cow",
+      "zh": "Burlina cow",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Burlina cow"
+    },
+    {
+      "id": "kiwi",
+      "zh": "kiwi",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "kiwi"
+    },
+    {
+      "id": "algarvia",
+      "zh": "Algarvia",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Algarvia"
+    },
+    {
+      "id": "white-galloway",
+      "zh": "White Galloway",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "White Galloway"
+    },
+    {
+      "id": "avile-a-negra-ib-rica-bociblanca",
+      "zh": "Avileña-Negra ibérica bociblanca",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Avileña-Negra ibérica bociblanca"
+    },
+    {
+      "id": "galician-blond",
+      "zh": "Galician Blond",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Galician Blond"
+    },
+    {
+      "id": "georgian-mountain-cattle",
+      "zh": "Georgian mountain cattle",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Georgian mountain cattle"
+    },
+    {
+      "id": "hinterwald",
+      "zh": "Hinterwald",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Hinterwald"
+    },
+    {
+      "id": "red-gorbatov",
+      "zh": "Red Gorbatov",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Red Gorbatov"
+    },
+    {
+      "id": "lebedyn",
+      "zh": "Lebedyn",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Lebedyn"
+    },
+    {
+      "id": "belgian-red",
+      "zh": "Belgian Red",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Belgian Red"
+    },
+    {
+      "id": "brown-carpathian",
+      "zh": "Brown Carpathian",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Brown Carpathian"
+    },
+    {
+      "id": "black-pied-dairy-cattle",
+      "zh": "Black Pied dairy cattle",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Black Pied dairy cattle"
+    },
+    {
+      "id": "irish-moiled",
+      "zh": "Irish Moiled",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Irish Moiled"
+    },
+    {
+      "id": "aure-et-saint-girons",
+      "zh": "Aure et Saint-Girons",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Aure et Saint-Girons"
+    },
+    {
+      "id": "avile-a-negra-ib-rica-cattle",
+      "zh": "Avileña-Negra ibérica cattle",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Avileña-Negra ibérica cattle"
+    },
+    {
+      "id": "ayrshire-cattle",
+      "zh": "愛爾夏牛",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Ayrshire cattle"
+    },
+    {
+      "id": "belted-galloway",
+      "zh": "白帶格羅威牛",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Belted Galloway"
+    },
+    {
+      "id": "bestuzhev",
+      "zh": "Bestuzhev",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Bestuzhev"
+    },
+    {
+      "id": "tswana",
+      "zh": "Tswana",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Tswana"
+    },
+    {
+      "id": "carinthian-blondvieh",
+      "zh": "Carinthian Blondvieh",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Carinthian Blondvieh"
+    },
+    {
+      "id": "blonde-d-aquitaine",
+      "zh": "金色阿奎丹牛",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Blonde d'Aquitaine"
+    },
+    {
+      "id": "bianca-modenese",
+      "zh": "Bianca Modenese",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Bianca Modenese"
+    },
+    {
+      "id": "modicana",
+      "zh": "Modicana",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Modicana"
+    },
+    {
+      "id": "monchina",
+      "zh": "Monchina",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Monchina"
+    },
+    {
+      "id": "morucha",
+      "zh": "Morucha",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Morucha"
+    },
+    {
+      "id": "nantaise-cattle",
+      "zh": "Nantaise cattle",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Nantaise cattle"
+    },
+    {
+      "id": "nguni-cattle",
+      "zh": "恩古尼牛",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Nguni cattle"
+    },
+    {
+      "id": "sidet-tr-nder-og-nordlandsfe",
+      "zh": "Sidet trønder- og nordlandsfe",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Sidet trønder- og nordlandsfe"
+    },
+    {
+      "id": "parthenais",
+      "zh": "Parthenais",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Parthenais"
+    },
+    {
+      "id": "pasiega-cattle",
+      "zh": "Pasiega cattle",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Pasiega cattle"
+    },
+    {
+      "id": "lithuanian-red",
+      "zh": "立陶宛紅牛",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Lithuanian Red"
+    },
+    {
+      "id": "sortbroget-dansk-malkerace",
+      "zh": "Sortbroget dansk malkerace",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Sortbroget dansk malkerace"
+    },
+    {
+      "id": "pie-rouge-des-plaines",
+      "zh": "Pie Rouge des Plaines",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Pie Rouge des Plaines"
+    },
+    {
+      "id": "mucca-pisana",
+      "zh": "Mucca Pisana",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Mucca Pisana"
+    },
+    {
+      "id": "podolica",
+      "zh": "Podolica",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Podolica"
+    },
+    {
+      "id": "pontremolese",
+      "zh": "Pontremolese",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Pontremolese"
+    },
+    {
+      "id": "prim-holstein",
+      "zh": "Prim'Holstein",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Prim'Holstein"
+    },
+    {
+      "id": "canadienne-cattle",
+      "zh": "Canadienne cattle",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Canadienne cattle"
+    },
+    {
+      "id": "red-bororo",
+      "zh": "Red Bororo",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Red Bororo"
+    },
+    {
+      "id": "iberian-cattle",
+      "zh": "Iberian cattle",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Iberian cattle"
+    },
+    {
+      "id": "ramo-grande",
+      "zh": "Ramo Grande",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Ramo Grande"
+    },
+    {
+      "id": "yakutian-cattle",
+      "zh": "雅庫特牛",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Yakutian cattle"
+    },
+    {
+      "id": "abyssinian-shorthorned-zebu",
+      "zh": "Abyssinian Shorthorned Zebu",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Abyssinian Shorthorned Zebu"
+    },
+    {
+      "id": "aceh",
+      "zh": "Aceh",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Aceh"
+    },
+    {
+      "id": "tuli",
+      "zh": "Tuli",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Tuli"
+    },
+    {
+      "id": "uckerm-rker",
+      "zh": "Uckermärker",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Uckermärker"
+    },
+    {
+      "id": "west-african-dwarf-cattle-of-lagune",
+      "zh": "West African dwarf cattle of Lagune",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "West African dwarf cattle of Lagune"
+    },
+    {
+      "id": "vosges-cattle",
+      "zh": "Vosges cattle",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Vosges cattle"
+    },
+    {
+      "id": "vorderwald-cattle",
+      "zh": "Vorderwald Cattle",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Vorderwald Cattle"
+    },
+    {
+      "id": "white-park",
+      "zh": "White Park",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "White Park"
+    },
+    {
+      "id": "blaarkop",
+      "zh": "泡头牛",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Blaarkop"
+    },
+    {
+      "id": "braford",
+      "zh": "Braford",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Braford"
+    },
+    {
+      "id": "rotes-h-henvieh",
+      "zh": "Rotes Höhenvieh",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Rotes Höhenvieh"
+    },
+    {
+      "id": "adaptaur",
+      "zh": "Adaptaur",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Adaptaur"
+    },
+    {
+      "id": "agerolese",
+      "zh": "Agerolese",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Agerolese"
+    },
+    {
+      "id": "alentejana",
+      "zh": "Alentejana",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Alentejana"
+    },
+    {
+      "id": "american",
+      "zh": "American",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "American"
+    },
+    {
+      "id": "amerifax",
+      "zh": "Amerifax",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Amerifax"
+    },
+    {
+      "id": "armorican",
+      "zh": "Armorican",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Armorican"
+    },
+    {
+      "id": "asturian-valley-cattle",
+      "zh": "Asturian Valley cattle",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Asturian Valley cattle"
+    },
+    {
+      "id": "lowline-cattle",
+      "zh": "澳洲楼来矮脚牛",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Lowline cattle"
+    },
+    {
+      "id": "azaouak",
+      "zh": "Azaouak",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Azaouak"
+    },
+    {
+      "id": "rode-geus",
+      "zh": "Rode geus",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Rode geus"
+    },
+    {
+      "id": "baladi",
+      "zh": "Baladi",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Baladi"
+    },
+    {
+      "id": "baoule",
+      "zh": "Baoule",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Baoule"
+    },
+    {
+      "id": "barzona",
+      "zh": "Barzona",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Barzona"
+    },
+    {
+      "id": "original-braunvieh",
+      "zh": "Original Braunvieh",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Original Braunvieh"
+    },
+    {
+      "id": "red-holstein",
+      "zh": "Red Holstein",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Red Holstein"
+    },
+    {
+      "id": "pustertal-pied",
+      "zh": "Pustertal Pied",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Pustertal Pied"
+    },
+    {
+      "id": "randall-lineback",
+      "zh": "Randall Lineback",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Randall Lineback"
+    },
+    {
+      "id": "sussex-cattle",
+      "zh": "Sussex cattle",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Sussex cattle"
+    },
+    {
+      "id": "garonnaise",
+      "zh": "Garonnaise",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Garonnaise"
+    },
+    {
+      "id": "sahiwal-cattle",
+      "zh": "Sahiwal cattle",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Sahiwal cattle"
+    },
+    {
+      "id": "brangus",
+      "zh": "布兰格斯牛",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Brangus"
+    },
+    {
+      "id": "ferrandaise-cattle",
+      "zh": "Ferrandaise cattle",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Ferrandaise cattle"
+    },
+    {
+      "id": "red-tambov-cattle",
+      "zh": "Red Tambov cattle",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Red Tambov cattle"
+    },
+    {
+      "id": "amrit-mahal",
+      "zh": "Amrit Mahal",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Amrit Mahal"
+    },
+    {
+      "id": "marchigiana",
+      "zh": "Marchigiana",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Marchigiana"
+    },
+    {
+      "id": "santa-gertrudis-cattle",
+      "zh": "圣格鲁迪牛",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Santa Gertrudis cattle"
+    },
+    {
+      "id": "vianesa",
+      "zh": "Vianesa",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Vianesa"
+    },
+    {
+      "id": "aubrac",
+      "zh": "Aubrac",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Aubrac"
+    },
+    {
+      "id": "aulie-ata-cattle",
+      "zh": "Aulie-Ata cattle",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Aulie-Ata cattle"
+    },
+    {
+      "id": "hungarian-gray-cattle",
+      "zh": "Hungarian Gray cattle",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Hungarian Gray cattle"
+    },
+    {
+      "id": "ankole-watusi",
+      "zh": "Ankole-Watusi",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Ankole-Watusi"
+    },
+    {
+      "id": "montb-liarde-cattle",
+      "zh": "Montbéliarde cattle",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Montbéliarde cattle"
+    },
+    {
+      "id": "telemark-cattle",
+      "zh": "Telemark cattle",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Telemark cattle"
+    },
+    {
+      "id": "senepol",
+      "zh": "Senepol",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Senepol"
+    },
+    {
+      "id": "lakenvelder",
+      "zh": "Lakenvelder",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Lakenvelder"
+    },
+    {
+      "id": "tarentaise-cattle",
+      "zh": "Tarentaise cattle",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Tarentaise cattle"
+    },
+    {
+      "id": "red-poll",
+      "zh": "Red Poll",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Red Poll"
+    },
+    {
+      "id": "sayaguesa-cattle",
+      "zh": "Sayaguesa Cattle",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Sayaguesa Cattle"
+    },
+    {
+      "id": "gloucester-cattle",
+      "zh": "Gloucester cattle",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Gloucester cattle"
+    },
+    {
+      "id": "q135949549",
+      "zh": "塔吉克黑花牛",
+      "prevalence": "uncommon",
+      "listed": false
+    },
+    {
+      "id": "q139858550",
+      "zh": "固原黄牛",
+      "prevalence": "uncommon",
+      "listed": false
+    }
+  ]
+}

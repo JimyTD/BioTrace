@@ -95,6 +95,7 @@ export async function migrate() {
       rarity TEXT NOT NULL DEFAULT 'N',
       cover_observation_id TEXT,
       lit_breed_ids_json TEXT NOT NULL,
+      lit_free_breeds_json TEXT NOT NULL,
       unregistered_lit INTEGER NOT NULL,
       first_collected_at INTEGER NOT NULL,
       updated_at INTEGER NOT NULL
@@ -166,6 +167,11 @@ export async function migrate() {
     "pet_collection_entries",
     "rarity",
     "rarity TEXT NOT NULL DEFAULT 'N'",
+  );
+  await ensureColumn(
+    "pet_collection_entries",
+    "lit_free_breeds_json",
+    "lit_free_breeds_json TEXT NOT NULL DEFAULT '[]'",
   );
 
   // 稀有度量表的判据列：查得出某行是哪档模型按哪些答案判的，老库补齐。

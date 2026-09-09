@@ -3,9 +3,2278 @@
   "taxonKey": "Gallus gallus",
   "commonNameZh": "家鸡",
   "breeds": [
-    { "id": "sanhuang", "zh": "三黄鸡", "aliases": ["三黄"], "prevalence": "common" },
-    { "id": "silkie", "zh": "乌骨鸡", "en": "Silkie", "aliases": ["乌鸡", "丝羽乌骨鸡"], "prevalence": "common" },
-    { "id": "barred", "zh": "芦花鸡", "aliases": ["芦花"], "prevalence": "uncommon" },
-    { "id": "leghorn", "zh": "来航鸡", "en": "Leghorn", "aliases": ["白来航"], "prevalence": "uncommon" }
+    {
+      "id": "sanhuang",
+      "zh": "三黄鸡",
+      "aliases": [
+        "三黄"
+      ],
+      "prevalence": "common"
+    },
+    {
+      "id": "silkie",
+      "zh": "乌骨鸡",
+      "en": "Silkie",
+      "aliases": [
+        "乌鸡",
+        "丝羽乌骨鸡",
+        "烏骨雞"
+      ],
+      "prevalence": "common"
+    },
+    {
+      "id": "barred",
+      "zh": "芦花鸡",
+      "aliases": [
+        "芦花"
+      ],
+      "prevalence": "uncommon"
+    },
+    {
+      "id": "leghorn",
+      "zh": "来航鸡",
+      "en": "Leghorn",
+      "aliases": [
+        "白来航",
+        "力康雞"
+      ],
+      "prevalence": "uncommon"
+    },
+    {
+      "id": "beijing-you",
+      "zh": "北京油鸡",
+      "prevalence": "uncommon",
+      "listed": true
+    },
+    {
+      "id": "wenchang",
+      "zh": "文昌鸡",
+      "prevalence": "common",
+      "listed": true
+    },
+    {
+      "id": "qingyuan",
+      "zh": "清远麻鸡",
+      "aliases": [
+        "清远麻"
+      ],
+      "prevalence": "common",
+      "listed": true
+    },
+    {
+      "id": "langshan",
+      "zh": "狼山鸡",
+      "en": "Langshan",
+      "prevalence": "uncommon",
+      "listed": true,
+      "aliases": [
+        "Croad Langshan"
+      ]
+    },
+    {
+      "id": "xianju",
+      "zh": "仙居鸡",
+      "prevalence": "uncommon",
+      "listed": true
+    },
+    {
+      "id": "chahua",
+      "zh": "茶花鸡",
+      "prevalence": "uncommon",
+      "listed": true
+    },
+    {
+      "id": "tibetan-chicken",
+      "zh": "藏鸡",
+      "prevalence": "uncommon",
+      "listed": true
+    },
+    {
+      "id": "pudong",
+      "zh": "浦东鸡",
+      "prevalence": "uncommon",
+      "listed": true
+    },
+    {
+      "id": "huiyang",
+      "zh": "惠阳胡须鸡",
+      "aliases": [
+        "胡须鸡"
+      ],
+      "prevalence": "uncommon",
+      "listed": true
+    },
+    {
+      "id": "guangxi-sanhuang",
+      "zh": "广西三黄鸡",
+      "prevalence": "common",
+      "listed": true
+    },
+    {
+      "id": "wenshang-barred",
+      "zh": "汶上芦花鸡",
+      "prevalence": "uncommon",
+      "listed": true
+    },
+    {
+      "id": "damaigu",
+      "zh": "大骨鸡",
+      "prevalence": "uncommon",
+      "listed": true
+    },
+    {
+      "id": "baierhuang",
+      "zh": "白耳黄鸡",
+      "prevalence": "uncommon",
+      "listed": true
+    },
+    {
+      "id": "belgian-bearded-d-anvers",
+      "zh": "Belgian Bearded d'Anvers",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Belgian Bearded d'Anvers"
+    },
+    {
+      "id": "lakenvelder",
+      "zh": "Lakenvelder",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Lakenvelder"
+    },
+    {
+      "id": "deutsches-reichshuhn",
+      "zh": "Deutsches Reichshuhn",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Deutsches Reichshuhn"
+    },
+    {
+      "id": "kosovo-long-crowing-rooster",
+      "zh": "Kosovo Long Crowing Rooster",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Kosovo Long Crowing Rooster"
+    },
+    {
+      "id": "yokohama",
+      "zh": "横滨鸡",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Yokohama"
+    },
+    {
+      "id": "ardennaise",
+      "zh": "Ardennaise",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Ardennaise"
+    },
+    {
+      "id": "broiler",
+      "zh": "肉鸡",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "broiler"
+    },
+    {
+      "id": "derbyshire-redcap",
+      "zh": "Derbyshire Redcap",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Derbyshire Redcap"
+    },
+    {
+      "id": "sulmtaler",
+      "zh": "Sulmtaler",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Sulmtaler"
+    },
+    {
+      "id": "barbu-de-watermael",
+      "zh": "Barbu de Watermael",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Barbu de Watermael"
+    },
+    {
+      "id": "serama",
+      "zh": "塞拉玛鸡",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Serama"
+    },
+    {
+      "id": "booted-bantam",
+      "zh": "Booted Bantam",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Booted Bantam"
+    },
+    {
+      "id": "ohiki",
+      "zh": "Ohiki",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Ohiki"
+    },
+    {
+      "id": "white-faced-black-spanish",
+      "zh": "White-faced Black Spanish",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "White-faced Black Spanish"
+    },
+    {
+      "id": "burmese",
+      "zh": "Burmese",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Burmese"
+    },
+    {
+      "id": "ramelsloher",
+      "zh": "Ramelsloher",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Ramelsloher"
+    },
+    {
+      "id": "groninger-meeuwen",
+      "zh": "Groninger Meeuwen",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Groninger Meeuwen"
+    },
+    {
+      "id": "drents-hoen",
+      "zh": "Drents hoen",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Drents hoen"
+    },
+    {
+      "id": "belgian-d-everberg",
+      "zh": "Belgian d'Everberg",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Belgian d'Everberg"
+    },
+    {
+      "id": "sundheimer",
+      "zh": "Sundheimer",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Sundheimer"
+    },
+    {
+      "id": "italiener",
+      "zh": "Italiener",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Italiener"
+    },
+    {
+      "id": "bielefelder-kennhuhn",
+      "zh": "Bielefelder Kennhuhn",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Bielefelder Kennhuhn"
+    },
+    {
+      "id": "polish",
+      "zh": "Polish",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Polish"
+    },
+    {
+      "id": "amrock",
+      "zh": "Amrock",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Amrock"
+    },
+    {
+      "id": "appenzeller-spitzhauben",
+      "zh": "Appenzeller Spitzhauben",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Appenzeller Spitzhauben"
+    },
+    {
+      "id": "old-english-game",
+      "zh": "Old English Game",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Old English Game"
+    },
+    {
+      "id": "altsteirer",
+      "zh": "Altsteirer",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Altsteirer"
+    },
+    {
+      "id": "malines",
+      "zh": "Malines",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Malines"
+    },
+    {
+      "id": "pekin",
+      "zh": "Pekin",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Pekin"
+    },
+    {
+      "id": "frizzle",
+      "zh": "Frizzle",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Frizzle"
+    },
+    {
+      "id": "schijndelaar",
+      "zh": "Schijndelaar",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Schijndelaar"
+    },
+    {
+      "id": "amarela",
+      "zh": "Amarela",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Amarela"
+    },
+    {
+      "id": "american-game",
+      "zh": "American Game",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "American Game"
+    },
+    {
+      "id": "pita-pinta-asturiana",
+      "zh": "Pita Pinta Asturiana",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Pita Pinta Asturiana"
+    },
+    {
+      "id": "australian-game",
+      "zh": "Australian Game",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Australian Game"
+    },
+    {
+      "id": "australian-langshan",
+      "zh": "澳大利亚狼山鸡",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Australian Langshan"
+    },
+    {
+      "id": "ayam-pelung",
+      "zh": "Ayam Pelung",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Ayam Pelung"
+    },
+    {
+      "id": "bianca-di-saluzzo",
+      "zh": "Bianca di Saluzzo",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Bianca di Saluzzo"
+    },
+    {
+      "id": "bionda-piemontese",
+      "zh": "Bionda Piemontese",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Bionda Piemontese"
+    },
+    {
+      "id": "blue-foot-chicken",
+      "zh": "Blue Foot Chicken",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Blue Foot Chicken"
+    },
+    {
+      "id": "blue-hen-of-delaware",
+      "zh": "Blue Hen of Delaware",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Blue Hen of Delaware"
+    },
+    {
+      "id": "legbar",
+      "zh": "Legbar",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Legbar"
+    },
+    {
+      "id": "burford-brown",
+      "zh": "Burford Brown",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Burford Brown"
+    },
+    {
+      "id": "campine",
+      "zh": "Campine",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Campine"
+    },
+    {
+      "id": "daisy-belle",
+      "zh": "Daisy Belle",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Daisy Belle"
+    },
+    {
+      "id": "dekalb-amberlink",
+      "zh": "Dekalb Amberlink",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Dekalb Amberlink"
+    },
+    {
+      "id": "delaware",
+      "zh": "Delaware",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Delaware"
+    },
+    {
+      "id": "westphalian-chicken",
+      "zh": "Westphalian chicken",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Westphalian chicken"
+    },
+    {
+      "id": "faverolles",
+      "zh": "法沃罗勒鸡",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Faverolles"
+    },
+    {
+      "id": "ameraucana",
+      "zh": "Ameraucana",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Ameraucana"
+    },
+    {
+      "id": "belgian-bearded-d-uccle",
+      "zh": "Belgian Bearded d'Uccle",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Belgian Bearded d'Uccle"
+    },
+    {
+      "id": "th-ringer-barth-hner",
+      "zh": "Thüringer Barthühner",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Thüringer Barthühner"
+    },
+    {
+      "id": "sultan",
+      "zh": "Sultan",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Sultan"
+    },
+    {
+      "id": "bourbonnaise",
+      "zh": "Bourbonnaise",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Bourbonnaise"
+    },
+    {
+      "id": "buckeye",
+      "zh": "Buckeye",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Buckeye"
+    },
+    {
+      "id": "chantecler",
+      "zh": "Chantecler",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Chantecler"
+    },
+    {
+      "id": "yurlov-crower",
+      "zh": "Yurlov Crower",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Yurlov Crower"
+    },
+    {
+      "id": "charollaise",
+      "zh": "Charollaise",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Charollaise"
+    },
+    {
+      "id": "combattant-de-tirlemont",
+      "zh": "Combattant de Tirlemont",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Combattant de Tirlemont"
+    },
+    {
+      "id": "combattant-du-nord",
+      "zh": "Combattant du Nord",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Combattant du Nord"
+    },
+    {
+      "id": "cotentine",
+      "zh": "Cotentine",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Cotentine"
+    },
+    {
+      "id": "naked-neck-of-forez",
+      "zh": "Naked Neck of Forez",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Naked Neck of Forez"
+    },
+    {
+      "id": "ayam-kampong",
+      "zh": "Ayam Kampong",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Ayam Kampong"
+    },
+    {
+      "id": "australian-pit-game-fowl",
+      "zh": "Australian Pit Game fowl",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Australian Pit Game fowl"
+    },
+    {
+      "id": "barbu-de-grubbe",
+      "zh": "Barbu de Grubbe",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Barbu de Grubbe"
+    },
+    {
+      "id": "belgian-bantam",
+      "zh": "Belgian Bantam",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Belgian Bantam"
+    },
+    {
+      "id": "thai-game-fowl",
+      "zh": "Thai Game fowl",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Thai Game fowl"
+    },
+    {
+      "id": "giriraja",
+      "zh": "Giriraja",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Giriraja"
+    },
+    {
+      "id": "vanaraja",
+      "zh": "Vanaraja",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Vanaraja"
+    },
+    {
+      "id": "brazilian-long-crower",
+      "zh": "Brazilian long crower",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Brazilian long crower"
+    },
+    {
+      "id": "long-crowing-chicken",
+      "zh": "Long-crowing chicken",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Long-crowing chicken"
+    },
+    {
+      "id": "hijazi-chicken",
+      "zh": "Hijazi chicken",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Hijazi chicken"
+    },
+    {
+      "id": "game-hen",
+      "zh": "Game hen",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Game hen"
+    },
+    {
+      "id": "gaulish-dory",
+      "zh": "Gaulish dory",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Gaulish dory"
+    },
+    {
+      "id": "ingie",
+      "zh": "Ingie",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Ingie"
+    },
+    {
+      "id": "venda-chicken",
+      "zh": "Venda chicken",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Venda chicken"
+    },
+    {
+      "id": "oxford-old-english-game-fowl",
+      "zh": "Oxford Old English Game fowl",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Oxford Old English Game fowl"
+    },
+    {
+      "id": "rsl-chicken",
+      "zh": "RSL chicken",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "RSL chicken"
+    },
+    {
+      "id": "luikse-vechter",
+      "zh": "列日斗鸡",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Luikse Vechter"
+    },
+    {
+      "id": "tiense-vechter",
+      "zh": "Tiense Vechter",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Tiense Vechter"
+    },
+    {
+      "id": "totenko",
+      "zh": "Totenko",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Totenko"
+    },
+    {
+      "id": "black-rock",
+      "zh": "Black Rock",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Black Rock"
+    },
+    {
+      "id": "gilyan",
+      "zh": "Gilyan",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Gilyan"
+    },
+    {
+      "id": "ndio-gigante-chicken",
+      "zh": "Índio Gigante Chicken",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Índio Gigante Chicken"
+    },
+    {
+      "id": "yakido",
+      "zh": "Yakido",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Yakido"
+    },
+    {
+      "id": "pavlovian-breed-chickens",
+      "zh": "Pavlovian breed chickens",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Pavlovian breed chickens"
+    },
+    {
+      "id": "isa-brown",
+      "zh": "ISA Brown",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "ISA Brown"
+    },
+    {
+      "id": "dresdner",
+      "zh": "Dresdner",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Dresdner"
+    },
+    {
+      "id": "blue-andalusian",
+      "zh": "Blue Andalusian",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Blue Andalusian"
+    },
+    {
+      "id": "cubalaya",
+      "zh": "Cubalaya",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Cubalaya"
+    },
+    {
+      "id": "braekel",
+      "zh": "布拉克尔鸡",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Braekel"
+    },
+    {
+      "id": "bassette-li-geoise",
+      "zh": "Bassette Liégeoise",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Bassette Liégeoise"
+    },
+    {
+      "id": "egyptian-fayoumi",
+      "zh": "埃及鸡",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Egyptian Fayoumi"
+    },
+    {
+      "id": "ga-noi",
+      "zh": "Ga Noi",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Ga Noi"
+    },
+    {
+      "id": "gramapriya",
+      "zh": "Gramapriya",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Gramapriya"
+    },
+    {
+      "id": "holland",
+      "zh": "Holland",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Holland"
+    },
+    {
+      "id": "iowa-blue",
+      "zh": "Iowa Blue",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Iowa Blue"
+    },
+    {
+      "id": "jangmigye",
+      "zh": "Jangmigye",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Jangmigye"
+    },
+    {
+      "id": "java-chicken",
+      "zh": "Java chicken",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Java chicken"
+    },
+    {
+      "id": "kadaknath-shamanth",
+      "zh": "印度黑鸡",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Kadaknath shamanth"
+    },
+    {
+      "id": "kuroiler",
+      "zh": "Kuroiler",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Kuroiler"
+    },
+    {
+      "id": "lamona",
+      "zh": "美洲拉蒙鸡",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Lamona"
+    },
+    {
+      "id": "manx-rumpy",
+      "zh": "Manx Rumpy",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Manx Rumpy"
+    },
+    {
+      "id": "marsh-daisy",
+      "zh": "Marsh Daisy",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Marsh Daisy"
+    },
+    {
+      "id": "mericanel-della-brianza",
+      "zh": "Mericanel della Brianza",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Mericanel della Brianza"
+    },
+    {
+      "id": "miss-pepperpot",
+      "zh": "Miss Pepperpot",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Miss Pepperpot"
+    },
+    {
+      "id": "mugellese",
+      "zh": "Mugellese",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Mugellese"
+    },
+    {
+      "id": "nankin",
+      "zh": "Nankin",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Nankin"
+    },
+    {
+      "id": "norfolk-grey",
+      "zh": "Norfolk Grey",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Norfolk Grey"
+    },
+    {
+      "id": "old-english-pheasant-fowl",
+      "zh": "Old English Pheasant Fowl",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Old English Pheasant Fowl"
+    },
+    {
+      "id": "potchefstroom-koekoek",
+      "zh": "Potchefstroom Koekoek",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Potchefstroom Koekoek"
+    },
+    {
+      "id": "romagnola-chicken",
+      "zh": "Romagnola chicken",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Romagnola chicken"
+    },
+    {
+      "id": "scots-dumpy",
+      "zh": "Scots Dumpy",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Scots Dumpy"
+    },
+    {
+      "id": "siciliana-buttercup",
+      "zh": "西西里毛茛鸡",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Siciliana Buttercup"
+    },
+    {
+      "id": "sindhi-aseel",
+      "zh": "Sindhi Aseel",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Sindhi Aseel"
+    },
+    {
+      "id": "solid-white",
+      "zh": "Solid white",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Solid white"
+    },
+    {
+      "id": "tomaru",
+      "zh": "Tomaru",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Tomaru"
+    },
+    {
+      "id": "pyncheon",
+      "zh": "Pyncheon",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Pyncheon"
+    },
+    {
+      "id": "saipan-jungle-fowl",
+      "zh": "Saipan Jungle Fowl",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Saipan Jungle Fowl"
+    },
+    {
+      "id": "sumatra",
+      "zh": "Sumatra",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Sumatra"
+    },
+    {
+      "id": "posavska-kukmasta-koko",
+      "zh": "Posavska kukmasta kokoš",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Posavska kukmasta kokoš"
+    },
+    {
+      "id": "deutsches-lachshuhn",
+      "zh": "Deutsches Lachshuhn",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Deutsches Lachshuhn"
+    },
+    {
+      "id": "marans",
+      "zh": "马朗鸡",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Marans"
+    },
+    {
+      "id": "cornish",
+      "zh": "科尼什鸡",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Cornish"
+    },
+    {
+      "id": "schweizer",
+      "zh": "Schweizer",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Schweizer"
+    },
+    {
+      "id": "p-poi",
+      "zh": "Pépoi",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Pépoi"
+    },
+    {
+      "id": "rhineland-chicken",
+      "zh": "Rhineland chicken",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Rhineland chicken"
+    },
+    {
+      "id": "robusta-lionata",
+      "zh": "Robusta Lionata",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Robusta Lionata"
+    },
+    {
+      "id": "bergische-schlotterkamm",
+      "zh": "Bergische Schlotterkamm",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Bergische Schlotterkamm"
+    },
+    {
+      "id": "la-fl-che-chicken",
+      "zh": "La Flèche chicken",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "La Flèche chicken"
+    },
+    {
+      "id": "houdan",
+      "zh": "乌当鸡",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Houdan"
+    },
+    {
+      "id": "kraienk-ppe",
+      "zh": "Kraienköppe",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Kraienköppe"
+    },
+    {
+      "id": "minorca",
+      "zh": "Minorca",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Minorca"
+    },
+    {
+      "id": "modern-game",
+      "zh": "Modern Game",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Modern Game"
+    },
+    {
+      "id": "dominique",
+      "zh": "Dominique",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Dominique"
+    },
+    {
+      "id": "shamo",
+      "zh": "军鸡",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Shamo"
+    },
+    {
+      "id": "araucana",
+      "zh": "阿劳卡尼亚鸡",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Araucana"
+    },
+    {
+      "id": "jersey-giant",
+      "zh": "Jersey Giant",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Jersey Giant"
+    },
+    {
+      "id": "uilebaard",
+      "zh": "Uilebaard",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Uilebaard"
+    },
+    {
+      "id": "appenzeller-barthuhn",
+      "zh": "Appenzeller Barthuhn",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Appenzeller Barthuhn"
+    },
+    {
+      "id": "izegemse-koekoek",
+      "zh": "Izegemse Koekoek",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Izegemse Koekoek"
+    },
+    {
+      "id": "coucou-de-france",
+      "zh": "Coucou de France",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Coucou de France"
+    },
+    {
+      "id": "coucou-des-flandres",
+      "zh": "Coucou des Flandres",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Coucou des Flandres"
+    },
+    {
+      "id": "coucou-de-rennes",
+      "zh": "Coucou de Rennes",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Coucou de Rennes"
+    },
+    {
+      "id": "norwegian-j-rh-ne",
+      "zh": "Norwegian Jærhøne",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Norwegian Jærhøne"
+    },
+    {
+      "id": "euskal-oiloa",
+      "zh": "Euskal Oiloa",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Euskal Oiloa"
+    },
+    {
+      "id": "fauve-de-hesbaye",
+      "zh": "Fauve de Hesbaye",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Fauve de Hesbaye"
+    },
+    {
+      "id": "frizzled-chickens",
+      "zh": "frizzled chickens",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "frizzled chickens"
+    },
+    {
+      "id": "black-shumen-chicken",
+      "zh": "Black Shumen chicken",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Black Shumen chicken"
+    },
+    {
+      "id": "gatinaise",
+      "zh": "Gatinaise",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Gatinaise"
+    },
+    {
+      "id": "g-lines-de-touraine",
+      "zh": "Gélines de Touraine",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Gélines de Touraine"
+    },
+    {
+      "id": "hergnies",
+      "zh": "Hergnies",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Hergnies"
+    },
+    {
+      "id": "dutch-bantam",
+      "zh": "Dutch Bantam",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Dutch Bantam"
+    },
+    {
+      "id": "lyonnaise",
+      "zh": "Lyonnaise",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Lyonnaise"
+    },
+    {
+      "id": "rhode-island-white",
+      "zh": "Rhode Island White",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Rhode Island White"
+    },
+    {
+      "id": "umavanka",
+      "zh": "Šumavanka",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Šumavanka"
+    },
+    {
+      "id": "orloff",
+      "zh": "Orloff",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Orloff"
+    },
+    {
+      "id": "pictave",
+      "zh": "Pictave",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Pictave"
+    },
+    {
+      "id": "zingems-leghoen",
+      "zh": "Zingems leghoen",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Zingems leghoen"
+    },
+    {
+      "id": "black-castilian-hen",
+      "zh": "Black Castilian Hen",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Black Castilian Hen"
+    },
+    {
+      "id": "boschvelder",
+      "zh": "Boschvelder",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Boschvelder"
+    },
+    {
+      "id": "barred-plymouth-rock",
+      "zh": "Barred Plymouth Rock",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Barred Plymouth Rock"
+    },
+    {
+      "id": "cobb-500",
+      "zh": "Cobb 500",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Cobb 500"
+    },
+    {
+      "id": "gueomdak",
+      "zh": "Gueomdak",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Gueomdak"
+    },
+    {
+      "id": "tuzo",
+      "zh": "Tuzo",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Tuzo"
+    },
+    {
+      "id": "kaunayen-chicken",
+      "zh": "Kaunayen chicken",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Kaunayen chicken"
+    },
+    {
+      "id": "modenese-chicken",
+      "zh": "Modenese chicken",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Modenese chicken"
+    },
+    {
+      "id": "ogye-chicken",
+      "zh": "Ogye chicken",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Ogye chicken"
+    },
+    {
+      "id": "harco",
+      "zh": "Harco",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Harco"
+    },
+    {
+      "id": "bantam-wyandotte",
+      "zh": "Bantam wyandotte",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Bantam wyandotte"
+    },
+    {
+      "id": "bresse-gauloise",
+      "zh": "Bresse Gauloise",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Bresse Gauloise"
+    },
+    {
+      "id": "croatian-bantam",
+      "zh": "Croatian Bantam",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Croatian Bantam"
+    },
+    {
+      "id": "limousine",
+      "zh": "Limousine",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Limousine"
+    },
+    {
+      "id": "dominant",
+      "zh": "Dominant",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Dominant"
+    },
+    {
+      "id": "barbu-de-boitsfort",
+      "zh": "Barbu de Boitsfort",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Barbu de Boitsfort"
+    },
+    {
+      "id": "saxony-chicken",
+      "zh": "Saxony chicken",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Saxony chicken"
+    },
+    {
+      "id": "naine-du-tournaisis",
+      "zh": "Naine du Tournaisis",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Naine du Tournaisis"
+    },
+    {
+      "id": "french-blue",
+      "zh": "French Blue",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "French Blue"
+    },
+    {
+      "id": "silverudd-blue",
+      "zh": "Silverudd Blue",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Silverudd Blue"
+    },
+    {
+      "id": "nixi-chicken",
+      "zh": "Nixi chicken",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Nixi chicken"
+    },
+    {
+      "id": "sentul-chicken",
+      "zh": "Sentul chicken",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Sentul chicken"
+    },
+    {
+      "id": "ross-308",
+      "zh": "Ross 308",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Ross 308"
+    },
+    {
+      "id": "gingernut-ranger",
+      "zh": "Gingernut Ranger",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Gingernut Ranger"
+    },
+    {
+      "id": "american-long-crower",
+      "zh": "American Long Crower",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "American Long Crower"
+    },
+    {
+      "id": "slovenian-barred-hen",
+      "zh": "Slovenian Barred Hen",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Slovenian Barred Hen"
+    },
+    {
+      "id": "slovenian-silver-hen",
+      "zh": "Slovenian Silver Hen",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Slovenian Silver Hen"
+    },
+    {
+      "id": "slovenian-brown-hen",
+      "zh": "Slovenian Brown Hen",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Slovenian Brown Hen"
+    },
+    {
+      "id": "prelux",
+      "zh": "Prelux",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Prelux"
+    },
+    {
+      "id": "hubbard",
+      "zh": "Hubbard",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Hubbard"
+    },
+    {
+      "id": "chaams-hoen",
+      "zh": "Chaams hoen",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Chaams hoen"
+    },
+    {
+      "id": "goliath",
+      "zh": "Goliath",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Goliath"
+    },
+    {
+      "id": "wassachi",
+      "zh": "Wassachiè",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Wassachiè"
+    },
+    {
+      "id": "kokochi",
+      "zh": "Kokochiè",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Kokochiè"
+    },
+    {
+      "id": "winnebago",
+      "zh": "Winnebago",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Winnebago"
+    },
+    {
+      "id": "yellow-hair-chicken",
+      "zh": "Yellow-hair chicken",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Yellow-hair chicken"
+    },
+    {
+      "id": "white-rocks",
+      "zh": "White Rocks",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "White Rocks"
+    },
+    {
+      "id": "green-legged-partridge",
+      "zh": "Green-legged Partridge",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Green-legged Partridge"
+    },
+    {
+      "id": "lohmann-brown",
+      "zh": "Lohmann Brown",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Lohmann Brown"
+    },
+    {
+      "id": "hedemorah-na",
+      "zh": "Hedemorahöna",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Hedemorahöna"
+    },
+    {
+      "id": "svensk-dv-rg",
+      "zh": "Svensk dvärg",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Svensk dvärg"
+    },
+    {
+      "id": "l-ndsk-dv-rgh-na",
+      "zh": "Öländsk dvärghöna",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Öländsk dvärghöna"
+    },
+    {
+      "id": "g-ri",
+      "zh": "Gà ri",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Gà ri"
+    },
+    {
+      "id": "dong-tao-chicken",
+      "zh": "东早鸡",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Dong Tao chicken"
+    },
+    {
+      "id": "dorking",
+      "zh": "Dorking",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Dorking"
+    },
+    {
+      "id": "nagoya-cochin",
+      "zh": "Nagoya Cochin",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Nagoya Cochin"
+    },
+    {
+      "id": "iwate-jidori",
+      "zh": "Iwate jidori",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Iwate jidori"
+    },
+    {
+      "id": "kawamata-shamo",
+      "zh": "Kawamata shamo",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Kawamata shamo"
+    },
+    {
+      "id": "hinaidori",
+      "zh": "Hinaidori",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Hinaidori"
+    },
+    {
+      "id": "satsumadori",
+      "zh": "Satsumadori",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Satsumadori"
+    },
+    {
+      "id": "jitokko",
+      "zh": "jitokko",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "jitokko"
+    },
+    {
+      "id": "polbar",
+      "zh": "Polbar",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Polbar"
+    },
+    {
+      "id": "finnish-landrace-chicken",
+      "zh": "Finnish Landrace Chicken",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Finnish Landrace Chicken"
+    },
+    {
+      "id": "gallina-mallorquina",
+      "zh": "Gallina mallorquina",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Gallina mallorquina"
+    },
+    {
+      "id": "o-shamo",
+      "zh": "O-Shamo",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "O-Shamo"
+    },
+    {
+      "id": "welbar",
+      "zh": "Welbar",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Welbar"
+    },
+    {
+      "id": "laughing-chicken",
+      "zh": "Laughing Chicken",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Laughing Chicken"
+    },
+    {
+      "id": "padovana",
+      "zh": "Padovana",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Padovana"
+    },
+    {
+      "id": "ho-chicken",
+      "zh": "Ho Chicken",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Ho Chicken"
+    },
+    {
+      "id": "gijang-ogolgye",
+      "zh": "Gijang Ogolgye",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Gijang Ogolgye"
+    },
+    {
+      "id": "yeonsan-ogye",
+      "zh": "Yeonsan Ogye",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Yeonsan Ogye"
+    },
+    {
+      "id": "collonca",
+      "zh": "Collonca",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Collonca"
+    },
+    {
+      "id": "white-rock",
+      "zh": "White Rock",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "White Rock"
+    },
+    {
+      "id": "ixworth",
+      "zh": "Ixworth",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Ixworth"
+    },
+    {
+      "id": "ayam-kedu",
+      "zh": "Ayam Kedu",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Ayam Kedu"
+    },
+    {
+      "id": "red-shaver",
+      "zh": "Red Shaver",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Red Shaver"
+    },
+    {
+      "id": "modern-langshan",
+      "zh": "现代狼山鸡",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Modern Langshan"
+    },
+    {
+      "id": "penedesenca",
+      "zh": "Penedesenca",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Penedesenca"
+    },
+    {
+      "id": "ermellinata-di-rovigo",
+      "zh": "Ermellinata di Rovigo",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Ermellinata di Rovigo"
+    },
+    {
+      "id": "millefiori-di-lonigo",
+      "zh": "Millefiori di Lonigo",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Millefiori di Lonigo"
+    },
+    {
+      "id": "polverara-chicken",
+      "zh": "Polverara chicken",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Polverara chicken"
+    },
+    {
+      "id": "robusta-maculata",
+      "zh": "Robusta Maculata",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Robusta Maculata"
+    },
+    {
+      "id": "plymouth-rock",
+      "zh": "芦花洛克鸡",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Plymouth Rock"
+    },
+    {
+      "id": "valdarnese",
+      "zh": "Valdarnese",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Valdarnese"
+    },
+    {
+      "id": "adler-silver-chicken",
+      "zh": "Adler Silver chicken",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Adler Silver chicken"
+    },
+    {
+      "id": "scots-grey",
+      "zh": "Scots Grey",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Scots Grey"
+    },
+    {
+      "id": "california-gray",
+      "zh": "California Gray",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "California Gray"
+    },
+    {
+      "id": "asil",
+      "zh": "asil",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "asil"
+    },
+    {
+      "id": "onagadori",
+      "zh": "长尾鸡",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Onagadori"
+    },
+    {
+      "id": "assendelfter",
+      "zh": "Assendelfter",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Assendelfter"
+    },
+    {
+      "id": "ancona",
+      "zh": "Ancona",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Ancona"
+    },
+    {
+      "id": "augsburger",
+      "zh": "Augsburger",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Augsburger"
+    },
+    {
+      "id": "catalana",
+      "zh": "Catalana",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Catalana"
+    },
+    {
+      "id": "cr-vec-ur",
+      "zh": "克雷沃克尔鸡",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Crèvecœur"
+    },
+    {
+      "id": "australorp",
+      "zh": "澳洲黑鸡",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Australorp"
+    },
+    {
+      "id": "german-langshan",
+      "zh": "德国狼山鸡",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "German Langshan"
+    },
+    {
+      "id": "brabanter",
+      "zh": "Brabanter",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Brabanter"
+    },
+    {
+      "id": "brahma-chicken",
+      "zh": "婆羅門雞",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Brahma chicken"
+    },
+    {
+      "id": "japanese-bantam",
+      "zh": "Japanese Bantam",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Japanese Bantam"
+    },
+    {
+      "id": "swedish-black-chicken",
+      "zh": "瑞典黑鸡",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Swedish Black Chicken"
+    },
+    {
+      "id": "braban-onne",
+      "zh": "Brabançonne",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Brabançonne"
+    },
+    {
+      "id": "rhode-island-red",
+      "zh": "羅德島紅雞",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Rhode Island Red"
+    },
+    {
+      "id": "merlerault",
+      "zh": "Merlerault",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Merlerault"
+    },
+    {
+      "id": "le-mans-chicken",
+      "zh": "Le Mans chicken",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Le Mans chicken"
+    },
+    {
+      "id": "alsacienne",
+      "zh": "Alsacienne",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Alsacienne"
+    },
+    {
+      "id": "aquitaine",
+      "zh": "Aquitaine",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Aquitaine"
+    },
+    {
+      "id": "estaires-chicken",
+      "zh": "Estaires chicken",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Estaires chicken"
+    },
+    {
+      "id": "barbezieux",
+      "zh": "Barbezieux",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Barbezieux"
+    },
+    {
+      "id": "bourbourg-chicken",
+      "zh": "Bourbourg chicken",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Bourbourg chicken"
+    },
+    {
+      "id": "caumont-hen",
+      "zh": "Caumont hen",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Caumont hen"
+    },
+    {
+      "id": "caussade",
+      "zh": "Caussade",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Caussade"
+    },
+    {
+      "id": "gournay",
+      "zh": "Gournay",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Gournay"
+    },
+    {
+      "id": "poule-de-janz",
+      "zh": "Poule de Janzé",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Poule de Janzé"
+    },
+    {
+      "id": "gasconne",
+      "zh": "加斯科涅鸡",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Gasconne"
+    },
+    {
+      "id": "pavilly",
+      "zh": "Pavilly",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Pavilly"
+    },
+    {
+      "id": "north-holland-blue",
+      "zh": "North Holland Blue",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "North Holland Blue"
+    },
+    {
+      "id": "poltava",
+      "zh": "Poltava",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Poltava"
+    },
+    {
+      "id": "danish-hen",
+      "zh": "Danish hen",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Danish hen"
+    },
+    {
+      "id": "meuse-chicken",
+      "zh": "Meuse chicken",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Meuse chicken"
+    },
+    {
+      "id": "poule-noire-du-berry",
+      "zh": "Poule noire du Berry",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Poule noire du Berry"
+    },
+    {
+      "id": "poule-landaise",
+      "zh": "Poule landaise",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Poule landaise"
+    },
+    {
+      "id": "valdarno-chicken",
+      "zh": "Valdarno chicken",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Valdarno chicken"
+    },
+    {
+      "id": "icelandic-chicken",
+      "zh": "Icelandic chicken",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Icelandic chicken"
+    },
+    {
+      "id": "sombor-crested",
+      "zh": "Sombor Crested",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Sombor Crested"
+    },
+    {
+      "id": "starozagorska-red-chicken",
+      "zh": "Starozagorska red chicken",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Starozagorska red chicken"
+    },
+    {
+      "id": "barnevelder",
+      "zh": "Barnevelder",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Barnevelder"
+    },
+    {
+      "id": "bergischer-long-crower",
+      "zh": "贝尔吉施啼鸡",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Bergischer Long Crower"
+    },
+    {
+      "id": "rosecomb-bantam",
+      "zh": "Rosecomb Bantam",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Rosecomb Bantam"
+    },
+    {
+      "id": "breda",
+      "zh": "Breda",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Breda"
+    },
+    {
+      "id": "friesian-chicken",
+      "zh": "Friesian Chicken",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Friesian Chicken"
+    },
+    {
+      "id": "sussex",
+      "zh": "萨塞克斯鸡",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "sussex"
+    },
+    {
+      "id": "orpington",
+      "zh": "奥品顿鸡",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "orpington"
+    },
+    {
+      "id": "hrvatica-chicken",
+      "zh": "Hrvatica chicken",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Hrvatica chicken"
+    },
+    {
+      "id": "malay",
+      "zh": "Malay",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Malay"
+    },
+    {
+      "id": "wyandotte",
+      "zh": "Wyandotte",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Wyandotte"
+    },
+    {
+      "id": "hamburg",
+      "zh": "Hamburg",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Hamburg"
+    },
+    {
+      "id": "ayam-cemani",
+      "zh": "爪哇黑鸡",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Ayam Cemani"
+    },
+    {
+      "id": "eikenburger",
+      "zh": "Eikenburger",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Eikenburger"
+    },
+    {
+      "id": "naked-neck",
+      "zh": "naked neck",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "naked neck"
+    },
+    {
+      "id": "brugse-vechter",
+      "zh": "Brugse Vechter",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Brugse Vechter"
+    },
+    {
+      "id": "phoenix",
+      "zh": "凤凰鸡",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Phoenix"
+    },
+    {
+      "id": "sebright",
+      "zh": "Sebright",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Sebright"
+    },
+    {
+      "id": "cochin",
+      "zh": "九斤黃",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Cochin"
+    },
+    {
+      "id": "kinpa",
+      "zh": "Kinpa",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Kinpa"
+    },
+    {
+      "id": "ko-shamo",
+      "zh": "Ko Shamo",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Ko Shamo"
+    },
+    {
+      "id": "kr-per",
+      "zh": "Krüper",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Krüper"
+    },
+    {
+      "id": "denizli-rooster",
+      "zh": "Denizli rooster",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Denizli rooster"
+    },
+    {
+      "id": "deutsche-sperber",
+      "zh": "Deutsche Sperber",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Deutsche Sperber"
+    },
+    {
+      "id": "german-bantam",
+      "zh": "German bantam",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "German bantam"
+    },
+    {
+      "id": "east-frisian-gull",
+      "zh": "东弗里斯兰海鸥鸡",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "East Frisian Gull"
+    },
+    {
+      "id": "oravka",
+      "zh": "oravka",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "oravka"
+    },
+    {
+      "id": "new-hampshire-red",
+      "zh": "New Hampshire Red",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "New Hampshire Red"
+    },
+    {
+      "id": "siciliana",
+      "zh": "Siciliana",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Siciliana"
+    },
+    {
+      "id": "welsummer",
+      "zh": "维尔沙模鸡",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "welsummer"
+    },
+    {
+      "id": "niederrheiner",
+      "zh": "下莱茵鸡",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Niederrheiner"
+    },
+    {
+      "id": "vorwerk",
+      "zh": "福韦尔克鸡",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Vorwerk"
+    },
+    {
+      "id": "easter-egger",
+      "zh": "Easter Egger",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Easter Egger"
+    },
+    {
+      "id": "q20025706",
+      "zh": "赫蒙鸡",
+      "prevalence": "uncommon",
+      "listed": false
+    }
   ]
 }

@@ -142,8 +142,9 @@ export type CollectionEntry = {
 export type PetBreedCell = {
   id: string;
   zh: string;
-  prevalence: "common" | "uncommon" | "rare";
+  prevalence?: "common" | "uncommon" | "rare";
   lit: boolean;
+  source?: "catalog" | "free";
 };
 
 export type PetCollectionEntry = {

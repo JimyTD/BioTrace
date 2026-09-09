@@ -1,0 +1,4712 @@
+{
+  "id": "horse",
+  "taxonKey": "Equus caballus",
+  "commonNameZh": "家马",
+  "source": "wikidata horse breed (Q1160573)",
+  "breeds": [
+    {
+      "id": "timor-pony",
+      "zh": "帝汶馬",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Timor Pony"
+    },
+    {
+      "id": "chincoteague-pony",
+      "zh": "Chincoteague pony",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Chincoteague pony"
+    },
+    {
+      "id": "karabakh-horse",
+      "zh": "Karabakh horse",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Karabakh horse"
+    },
+    {
+      "id": "d-lehest",
+      "zh": "德勒赫斯特马",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Dølehest"
+    },
+    {
+      "id": "asturc-n",
+      "zh": "Asturcón",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Asturcón"
+    },
+    {
+      "id": "australian-stock-horse",
+      "zh": "Australian Stock Horse",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Australian Stock Horse"
+    },
+    {
+      "id": "australian-warmblood",
+      "zh": "Australian Warmblood",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Australian Warmblood"
+    },
+    {
+      "id": "azteca-horse",
+      "zh": "阿兹台克马",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Azteca horse"
+    },
+    {
+      "id": "peruvian-paso",
+      "zh": "秘鲁帕索马",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Peruvian Paso"
+    },
+    {
+      "id": "pindos-pony",
+      "zh": "Pindos Pony",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Pindos Pony"
+    },
+    {
+      "id": "zangersheide",
+      "zh": "Zangersheide",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Zangersheide"
+    },
+    {
+      "id": "anglo-norman-horse",
+      "zh": "盎格鲁-诺曼马",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Anglo-Norman horse"
+    },
+    {
+      "id": "oldenburg-horse",
+      "zh": "Oldenburg horse",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Oldenburg horse"
+    },
+    {
+      "id": "araber-haflinger",
+      "zh": "Araber-Haflinger",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Araber-Haflinger"
+    },
+    {
+      "id": "north-swedish-horse",
+      "zh": "北瑞典馬",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "North Swedish Horse"
+    },
+    {
+      "id": "mangalarga-marchador",
+      "zh": "Mangalarga Marchador",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Mangalarga Marchador"
+    },
+    {
+      "id": "arabian-horse",
+      "zh": "阿拉伯馬",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Arabian horse"
+    },
+    {
+      "id": "hanoverian-horse",
+      "zh": "汉诺威马",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Hanoverian horse"
+    },
+    {
+      "id": "mecklenburger",
+      "zh": "Mecklenburger",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Mecklenburger"
+    },
+    {
+      "id": "coldblood-trotter",
+      "zh": "Coldblood trotter",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Coldblood trotter"
+    },
+    {
+      "id": "giara-horse",
+      "zh": "Giara horse",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Giara horse"
+    },
+    {
+      "id": "groningen-horse",
+      "zh": "格罗宁根马",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Groningen horse"
+    },
+    {
+      "id": "hack-horses",
+      "zh": "Hack horses",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Hack horses"
+    },
+    {
+      "id": "lithuanian-heavy-draught",
+      "zh": "Lithuanian Heavy Draught",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Lithuanian Heavy Draught"
+    },
+    {
+      "id": "kladruber",
+      "zh": "克拉德鲁伯马",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Kladruber"
+    },
+    {
+      "id": "heck-horse",
+      "zh": "海克馬",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Heck horse"
+    },
+    {
+      "id": "westphalian-horse",
+      "zh": "Westphalian horse",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Westphalian horse"
+    },
+    {
+      "id": "marwari-horse",
+      "zh": "马尔瓦里",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Marwari horse"
+    },
+    {
+      "id": "nangchen-horse",
+      "zh": "囊谦马",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Nangchen horse"
+    },
+    {
+      "id": "pentro-horse",
+      "zh": "Pentro horse",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Pentro horse"
+    },
+    {
+      "id": "belgian-sport-horse",
+      "zh": "Belgian Sport Horse",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Belgian Sport Horse"
+    },
+    {
+      "id": "nez-perce-horse",
+      "zh": "内兹珀斯马",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Nez Perce Horse"
+    },
+    {
+      "id": "cheval-des-marquises",
+      "zh": "Cheval des Marquises",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Cheval des Marquises"
+    },
+    {
+      "id": "brazilian-sport-horse",
+      "zh": "Brazilian Sport Horse",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Brazilian Sport Horse"
+    },
+    {
+      "id": "cheval-du-morvan",
+      "zh": "Cheval du Morvan",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Cheval du Morvan"
+    },
+    {
+      "id": "ventasso-horse",
+      "zh": "Ventasso horse",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Ventasso horse"
+    },
+    {
+      "id": "flemish-horse",
+      "zh": "Flemish Horse",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Flemish Horse"
+    },
+    {
+      "id": "limousin-horse",
+      "zh": "Limousin horse",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Limousin horse"
+    },
+    {
+      "id": "cheval-lorrain",
+      "zh": "Cheval lorrain",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Cheval lorrain"
+    },
+    {
+      "id": "navarrin-horse",
+      "zh": "纳瓦尔种马",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Navarrin horse"
+    },
+    {
+      "id": "chilean-horse",
+      "zh": "Chilean horse",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Chilean horse"
+    },
+    {
+      "id": "choctaw-horse",
+      "zh": "Choctaw Horse",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Choctaw Horse"
+    },
+    {
+      "id": "coffin-bay-pony",
+      "zh": "Coffin Bay Pony",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Coffin Bay Pony"
+    },
+    {
+      "id": "vyatka-horse",
+      "zh": "Vyatka horse",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Vyatka horse"
+    },
+    {
+      "id": "deli-pony",
+      "zh": "Deli pony",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Deli pony"
+    },
+    {
+      "id": "norfolk-trotter",
+      "zh": "诺福克快步马",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Norfolk Trotter"
+    },
+    {
+      "id": "suffolk-punch",
+      "zh": "萨福克马",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Suffolk Punch"
+    },
+    {
+      "id": "auxois",
+      "zh": "Auxois",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Auxois"
+    },
+    {
+      "id": "belgian-warmblood",
+      "zh": "Belgian Warmblood",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Belgian Warmblood"
+    },
+    {
+      "id": "mallorqu-n",
+      "zh": "Mallorquín",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Mallorquín"
+    },
+    {
+      "id": "bardigiano",
+      "zh": "Bardigiano",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Bardigiano"
+    },
+    {
+      "id": "bashkir-horse",
+      "zh": "巴什基尔马",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Bashkir horse"
+    },
+    {
+      "id": "basuto-pony",
+      "zh": "Basuto pony",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Basuto pony"
+    },
+    {
+      "id": "hessisches-warmblut",
+      "zh": "Hessisches Warmblut",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Hessisches Warmblut"
+    },
+    {
+      "id": "konik",
+      "zh": "柯尼克波蘭小馬",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Konik"
+    },
+    {
+      "id": "thoroughbred",
+      "zh": "純種馬",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Thoroughbred"
+    },
+    {
+      "id": "racking-horse",
+      "zh": "Racking horse",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Racking horse"
+    },
+    {
+      "id": "connemara-pony",
+      "zh": "Connemara pony",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Connemara pony"
+    },
+    {
+      "id": "brumby",
+      "zh": "Brumby",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Brumby"
+    },
+    {
+      "id": "fjord-horse",
+      "zh": "挪威峽灣馬",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Fjord horse"
+    },
+    {
+      "id": "boer-pony",
+      "zh": "Boer pony",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Boer pony",
+      "aliases": [
+        "Boer Pony"
+      ]
+    },
+    {
+      "id": "highland-pony",
+      "zh": "高地小馬",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Highland pony"
+    },
+    {
+      "id": "hispano-rabe",
+      "zh": "Hispano-Árabe",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Hispano-Árabe"
+    },
+    {
+      "id": "posavac-horse",
+      "zh": "Posavac horse",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Posavac horse"
+    },
+    {
+      "id": "albanian-horse",
+      "zh": "Albanian horse",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Albanian horse"
+    },
+    {
+      "id": "irish-sport-horse",
+      "zh": "Irish Sport Horse",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Irish Sport Horse"
+    },
+    {
+      "id": "irish-draught",
+      "zh": "爱尔兰挽马",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Irish Draught"
+    },
+    {
+      "id": "java-pony",
+      "zh": "Java Pony",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Java Pony"
+    },
+    {
+      "id": "jutland-horse",
+      "zh": "Jutland horse",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Jutland horse"
+    },
+    {
+      "id": "norman-cob",
+      "zh": "Norman Cob",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Norman Cob"
+    },
+    {
+      "id": "tennessee-walking-horse",
+      "zh": "田纳西步行马",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Tennessee Walking Horse"
+    },
+    {
+      "id": "skyros-pony",
+      "zh": "Skyros Pony",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Skyros Pony"
+    },
+    {
+      "id": "karabair",
+      "zh": "Karabair",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Karabair"
+    },
+    {
+      "id": "caspian-horse",
+      "zh": "裏海馬",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Caspian horse"
+    },
+    {
+      "id": "kazakh-horse",
+      "zh": "哈萨克马",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Kazakh horse"
+    },
+    {
+      "id": "welara",
+      "zh": "Welara",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Welara"
+    },
+    {
+      "id": "lijiang-pony",
+      "zh": "Lijiang pony",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Lijiang pony"
+    },
+    {
+      "id": "manipuri-pony",
+      "zh": "Manipuri pony",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Manipuri pony"
+    },
+    {
+      "id": "marisme-o",
+      "zh": "Marismeño",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Marismeño"
+    },
+    {
+      "id": "h-n-s",
+      "zh": "Hınıs",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Hınıs"
+    },
+    {
+      "id": "french-anglo-arab",
+      "zh": "French Anglo Arab",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "French Anglo Arab"
+    },
+    {
+      "id": "nisean-horse",
+      "zh": "Nisean horse",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Nisean horse"
+    },
+    {
+      "id": "northamerican-sportpony",
+      "zh": "NorthAmerican Sportpony",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "NorthAmerican Sportpony"
+    },
+    {
+      "id": "pryor-mountain-mustang",
+      "zh": "Pryor Mountain Mustang",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Pryor Mountain Mustang"
+    },
+    {
+      "id": "quarter-pony",
+      "zh": "Quarter pony",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Quarter pony"
+    },
+    {
+      "id": "romanian-sporthorse",
+      "zh": "Romanian Sporthorse",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Romanian Sporthorse"
+    },
+    {
+      "id": "samolaco-horse",
+      "zh": "Samolaco horse",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Samolaco horse"
+    },
+    {
+      "id": "spanish-norman-horse",
+      "zh": "西班牙-诺曼马",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Spanish-Norman horse"
+    },
+    {
+      "id": "spanish-jennet-horse",
+      "zh": "西班牙珍妮特马",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Spanish Jennet Horse"
+    },
+    {
+      "id": "tawleed",
+      "zh": "Tawleed",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Tawleed"
+    },
+    {
+      "id": "kalmyk-horse",
+      "zh": "Kalmyk horse",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Kalmyk horse"
+    },
+    {
+      "id": "warlander",
+      "zh": "沃兰德马",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Warlander"
+    },
+    {
+      "id": "taishuh",
+      "zh": "對州馬",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Taishuh"
+    },
+    {
+      "id": "burmese-pony",
+      "zh": "Burmese Pony",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Burmese Pony"
+    },
+    {
+      "id": "kerry-bog-pony",
+      "zh": "Kerry Bog Pony",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Kerry Bog Pony"
+    },
+    {
+      "id": "byelorussian-harness",
+      "zh": "Byelorussian Harness",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Byelorussian Harness"
+    },
+    {
+      "id": "noma-pony",
+      "zh": "Noma pony",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Noma pony"
+    },
+    {
+      "id": "dongola-horse",
+      "zh": "Dongola horse",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Dongola horse"
+    },
+    {
+      "id": "irish-hobby",
+      "zh": "Irish Hobby",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Irish Hobby"
+    },
+    {
+      "id": "nordlandshest-lyngshest",
+      "zh": "Nordlandshest/Lyngshest",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Nordlandshest/Lyngshest"
+    },
+    {
+      "id": "galician-pony",
+      "zh": "Galician Pony",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Galician Pony"
+    },
+    {
+      "id": "zaniskari",
+      "zh": "藏斯卡马",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Zaniskari"
+    },
+    {
+      "id": "missouri-fox-trotter",
+      "zh": "密苏里狐步马",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Missouri Fox Trotter"
+    },
+    {
+      "id": "knabstrupper",
+      "zh": "纳布斯楚珀马",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Knabstrupper"
+    },
+    {
+      "id": "menorqu-n-horse",
+      "zh": "Menorquín horse",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Menorquín horse"
+    },
+    {
+      "id": "kushum",
+      "zh": "Kushum",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Kushum"
+    },
+    {
+      "id": "morab",
+      "zh": "Morab",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Morab"
+    },
+    {
+      "id": "peneia-pony",
+      "zh": "Peneia Pony",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Peneia Pony"
+    },
+    {
+      "id": "baltic-ardennes",
+      "zh": "Baltic Ardennes",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Baltic Ardennes"
+    },
+    {
+      "id": "pottok",
+      "zh": "Pottok",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Pottok"
+    },
+    {
+      "id": "tibetan-pony",
+      "zh": "藏马",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Tibetan pony"
+    },
+    {
+      "id": "barb-horse",
+      "zh": "巴布马",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Barb horse"
+    },
+    {
+      "id": "garrano",
+      "zh": "加拉诺马",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Garrano"
+    },
+    {
+      "id": "icelandic-horse",
+      "zh": "冰島馬",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Icelandic horse"
+    },
+    {
+      "id": "riwoche-horse",
+      "zh": "類烏齊馬",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Riwoche horse"
+    },
+    {
+      "id": "cleveland-bay",
+      "zh": "Cleveland Bay",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Cleveland Bay"
+    },
+    {
+      "id": "mustang",
+      "zh": "美洲野馬",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "mustang"
+    },
+    {
+      "id": "shetland-pony",
+      "zh": "昔德蘭矮種馬",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Shetland pony"
+    },
+    {
+      "id": "maremmano",
+      "zh": "Maremmano",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Maremmano"
+    },
+    {
+      "id": "american-shetland-pony",
+      "zh": "American Shetland Pony",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "American Shetland Pony"
+    },
+    {
+      "id": "miniature-shetland-pony",
+      "zh": "Miniature Shetland pony",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Miniature Shetland pony"
+    },
+    {
+      "id": "murgese",
+      "zh": "Murgese",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Murgese"
+    },
+    {
+      "id": "kiger-mustang",
+      "zh": "Kiger Mustang",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Kiger Mustang"
+    },
+    {
+      "id": "soviet-heavy-draft",
+      "zh": "Soviet Heavy Draft",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Soviet Heavy Draft"
+    },
+    {
+      "id": "panje",
+      "zh": "Panje",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Panje"
+    },
+    {
+      "id": "sandalwood-pony",
+      "zh": "Sandalwood Pony",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Sandalwood Pony"
+    },
+    {
+      "id": "rottaler",
+      "zh": "Rottaler",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Rottaler"
+    },
+    {
+      "id": "russian-trotter",
+      "zh": "Russian Trotter",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Russian Trotter"
+    },
+    {
+      "id": "eriskay-pony",
+      "zh": "Eriskay Pony",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Eriskay Pony"
+    },
+    {
+      "id": "senner",
+      "zh": "Senner",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Senner"
+    },
+    {
+      "id": "malopolski",
+      "zh": "Malopolski",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Malopolski"
+    },
+    {
+      "id": "gayoe",
+      "zh": "Gayoe",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Gayoe"
+    },
+    {
+      "id": "hackney-pony",
+      "zh": "哈克尼矮马",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Hackney pony"
+    },
+    {
+      "id": "czech-warm-blood",
+      "zh": "Czech warm blood",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Czech warm blood"
+    },
+    {
+      "id": "henson-horse",
+      "zh": "Henson horse",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Henson horse"
+    },
+    {
+      "id": "jaca-navarra",
+      "zh": "Jaca Navarra",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Jaca Navarra"
+    },
+    {
+      "id": "kaimanawa-horse",
+      "zh": "Kaimanawa horse",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Kaimanawa horse"
+    },
+    {
+      "id": "karacabey-horse",
+      "zh": "Karacabey horse",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Karacabey horse"
+    },
+    {
+      "id": "kyrgyz-horse",
+      "zh": "Kyrgyz Horse",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Kyrgyz Horse"
+    },
+    {
+      "id": "losino-horse",
+      "zh": "Losino horse",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Losino horse"
+    },
+    {
+      "id": "marajoara-horse-breed",
+      "zh": "Marajoara (horse breed)",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Marajoara (horse breed)"
+    },
+    {
+      "id": "montana-traveler",
+      "zh": "Montana Traveler",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Montana Traveler"
+    },
+    {
+      "id": "moyle-horse",
+      "zh": "Moyle horse",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Moyle horse"
+    },
+    {
+      "id": "spanish-mustang",
+      "zh": "Spanish Mustang",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Spanish Mustang"
+    },
+    {
+      "id": "lipizzaner",
+      "zh": "利皮赞马",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Lipizzaner"
+    },
+    {
+      "id": "zweibr-cker",
+      "zh": "Zweibrücker",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Zweibrücker"
+    },
+    {
+      "id": "kisber-felver",
+      "zh": "Kisber Felver",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Kisber Felver"
+    },
+    {
+      "id": "lokai",
+      "zh": "Lokai",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Lokai"
+    },
+    {
+      "id": "poitevin-horse",
+      "zh": "Poitevin horse",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Poitevin horse"
+    },
+    {
+      "id": "western-sudan-pony",
+      "zh": "Western Sudan pony",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Western Sudan pony"
+    },
+    {
+      "id": "french-saddle-pony",
+      "zh": "French Saddle Pony",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "French Saddle Pony"
+    },
+    {
+      "id": "lac-la-croix-indian-pony",
+      "zh": "Lac La Croix Indian Pony",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Lac La Croix Indian Pony"
+    },
+    {
+      "id": "qatgani",
+      "zh": "Qatgani",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Qatgani"
+    },
+    {
+      "id": "half-bred-horses-of-dombes",
+      "zh": "Half-bred horses of Dombes",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Half-bred horses of Dombes"
+    },
+    {
+      "id": "argentinian-warmblood",
+      "zh": "Argentinian Warmblood",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Argentinian Warmblood"
+    },
+    {
+      "id": "spotted-saddle-horse",
+      "zh": "Spotted Saddle horse",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Spotted Saddle horse"
+    },
+    {
+      "id": "tiger-horse",
+      "zh": "虎马",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Tiger horse"
+    },
+    {
+      "id": "tolfetano",
+      "zh": "Tolfetano",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Tolfetano"
+    },
+    {
+      "id": "australian-draught-horse",
+      "zh": "澳大利亚挽马",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Australian Draught Horse"
+    },
+    {
+      "id": "croatian-coldblood",
+      "zh": "Croatian Coldblood",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Croatian Coldblood"
+    },
+    {
+      "id": "cape-harness",
+      "zh": "Cape Harness",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Cape Harness"
+    },
+    {
+      "id": "italian-trotter",
+      "zh": "Italian trotter",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Italian trotter"
+    },
+    {
+      "id": "unmol-horse",
+      "zh": "Unmol Horse",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Unmol Horse"
+    },
+    {
+      "id": "uzunyayla",
+      "zh": "Uzunyayla",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Uzunyayla"
+    },
+    {
+      "id": "virginia-highlander",
+      "zh": "Virginia Highlander",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Virginia Highlander"
+    },
+    {
+      "id": "walkaloosa",
+      "zh": "步态卢萨马",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Walkaloosa"
+    },
+    {
+      "id": "vladimir-heavy-draft",
+      "zh": "Vladimir Heavy Draft",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Vladimir Heavy Draft"
+    },
+    {
+      "id": "lundy",
+      "zh": "Lundy",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Lundy"
+    },
+    {
+      "id": "british-spotted-pony",
+      "zh": "British Spotted pony",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "British Spotted pony"
+    },
+    {
+      "id": "san-fratello-horse",
+      "zh": "San Fratello horse",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "San Fratello horse"
+    },
+    {
+      "id": "m-bayar",
+      "zh": "M'Bayar",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "M'Bayar"
+    },
+    {
+      "id": "yakutian-horse",
+      "zh": "雅庫特馬",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Yakutian horse"
+    },
+    {
+      "id": "turkoman-horse",
+      "zh": "Turkoman horse",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Turkoman horse"
+    },
+    {
+      "id": "yonaguni-horse",
+      "zh": "與那國馬",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Yonaguni horse"
+    },
+    {
+      "id": "batak-pony",
+      "zh": "Batak Pony",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Batak Pony"
+    },
+    {
+      "id": "bavarian-warmblood",
+      "zh": "Bavarian Warmblood",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Bavarian Warmblood"
+    },
+    {
+      "id": "trakehner",
+      "zh": "特雷克納",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Trakehner"
+    },
+    {
+      "id": "clydesdale-horse",
+      "zh": "克莱兹代尔马",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Clydesdale horse"
+    },
+    {
+      "id": "camargue-horse",
+      "zh": "Camargue horse",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Camargue horse"
+    },
+    {
+      "id": "danish-sport-pony",
+      "zh": "Danish Sport Pony",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Danish Sport Pony"
+    },
+    {
+      "id": "guangxi",
+      "zh": "Guangxi",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Guangxi"
+    },
+    {
+      "id": "basque-mountain-horse",
+      "zh": "Basque Mountain Horse",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Basque Mountain Horse"
+    },
+    {
+      "id": "burguete-horse",
+      "zh": "Burguete horse",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Burguete horse"
+    },
+    {
+      "id": "cayuse",
+      "zh": "Cayuse",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Cayuse"
+    },
+    {
+      "id": "clay-trotting-horses",
+      "zh": "Clay Trotting Horses",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Clay Trotting Horses"
+    },
+    {
+      "id": "cumberland-island-horse",
+      "zh": "Cumberland Island horse",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Cumberland Island horse"
+    },
+    {
+      "id": "czechoslovakian-small-riding-pony",
+      "zh": "Czechoslovakian Small Riding Pony",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Czechoslovakian Small Riding Pony"
+    },
+    {
+      "id": "danube-delta-horse",
+      "zh": "Danube Delta horse",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Danube Delta horse"
+    },
+    {
+      "id": "galloway-pony",
+      "zh": "Galloway pony",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Galloway pony"
+    },
+    {
+      "id": "dutch-harness-horse",
+      "zh": "Dutch harness horse",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Dutch harness horse"
+    },
+    {
+      "id": "friesian-sporthorse",
+      "zh": "弗里斯兰运动马",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Friesian Sporthorse"
+    },
+    {
+      "id": "georgian-grande-horse",
+      "zh": "Georgian Grande Horse",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Georgian Grande Horse"
+    },
+    {
+      "id": "guizhou-pony",
+      "zh": "Guizhou pony",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Guizhou pony"
+    },
+    {
+      "id": "heihe-horse",
+      "zh": "Heihe horse",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Heihe horse"
+    },
+    {
+      "id": "spanish-sport-horse",
+      "zh": "Spanish Sport Horse",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Spanish Sport Horse"
+    },
+    {
+      "id": "hirzai",
+      "zh": "Hirzai",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Hirzai"
+    },
+    {
+      "id": "indian-country-bred",
+      "zh": "Indian Country Bred",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Indian Country Bred"
+    },
+    {
+      "id": "bosnian-mountain-horse",
+      "zh": "波斯尼亚山马",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Bosnian Mountain Horse"
+    },
+    {
+      "id": "belgian-draught",
+      "zh": "比利时马",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Belgian Draught"
+    },
+    {
+      "id": "dales-pony",
+      "zh": "Dales pony",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Dales pony"
+    },
+    {
+      "id": "tokara-horse",
+      "zh": "Tokara horse",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Tokara horse"
+    },
+    {
+      "id": "messara",
+      "zh": "Messara",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Messara"
+    },
+    {
+      "id": "landais-pony",
+      "zh": "Landais pony",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Landais pony"
+    },
+    {
+      "id": "neapolitan-horse",
+      "zh": "那不勒斯马",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Neapolitan horse"
+    },
+    {
+      "id": "windsor-grey",
+      "zh": "Windsor Grey",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Windsor Grey"
+    },
+    {
+      "id": "xilingol-horse",
+      "zh": "锡林郭勒马",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Xilingol horse"
+    },
+    {
+      "id": "yili-horse",
+      "zh": "Yili horse",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Yili horse"
+    },
+    {
+      "id": "yorkshire-coach-horse",
+      "zh": "Yorkshire Coach Horse",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Yorkshire Coach Horse"
+    },
+    {
+      "id": "bachmat",
+      "zh": "Bachmat",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Bachmat"
+    },
+    {
+      "id": "british-warmblood",
+      "zh": "British Warmblood",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "British Warmblood"
+    },
+    {
+      "id": "avelignese",
+      "zh": "Avelignese",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Avelignese"
+    },
+    {
+      "id": "brazilian-pony",
+      "zh": "Brazilian pony",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Brazilian pony"
+    },
+    {
+      "id": "american-spotted-paso",
+      "zh": "American spotted paso",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "American spotted paso"
+    },
+    {
+      "id": "andean",
+      "zh": "Andean",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Andean"
+    },
+    {
+      "id": "chapman-horse",
+      "zh": "Chapman Horse",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Chapman Horse"
+    },
+    {
+      "id": "dareshuri",
+      "zh": "Dareshuri",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Dareshuri"
+    },
+    {
+      "id": "american-drum-horse",
+      "zh": "American Drum Horse",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "American Drum Horse"
+    },
+    {
+      "id": "egyptian-arabian",
+      "zh": "Egyptian Arabian",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Egyptian Arabian"
+    },
+    {
+      "id": "estonian-draft",
+      "zh": "Estonian Draft",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Estonian Draft"
+    },
+    {
+      "id": "golden-american-saddlebred",
+      "zh": "Golden American Saddlebred",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Golden American Saddlebred"
+    },
+    {
+      "id": "hebridean-pony",
+      "zh": "Hebridean pony",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Hebridean pony"
+    },
+    {
+      "id": "florida-cracker-horse",
+      "zh": "Florida Cracker Horse",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Florida Cracker Horse"
+    },
+    {
+      "id": "foutank",
+      "zh": "fouta",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Foutanké"
+    },
+    {
+      "id": "welsh-cob",
+      "zh": "Welsh cob",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Welsh cob"
+    },
+    {
+      "id": "abstang",
+      "zh": "Abstang",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Abstang"
+    },
+    {
+      "id": "abtenauer",
+      "zh": "Abtenauer",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Abtenauer"
+    },
+    {
+      "id": "retuerta-horse",
+      "zh": "Retuerta horse",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Retuerta horse"
+    },
+    {
+      "id": "altai-horse",
+      "zh": "Altai horse",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Altai horse"
+    },
+    {
+      "id": "american-indian-horse",
+      "zh": "American Indian horse",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "American Indian horse"
+    },
+    {
+      "id": "american-warmblood",
+      "zh": "American Warmblood",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "American Warmblood"
+    },
+    {
+      "id": "amurski-horse",
+      "zh": "Amurski horse",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Amurski horse"
+    },
+    {
+      "id": "anadolu-pony",
+      "zh": "Anadolu Pony",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Anadolu Pony"
+    },
+    {
+      "id": "andravida-horse",
+      "zh": "Andravida horse",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Andravida horse"
+    },
+    {
+      "id": "angevin-horse",
+      "zh": "Angevin horse",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Angevin horse"
+    },
+    {
+      "id": "anglo-kabarda",
+      "zh": "Anglo-Kabarda",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Anglo-Kabarda"
+    },
+    {
+      "id": "swedish-ardennes",
+      "zh": "Swedish Ardennes",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Swedish Ardennes"
+    },
+    {
+      "id": "narragansett-pacer",
+      "zh": "纳拉甘西特顺边马",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Narragansett Pacer"
+    },
+    {
+      "id": "narym-pony",
+      "zh": "Narym Pony",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Narym Pony"
+    },
+    {
+      "id": "national-show-horse",
+      "zh": "National Show Horse",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "National Show Horse"
+    },
+    {
+      "id": "nivernais-horse",
+      "zh": "Nivernais horse",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Nivernais horse"
+    },
+    {
+      "id": "nooitgedacht-pony",
+      "zh": "Nooitgedacht pony",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Nooitgedacht pony"
+    },
+    {
+      "id": "novokirghiz",
+      "zh": "Novokirghiz",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Novokirghiz"
+    },
+    {
+      "id": "ob-pony",
+      "zh": "Ob pony",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Ob pony"
+    },
+    {
+      "id": "oberlander-horse",
+      "zh": "Oberlander horse",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Oberlander horse"
+    },
+    {
+      "id": "old-english-black",
+      "zh": "Old English Black",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Old English Black"
+    },
+    {
+      "id": "pantaneiro",
+      "zh": "Pantaneiro",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Pantaneiro"
+    },
+    {
+      "id": "costa-rican-saddle-horse",
+      "zh": "Costa Rican Saddle Horse",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Costa Rican Saddle Horse"
+    },
+    {
+      "id": "petiso-argentino",
+      "zh": "Petiso Argentino",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Petiso Argentino"
+    },
+    {
+      "id": "kiso",
+      "zh": "木曾馬",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Kiso"
+    },
+    {
+      "id": "p-nei-da-terceira",
+      "zh": "Pónei da Terceira",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Pónei da Terceira"
+    },
+    {
+      "id": "australian-pony",
+      "zh": "Australian Pony",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Australian Pony"
+    },
+    {
+      "id": "orlov-rostopchin-sport-horse",
+      "zh": "Orlov-Rostopchin Sport Horse",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Orlov-Rostopchin Sport Horse"
+    },
+    {
+      "id": "riding-pony",
+      "zh": "Riding Pony",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Riding Pony"
+    },
+    {
+      "id": "gidran",
+      "zh": "Gidran",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Gidran"
+    },
+    {
+      "id": "frederiksborg-horse",
+      "zh": "腓特烈堡马",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Frederiksborg horse"
+    },
+    {
+      "id": "abaco-barb",
+      "zh": "Abaco Barb",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Abaco Barb"
+    },
+    {
+      "id": "rocky-mountain-horse",
+      "zh": "Rocky Mountain Horse",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Rocky Mountain Horse"
+    },
+    {
+      "id": "austrian-warmblood",
+      "zh": "Austrian Warmblood",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Austrian Warmblood"
+    },
+    {
+      "id": "namib-desert-horse",
+      "zh": "Namib Desert Horse",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Namib Desert Horse"
+    },
+    {
+      "id": "abyssinian-horse",
+      "zh": "Abyssinian horse",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Abyssinian horse"
+    },
+    {
+      "id": "hequ-horse",
+      "zh": "河曲马",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Hequ horse"
+    },
+    {
+      "id": "canadian-warmblood",
+      "zh": "Canadian Warmblood",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Canadian Warmblood"
+    },
+    {
+      "id": "cuban-pinto",
+      "zh": "Cuban Pinto",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Cuban Pinto"
+    },
+    {
+      "id": "cuban-paso",
+      "zh": "Cuban Paso",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Cuban Paso"
+    },
+    {
+      "id": "cuban-trotter",
+      "zh": "Cuban trotter",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Cuban trotter"
+    },
+    {
+      "id": "liebenthaler",
+      "zh": "Liebenthaler",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Liebenthaler"
+    },
+    {
+      "id": "morocco-spotted-horse",
+      "zh": "Morocco Spotted Horse",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Morocco Spotted Horse"
+    },
+    {
+      "id": "iranian-arabian",
+      "zh": "Iranian Arabian",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Iranian Arabian"
+    },
+    {
+      "id": "strelets",
+      "zh": "Strelets",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Strelets"
+    },
+    {
+      "id": "american-sugarbush-harlequin-draft",
+      "zh": "American Sugarbush Harlequin Draft",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "American Sugarbush Harlequin Draft"
+    },
+    {
+      "id": "tatar-pony",
+      "zh": "Tatar Pony",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Tatar Pony"
+    },
+    {
+      "id": "welsh-pony-of-cob-type",
+      "zh": "Welsh Pony of Cob Type",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Welsh Pony of Cob Type"
+    },
+    {
+      "id": "jinjiang",
+      "zh": "晋江马",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Jinjiang"
+    },
+    {
+      "id": "ushi-uma",
+      "zh": "Ushi-uma",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Ushi-uma"
+    },
+    {
+      "id": "kentucky-mountain-saddle-horse",
+      "zh": "肯塔基山地骑乘马",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Kentucky Mountain Saddle Horse"
+    },
+    {
+      "id": "sumbawa-pony",
+      "zh": "Sumbawa Pony",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Sumbawa Pony"
+    },
+    {
+      "id": "sorraia",
+      "zh": "索拉亚马",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Sorraia"
+    },
+    {
+      "id": "kustanair",
+      "zh": "Kustanair",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Kustanair"
+    },
+    {
+      "id": "latvian-horse",
+      "zh": "Latvian horse",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Latvian horse"
+    },
+    {
+      "id": "chinese-guoxia",
+      "zh": "Chinese Guoxia",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Chinese Guoxia"
+    },
+    {
+      "id": "salerno-horse",
+      "zh": "Salerno horse",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Salerno horse"
+    },
+    {
+      "id": "lusitano",
+      "zh": "卢西塔诺马",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Lusitano"
+    },
+    {
+      "id": "augeron-horse",
+      "zh": "Augeron horse",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Augeron horse"
+    },
+    {
+      "id": "aqps",
+      "zh": "AQPS",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "AQPS"
+    },
+    {
+      "id": "aenos",
+      "zh": "Aenos",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Aenos"
+    },
+    {
+      "id": "banker-horse",
+      "zh": "班克尔马",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Banker horse"
+    },
+    {
+      "id": "baixadeiro",
+      "zh": "Baixadeiro",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Baixadeiro"
+    },
+    {
+      "id": "bali-pony",
+      "zh": "Bali Pony",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Bali Pony"
+    },
+    {
+      "id": "balikun-horse",
+      "zh": "巴里坤马",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Balikun horse"
+    },
+    {
+      "id": "baluchi-horse",
+      "zh": "Baluchi horse",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Baluchi horse"
+    },
+    {
+      "id": "berrichon-horse",
+      "zh": "Berrichon horse",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Berrichon horse"
+    },
+    {
+      "id": "bhirum-pony",
+      "zh": "Bhirum pony",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Bhirum pony"
+    },
+    {
+      "id": "blazer-horse",
+      "zh": "Blazer horse",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Blazer horse"
+    },
+    {
+      "id": "camarillo-white-horse",
+      "zh": "Camarillo White Horse",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Camarillo White Horse"
+    },
+    {
+      "id": "canadian-pacer",
+      "zh": "Canadian Pacer",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Canadian Pacer"
+    },
+    {
+      "id": "canadian-rustic-pony",
+      "zh": "Canadian Rustic Pony",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Canadian Rustic Pony"
+    },
+    {
+      "id": "carolina-marsh-tacky",
+      "zh": "Carolina Marsh Tacky",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Carolina Marsh Tacky"
+    },
+    {
+      "id": "castilian-horse",
+      "zh": "castilian horse",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "castilian horse"
+    },
+    {
+      "id": "castillonnais",
+      "zh": "Castillonnais",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Castillonnais"
+    },
+    {
+      "id": "charentais-horse",
+      "zh": "Charentais horse",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Charentais horse"
+    },
+    {
+      "id": "cavallo-appenninico",
+      "zh": "Cavallo Appenninico",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Cavallo Appenninico"
+    },
+    {
+      "id": "pleven-horse",
+      "zh": "Pleven horse",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Pleven horse"
+    },
+    {
+      "id": "east-bulgarian",
+      "zh": "East Bulgarian",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "East Bulgarian"
+    },
+    {
+      "id": "sarcidano-horse",
+      "zh": "Sarcidano horse",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Sarcidano horse"
+    },
+    {
+      "id": "monchino",
+      "zh": "Monchino",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Monchino"
+    },
+    {
+      "id": "hispano-bret-n",
+      "zh": "Hispano-Bretón",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Hispano-Bretón"
+    },
+    {
+      "id": "silesian-horse",
+      "zh": "Silesian horse",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Silesian horse"
+    },
+    {
+      "id": "persano-horse",
+      "zh": "Persano horse",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Persano horse"
+    },
+    {
+      "id": "purosangue-orientale",
+      "zh": "Purosangue Orientale",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Purosangue Orientale"
+    },
+    {
+      "id": "indian-half-bred",
+      "zh": "Indian Half-Bred",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Indian Half-Bred"
+    },
+    {
+      "id": "voronej",
+      "zh": "Voronej",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Voronej"
+    },
+    {
+      "id": "dzhab",
+      "zh": "Dzhab",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Dzhab"
+    },
+    {
+      "id": "karachay-horse",
+      "zh": "Karachay horse",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Karachay horse"
+    },
+    {
+      "id": "kuznet",
+      "zh": "Kuznet",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Kuznet"
+    },
+    {
+      "id": "kabarda-horse",
+      "zh": "Kabarda horse",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Kabarda horse"
+    },
+    {
+      "id": "american-cream-draft",
+      "zh": "美国奶油马",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "American Cream Draft"
+    },
+    {
+      "id": "brandenburger",
+      "zh": "Brandenburger",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Brandenburger"
+    },
+    {
+      "id": "rhinelander-horse",
+      "zh": "Rhinelander horse",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Rhinelander horse"
+    },
+    {
+      "id": "aegidienberger",
+      "zh": "Aegidienberger",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Aegidienberger"
+    },
+    {
+      "id": "poney-du-logone",
+      "zh": "Poney du Logone",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Poney du Logone"
+    },
+    {
+      "id": "friesian-horse",
+      "zh": "弗里斯兰马",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Friesian horse"
+    },
+    {
+      "id": "fell-pony",
+      "zh": "費爾小型馬",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Fell pony"
+    },
+    {
+      "id": "vlaamperd",
+      "zh": "Vlaamperd",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Vlaamperd"
+    },
+    {
+      "id": "esperia-pony",
+      "zh": "Esperia Pony",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Esperia Pony"
+    },
+    {
+      "id": "mangalarga",
+      "zh": "Mangalarga",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Mangalarga"
+    },
+    {
+      "id": "italian-heavy-draft",
+      "zh": "Italian Heavy Draft",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Italian Heavy Draft"
+    },
+    {
+      "id": "german-riding-pony",
+      "zh": "German Riding Pony",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "German Riding Pony"
+    },
+    {
+      "id": "exmoor-pony",
+      "zh": "凯尔特矮种马",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Exmoor pony"
+    },
+    {
+      "id": "finnhorse",
+      "zh": "芬兰马",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Finnhorse"
+    },
+    {
+      "id": "kandachime",
+      "zh": "Kandachime",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Kandachime"
+    },
+    {
+      "id": "jaf",
+      "zh": "Jaf",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Jaf"
+    },
+    {
+      "id": "swiss-pony",
+      "zh": "Swiss Pony",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Swiss Pony"
+    },
+    {
+      "id": "kuc-felinski",
+      "zh": "Kuc felinski",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Kuc felinski"
+    },
+    {
+      "id": "polish-coldblood",
+      "zh": "Polish Coldblood",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Polish Coldblood"
+    },
+    {
+      "id": "warmblood-trotter",
+      "zh": "warmblood trotter",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "warmblood trotter"
+    },
+    {
+      "id": "stara-planina",
+      "zh": "Stara Planina",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Stara Planina"
+    },
+    {
+      "id": "gelderland-horse",
+      "zh": "海尔德兰马",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Gelderland horse"
+    },
+    {
+      "id": "calabrese-horse",
+      "zh": "Calabrese horse",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Calabrese horse"
+    },
+    {
+      "id": "gotland-pony",
+      "zh": "哥特蘭矮種馬",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Gotland Pony"
+    },
+    {
+      "id": "campeiro",
+      "zh": "Campeiro",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Campeiro"
+    },
+    {
+      "id": "campolina",
+      "zh": "Campolina",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Campolina"
+    },
+    {
+      "id": "selle-fran-ais",
+      "zh": "Selle Français",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Selle Français"
+    },
+    {
+      "id": "welsh-pony-and-cob",
+      "zh": "威爾斯矮種馬",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Welsh Pony and Cob"
+    },
+    {
+      "id": "emaitukas",
+      "zh": "Žemaitukas",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Žemaitukas"
+    },
+    {
+      "id": "sella-italiano",
+      "zh": "Sella Italiano",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Sella Italiano"
+    },
+    {
+      "id": "ostfriesen-and-alt-oldenburger",
+      "zh": "奥斯特弗里森和艾尔特-奥尔登堡马",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Ostfriesen and Alt-Oldenburger"
+    },
+    {
+      "id": "german-classic-pony",
+      "zh": "German Classic Pony",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "German Classic Pony"
+    },
+    {
+      "id": "alter-real",
+      "zh": "Alter Real",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Alter Real"
+    },
+    {
+      "id": "arravani",
+      "zh": "Arravani",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Arravani"
+    },
+    {
+      "id": "american-bashkir-curly",
+      "zh": "北美卷毛马",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "American Bashkir Curly"
+    },
+    {
+      "id": "american-miniature-horse",
+      "zh": "美洲矮种马",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "American Miniature Horse"
+    },
+    {
+      "id": "charolais-horse",
+      "zh": "Charolais horse",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Charolais horse"
+    },
+    {
+      "id": "jeju-horse",
+      "zh": "濟州馬",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Jeju horse"
+    },
+    {
+      "id": "barraquand-horse",
+      "zh": "Barraquand horse",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Barraquand horse"
+    },
+    {
+      "id": "pampa-horse",
+      "zh": "Pampa Horse",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Pampa Horse"
+    },
+    {
+      "id": "cavallo-romano-della-maremma-laziale",
+      "zh": "Cavallo Romano della Maremma Laziale",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Cavallo Romano della Maremma Laziale"
+    },
+    {
+      "id": "american-creme-and-white-horse-registry",
+      "zh": "American creme and white horse registry",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "American creme and white horse registry"
+    },
+    {
+      "id": "corsican-horse",
+      "zh": "Corsican horse",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Corsican horse"
+    },
+    {
+      "id": "auvergne-horse",
+      "zh": "Auvergne horse",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Auvergne horse"
+    },
+    {
+      "id": "catria-horse",
+      "zh": "Catria horse",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Catria horse"
+    },
+    {
+      "id": "kathiawari",
+      "zh": "卡提阿瓦马",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Kathiawari"
+    },
+    {
+      "id": "colorado-ranger",
+      "zh": "科罗拉多游侠",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Colorado Ranger"
+    },
+    {
+      "id": "swedish-warmblood",
+      "zh": "Swedish Warmblood",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Swedish Warmblood"
+    },
+    {
+      "id": "comtois-horse",
+      "zh": "孔图瓦马",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Comtois horse"
+    },
+    {
+      "id": "hokkaido-pony",
+      "zh": "道産子",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Hokkaido Pony"
+    },
+    {
+      "id": "criollo-horse",
+      "zh": "克里奥尔马",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Criollo horse"
+    },
+    {
+      "id": "pony-of-the-americas",
+      "zh": "美洲小马",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Pony of the Americas"
+    },
+    {
+      "id": "ferghana-horse",
+      "zh": "汗血馬",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Ferghana horse"
+    },
+    {
+      "id": "russian-don",
+      "zh": "Russian Don",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Russian Don"
+    },
+    {
+      "id": "hungarian-sport-horse",
+      "zh": "Hungarian Sport Horse",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Hungarian Sport Horse"
+    },
+    {
+      "id": "morgan-horse",
+      "zh": "摩根马",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Morgan horse"
+    },
+    {
+      "id": "deliboz",
+      "zh": "Deliboz",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Deliboz"
+    },
+    {
+      "id": "wild-horses-of-livno",
+      "zh": "Wild horses of Livno",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Wild horses of Livno"
+    },
+    {
+      "id": "tusheti-horse",
+      "zh": "Tusheti horse",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Tusheti horse"
+    },
+    {
+      "id": "finnish-warmblood",
+      "zh": "Finnish Warmblood",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Finnish Warmblood"
+    },
+    {
+      "id": "me-imurje-horse",
+      "zh": "Međimurje horse",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Međimurje horse"
+    },
+    {
+      "id": "ader",
+      "zh": "Ader",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Ader"
+    },
+    {
+      "id": "anglo-european",
+      "zh": "Anglo European",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Anglo European"
+    },
+    {
+      "id": "croatian-trotter",
+      "zh": "Croatian trotter",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Croatian trotter"
+    },
+    {
+      "id": "hegardt-horse",
+      "zh": "Hegardt Horse",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Hegardt Horse"
+    },
+    {
+      "id": "ngua-noi",
+      "zh": "Ngua Noi",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Ngua Noi"
+    },
+    {
+      "id": "bhutia-horse",
+      "zh": "Bhutia Horse",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Bhutia Horse"
+    },
+    {
+      "id": "bohai",
+      "zh": "渤海马",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Bohai"
+    },
+    {
+      "id": "canik",
+      "zh": "Canik",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Canik"
+    },
+    {
+      "id": "chernomor",
+      "zh": "Chernomor",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Chernomor"
+    },
+    {
+      "id": "erlenbach-horse",
+      "zh": "Erlenbach horse",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Erlenbach horse"
+    },
+    {
+      "id": "corlay-horse",
+      "zh": "Corlay horse",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Corlay horse"
+    },
+    {
+      "id": "israeli-local-horse",
+      "zh": "Israeli Local Horse",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Israeli Local Horse"
+    },
+    {
+      "id": "spanish-trotter",
+      "zh": "Spanish Trotter",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Spanish Trotter"
+    },
+    {
+      "id": "bidet-breton",
+      "zh": "Bidet breton",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Bidet breton"
+    },
+    {
+      "id": "american-walking-pony",
+      "zh": "American Walking Pony",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "American Walking Pony"
+    },
+    {
+      "id": "akhal-teke",
+      "zh": "阿哈尔捷金马",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Akhal-Teke"
+    },
+    {
+      "id": "andalusian-horse",
+      "zh": "安达卢西亚马",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Andalusian horse"
+    },
+    {
+      "id": "iberoamericano",
+      "zh": "Iberoamericano",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Iberoamericano"
+    },
+    {
+      "id": "mezen-horse",
+      "zh": "Mezen horse",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Mezen horse"
+    },
+    {
+      "id": "caballo-polo-argentino",
+      "zh": "Caballo Polo Argentino",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Caballo Polo Argentino"
+    },
+    {
+      "id": "beberbecker",
+      "zh": "Beberbecker",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Beberbecker"
+    },
+    {
+      "id": "welsh-mountain-pony",
+      "zh": "Welsh Mountain Pony",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Welsh Mountain Pony"
+    },
+    {
+      "id": "axios-horses",
+      "zh": "Axios horses",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Axios horses"
+    },
+    {
+      "id": "calvinia",
+      "zh": "Calvinia",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Calvinia"
+    },
+    {
+      "id": "kundido-horse",
+      "zh": "Kundido horse",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Kundido horse"
+    },
+    {
+      "id": "bolivian-pony",
+      "zh": "Bolivian Pony",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Bolivian Pony"
+    },
+    {
+      "id": "borneo-pony",
+      "zh": "Borneo Pony",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Borneo Pony"
+    },
+    {
+      "id": "zabaikal",
+      "zh": "Zabaikal",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Zabaikal"
+    },
+    {
+      "id": "american-paint-pony-registry",
+      "zh": "American Paint Pony Registry",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "American Paint Pony Registry"
+    },
+    {
+      "id": "thai-pony",
+      "zh": "Thai Pony",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Thai Pony"
+    },
+    {
+      "id": "spiti-horse",
+      "zh": "斯皮蒂马",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Spiti Horse"
+    },
+    {
+      "id": "luxembourg-warmblood",
+      "zh": "Luxembourg Warmblood",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Luxembourg Warmblood"
+    },
+    {
+      "id": "dutch-miniature",
+      "zh": "Dutch Miniature",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Dutch Miniature"
+    },
+    {
+      "id": "pirenenc-catal",
+      "zh": "Pirenenc Català",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Pirenenc Català"
+    },
+    {
+      "id": "altw-rttemberger",
+      "zh": "Altwürttemberger",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Altwürttemberger"
+    },
+    {
+      "id": "american-quarter-horse",
+      "zh": "美洲奎特馬",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "American Quarter Horse"
+    },
+    {
+      "id": "american-saddlebred",
+      "zh": "美国鞍马",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "American Saddlebred"
+    },
+    {
+      "id": "standardbred",
+      "zh": "標準競賽用馬",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Standardbred"
+    },
+    {
+      "id": "edelbluthaflinger",
+      "zh": "Edelbluthaflinger",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Edelbluthaflinger"
+    },
+    {
+      "id": "edles-warmblut",
+      "zh": "Edles Warmblut",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Edles Warmblut"
+    },
+    {
+      "id": "sardinian-anglo-arab",
+      "zh": "Sardinian Anglo-Arab",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Sardinian Anglo-Arab"
+    },
+    {
+      "id": "guba",
+      "zh": "Guba",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Guba"
+    },
+    {
+      "id": "kinsky-horse",
+      "zh": "Kinsky horse",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Kinsky horse"
+    },
+    {
+      "id": "emscherbr-cher",
+      "zh": "Emscherbrücher",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Emscherbrücher"
+    },
+    {
+      "id": "tori-horse",
+      "zh": "Tori horse",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Tori horse"
+    },
+    {
+      "id": "estonian-horse",
+      "zh": "Estonian horse",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Estonian horse"
+    },
+    {
+      "id": "noriker-horse",
+      "zh": "诺里克马",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Noriker horse"
+    },
+    {
+      "id": "siciliano-indigeno",
+      "zh": "Siciliano indigeno",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Siciliano indigeno"
+    },
+    {
+      "id": "mongolian-horse",
+      "zh": "蒙古馬",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Mongolian horse"
+    },
+    {
+      "id": "german-part-bred-shetland-pony",
+      "zh": "German Part-bred Shetland Pony",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "German Part-bred Shetland Pony"
+    },
+    {
+      "id": "german-warmblood",
+      "zh": "German Warmblood",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "German Warmblood"
+    },
+    {
+      "id": "percheron",
+      "zh": "佩尔什马",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Percheron"
+    },
+    {
+      "id": "danish-warmblood",
+      "zh": "Danish Warmblood",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Danish Warmblood"
+    },
+    {
+      "id": "tersk-horse",
+      "zh": "Tersk horse",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Tersk horse"
+    },
+    {
+      "id": "adaev",
+      "zh": "Adaev",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Adaev"
+    },
+    {
+      "id": "breton-horse",
+      "zh": "Breton horse",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Breton horse"
+    },
+    {
+      "id": "orlov-trotter",
+      "zh": "奥尔洛夫小跑马",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Orlov Trotter"
+    },
+    {
+      "id": "gypsy-vanner-horse",
+      "zh": "吉普赛马",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Gypsy Vanner horse"
+    },
+    {
+      "id": "misaki",
+      "zh": "Misaki",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Misaki"
+    },
+    {
+      "id": "d-lmener",
+      "zh": "Dülmener",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Dülmener"
+    },
+    {
+      "id": "monterufolino",
+      "zh": "Monterufolino",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Monterufolino"
+    },
+    {
+      "id": "carthusian",
+      "zh": "Carthusian",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Carthusian"
+    },
+    {
+      "id": "russian-heavy-draft",
+      "zh": "俄罗斯重草马",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Russian Heavy Draft"
+    },
+    {
+      "id": "galiceno",
+      "zh": "Galiceno",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Galiceno"
+    },
+    {
+      "id": "trait-du-nord",
+      "zh": "Trait du Nord",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Trait du Nord"
+    },
+    {
+      "id": "french-trotter",
+      "zh": "法国小跑马",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "French Trotter"
+    },
+    {
+      "id": "wielkopolski",
+      "zh": "Wielkopolski",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Wielkopolski"
+    },
+    {
+      "id": "dutch-warmblood",
+      "zh": "荷兰温血马",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Dutch Warmblood"
+    },
+    {
+      "id": "new-forest-pony",
+      "zh": "New Forest pony",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "New Forest pony"
+    },
+    {
+      "id": "chakouyi",
+      "zh": "岔口驿马",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Chakouyi"
+    },
+    {
+      "id": "datong-horse",
+      "zh": "Datong horse",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Datong horse"
+    },
+    {
+      "id": "chaidamu",
+      "zh": "柴达木马",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Chaidamu"
+    },
+    {
+      "id": "jianchang",
+      "zh": "建昌马",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Jianchang"
+    },
+    {
+      "id": "jilin",
+      "zh": "Jilin",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Jilin"
+    },
+    {
+      "id": "chinese-kazakh-horse",
+      "zh": "Chinese Kazakh Horse",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Chinese Kazakh Horse"
+    },
+    {
+      "id": "chinese-mongolian",
+      "zh": "Chinese Mongolian",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Chinese Mongolian"
+    },
+    {
+      "id": "shandan-horse",
+      "zh": "Shandan horse",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Shandan horse"
+    },
+    {
+      "id": "tuva-harness-horse",
+      "zh": "Tuva Harness Horse",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Tuva Harness Horse"
+    },
+    {
+      "id": "tuva",
+      "zh": "图瓦马",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Tuva"
+    },
+    {
+      "id": "ban-ei-race-horse",
+      "zh": "Ban-ei Race Horse",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Ban-ei Race Horse"
+    },
+    {
+      "id": "cavallo-del-delta",
+      "zh": "Cavallo del Delta",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Cavallo del Delta"
+    },
+    {
+      "id": "bhimthadi-horse",
+      "zh": "Bhimthadi horse",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Bhimthadi horse"
+    },
+    {
+      "id": "lombok-pony",
+      "zh": "Lombok Pony",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Lombok Pony"
+    },
+    {
+      "id": "yushu",
+      "zh": "玉树马",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Yushu"
+    },
+    {
+      "id": "mountain-pleasure-horse",
+      "zh": "Mountain Pleasure Horse",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Mountain Pleasure Horse"
+    },
+    {
+      "id": "rhenish-german-cold-blood",
+      "zh": "Rhenish-German Cold-Blood",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Rhenish-German Cold-Blood"
+    },
+    {
+      "id": "sable-island-pony",
+      "zh": "塞布爾島馬",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Sable Island Pony"
+    },
+    {
+      "id": "north-american-single-footing-horse",
+      "zh": "North American Single-Footing Horse",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "North American Single-Footing Horse"
+    },
+    {
+      "id": "bangladesh-native-horse",
+      "zh": "Bangladesh native horse",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Bangladesh native horse"
+    },
+    {
+      "id": "chumbivilcas",
+      "zh": "Chumbivilcas",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Chumbivilcas"
+    },
+    {
+      "id": "fleuve",
+      "zh": "Fleuve",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Fleuve"
+    },
+    {
+      "id": "brantome-line",
+      "zh": "Brantome line",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Brantome line"
+    },
+    {
+      "id": "cerbat-mustang",
+      "zh": "Cerbat Mustang",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Cerbat Mustang"
+    },
+    {
+      "id": "m-par",
+      "zh": "M'Par",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "M'Par"
+    },
+    {
+      "id": "merak-saktenpata",
+      "zh": "Merak-Saktenpata",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Merak-Saktenpata"
+    },
+    {
+      "id": "sri-lankan-pony",
+      "zh": "Sri Lankan pony",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Sri Lankan pony"
+    },
+    {
+      "id": "indonesian-racing-horse",
+      "zh": "Indonesian Racing Horse",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Indonesian Racing Horse"
+    },
+    {
+      "id": "yuta-horse",
+      "zh": "尤塔马",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Yuta horse"
+    },
+    {
+      "id": "shan-horse",
+      "zh": "Shan Horse",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Shan Horse"
+    },
+    {
+      "id": "kuningan",
+      "zh": "Kuningan",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Kuningan"
+    },
+    {
+      "id": "ukurova",
+      "zh": "Çukurova",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Çukurova"
+    },
+    {
+      "id": "chara",
+      "zh": "Chara",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Chara"
+    },
+    {
+      "id": "abeya",
+      "zh": "Abeya",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Abeya"
+    },
+    {
+      "id": "poney-de-selle-belge",
+      "zh": "Poney de selle belge",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Poney de selle belge"
+    },
+    {
+      "id": "turkish-arabian-horse",
+      "zh": "Turkish Arabian horse",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Turkish Arabian horse"
+    },
+    {
+      "id": "kurdish-horse",
+      "zh": "Kurdish horse",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Kurdish horse"
+    },
+    {
+      "id": "persian-plateau-horse",
+      "zh": "Persian plateau horse",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Persian plateau horse"
+    },
+    {
+      "id": "muniqi",
+      "zh": "Muniqi",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Muniqi"
+    },
+    {
+      "id": "alaca",
+      "zh": "Alaca",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Alaca"
+    },
+    {
+      "id": "gemlik",
+      "zh": "Gemlik",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Gemlik"
+    },
+    {
+      "id": "priangan-horse",
+      "zh": "Priangan horse",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Priangan horse"
+    },
+    {
+      "id": "lavradeiro",
+      "zh": "Lavradeiro",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Lavradeiro"
+    },
+    {
+      "id": "barock-pinto",
+      "zh": "Barock Pinto",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Barock Pinto"
+    },
+    {
+      "id": "malakan",
+      "zh": "Malakan",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Malakan"
+    },
+    {
+      "id": "miquelon-horse",
+      "zh": "Miquelon horse",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Miquelon horse"
+    },
+    {
+      "id": "slovak-warmblood",
+      "zh": "Slovak Warmblood",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Slovak Warmblood"
+    },
+    {
+      "id": "romanian-draft-horse",
+      "zh": "Romanian draft horse",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Romanian draft horse"
+    },
+    {
+      "id": "slovenian-warmblood",
+      "zh": "Slovenian warmblood",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Slovenian warmblood"
+    },
+    {
+      "id": "baladi-horse",
+      "zh": "Baladi horse",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Baladi horse"
+    },
+    {
+      "id": "bale-horse",
+      "zh": "Bale horse",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Bale horse"
+    },
+    {
+      "id": "selale",
+      "zh": "Selale",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Selale"
+    },
+    {
+      "id": "bobo-horse",
+      "zh": "Bobo horse",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Bobo horse"
+    },
+    {
+      "id": "trochador",
+      "zh": "Trochador",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Trochador"
+    },
+    {
+      "id": "trote-y-galope",
+      "zh": "Trote y Galope",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Trote y Galope"
+    },
+    {
+      "id": "venezuelan-criollo",
+      "zh": "Venezuelan Criollo",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Venezuelan Criollo"
+    },
+    {
+      "id": "uruguayan-criollo",
+      "zh": "Uruguayan Criollo",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Uruguayan Criollo"
+    },
+    {
+      "id": "crioulo",
+      "zh": "Crioulo",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Crioulo"
+    },
+    {
+      "id": "paraguayan-criollo",
+      "zh": "Paraguayan Criollo",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Paraguayan Criollo"
+    },
+    {
+      "id": "northeastern-horse",
+      "zh": "Northeastern horse",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Northeastern horse"
+    },
+    {
+      "id": "beledougou",
+      "zh": "Beledougou",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Beledougou"
+    },
+    {
+      "id": "nokota-horse",
+      "zh": "Nokota horse",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Nokota horse"
+    },
+    {
+      "id": "anglo-arabian",
+      "zh": "英伦-阿拉伯种马",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Anglo-Arabian"
+    },
+    {
+      "id": "black-forest-horse",
+      "zh": "Black Forest Horse",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Black Forest Horse"
+    },
+    {
+      "id": "araappaloosa",
+      "zh": "AraAppaloosa",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "AraAppaloosa"
+    },
+    {
+      "id": "faroe-pony",
+      "zh": "Faroe pony",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Faroe pony"
+    },
+    {
+      "id": "w-rttemberger",
+      "zh": "Württemberger",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Württemberger"
+    },
+    {
+      "id": "holsteiner-horse",
+      "zh": "荷尔斯泰因马",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Holsteiner horse"
+    },
+    {
+      "id": "canadian-horse",
+      "zh": "加拿大马",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Canadian horse"
+    },
+    {
+      "id": "miyako-horse",
+      "zh": "宮古馬",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Miyako horse"
+    },
+    {
+      "id": "arabo-friesian",
+      "zh": "Arabo-friesian",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Arabo-friesian"
+    },
+    {
+      "id": "boulonnais",
+      "zh": "布洛涅馬",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Boulonnais"
+    },
+    {
+      "id": "nonius-horse",
+      "zh": "Nonius horse",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Nonius horse"
+    },
+    {
+      "id": "m-rens-horse",
+      "zh": "梅朗斯马",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Mérens horse"
+    },
+    {
+      "id": "polesskaya-horse",
+      "zh": "Polesskaya horse",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Polesskaya horse"
+    },
+    {
+      "id": "bagual",
+      "zh": "Bagual",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Bagual"
+    },
+    {
+      "id": "belgian-trotter",
+      "zh": "Belgian Trotter",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Belgian Trotter"
+    },
+    {
+      "id": "hrvatski-toplokrvnjak",
+      "zh": "Hrvatski toplokrvnjak",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Hrvatski toplokrvnjak"
+    },
+    {
+      "id": "novoolexandrian-draught",
+      "zh": "Novoolexandrian Draught",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Novoolexandrian Draught"
+    },
+    {
+      "id": "einsiedler",
+      "zh": "Einsiedler",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Einsiedler"
+    },
+    {
+      "id": "polish-halfbred-horse",
+      "zh": "Polish Halfbred Horse",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Polish Halfbred Horse"
+    },
+    {
+      "id": "waziri",
+      "zh": "Waziri",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Waziri"
+    },
+    {
+      "id": "lesbos-horse",
+      "zh": "Lesbos horse",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Lesbos horse"
+    },
+    {
+      "id": "galshar",
+      "zh": "Galshar",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Galshar"
+    },
+    {
+      "id": "tes",
+      "zh": "Tes",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Tes"
+    },
+    {
+      "id": "darkhad",
+      "zh": "Darkhad",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Darkhad"
+    },
+    {
+      "id": "myngad",
+      "zh": "Myngad",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Myngad"
+    },
+    {
+      "id": "ljutomer-trotter",
+      "zh": "Ljutomer Trotter",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Ljutomer Trotter"
+    },
+    {
+      "id": "patibarcina",
+      "zh": "Patibarcina",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Patibarcina"
+    },
+    {
+      "id": "conestoga-horse",
+      "zh": "Conestoga Horse",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Conestoga Horse"
+    },
+    {
+      "id": "rodope-horse",
+      "zh": "Rodope horse",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Rodope horse"
+    },
+    {
+      "id": "zanthe-horse",
+      "zh": "Zanthe horse",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Zanthe horse"
+    },
+    {
+      "id": "rhodos-pony",
+      "zh": "Rhodos pony",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Rhodos pony"
+    },
+    {
+      "id": "kafa",
+      "zh": "Kafa",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Kafa"
+    },
+    {
+      "id": "iomud",
+      "zh": "Iomud",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Iomud"
+    },
+    {
+      "id": "sokolsky-horse",
+      "zh": "Sokolsky horse",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Sokolsky horse"
+    },
+    {
+      "id": "haflinger",
+      "zh": "哈福林格马",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Haflinger"
+    },
+    {
+      "id": "falabella",
+      "zh": "法拉貝拉馬",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Falabella"
+    },
+    {
+      "id": "appaloosa",
+      "zh": "阿帕卢萨马",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Appaloosa"
+    },
+    {
+      "id": "appaloosa-sport-horse",
+      "zh": "Appaloosa Sport Horse",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Appaloosa Sport Horse"
+    },
+    {
+      "id": "arab-barb",
+      "zh": "Arab-Barb",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Arab-Barb"
+    },
+    {
+      "id": "pintabian",
+      "zh": "Pintabian",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Pintabian"
+    },
+    {
+      "id": "quarab",
+      "zh": "Quarab",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Quarab"
+    },
+    {
+      "id": "hackney-horse",
+      "zh": "哈克尼马",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Hackney horse"
+    },
+    {
+      "id": "paso-fino",
+      "zh": "巴蘇馬",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Paso Fino"
+    },
+    {
+      "id": "ardennes-horse",
+      "zh": "阿登馬",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Ardennes horse"
+    },
+    {
+      "id": "baguio",
+      "zh": "Baguio",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Baguio"
+    },
+    {
+      "id": "bergmann",
+      "zh": "Bergmann",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Bergmann"
+    },
+    {
+      "id": "carneddau-pony",
+      "zh": "Carneddau pony",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Carneddau pony"
+    },
+    {
+      "id": "cherokee",
+      "zh": "Cherokee",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Cherokee"
+    },
+    {
+      "id": "chumysh",
+      "zh": "Chumysh",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Chumysh"
+    },
+    {
+      "id": "danish-trotter",
+      "zh": "Danish trotter",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Danish trotter"
+    },
+    {
+      "id": "estonian-sport-horse",
+      "zh": "Estonian Sport Horse",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Estonian Sport Horse"
+    },
+    {
+      "id": "yabu",
+      "zh": "Yabu",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Yabu"
+    },
+    {
+      "id": "bajau",
+      "zh": "Bajau",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Bajau"
+    },
+    {
+      "id": "romanian-trotter",
+      "zh": "Romanian Trotter",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Romanian Trotter"
+    },
+    {
+      "id": "sudan-country-bred",
+      "zh": "Sudan Country-Bred",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Sudan Country-Bred"
+    },
+    {
+      "id": "javakhuri-harness-horse",
+      "zh": "Javakhuri Harness Horse",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Javakhuri Harness Horse"
+    },
+    {
+      "id": "cauchois-horse",
+      "zh": "Cauchois horse",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Cauchois horse"
+    },
+    {
+      "id": "maine",
+      "zh": "Maine",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Maine"
+    },
+    {
+      "id": "la-hague-horse",
+      "zh": "La Hague horse",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "La Hague horse"
+    },
+    {
+      "id": "merlerault-horse",
+      "zh": "Merlerault horse",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Merlerault horse"
+    },
+    {
+      "id": "carrossier-noir-du-cotentin",
+      "zh": "Carrossier noir du Cotentin",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Carrossier noir du Cotentin"
+    },
+    {
+      "id": "karelian-horse",
+      "zh": "Karelian horse",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Karelian horse"
+    },
+    {
+      "id": "puruca",
+      "zh": "Puruca",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Puruca"
+    },
+    {
+      "id": "goonhilly",
+      "zh": "Goonhilly",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Goonhilly"
+    },
+    {
+      "id": "banat",
+      "zh": "Banat",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Banat"
+    },
+    {
+      "id": "makassar",
+      "zh": "Makassar",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Makassar"
+    },
+    {
+      "id": "lao",
+      "zh": "Lao",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Lao"
+    },
+    {
+      "id": "zhongdian",
+      "zh": "Zhongdian",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Zhongdian"
+    },
+    {
+      "id": "ondorshil",
+      "zh": "Ondorshil",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Ondorshil"
+    },
+    {
+      "id": "ujumqin",
+      "zh": "Ujumqin",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Ujumqin"
+    },
+    {
+      "id": "arenberg-nordkirchen",
+      "zh": "Arenberg-Nordkirchen",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Arenberg-Nordkirchen"
+    },
+    {
+      "id": "ukrainian-riding-horse",
+      "zh": "Ukrainian Riding Horse",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Ukrainian Riding Horse"
+    },
+    {
+      "id": "shagya-arabian",
+      "zh": "Shagya Arabian",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Shagya Arabian"
+    },
+    {
+      "id": "furioso-north-star",
+      "zh": "Furioso-North Star",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Furioso-North Star"
+    },
+    {
+      "id": "dartmoor-pony",
+      "zh": "Dartmoor Pony",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Dartmoor Pony"
+    },
+    {
+      "id": "budyonny-horse",
+      "zh": "布琼尼马",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Budyonny horse"
+    },
+    {
+      "id": "waler-horse",
+      "zh": "Waler horse",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Waler horse"
+    },
+    {
+      "id": "schleswig-horse",
+      "zh": "Schleswig horse",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Schleswig horse"
+    },
+    {
+      "id": "freiberger",
+      "zh": "弗朗什‒蒙塔涅斯马",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Freiberger"
+    },
+    {
+      "id": "swiss-warmblood",
+      "zh": "Swiss Warmblood",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Swiss Warmblood"
+    },
+    {
+      "id": "american-paint-horse",
+      "zh": "美洲佩恩特马",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "American Paint Horse"
+    },
+    {
+      "id": "pura-raza-espa-ola",
+      "zh": "Pura Raza Española",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Pura Raza Española"
+    },
+    {
+      "id": "hucul-pony",
+      "zh": "胡克尔马",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Hucul pony"
+    },
+    {
+      "id": "polish-arabian-horse",
+      "zh": "Polish Arabian horse",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Polish Arabian horse"
+    },
+    {
+      "id": "abaga",
+      "zh": "Abaga",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Abaga"
+    },
+    {
+      "id": "henan",
+      "zh": "Henan",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Henan"
+    },
+    {
+      "id": "wenshan",
+      "zh": "Wenshan",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Wenshan"
+    },
+    {
+      "id": "south-african-warmblood",
+      "zh": "South African Warmblood",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "South African Warmblood"
+    },
+    {
+      "id": "morna",
+      "zh": "Morna",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Morna"
+    },
+    {
+      "id": "kajlan",
+      "zh": "Kajlan",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Kajlan"
+    },
+    {
+      "id": "jata",
+      "zh": "Jata",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Jata"
+    },
+    {
+      "id": "polish-riding-pony",
+      "zh": "Polish Riding Pony",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Polish Riding Pony"
+    },
+    {
+      "id": "slovenian-cold-blood",
+      "zh": "Slovenian Cold-blood",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Slovenian Cold-blood"
+    },
+    {
+      "id": "south-african-miniature",
+      "zh": "South African Miniature",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "South African Miniature"
+    },
+    {
+      "id": "south-african-saddlehorse",
+      "zh": "South African Saddlehorse",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "South African Saddlehorse"
+    },
+    {
+      "id": "lippitt-morgan",
+      "zh": "Lippitt Morgan",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Lippitt Morgan"
+    },
+    {
+      "id": "pinkaf",
+      "zh": "Pinkafö",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Pinkafö"
+    },
+    {
+      "id": "studbook-la-silla",
+      "zh": "Studbook La Silla",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Studbook La Silla"
+    },
+    {
+      "id": "namaqua-pony",
+      "zh": "Namaqua Pony",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Namaqua Pony"
+    },
+    {
+      "id": "mossi",
+      "zh": "Mossi",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Mossi"
+    },
+    {
+      "id": "westphalian-pony",
+      "zh": "Westphalian Pony",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Westphalian Pony"
+    },
+    {
+      "id": "sachsen-anhaltiner-warmblut",
+      "zh": "Sachsen-Anhaltiner Warmblut",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Sachsen-Anhaltiner Warmblut"
+    },
+    {
+      "id": "trotter-type-finnhorse",
+      "zh": "Trotter-type Finnhorse",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Trotter-type Finnhorse"
+    },
+    {
+      "id": "basseri-horse",
+      "zh": "Basseri horse",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Basseri horse"
+    },
+    {
+      "id": "borta",
+      "zh": "Borta",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Borta"
+    },
+    {
+      "id": "dawand",
+      "zh": "Dawand",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Dawand"
+    },
+    {
+      "id": "jofi",
+      "zh": "Jofi",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Jofi"
+    },
+    {
+      "id": "mazari",
+      "zh": "Mazari",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Mazari"
+    },
+    {
+      "id": "herati",
+      "zh": "Herati",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Herati"
+    },
+    {
+      "id": "qazal",
+      "zh": "Qazal",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Qazal"
+    },
+    {
+      "id": "yargha",
+      "zh": "Yargha",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Yargha"
+    },
+    {
+      "id": "samand",
+      "zh": "Samand",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Samand"
+    },
+    {
+      "id": "kohband",
+      "zh": "Kohband",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Kohband"
+    },
+    {
+      "id": "manx",
+      "zh": "Manx",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Manx"
+    },
+    {
+      "id": "japanese-miniature-horse",
+      "zh": "Japanese Miniature Horse",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Japanese Miniature Horse"
+    },
+    {
+      "id": "japanese-sport-horse",
+      "zh": "Japanese Sport Horse",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Japanese Sport Horse"
+    },
+    {
+      "id": "japanese-riding-horse",
+      "zh": "Japanese Riding Horse",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Japanese Riding Horse"
+    },
+    {
+      "id": "japanese-pony",
+      "zh": "Japanese Pony",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Japanese Pony"
+    },
+    {
+      "id": "podveleski",
+      "zh": "Podveleski",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Podveleski"
+    },
+    {
+      "id": "busa-pony",
+      "zh": "Busa Pony",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Busa Pony"
+    },
+    {
+      "id": "hutovo-blato",
+      "zh": "Hutovo-Blato",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Hutovo-Blato"
+    },
+    {
+      "id": "domestic-mountain-pony",
+      "zh": "Domestic mountain pony",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Domestic mountain pony"
+    },
+    {
+      "id": "namaqua",
+      "zh": "Namaqua",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Namaqua"
+    },
+    {
+      "id": "english-halfblut",
+      "zh": "English Halfblut",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "English Halfblut"
+    },
+    {
+      "id": "bisbino-horse",
+      "zh": "Bisbino horse",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Bisbino horse"
+    },
+    {
+      "id": "palatinate-ardennes",
+      "zh": "Palatinate-Ardennes",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Palatinate-Ardennes"
+    },
+    {
+      "id": "newfoundland-pony",
+      "zh": "Newfoundland pony",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Newfoundland pony"
+    },
+    {
+      "id": "tattu",
+      "zh": "Tattu",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Tattu"
+    },
+    {
+      "id": "chyanta",
+      "zh": "Chyanta",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Chyanta"
+    },
+    {
+      "id": "tanghan",
+      "zh": "Tanghan",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Tanghan"
+    },
+    {
+      "id": "baltic-trotter",
+      "zh": "Baltic Trotter",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Baltic Trotter"
+    },
+    {
+      "id": "balkan-pony",
+      "zh": "Balkan Pony",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Balkan Pony"
+    },
+    {
+      "id": "bakhtiari",
+      "zh": "Bakhtiari",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Bakhtiari"
+    },
+    {
+      "id": "pahlavan",
+      "zh": "Pahlavan",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Pahlavan"
+    },
+    {
+      "id": "north-american-spotted-draft-horse",
+      "zh": "North American Spotted Draft Horse",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "North American Spotted Draft Horse"
+    },
+    {
+      "id": "sulphur",
+      "zh": "Sulphur",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Sulphur"
+    },
+    {
+      "id": "mccurdy-plantation-horse",
+      "zh": "McCurdy Plantation Horse",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "McCurdy Plantation Horse"
+    },
+    {
+      "id": "desert-norman-horse",
+      "zh": "Desert Norman Horse",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Desert Norman Horse"
+    },
+    {
+      "id": "sport-horse-breeding-of-great-britain",
+      "zh": "Sport Horse Breeding of Great Britain",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Sport Horse Breeding of Great Britain"
+    },
+    {
+      "id": "anglo-barb-horse",
+      "zh": "Anglo-barb horse",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Anglo-barb horse"
+    },
+    {
+      "id": "constantine-barb",
+      "zh": "Constantine Barb",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Constantine Barb"
+    },
+    {
+      "id": "oran-barb",
+      "zh": "Oran Barb",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Oran Barb"
+    },
+    {
+      "id": "karst-horse",
+      "zh": "Karst horse",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Karst horse"
+    },
+    {
+      "id": "american-belgian-draft",
+      "zh": "American Belgian Draft",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "American Belgian Draft"
+    },
+    {
+      "id": "irish-cob",
+      "zh": "Irish cob",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Irish cob"
+    },
+    {
+      "id": "irish-pony",
+      "zh": "Irish Pony",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Irish Pony"
+    },
+    {
+      "id": "baise",
+      "zh": "Baise",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Baise"
+    },
+    {
+      "id": "shishan",
+      "zh": "Shishan",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Shishan"
+    },
+    {
+      "id": "tatar-horse",
+      "zh": "tatar horse",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "tatar horse"
+    },
+    {
+      "id": "canadian-sport-horse",
+      "zh": "Canadian Sport Horse",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Canadian Sport Horse"
+    },
+    {
+      "id": "british-miniature-horse",
+      "zh": "British Miniature Horse",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "British Miniature Horse"
+    },
+    {
+      "id": "shire-horse",
+      "zh": "夏尔马",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Shire horse"
+    },
+    {
+      "id": "dutch-draft",
+      "zh": "Dutch Draft",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Dutch Draft"
+    },
+    {
+      "id": "sztumski",
+      "zh": "Sztumski",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Sztumski"
+    },
+    {
+      "id": "american-white-draught-horse",
+      "zh": "American White Draught Horse",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "American White Draught Horse"
+    },
+    {
+      "id": "amyrakikos",
+      "zh": "Amyrakikos",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Amyrakikos"
+    },
+    {
+      "id": "kachchhi-sindhit",
+      "zh": "Kachchhi-Sindhit",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Kachchhi-Sindhit"
+    },
+    {
+      "id": "lofoten-pony",
+      "zh": "Lofoten pony",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Lofoten pony"
+    },
+    {
+      "id": "german-trotter",
+      "zh": "German Trotter",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "German Trotter"
+    },
+    {
+      "id": "lincolnshire-dray-horse",
+      "zh": "Lincolnshire Dray Horse",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Lincolnshire Dray Horse"
+    },
+    {
+      "id": "sistani",
+      "zh": "Sistani",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Sistani"
+    },
+    {
+      "id": "brennou-horse",
+      "zh": "Brennou horse",
+      "prevalence": "uncommon",
+      "listed": false,
+      "en": "Brennou horse"
+    },
+    {
+      "id": "q10661303",
+      "zh": "三河马",
+      "prevalence": "uncommon",
+      "listed": false
+    },
+    {
+      "id": "q19544550",
+      "zh": "鄂伦春马",
+      "prevalence": "uncommon",
+      "listed": false
+    },
+    {
+      "id": "q48801235",
+      "zh": "貢扎加的馬",
+      "prevalence": "uncommon",
+      "listed": false
+    }
+  ]
+}

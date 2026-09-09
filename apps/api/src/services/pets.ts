@@ -9,7 +9,12 @@ import {
 } from "../db/schema.js";
 import { collectibleRankFromTier } from "../rarity/scale-rubric.js";
 import { collectionScientificName } from "../settle/taxon.js";
-import { matchBreed, parseBreedIdList, petDisplayCommonName } from "../pets/breeds.js";
+import {
+  parseBreedIdList,
+  petDisplayCommonName,
+  resolveBreed,
+  type FreeBreedCell,
+} from "../pets/breeds.js";
 
 function isDomesticated(obs: Pick<Observation, "domesticated">): boolean {
   return Boolean(obs.domesticated);
@@ -60,16 +65,21 @@ function bestRarity(sources: Observation[]): string {
 
 function breedProgress(sources: Observation[], taxonKey: string): {
   litIds: string[];
+  free: FreeBreedCell[];
   unregisteredLit: boolean;
 } {
   const lit = new Set<string>();
+  const freeById = new Map<string, string>();
   let unregisteredLit = false;
   for (const obs of sources) {
-    const matched = matchBreed(taxonKey, obs.breedZh);
-    if (matched) lit.add(matched.id);
-    else unregisteredLit = true;
+    const resolved = resolveBreed(taxonKey, obs.breedZh);
+    if (resolved.kind === "catalog") lit.add(resolved.breed.id);
+    else if (resolved.kind === "free") {
+      if (!freeById.has(resolved.id)) freeById.set(resolved.id, resolved.zh);
+    } else unregisteredLit = true;
   }
-  return { litIds: [...lit], unregisteredLit };
+  const free = [...freeById].map(([id, zh]) => ({ id, zh }));
+  return { litIds: [...lit], free, unregisteredLit };
 }
 
 export async function rebuildPetTaxonForUser(userId: string, taxonKey: string) {
@@ -88,7 +98,7 @@ export async function rebuildPetTaxonForUser(userId: string, taxonKey: string) {
 
   const cover = ownPet[0] ?? sources[0]!;
   const nameSource = cover;
-  const { litIds, unregisteredLit } = breedProgress(sources, taxonKey);
+  const { litIds, free, unregisteredLit } = breedProgress(sources, taxonKey);
   const now = new Date();
   const commonName = petDisplayCommonName(taxonKey, nameSource.commonName);
   const scientificName = collectionScientificName(nameSource);
@@ -104,6 +114,7 @@ export async function rebuildPetTaxonForUser(userId: string, taxonKey: string) {
       rarity,
       coverObservationId: cover.id,
       litBreedIdsJson: JSON.stringify(litIds),
+      litFreeBreedsJson: JSON.stringify(free),
       unregisteredLit,
       firstCollectedAt: now,
       updatedAt: now,
@@ -119,6 +130,7 @@ export async function rebuildPetTaxonForUser(userId: string, taxonKey: string) {
       rarity,
       coverObservationId: cover.id,
       litBreedIdsJson: JSON.stringify(litIds),
+      litFreeBreedsJson: JSON.stringify(free),
       unregisteredLit,
       updatedAt: now,
     })

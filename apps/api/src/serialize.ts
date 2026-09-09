@@ -1,6 +1,6 @@
 import { normalizeTaxonomy, type Taxonomy } from "./identify/types.js";
 import type { CollectionEntry, Observation, PetCollectionEntry, Trip, User } from "./db/schema.js";
-import { catalogForTaxon, parseBreedIdList, petDisplayCommonName } from "./pets/breeds.js";
+import { catalogForTaxon, parseBreedIdList, parseFreeBreedList, petDisplayCommonName } from "./pets/breeds.js";
 import { EMPTY_CN_STATUS, lookupListed, statusTagsFrom, type StatusTag } from "./rarity/cn-status.js";
 import { canonicalizeUserTheme } from "./theme-id.js";
 import type { TripSummaryResolved } from "./trips/summary.js";
@@ -165,6 +165,22 @@ export function serializePetCollectionEntry(
 ) {
   const catalog = catalogForTaxon(entry.taxonKey);
   const lit = new Set(parseBreedIdList(entry.litBreedIdsJson));
+  const free = parseFreeBreedList(entry.litFreeBreedsJson);
+  const catalogCells = (catalog?.breeds ?? [])
+    .filter((b) => lit.has(b.id))
+    .map((b) => ({
+      id: b.id,
+      zh: b.zh,
+      prevalence: b.prevalence,
+      lit: true,
+      source: "catalog" as const,
+    }));
+  const freeCells = free.map((f) => ({
+    id: f.id,
+    zh: f.zh,
+    lit: true,
+    source: "free" as const,
+  }));
   return {
     id: entry.id,
     taxonKey: entry.taxonKey,
@@ -178,11 +194,6 @@ export function serializePetCollectionEntry(
     updatedAt: entry.updatedAt.toISOString(),
     taxonomy: opts?.taxonomy ?? null,
     unregisteredLit: Boolean(entry.unregisteredLit),
-    breeds: (catalog?.breeds ?? []).map((b) => ({
-      id: b.id,
-      zh: b.zh,
-      prevalence: b.prevalence,
-      lit: lit.has(b.id),
-    })),
+    breeds: [...catalogCells, ...freeCells],
   };
 }

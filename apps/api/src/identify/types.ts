@@ -53,7 +53,7 @@ export type IdentifyResult = {
    * 只认生物本体，项圈/场景不算。
    */
   domesticated: boolean | null;
-  /** 标准品种中文名；非驯化或认不出时为 null。不收颜色系俗名。 */
+  /** 品种中文名；非驯化或认不出时为 null。颜色俗名、串串、物种名不要填。 */
   breed_zh: string | null;
   /** 自报 L1 本体证据，仅审计，不进判卷。 */
   dom_evidence_zh: string | null;
