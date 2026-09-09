@@ -52,7 +52,6 @@ GROUPS = {
     },
     "册族": {
         "trips.lede", "trips.empty", "album.empty", "onboard.tripLede",
-        "collection.volumesLede",
     },
     "证书族": {
         "settle.title", "settle.lede", "settle.open", "settle.claim",

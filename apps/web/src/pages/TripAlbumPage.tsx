@@ -574,7 +574,7 @@ export default function TripAlbumPage({ userId }: { userId: string }) {
               disabled={picking}
               onClick={() => void onPick("gallery")}
             >
-              {picking ? t("album.picking") : t("album.addPhotos")}
+              {t("album.addPhotos")}
             </button>
             <button
               className="text-link"
@@ -613,7 +613,7 @@ export default function TripAlbumPage({ userId }: { userId: string }) {
             ) : null}
           </div>
           <span className="muted">
-            {picking ? t("album.picking") : t("album.filesChosen", { count: files.length })}
+            {t("album.filesChosen", { count: files.length })}
           </span>
           {previewUrls.length > 0 ? (
             <div className="pick-thumbs" aria-hidden>
