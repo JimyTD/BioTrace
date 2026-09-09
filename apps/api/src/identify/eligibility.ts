@@ -97,7 +97,7 @@ export function evaluateEligibility(result: IdentifyResult): EligibilityDecision
       ok: true,
       keepsake: {
         kind,
-        reasonZh: result.ineligibility_reason_zh.trim() || t("error.identifyNoKingdomReason"),
+        reasonZh: result.ineligibility_reason_zh.trim() || t("error.identifyGenericFailed"),
       },
     };
   }

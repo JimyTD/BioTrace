@@ -29,9 +29,8 @@ export function isNotAFault(code: string | null | undefined): boolean {
 /** User-facing primary line for observation.error codes. Never dump raw stack/API junk. */
 export function identifyErrorPrimary(code: string | null | undefined): string {
   if (!code) return t("error.identifyGenericFailed");
-  if (isKeepsakeError(code)) return t("error.identifyKeepsake");
+  if (isKeepsakeError(code) || isNotCollectibleError(code)) return t("error.identifyKeepsake");
   if (isSoftEncounterError(code)) return t("error.identifySoftEncounter");
-  if (isNotCollectibleError(code)) return t("error.identifyNotCollectible");
   if (code === "identify_too_coarse") return t("error.identifyTooCoarse");
   if (code === "identify_quota") return t("error.identifyQuota");
   if (code === "identify_daily_limit") return t("error.identifyDailyLimit");
@@ -43,9 +42,8 @@ export function identifyErrorPrimary(code: string | null | undefined): string {
 }
 
 export function identifyErrorHint(code: string | null | undefined): string | null {
-  if (isKeepsakeError(code)) return t("error.identifyKeepsakeHint");
+  if (isKeepsakeError(code) || isNotCollectibleError(code)) return t("error.identifyKeepsakeHint");
   if (isSoftEncounterError(code)) return t("error.identifySoftEncounterHint");
-  if (isNotCollectibleError(code)) return t("error.identifyNotCollectibleHint");
   if (code === "identify_daily_limit") return t("me.identifyQuotaHint");
   return null;
 }
