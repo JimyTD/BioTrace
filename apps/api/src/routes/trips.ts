@@ -12,6 +12,7 @@ import { enqueueIdentify } from "../jobs/identify.js";
 import { isPlatformIdentifyQuotaExhausted } from "../services/identify-quota.js";
 import { usesOwnIdentifyKey } from "../services/user-identify.js";
 import { embedFallbackExif, readExif, saveObservationMedia } from "../services/media.js";
+import { geoSettleFields } from "../settle/country.js";
 import { validCoords } from "../settle/geo/coords.js";
 import { repairCollectionAfterObservationDeleted } from "../services/collection.js";
 import { removeObservationFiles } from "../services/observationFiles.js";
@@ -459,6 +460,9 @@ tripRoutes.post("/:id/observations", async (c) => {
   const useOwnKey = await usesOwnIdentifyKey(user.id);
   const quotaExhausted =
     !useOwnKey && (await isPlatformIdentifyQuotaExhausted(user.id));
+  /* 上传即判定：地理是照片自带属性，不等识别、也不因识别失败而缺失。
+     天地图 2s 超时 + 1.1km 网格缓存，额度用尽时不跑识别，这里更不能省。 */
+  const geo = await geoSettleFields(lat, lng);
   const row = {
     id: observationId,
     tripId: trip.id,
@@ -471,7 +475,7 @@ tripRoutes.post("/:id/observations", async (c) => {
     contentHash,
     displayPath: saved.displayPath,
     originalPath: saved.originalPath,
-    locationLabel: null as string | null,
+    locationLabel: geo.locationLabel,
     commonName: null,
     scientificName: null,
     finestReliableRank: null,
@@ -482,10 +486,10 @@ tripRoutes.post("/:id/observations", async (c) => {
     error: quotaExhausted ? ("identify_daily_limit" as const) : null,
     settleTier: null,
     rarity: null,
-    countryCode: null,
-    // null = 尚未做过国别判定（此刻刚上传，鉴定还没跑）
-    countrySource: null,
-    locationPrecise: null,
+    countryCode: geo.countryCode,
+    // null = 尚未做过国别判定（无坐标以外的场合）
+    countrySource: geo.countrySource,
+    locationPrecise: geo.locationPrecise,
     alertIntroduced: false,
     taxonKey: null,
     acceptedTaxonomyJson: null,

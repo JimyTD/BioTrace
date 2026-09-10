@@ -20,7 +20,7 @@ import { isTripMember, listTripsForUser, uploaderNamesForObservations } from "..
 import { removeObservationFiles } from "../services/observationFiles.js";
 import { serializeObservation } from "../serialize.js";
 import { validCoords } from "../settle/geo/coords.js";
-import { resolveCountry } from "../settle/country.js";
+import { geoSettleFields, resolveCountry } from "../settle/country.js";
 import { computeSettle } from "../settle/rules.js";
 import { storeAcceptedTaxonomyJson } from "../settle/taxon.js";
 export const observationRoutes = new Hono<{ Variables: Variables }>();
@@ -148,13 +148,13 @@ observationRoutes.patch("/:id/location", async (c) => {
       acceptedTaxonomyJson: storeAcceptedTaxonomyJson(derived.acceptedTaxonomy, row.taxonomyJson),
     };
   } else {
-    const country = await resolveCountry(lat, lng);
+    const geo = await geoSettleFields(lat, lng);
     patch = {
       ...patch,
-      countryCode: country.code,
-      countrySource: country.source,
-      locationLabel: country.locationLabel,
-      locationPrecise: Boolean(country.code),
+      countryCode: geo.countryCode,
+      countrySource: geo.countrySource,
+      locationLabel: geo.locationLabel,
+      locationPrecise: geo.locationPrecise,
     };
   }
 
@@ -281,9 +281,6 @@ observationRoutes.post("/:id/reidentify", async (c) => {
       error: null,
       settleTier: null,
       rarity: null,
-      countryCode: null,
-      locationLabel: null,
-      locationPrecise: null,
       alertIntroduced: false,
       taxonKey: null,
       acceptedTaxonomyJson: null,

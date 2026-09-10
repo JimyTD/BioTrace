@@ -39,6 +39,42 @@ export function countryFromLatLng(
 }
 
 /**
+ * 坐标 → 落库用的地理四件套。
+ *
+ * 地理是照片自带的属性，与识别结果无关：识别合格与否、重新识别、识别失败
+ * 都不清这四项，只有用户主动改定位（PATCH /:id/location）才重算。
+ */
+export type GeoSettleFields = {
+  countryCode: string | null;
+  countrySource: CountrySource | null;
+  locationLabel: string | null;
+  locationPrecise: boolean | null;
+};
+
+export async function geoSettleFields(
+  lat: number | null | undefined,
+  lng: number | null | undefined,
+): Promise<GeoSettleFields> {
+  const c = validCoords(lat, lng);
+  if (!c) {
+    // 没坐标就是没得判，不等于「尚未判定」；locationPrecise=false 与迁移口径一致
+    return {
+      countryCode: null,
+      countrySource: "none",
+      locationLabel: null,
+      locationPrecise: false,
+    };
+  }
+  const r = await resolveCountry(c.lat, c.lng);
+  return {
+    countryCode: r.code,
+    countrySource: r.source,
+    locationLabel: r.locationLabel,
+    locationPrecise: Boolean(r.code),
+  };
+}
+
+/**
  * 线上优先、离线兜底。
  *
  * 注意「成功但无国家」与「调用失败」是两件事：前者（海上等）直接采信 null,

@@ -5,7 +5,7 @@ import { localizeThrownMessage } from "../errors.js";
 import { evaluateEligibility } from "../identify/eligibility.js";
 import { runIdentifyForUser } from "../identify/run.js";
 import { emptyTaxonomy, storedDomIdentity, type IdentifyResult } from "../identify/types.js";
-import { resolveCountry } from "../settle/country.js";
+import { geoSettleFields, resolveCountry } from "../settle/country.js";
 import { computeSettle } from "../settle/rules.js";
 import { storeAcceptedTaxonomyJson } from "../settle/taxon.js";
 import { enqueueIdentifyJob } from "./identify-queue.js";
@@ -192,6 +192,11 @@ export function enqueueIdentify(opts: IdentifyOpts) {
         console.log(
           `[identify] ineligible obs=${opts.observationId} code=${gate.code} kind=${gate.kind}`,
         );
+        const fresh = await db.query.observations.findFirst({
+          where: eq(observations.id, opts.observationId),
+          columns: { lat: true, lng: true },
+        });
+        const geo = await geoSettleFields(fresh?.lat ?? opts.lat, fresh?.lng ?? opts.lng);
         await db
           .update(observations)
           .set({
@@ -206,10 +211,10 @@ export function enqueueIdentify(opts: IdentifyOpts) {
             error: gate.code,
             settleTier: "none",
             rarity: null,
-            countryCode: null,
-            countrySource: null,
-            locationLabel: null,
-            locationPrecise: false,
+            countryCode: geo.countryCode,
+            countrySource: geo.countrySource,
+            locationLabel: geo.locationLabel,
+            locationPrecise: geo.locationPrecise,
             alertIntroduced: false,
             taxonKey: null,
             acceptedTaxonomyJson: null,
