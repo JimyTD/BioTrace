@@ -89,6 +89,89 @@ async function sightingsForTaxon(
   });
 }
 
+type PetPlateObs = {
+  id: string;
+  taxonKey: string | null;
+  displayPath: string;
+  breedZh: string | null;
+};
+
+type PetPlateExtras = {
+  sightingCount: number;
+  faces: string[];
+  breeds: Array<string | null>;
+};
+
+async function petPlateExtras(
+  userId: string,
+  rows: Array<{ taxonKey: string; coverObservationId: string | null }>,
+): Promise<Map<string, PetPlateExtras>> {
+  const out = new Map<string, PetPlateExtras>();
+  const taxonKeys = [...new Set(rows.map((r) => r.taxonKey).filter(Boolean))];
+  if (taxonKeys.length === 0) return out;
+
+  const memberTrips = await listTripsForUser(userId);
+  const tripIds = memberTrips.map((trip) => trip.id);
+  const whereBase = [
+    eq(observations.status, "settled"),
+    eq(observations.domesticated, true),
+    inArray(observations.taxonKey, taxonKeys),
+  ] as const;
+  const obs: PetPlateObs[] =
+    tripIds.length > 0
+      ? await db.query.observations.findMany({
+          where: and(...whereBase, inArray(observations.tripId, tripIds)),
+          orderBy: [desc(observations.settledAt), desc(observations.createdAt)],
+          columns: { id: true, taxonKey: true, displayPath: true, breedZh: true },
+        })
+      : await db.query.observations.findMany({
+          where: and(eq(observations.userId, userId), ...whereBase),
+          orderBy: [desc(observations.settledAt), desc(observations.createdAt)],
+          columns: { id: true, taxonKey: true, displayPath: true, breedZh: true },
+        });
+
+  const grouped = new Map<string, PetPlateObs[]>();
+  for (const row of obs) {
+    if (!row.taxonKey) continue;
+    const list = grouped.get(row.taxonKey);
+    if (list) list.push(row);
+    else grouped.set(row.taxonKey, [row]);
+  }
+
+  for (const entry of rows) {
+    const list = grouped.get(entry.taxonKey) ?? [];
+    const faces: string[] = [];
+    const seenFace = new Set<string>();
+    const pushFace = (url: string | null | undefined) => {
+      if (!url || seenFace.has(url) || faces.length >= 6) return;
+      seenFace.add(url);
+      faces.push(url);
+    };
+    const cover = entry.coverObservationId
+      ? list.find((item) => item.id === entry.coverObservationId)
+      : undefined;
+    if (cover) pushFace(observationDisplayUrl(cover.displayPath));
+    for (const item of list) pushFace(observationDisplayUrl(item.displayPath));
+
+    const breeds: Array<string | null> = [];
+    const seenBreed = new Set<string>();
+    for (const item of list) {
+      const label = displayBreedLabel(entry.taxonKey, item.breedZh);
+      const key = label ?? "";
+      if (seenBreed.has(key)) continue;
+      seenBreed.add(key);
+      breeds.push(label);
+    }
+
+    out.set(entry.taxonKey, {
+      sightingCount: Math.max(list.length, faces.length),
+      faces,
+      breeds,
+    });
+  }
+  return out;
+}
+
 collectionRoutes.get("/", async (c) => {
   const user = c.get("user");
   await sanitizeUserCollection(user.id);
@@ -132,6 +215,7 @@ collectionRoutes.get("/pets", async (c) => {
   });
 
   const alertedTaxa = await introducedTaxonKeys(user.id, true);
+  const plates = await petPlateExtras(user.id, rows);
   const payload = await Promise.all(
     rows.map(async (entry) => {
       let coverUrl: string | null = null;
@@ -145,9 +229,13 @@ collectionRoutes.get("/pets", async (c) => {
           taxonomy = parseCollectionTaxonomy(obs);
         }
       }
+      const plate = plates.get(entry.taxonKey);
       return serializePetCollectionEntry(entry, coverUrl, {
         taxonomy,
         alertIntroduced: alertedTaxa.has(entry.taxonKey),
+        sightingCount: plate?.sightingCount ?? 0,
+        faces: plate?.faces ?? (coverUrl ? [coverUrl] : []),
+        breeds: plate?.breeds ?? [],
       });
     }),
   );

@@ -276,6 +276,64 @@
   text-overflow: ellipsis;
 }
 
+[data-theme="clear"] .pet-plate {
+  --mount-lip-top: 3cqw;
+  --mount-lip-right: 3cqw;
+  --mount-lip-bottom: 7cqw;
+  --mount-lip-left: 3cqw;
+  --mount-caption-gap: 8px;
+}
+
+[data-theme="clear"] .pet-plate-mount {
+  border-radius: 6px;
+}
+
+[data-theme="clear"] .pet-plate-name {
+  grid-area: lip-bottom;
+  z-index: 3;
+  align-self: center;
+  justify-self: start;
+  max-width: 62%;
+  margin: 0;
+  padding: 0 0.4cqw;
+  font-size: 4cqw;
+  line-height: 1.35;
+  letter-spacing: -0.01em;
+  color: var(--mount-title-ink);
+}
+
+[data-theme="clear"] .pet-plate-count {
+  grid-area: lip-bottom;
+  z-index: 3;
+  align-self: center;
+  justify-self: end;
+  margin: 0;
+  padding: 0 0.4cqw;
+  font-size: 2.8cqw;
+  line-height: 1.35;
+  letter-spacing: 0.06em;
+  color: var(--mount-ink);
+}
+
+[data-theme="clear"] .pet-plate-breeds {
+  grid-area: below;
+  margin-top: var(--mount-caption-gap);
+  color: var(--muted);
+}
+
+[data-theme="clear"] .pet-plate:nth-child(4n + 1) {
+  transform: rotate(-0.4deg);
+}
+[data-theme="clear"] .pet-plate:nth-child(4n + 2) {
+  transform: rotate(0.45deg);
+}
+[data-theme="clear"] .pet-plate:nth-child(4n + 3) {
+  transform: rotate(-0.25deg);
+}
+[data-theme="clear"] .pet-plate:nth-child(4n + 4) {
+  transform: rotate(0.35deg);
+}
+
 /* 卡纸不跟界面卡片一样圆：它是张相片，不是一块面板 */
 [data-theme="clear"] .trip-cover-media {
   border-radius: 6px;

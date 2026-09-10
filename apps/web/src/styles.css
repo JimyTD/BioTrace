@@ -315,14 +315,16 @@ a.btn {
    零件清单与各面默认摆放见 docs/features/皮肤主题.md §2.3。 */
 .film-tile,
 .trip-cover-slot,
-.stamp-slot {
+.stamp-slot,
+.pet-plate {
   container-type: inline-size;
 }
 
 .film-tile-link,
 .trip-cover,
 .stamp,
-.settle-photo-mat {
+.settle-photo-mat,
+.pet-plate {
   position: relative;
   display: grid;
   grid-template-columns:
@@ -490,6 +492,134 @@ button.trip-cover {
   padding: 0 4px;
   font-size: 0.9rem;
   font-family: var(--font-meta, var(--font-sans));
+}
+
+/* 宠物页：每种一块卡。图窗固定 16:10，按张数切开，不按物种改版式。 */
+.pet-plates {
+  display: grid;
+  gap: 18px;
+  margin-top: 4px;
+}
+
+.pet-plate {
+  --mount-lip-top: 4cqw;
+  --mount-lip-right: 6cqw;
+  --mount-lip-bottom: 4cqw;
+  --mount-lip-left: 6cqw;
+  --mount-caption-gap: 10px;
+  width: 100%;
+  color: inherit;
+  text-decoration: none;
+  cursor: pointer;
+}
+
+.pet-plate-mount {
+  grid-row: mount-start / mount-end;
+  grid-column: mount-start / mount-end;
+  border-radius: calc(var(--radius-md) + 1px);
+  background: var(--trip-cover-plate);
+  box-shadow: var(--trip-cover-shadow);
+}
+
+.pet-plate:hover .pet-plate-mount,
+.pet-plate:focus-visible .pet-plate-mount {
+  box-shadow: var(--trip-cover-shadow-hover);
+}
+
+.pet-plate-sheet {
+  grid-area: window;
+  aspect-ratio: 16 / 10;
+  display: grid;
+  gap: 1.2cqw;
+  overflow: hidden;
+  z-index: 1;
+  border-radius: 3px;
+}
+
+.pet-plate-sheet > * {
+  min-width: 0;
+  min-height: 0;
+}
+
+.pet-plate-sheet img,
+.pet-plate-empty {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  border-radius: 2px;
+}
+
+.pet-plate-empty {
+  background:
+    linear-gradient(
+      145deg,
+      color-mix(in srgb, var(--cta) 10%, transparent),
+      transparent 55%
+    ),
+    var(--trip-cover-plate);
+}
+
+.pet-plate-sheet.is-1 {
+  grid-template: 1fr / 1fr;
+}
+.pet-plate-sheet.is-2 {
+  grid-template: 1fr / 1fr 1fr;
+}
+.pet-plate-sheet.is-3 {
+  grid-template-columns: 2fr 1fr;
+  grid-template-rows: 1fr 1fr;
+}
+.pet-plate-sheet.is-3 img:first-child {
+  grid-row: 1 / -1;
+}
+.pet-plate-sheet.is-4 {
+  grid-template: 1fr 1fr / 1fr 1fr;
+}
+.pet-plate-sheet.is-5 {
+  grid-template-columns: 2fr 1fr 1fr;
+  grid-template-rows: 1fr 1fr;
+}
+.pet-plate-sheet.is-5 img:first-child {
+  grid-row: 1 / -1;
+}
+.pet-plate-sheet.is-6 {
+  grid-template: 1fr 1fr / 1fr 1fr 1fr;
+}
+
+.pet-plate-name {
+  grid-area: below;
+  justify-self: start;
+  margin-top: var(--mount-caption-gap);
+  padding: 0 4px;
+  font-family: var(--font-brand);
+  font-size: 1.14rem;
+  letter-spacing: -0.02em;
+  min-width: 0;
+  max-width: calc(100% - 4.5em);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.pet-plate-count {
+  grid-area: below;
+  justify-self: end;
+  margin-top: var(--mount-caption-gap);
+  padding: 0 4px;
+  font-size: 0.82rem;
+  font-family: var(--font-meta, var(--font-sans));
+  color: var(--muted);
+  white-space: nowrap;
+}
+
+.pet-plate-breeds {
+  grid-area: foot;
+  margin-top: 3px;
+  padding: 0 4px;
+  font-size: 0.82rem;
+  line-height: 1.45;
+  color: var(--muted);
 }
 
 /* 空态：克制文案，不用整幅插画抢戏 */
@@ -2654,7 +2784,8 @@ button.species-card-cover {
 }
 
 .page-collection.is-covered,
-.page-collection-species.is-covered {
+.page-collection-species.is-covered,
+.page-collection-pets.is-covered {
   visibility: hidden;
   pointer-events: none;
 }

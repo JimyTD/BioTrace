@@ -163,7 +163,13 @@ export function serializeCollectionEntry(
 export function serializePetCollectionEntry(
   entry: PetCollectionEntry,
   coverDisplayUrl?: string | null,
-  opts?: { taxonomy?: Taxonomy | null; alertIntroduced?: boolean },
+  opts?: {
+    taxonomy?: Taxonomy | null;
+    alertIntroduced?: boolean;
+    sightingCount?: number;
+    faces?: string[];
+    breeds?: Array<string | null>;
+  },
 ) {
   return {
     id: entry.id,
@@ -178,5 +184,8 @@ export function serializePetCollectionEntry(
     firstCollectedAt: entry.firstCollectedAt.toISOString(),
     updatedAt: entry.updatedAt.toISOString(),
     taxonomy: opts?.taxonomy ?? null,
+    sightingCount: opts?.sightingCount ?? 0,
+    faces: opts?.faces ?? [],
+    breeds: opts?.breeds ?? [],
   };
 }

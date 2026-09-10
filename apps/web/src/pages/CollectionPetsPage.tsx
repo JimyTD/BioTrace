@@ -1,24 +1,19 @@
-import { useEffect, useLayoutEffect, useMemo, useRef, useState } from "react";
+import { useEffect, useLayoutEffect, useRef, useState } from "react";
 import { Link, useMatch, useNavigate } from "react-router-dom";
-import { hasMessage, t, type MessageKey } from "@biotrace/messages";
-import { api, type PetCollectionEntry, type Rarity } from "../api";
-import { ListTag, ListTagRow } from "../components/ListTagRow";
+import { t } from "@biotrace/messages";
+import { api, type PetCollectionEntry } from "../api";
 import { useBackClose } from "../androidBack";
-import {
-  buildNamedFuse,
-  filterNamed,
-  indexNamed,
-  speciesEntryName,
-} from "../speciesSearch";
+import { petBreedLine } from "../petIdentity";
+import { speciesEntryName } from "../speciesSearch";
 import { restoreContentScroll, saveContentScroll } from "../scrollMemory";
 
 function entryName(entry: PetCollectionEntry) {
   return speciesEntryName(entry, t("detail.unnamed"));
 }
 
-function rarityLabel(r: Rarity) {
-  const key = `rarity.${r}`;
-  return hasMessage(key) ? t(key as MessageKey) : r;
+function sheetClass(n: number) {
+  const k = Math.min(Math.max(n, 1), 6);
+  return `pet-plate-sheet is-${k}`;
 }
 
 export default function CollectionPetsPage() {
@@ -26,8 +21,6 @@ export default function CollectionPetsPage() {
   const cardOpen = Boolean(useMatch("/collection/pets/:id"));
   useBackClose(() => navigate("/collection"), !cardOpen);
   const [entries, setEntries] = useState<PetCollectionEntry[]>([]);
-  const [query, setQuery] = useState("");
-  const [sort, setSort] = useState<"recent" | "name">("recent");
   const [error, setError] = useState<string | null>(null);
   const [loading, setLoading] = useState(true);
   const scrollRestored = useRef(false);
@@ -52,23 +45,9 @@ export default function CollectionPetsPage() {
     }
   }, [loading, cardOpen]);
 
-  const indexed = useMemo(() => entries.map(indexNamed), [entries]);
-  const fuse = useMemo(() => (indexed.length ? buildNamedFuse(indexed) : null), [indexed]);
-
-  const visible = useMemo(() => {
-    const byName = filterNamed(indexed, fuse, query);
-    const copy = [...byName];
-    if (sort === "recent") {
-      copy.sort((a, b) => Date.parse(b.updatedAt) - Date.parse(a.updatedAt));
-    } else {
-      copy.sort((a, b) => speciesEntryName(a).localeCompare(speciesEntryName(b), "zh"));
-    }
-    return copy;
-  }, [indexed, fuse, query, sort]);
-
   return (
     <div
-      className={`stack page-collection-species${cardOpen ? " is-covered" : ""}`}
+      className={`stack page-collection-pets${cardOpen ? " is-covered" : ""}`}
       {...(cardOpen ? { inert: true } : {})}
     >
       <header className="page-head me-sub-head">
@@ -86,74 +65,42 @@ export default function CollectionPetsPage() {
       ) : null}
 
       {!loading && entries.length > 0 ? (
-        <>
-          <div className="species-toolbar">
-            <label className="sr-only" htmlFor="collection-pets-q">
-              {t("collection.speciesSearch")}
-            </label>
-            <input
-              id="collection-pets-q"
-              className="input"
-              value={query}
-              onChange={(e) => setQuery(e.target.value)}
-              placeholder={t("collection.speciesSearch")}
-              autoComplete="off"
-            />
-            <div className="species-sort" role="group">
-              <button
-                type="button"
-                className={`species-sort-btn${sort === "recent" ? " is-on" : ""}`}
-                aria-pressed={sort === "recent"}
-                onClick={() => setSort("recent")}
+        <div className="pet-plates">
+          {entries.map((entry) => {
+            const name = entryName(entry);
+            const faces = (
+              entry.faces && entry.faces.length > 0
+                ? entry.faces
+                : entry.coverDisplayUrl
+                  ? [entry.coverDisplayUrl]
+                  : []
+            ).slice(0, 6);
+            const count = Math.max(entry.sightingCount ?? 0, faces.length);
+            return (
+              <Link
+                key={entry.id}
+                className="pet-plate"
+                to={`/collection/pets/${entry.id}`}
+                onClick={() => saveContentScroll("collection-pets")}
+                aria-label={`${name}，${t("collection.petsSightingCount", { count })}`}
               >
-                {t("collection.speciesSortRecent")}
-              </button>
-              <button
-                type="button"
-                className={`species-sort-btn${sort === "name" ? " is-on" : ""}`}
-                aria-pressed={sort === "name"}
-                onClick={() => setSort("name")}
-              >
-                {t("collection.speciesSortName")}
-              </button>
-            </div>
-          </div>
-          {visible.length === 0 ? (
-            <p className="muted">{t("collection.speciesNoMatch")}</p>
-          ) : (
-            <div className="species-index">
-              {visible.map((entry) => (
-                <Link
-                  key={entry.id}
-                  className="species-index-row"
-                  to={`/collection/pets/${entry.id}`}
-                  onClick={() => saveContentScroll("collection-pets")}
-                >
-                  {entry.coverDisplayUrl ? (
-                    <img className="species-index-thumb" src={entry.coverDisplayUrl} alt="" />
+                <span className="pet-plate-mount" aria-hidden />
+                <span className={sheetClass(faces.length)}>
+                  {faces.length > 0 ? (
+                    faces.map((url) => <img key={url} src={url} alt="" />)
                   ) : (
-                    <span className="species-index-thumb is-empty" aria-hidden />
+                    <span className="pet-plate-empty" aria-hidden />
                   )}
-                  <span className="species-index-copy">
-                    <strong>{entryName(entry)}</strong>
-                    {entry.scientificName && entry.commonName ? (
-                      <span className="muted species-index-sci">{entry.scientificName}</span>
-                    ) : null}
-                    <span className="species-index-marks">
-                      {entry.rarity ? (
-                        <span className={`rarity-badge rarity-${entry.rarity}`}>
-                          {rarityLabel(entry.rarity)}
-                        </span>
-                      ) : null}
-                      <ListTag tag="domesticated" />
-                    </span>
-                    <ListTagRow tags={entry.tags} except={["domesticated"]} />
-                  </span>
-                </Link>
-              ))}
-            </div>
-          )}
-        </>
+                </span>
+                <strong className="pet-plate-name">{name}</strong>
+                <span className="pet-plate-count">
+                  {t("collection.petsSightingCount", { count })}
+                </span>
+                <span className="pet-plate-breeds">{petBreedLine(entry.breeds)}</span>
+              </Link>
+            );
+          })}
+        </div>
       ) : null}
     </div>
   );

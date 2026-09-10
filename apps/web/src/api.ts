@@ -155,6 +155,12 @@ export type PetCollectionEntry = {
   firstCollectedAt: string;
   updatedAt: string;
   taxonomy?: Taxonomy | null;
+  /** 该种已结算驯养遇见次数。列表接口带上。 */
+  sightingCount?: number;
+  /** 图窗用的照片，封面优先，最多六张。 */
+  faces?: string[];
+  /** 见过的品种，首次出现顺序；null 为品种不详。 */
+  breeds?: Array<string | null>;
 };
 
 export class ApiError extends Error {
