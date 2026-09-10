@@ -68,7 +68,7 @@ export default function CollectionPetCardPage() {
         setEntry(res.entry);
         setSightings(res.sightings);
       })
-      .catch((e) => setError(e instanceof Error ? e.message : t("collection.petsLoadFailed")))
+      .catch((e) => setError(e instanceof Error ? e.message : t("common.loadFailed")))
       .finally(() => setLoading(false));
   }, [id]);
 

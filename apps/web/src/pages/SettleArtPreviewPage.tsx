@@ -130,7 +130,7 @@ export default function SettleArtPreviewPage() {
       </div>
 
       <Link className="btn secondary" to="/">
-        {t("detail.back")}
+{t("common.back")}
       </Link>
     </div>
   );

@@ -57,7 +57,7 @@ export default function CollectionSpeciesCardPage() {
         setEntry(res.entry);
         setSightings(res.sightings);
       })
-      .catch((e) => setError(e instanceof Error ? e.message : t("collection.speciesLoadFailed")))
+      .catch((e) => setError(e instanceof Error ? e.message : t("common.loadFailed")))
       .finally(() => setLoading(false));
   }, [id]);
 

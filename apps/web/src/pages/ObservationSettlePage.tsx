@@ -186,7 +186,7 @@ export default function ObservationSettlePage({ userId }: { userId?: string }) {
       <div className="stack">
         <p className="error">{error}</p>
         <Link className="btn secondary" to="/">
-          {t("detail.back")}
+{t("common.back")}
         </Link>
       </div>
     );

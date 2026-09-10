@@ -286,7 +286,7 @@ function OnboardFolio({
             onPointerDown={(e) => e.stopPropagation()}
             onClick={onAdvance}
           >
-            {last ? (mode === "replay" ? t("me.back") : t("onboard.done")) : t("onboard.turn")}
+{last ? (mode === "replay" ? t("common.back") : t("onboard.done")) : t("onboard.turn")}
           </button>
         </div>
       </div>

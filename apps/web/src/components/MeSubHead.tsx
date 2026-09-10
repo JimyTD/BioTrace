@@ -8,7 +8,7 @@ export function MeSubHead({ title }: { title: string }) {
   return (
     <header className="page-head me-sub-head">
       <Link className="text-link" to="/me">
-        ← {t("me.back")}
+← {t("common.back")}
       </Link>
       <h1 className="page-title">{title}</h1>
     </header>

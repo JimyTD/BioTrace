@@ -223,13 +223,11 @@ const zhCore = {
   "collection.speciesSortRarity": "稀有度",
   "collection.speciesSortName": "名字",
   "collection.speciesFirstCollected": "首次收录 {date}",
-  "collection.speciesLoadFailed": "加载这种失败",
   "collection.treeTitle": "物种树",
   "collection.treeCount": "已点亮 {count} 界",
   "collection.petsTitle": "宠物",
   "collection.petsCount": "{count} 种",
   "collection.petsEmpty": "还没有宠物收录。拍到家养动物就会出现在这里。",
-  "collection.petsLoadFailed": "加载这种失败",
 
   "tree3d.crumbRoot": "全树",
   "tree3d.rootLife": "生命",
@@ -300,7 +298,6 @@ const zhCore = {
   "map.simpleBasemapAttribution": "Natural Earth",
 
   "me.title": "我的",
-  "me.back": "返回",
   "me.editProfile": "编辑资料",
   "me.accountSecurity": "账号安全",
   "me.identifyAdvanced": "识图高级设置",
@@ -347,7 +344,6 @@ const zhCore = {
   "me.forceUpdateTitle": "需要更新应用",
   "me.forceUpdateBody": "当前版本过旧（{current}），请更新到 {latest} 后继续使用",
 
-  "detail.back": "返回",
   "detail.taxonomy": "分类",
   "detail.record": "记录",
   "detail.identify": "识别",
@@ -398,6 +394,7 @@ const zhCore = {
   "rank.domain": "域",
 
   "common.unknown": "未知",
+  "common.back": "返回",
   "common.cancel": "取消",
   "common.confirm": "确认",
   "common.confirmTitle": "请确认",

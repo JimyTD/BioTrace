@@ -365,7 +365,7 @@ export default function ObservationDetailPage({ userId }: { userId?: string }) {
     <div className="stack detail-page" ref={pageRef}>
       <div className="album-head-row">
         <button className="text-link" type="button" onClick={goBackToAlbum}>
-          ← {t("detail.back")}
+← {t("common.back")}
         </button>
         <Link className="text-link" to="/map">
           {t("nav.map")}
