@@ -27,7 +27,7 @@ export default function MeProfilePage({
     try {
       const { user: next } = await api.updateMe({ displayName: displayName.trim() });
       onUserUpdated(next);
-      setMsg(t("me.profileSaved"));
+      setMsg(t("common.saved"));
     } catch (error) {
       setErr(error instanceof Error ? error.message : t("error.server"));
     } finally {
@@ -52,7 +52,7 @@ export default function MeProfilePage({
           />
         </label>
         <button className="btn secondary" type="submit" disabled={busy}>
-          {busy ? t("me.savingProfile") : t("me.saveProfile")}
+          {busy ? t("common.saving") : t("me.saveProfile")}
         </button>
         {msg ? <p className="muted">{msg}</p> : null}
         {err ? <p className="error">{err}</p> : null}

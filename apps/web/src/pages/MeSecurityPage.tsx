@@ -45,7 +45,7 @@ export default function MeSecurityPage() {
           />
         </label>
         <label className="me-field">
-          <span className="muted">{t("me.newPasswordLabel")}</span>
+          <span className="muted">{t("common.newPassword")}</span>
           <input
             className="input"
             type="password"

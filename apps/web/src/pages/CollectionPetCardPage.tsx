@@ -3,7 +3,7 @@ import { flushSync } from "react-dom";
 import { matchPath, useLocation, useNavigate, useParams } from "react-router-dom";
 import { hasMessage, t, type MessageKey } from "@biotrace/messages";
 import { api, type CollectionSighting, type PetCollectionEntry, type Rarity } from "../api";
-import { ListTagRow } from "../components/ListTagRow";
+import { ListTag, ListTagRow } from "../components/ListTagRow";
 import { useBackClose } from "../androidBack";
 import { measureBox } from "../motion";
 import { playPhotoLift } from "../photoLift";
@@ -16,6 +16,7 @@ import {
 import { restoreNamedScroll, saveNamedScroll } from "../scrollMemory";
 import { useRealLocation } from "../realLocation";
 import { speciesEntryName } from "../speciesSearch";
+import { petBreedLabel } from "../petIdentity";
 
 function shortDate(iso: string) {
   return new Date(iso).toLocaleDateString();
@@ -187,11 +188,12 @@ export default function CollectionPetCardPage() {
             {entry.rarity ? (
               <span className={`rarity-badge rarity-${entry.rarity}`}>{rarityLabel(entry.rarity)}</span>
             ) : null}
+            <ListTag tag="domesticated" />
             <span className="muted">
               {t("collection.speciesFirstCollected", { date: shortDate(entry.firstCollectedAt) })}
             </span>
           </div>
-          <ListTagRow tags={entry.tags} />
+          <ListTagRow tags={entry.tags} except={["domesticated"]} />
 
           <h2 className="section-title">{t("collection.speciesSightings")}</h2>
           {sightings.length === 0 ? (
@@ -224,7 +226,9 @@ export default function CollectionPetCardPage() {
                 >
                   <img className="species-sighting-photo" src={item.displayUrl} alt="" />
                   {item.tripTitle ? <strong>{item.tripTitle}</strong> : null}
-                  {item.breedZh ? <span className="muted">{item.breedZh}</span> : null}
+                  <span className="muted">
+                    {petBreedLabel({ domesticated: true, breedZh: item.breedZh })}
+                  </span>
                   <span className="muted">{shortDate(item.occurredAt)}</span>
                 </button>
               ))}

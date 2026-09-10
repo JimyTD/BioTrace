@@ -13,6 +13,7 @@ import { Link, matchPath, useLocation, useNavigate, useParams } from "react-rout
 import { formatRank, t } from "@biotrace/messages";
 import { ApiError, api, type Observation, type Trip } from "../api";
 import { useBackClose } from "../androidBack";
+import { ListTag } from "../components/ListTagRow";
 import ConfirmDialog from "../components/ConfirmDialog";
 import { OpenBookCloseContext } from "../components/TripBookLayer";
 import {
@@ -42,6 +43,7 @@ import {
 } from "../photoLiftHandoff";
 import { restoreAlbumScroll, saveAlbumScroll, saveContentScroll } from "../scrollMemory";
 import { peekAlbum, rememberAlbum } from "../pageCache";
+import { petBreedLabel } from "../petIdentity";
 import { useRealLocation } from "../realLocation";
 import { tripFilmFrameUrl } from "../themes";
 import { tripMetaLine } from "../tripMeta";
@@ -213,7 +215,7 @@ export default function TripAlbumPage({ userId }: { userId: string }) {
     refresh()
       .then(() => undefined)
       .catch((e) => {
-        setError(e instanceof Error ? e.message : t("trips.loadFailed"));
+        setError(e instanceof Error ? e.message : t("common.loadFailed"));
         setLoaded(true);
       });
   }, [id]);
@@ -498,7 +500,7 @@ export default function TripAlbumPage({ userId }: { userId: string }) {
       setPendingDeleteId(null);
       await refresh();
     } catch (err) {
-      setError(err instanceof Error ? err.message : t("album.deleteFailed"));
+      setError(err instanceof Error ? err.message : t("common.deleteFailed"));
     } finally {
       setDeletingId(null);
     }
@@ -722,15 +724,18 @@ export default function TripAlbumPage({ userId }: { userId: string }) {
                     <strong className="film-tile-name">
                       {obs.commonName || obs.scientificName || t("detail.unnamed")}
                     </strong>
+                    {obs.domesticated ? <ListTag tag="domesticated" className="intro-tag-sm" /> : null}
                     {obs.alertIntroduced ? (
                       <span className="intro-tag intro-tag-sm">
                         {t("settle.alertIntroduced")}
                       </span>
                     ) : null}
                     <span className="muted film-tile-rank">
-                      {t("album.reliableTo", {
-                        rank: formatRank(obs.finestReliableRank),
-                      })}
+                      {obs.domesticated
+                        ? petBreedLabel(obs)
+                        : t("album.reliableTo", {
+                            rank: formatRank(obs.finestReliableRank),
+                          })}
                     </span>
                   </>
                 ) : null}
@@ -759,7 +764,7 @@ export default function TripAlbumPage({ userId }: { userId: string }) {
                 disabled={deletingId === obs.id}
                 onClick={(ev) => askDeleteOne(obs.id, ev)}
               >
-                {deletingId === obs.id ? t("album.deleting") : t("album.delete")}
+                {deletingId === obs.id ? t("common.deleting") : t("album.delete")}
               </button>
             ) : null}
           </article>

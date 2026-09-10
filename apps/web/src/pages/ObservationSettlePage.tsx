@@ -8,6 +8,7 @@ import { ListTagRow } from "../components/ListTagRow";
 import ReidentifyDialog from "../components/ReidentifyDialog";
 import { themeSlot } from "../themes/slots";
 import { peekObservation, rememberObservation } from "../pageCache";
+import { petBreedLabel } from "../petIdentity";
 import { peekLiftBackground } from "../photoLiftHandoff";
 import { volumeCeremonyBgUrl, volumeSealCompleteUrl } from "../themes";
 
@@ -237,6 +238,11 @@ export default function ObservationSettlePage({ userId }: { userId?: string }) {
                   {obs.scientificName ? <span className="muted">{obs.scientificName}</span> : null}
                   {acceptedSci ? (
                     <span className="muted">{t("detail.acceptedScientificName", { name: acceptedSci })}</span>
+                  ) : null}
+                  {petBreedLabel(obs) ? (
+                    <span className="muted">
+                      {t("detail.breed")} · {petBreedLabel(obs)}
+                    </span>
                   ) : null}
                   <ListTagRow tags={obs.tags} />
                   {(() => {

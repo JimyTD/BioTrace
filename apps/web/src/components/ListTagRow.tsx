@@ -19,18 +19,28 @@ const HINT: Record<StatusTag, MessageKey> = {
   domesticated: "listTag.domesticated.hint",
 };
 
-export function ListTagRow({ tags }: { tags?: StatusTag[] | null }) {
-  if (!tags?.length) return null;
+export function ListTag({ tag, className }: { tag: StatusTag; className?: string }) {
+  const base = tag === "introduced" ? "intro-tag" : `list-tag list-tag-${tag}`;
+  return (
+    <span className={className ? `${base} ${className}` : base} title={t(HINT[tag])}>
+      {t(LABEL[tag])}
+    </span>
+  );
+}
+
+export function ListTagRow({
+  tags,
+  except,
+}: {
+  tags?: StatusTag[] | null;
+  except?: StatusTag[];
+}) {
+  const shown = except?.length ? tags?.filter((tag) => !except.includes(tag)) : tags;
+  if (!shown?.length) return null;
   return (
     <span className="list-tag-row">
-      {tags.map((tag) => (
-        <span
-          key={tag}
-          className={tag === "introduced" ? "intro-tag" : `list-tag list-tag-${tag}`}
-          title={t(HINT[tag])}
-        >
-          {t(LABEL[tag])}
-        </span>
+      {shown.map((tag) => (
+        <ListTag key={tag} tag={tag} />
       ))}
     </span>
   );

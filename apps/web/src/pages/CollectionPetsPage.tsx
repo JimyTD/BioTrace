@@ -2,7 +2,7 @@ import { useEffect, useLayoutEffect, useMemo, useRef, useState } from "react";
 import { Link, useMatch, useNavigate } from "react-router-dom";
 import { hasMessage, t, type MessageKey } from "@biotrace/messages";
 import { api, type PetCollectionEntry, type Rarity } from "../api";
-import { ListTagRow } from "../components/ListTagRow";
+import { ListTag, ListTagRow } from "../components/ListTagRow";
 import { useBackClose } from "../androidBack";
 import {
   buildNamedFuse,
@@ -145,8 +145,9 @@ export default function CollectionPetsPage() {
                           {rarityLabel(entry.rarity)}
                         </span>
                       ) : null}
+                      <ListTag tag="domesticated" />
                     </span>
-                    <ListTagRow tags={entry.tags} />
+                    <ListTagRow tags={entry.tags} except={["domesticated"]} />
                   </span>
                 </Link>
               ))}

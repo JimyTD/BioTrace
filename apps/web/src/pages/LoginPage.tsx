@@ -215,7 +215,7 @@ export default function LoginPage({
               {mode !== "reset" || resetCodeSent ? (
                 <label className="field">
                   <span className="muted">
-                    {mode === "reset" ? t("auth.newPasswordLabel") : t("auth.passwordLabel")}
+                    {mode === "reset" ? t("common.newPassword") : t("auth.passwordLabel")}
                   </span>
                   <input
                     className="input"

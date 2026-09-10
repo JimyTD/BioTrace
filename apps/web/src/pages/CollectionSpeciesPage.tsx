@@ -3,7 +3,7 @@ import { Link, useMatch, useNavigate } from "react-router-dom";
 import { useBackClose } from "../androidBack";
 import { hasMessage, t, type MessageKey } from "@biotrace/messages";
 import { api, type Rarity } from "../api";
-import { ListTagRow } from "../components/ListTagRow";
+import { ListTag, ListTagRow } from "../components/ListTagRow";
 import {
   buildSpeciesFuse,
   filterSpecies,
@@ -17,6 +17,7 @@ import {
   type SpeciesSort,
 } from "../speciesSearch";
 import { restoreContentScroll, saveContentScroll } from "../scrollMemory";
+import { hasDomesticatedTag } from "../petIdentity";
 
 function rarityLabel(r: Rarity) {
   const key = `rarity.${r}`;
@@ -179,8 +180,9 @@ export default function CollectionSpeciesPage() {
                           {rarityLabel(entry.rarity)}
                         </span>
                       ) : null}
+                      {hasDomesticatedTag(entry.tags) ? <ListTag tag="domesticated" /> : null}
                     </span>
-                    <ListTagRow tags={entry.tags} />
+                    <ListTagRow tags={entry.tags} except={["domesticated"]} />
                   </span>
                 </Link>
               ))}

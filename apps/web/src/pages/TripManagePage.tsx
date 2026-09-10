@@ -48,7 +48,7 @@ export default function TripManagePage({ userId }: { userId: string }) {
     refresh()
       .then(() => undefined)
       .catch((e) => {
-        setError(e instanceof Error ? e.message : t("trips.loadFailed"));
+        setError(e instanceof Error ? e.message : t("common.loadFailed"));
         setLoaded(true);
       });
   }, [id]);
@@ -203,7 +203,7 @@ export default function TripManagePage({ userId }: { userId: string }) {
                 onChange={(e) => setTitleDraft(e.target.value)}
               />
               <button className="btn" type="submit" disabled={savingTitle}>
-                {savingTitle ? t("trips.savingTitle") : t("trips.saveTitle")}
+                {savingTitle ? t("common.saving") : t("trips.saveTitle")}
               </button>
             </div>
           </form>
@@ -250,9 +250,9 @@ export default function TripManagePage({ userId }: { userId: string }) {
             ) : null}
             <div className="row">
               <button className="btn secondary" type="submit" disabled={savingMeta}>
-                {savingMeta ? t("trips.savingMeta") : t("trips.saveMeta")}
+                {savingMeta ? t("common.saving") : t("trips.saveMeta")}
               </button>
-              {metaSavedFlash ? <span className="muted">{t("trips.metaSaved")}</span> : null}
+              {metaSavedFlash ? <span className="muted">{t("common.saved")}</span> : null}
             </div>
           </form>
 
@@ -340,7 +340,7 @@ export default function TripManagePage({ userId }: { userId: string }) {
                 type="submit"
                 disabled={deletingTrip || deletePhrase.trim() !== t("trips.deleteConfirmPhrase")}
               >
-                {deletingTrip ? t("trips.deleting") : t("trips.delete")}
+                {deletingTrip ? t("common.deleting") : t("trips.delete")}
               </button>
             </form>
           ) : null}

@@ -70,7 +70,7 @@ export default function PinLocationPage() {
         map.resize();
       } catch (e) {
         if (!cancelled) {
-          setError(e instanceof Error ? e.message : t("detail.loadFailed"));
+          setError(e instanceof Error ? e.message : t("common.loadFailed"));
         }
       }
     }
@@ -103,7 +103,7 @@ export default function PinLocationPage() {
   return (
     <div className="pin-page">
       <Link className="text-link pin-back" to={`/observations/${id}`}>
-        ← {t("detail.pinCancel")}
+        ← {t("common.cancel")}
       </Link>
 
       <div className="map-wrap map-wrap-pin">
@@ -118,7 +118,7 @@ export default function PinLocationPage() {
         {centerLabel ? <p className="muted pin-center-label">{centerLabel}</p> : null}
         {error ? <p className="error">{error}</p> : null}
         <button className="btn" type="button" disabled={!mapReady || saving} onClick={confirmHere}>
-          {saving ? t("detail.pinSaving") : t("detail.pinConfirm")}
+          {saving ? t("common.saving") : t("detail.pinConfirm")}
         </button>
       </div>
     </div>

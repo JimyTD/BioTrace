@@ -30,7 +30,7 @@ export default function TripsPage({
 
   useEffect(() => {
     refresh()
-      .catch((e) => setError(e instanceof Error ? e.message : t("trips.loadFailed")))
+      .catch((e) => setError(e instanceof Error ? e.message : t("common.loadFailed")))
       .finally(() => setLoading(false));
   }, []);
 

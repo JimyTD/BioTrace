@@ -147,7 +147,7 @@ export default function MeIdentifyPage() {
 
         <div className="row me-actions">
           <button className="btn secondary" type="submit" disabled={busy}>
-            {busy ? t("me.identifyKeySaving") : t("me.identifyKeySave")}
+            {busy ? t("common.saving") : t("me.identifyKeySave")}
           </button>
           {useOwnKey && identifyKey?.hasKey ? (
             <button

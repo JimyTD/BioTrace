@@ -1606,12 +1606,13 @@ button.film-tile-link {
 
 .taxonomy-chain li {
   display: grid;
-  grid-template-columns: 2.5rem 1fr;
+  grid-template-columns: max-content 1fr;
   gap: 10px;
   align-items: baseline;
 }
 
 .tax-rank {
+  min-width: 2.5rem;
   font-size: 0.8rem;
   color: var(--accent);
   font-weight: 600;

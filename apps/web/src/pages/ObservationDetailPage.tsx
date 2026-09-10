@@ -5,7 +5,7 @@ import { acceptedScientificIfDifferent, api, type Observation, type Taxonomy } f
 import { identifyDisplayName } from "../identifyLabel";
 import { useBackClose } from "../androidBack";
 import ConfirmDialog from "../components/ConfirmDialog";
-import { ListTagRow } from "../components/ListTagRow";
+import { ListTag, ListTagRow } from "../components/ListTagRow";
 import ReidentifyDialog from "../components/ReidentifyDialog";
 import {
   identifyErrorHint,
@@ -19,6 +19,7 @@ import SoftEncounterSeal from "../components/SoftEncounterSeal";
 import KeepsakeSeal from "../components/KeepsakeSeal";
 import { hasValidCoords } from "../geo";
 import { peekObservation, rememberObservation } from "../pageCache";
+import { petBreedLabel } from "../petIdentity";
 import { containedImageBox, decodeIfSimilarAspect, playPhotoLift } from "../photoLift";
 import {
   clearPhotoLiftHandoff,
@@ -87,9 +88,15 @@ function keepsakeReasonText(obs: Observation): string {
   return t("detail.keepsakeReasonFallback");
 }
 
-function TaxonomyList({ taxonomy }: { taxonomy: Taxonomy }) {
+function TaxonomyList({
+  taxonomy,
+  breed,
+}: {
+  taxonomy: Taxonomy | null;
+  breed?: string | null;
+}) {
   const rows = RANK_ORDER.map((rank) => {
-    const node = taxonomy[rank];
+    const node = taxonomy?.[rank];
     if (!node?.name_la && !node?.name_zh) return null;
     const primary = node.name_zh || node.name_la || "";
     const secondary = node.name_zh && node.name_la ? node.name_la : null;
@@ -104,11 +111,21 @@ function TaxonomyList({ taxonomy }: { taxonomy: Taxonomy }) {
     );
   }).filter(Boolean);
 
-  if (rows.length === 0) {
+  if (rows.length === 0 && !breed) {
     return <p className="muted">{t("detail.noTaxonomy")}</p>;
   }
 
-  return <ol className="taxonomy-chain">{rows}</ol>;
+  return (
+    <ol className="taxonomy-chain">
+      {rows}
+      {breed ? (
+        <li>
+          <span className="tax-rank">{t("detail.breed")}</span>
+          <span className="tax-name">{breed}</span>
+        </li>
+      ) : null}
+    </ol>
+  );
 }
 
 export default function ObservationDetailPage({ userId }: { userId?: string }) {
@@ -162,7 +179,7 @@ export default function ObservationDetailPage({ userId }: { userId?: string }) {
         rememberObservation(observation);
         setError(null);
       } catch (e) {
-        if (!cancelled) setError(e instanceof Error ? e.message : t("detail.loadFailed"));
+        if (!cancelled) setError(e instanceof Error ? e.message : t("common.loadFailed"));
       }
     }
 
@@ -280,7 +297,7 @@ export default function ObservationDetailPage({ userId }: { userId?: string }) {
       setConfirmKind(null);
       navigate(`/trips/${obs.tripId}`, { replace: true });
     } catch (e) {
-      setError(e instanceof Error ? e.message : t("detail.deleteFailed"));
+      setError(e instanceof Error ? e.message : t("common.deleteFailed"));
       setDeleting(false);
     }
   }
@@ -395,8 +412,12 @@ export default function ObservationDetailPage({ userId }: { userId?: string }) {
             </span>
           ) : null}
           {keepsake ? <span className="badge soft">{t("status.keepsake")}</span> : null}
+          {obs.domesticated ? <ListTag tag="domesticated" /> : null}
         </div>
-        <ListTagRow tags={noCollection && !softEncounter ? [] : obs.tags} />
+        <ListTagRow
+          tags={noCollection && !softEncounter ? [] : obs.tags}
+          except={["domesticated"]}
+        />
       </header>
 
       {notice ? <p className="muted">{notice}</p> : null}
@@ -442,11 +463,7 @@ export default function ObservationDetailPage({ userId }: { userId?: string }) {
       {showTaxonomy ? (
         <section className="detail-block">
           <h2 className="section-title">{t("detail.taxonomy")}</h2>
-          {obs.taxonomy ? (
-            <TaxonomyList taxonomy={obs.taxonomy} />
-          ) : (
-            <p className="muted">{t("detail.noTaxonomy")}</p>
-          )}
+          <TaxonomyList taxonomy={obs.taxonomy} breed={petBreedLabel(obs)} />
         </section>
       ) : null}
 
@@ -463,12 +480,6 @@ export default function ObservationDetailPage({ userId }: { userId?: string }) {
             <dt>{t("detail.capturedAt")}</dt>
             <dd>{obs.capturedAt ? new Date(obs.capturedAt).toLocaleString() : "—"}</dd>
           </div>
-          {obs.domesticated && obs.breedZh ? (
-            <div className="detail-fact">
-              <dt>{t("detail.breed")}</dt>
-              <dd>{obs.breedZh}</dd>
-            </div>
-          ) : null}
           <div className="detail-fact">
             <dt>{t("detail.location")}</dt>
             <dd>
@@ -519,7 +530,7 @@ export default function ObservationDetailPage({ userId }: { userId?: string }) {
           disabled={deleting || reidentifying}
           onClick={() => setConfirmKind("delete")}
         >
-          {deleting ? t("detail.deleting") : t("detail.delete")}
+          {deleting ? t("common.deleting") : t("detail.delete")}
         </button>
       </div>
       ) : null}
