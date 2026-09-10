@@ -613,15 +613,6 @@ button.trip-cover {
   white-space: nowrap;
 }
 
-.pet-plate-breeds {
-  grid-area: foot;
-  margin-top: 3px;
-  padding: 0 4px;
-  font-size: 0.82rem;
-  line-height: 1.45;
-  color: var(--muted);
-}
-
 /* 空态：克制文案，不用整幅插画抢戏 */
 .trip-empty {
   padding: 28px 8px 12px;

@@ -3,7 +3,6 @@ import { Link, useMatch, useNavigate } from "react-router-dom";
 import { t } from "@biotrace/messages";
 import { api, type PetCollectionEntry } from "../api";
 import { useBackClose } from "../androidBack";
-import { petBreedLine } from "../petIdentity";
 import { speciesEntryName } from "../speciesSearch";
 import { restoreContentScroll, saveContentScroll } from "../scrollMemory";
 
@@ -96,7 +95,6 @@ export default function CollectionPetsPage() {
                 <span className="pet-plate-count">
                   {t("collection.petsSightingCount", { count })}
                 </span>
-                <span className="pet-plate-breeds">{petBreedLine(entry.breeds)}</span>
               </Link>
             );
           })}

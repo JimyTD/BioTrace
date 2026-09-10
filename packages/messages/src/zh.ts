@@ -227,7 +227,6 @@ const zhCore = {
   "collection.petsCount": "{count} 种",
   "collection.petsEmpty": "还没有宠物收录。拍到家养动物就会出现在这里。",
   "collection.petsSightingCount": "{count} 次",
-  "collection.petsBreedMore": "等 {count} 个",
 
   "tree3d.crumbRoot": "全树",
   "tree3d.rootLife": "生命",

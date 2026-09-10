@@ -315,12 +315,6 @@
   color: var(--mount-ink);
 }
 
-[data-theme="clear"] .pet-plate-breeds {
-  grid-area: below;
-  margin-top: var(--mount-caption-gap);
-  color: var(--muted);
-}
-
 [data-theme="clear"] .pet-plate:nth-child(4n + 1) {
   transform: rotate(-0.4deg);
 }
