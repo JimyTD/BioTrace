@@ -259,6 +259,15 @@ export async function migrate() {
   // 留着只会让新旧两套判据混在一张表里。observations 上的旧档位由后台批量重算刷新。
   await client.execute(`DELETE FROM rarity_cache WHERE cache_key NOT LIKE 'scale%|%'`);
 
+  // 2026-09-10：保护名录改按法域判定，非 CN 的档位此前吃了中国名录加成
+  // （一级 +2.5 / 二级 +1.8 / 三有 +0.8，灭绝门直接 XR）。只清非 CN 那批重算，
+  // CN 的判据没变，不动，避免全量重跑烧模型调用。清掉的键下次访问按其国别重算。
+  await client.execute(`
+    DELETE FROM rarity_cache
+    WHERE cache_key LIKE 'scale%|%'
+      AND cache_key NOT LIKE 'scale%|CN|%'
+  `);
+
   const ver = await client.execute(`PRAGMA user_version`);
   const userVersion = Number(ver.rows[0]?.user_version ?? 0);
 

@@ -1,7 +1,13 @@
 import { normalizeTaxonomy, type Taxonomy } from "./identify/types.js";
 import type { CollectionEntry, Observation, PetCollectionEntry, Trip, User } from "./db/schema.js";
 import { displayBreedLabel, petDisplayCommonName } from "./pets/breeds.js";
-import { EMPTY_CN_STATUS, lookupListed, statusTagsFrom, type StatusTag } from "./rarity/cn-status.js";
+import {
+  EMPTY_CN_STATUS,
+  isListJurisdiction,
+  lookupListed,
+  statusTagsFrom,
+  type StatusTag,
+} from "./rarity/cn-status.js";
 import { canonicalizeUserTheme } from "./theme-id.js";
 import type { TripSummaryResolved } from "./trips/summary.js";
 
@@ -11,11 +17,16 @@ function tagsForNames(
     taxonKey?: string | null;
     commonName?: string | null;
     domesticated?: boolean | null;
+    /**
+     * 判定所用国别。单条观察传自身 countryCode；
+     * 图鉴页传「该物种是否在国内拍过」导出的布尔，不可直接传聚合国别。
+     */
+    listJurisdiction?: boolean;
   },
   introduced: boolean,
 ): StatusTag[] {
   const tags = statusTagsFrom(
-    input.domesticated
+    input.domesticated || input.listJurisdiction === false
       ? EMPTY_CN_STATUS
       : lookupListed({
           scientificName: input.scientificName,
@@ -120,7 +131,10 @@ export function serializeObservation(
     alertIntroduced: redact ? false : Boolean(obs.alertIntroduced),
     tags: redact
       ? []
-      : tagsForNames(obs, Boolean(obs.alertIntroduced)),
+      : tagsForNames(
+          { ...obs, listJurisdiction: isListJurisdiction(obs.countryCode) },
+          Boolean(obs.alertIntroduced),
+        ),
     taxonKey: redact ? null : obs.taxonKey,
     identifyProvider: redact ? null : obs.identifyProvider ?? null,
     identifyModel: redact ? null : obs.identifyModel ?? null,
@@ -141,7 +155,12 @@ export function serializeObservation(
 export function serializeCollectionEntry(
   entry: CollectionEntry,
   coverDisplayUrl?: string | null,
-  opts?: { alertIntroduced?: boolean; taxonomy?: Taxonomy | null },
+  opts?: {
+    alertIntroduced?: boolean;
+    taxonomy?: Taxonomy | null;
+    /** 该物种是否在中国境内拍过；false 时不套中国名录。缺省视为拍过。 */
+    listJurisdiction?: boolean;
+  },
 ) {
   return {
     id: entry.id,
@@ -151,7 +170,10 @@ export function serializeCollectionEntry(
     rarity: entry.rarity,
     /** 该种任意已结算观察曾命中引入警示（图鉴轻标；详情仍看单条观察）。 */
     alertIntroduced: Boolean(opts?.alertIntroduced),
-    tags: tagsForNames(entry, Boolean(opts?.alertIntroduced)),
+    tags: tagsForNames(
+      { ...entry, listJurisdiction: opts?.listJurisdiction },
+      Boolean(opts?.alertIntroduced),
+    ),
     coverObservationId: entry.coverObservationId,
     coverDisplayUrl: coverDisplayUrl ?? null,
     firstCollectedAt: entry.firstCollectedAt.toISOString(),

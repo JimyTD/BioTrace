@@ -181,7 +181,25 @@ export function lookupCnStatus(
 }
 
 /**
+ * 名录生效范围：中国的法域名录只在「中国境内」成立，境外拍摄不适用。
+ *
+ * 历史：这里不看国别，导致在日本拍的丹顶鹤也挂「国家一级」——名录里确实有
+ * 这个物种，但那是中国法域的保护状态，不是这张照片所在地的状态。
+ * 引入种告警（introduced/index.ts）一开始就按国别查，保护名录这条漏了。
+ */
+export const LIST_JURISDICTION = "CN";
+
+/** 国别是否落在中国法域内。无国别按 CN 处理，与 rarity/scale effectiveCountry 同口径。 */
+export function isListJurisdiction(countryCode: string | null | undefined): boolean {
+  const cc = countryCode?.trim().toUpperCase();
+  return !cc || cc === LIST_JURISDICTION;
+}
+
+/**
  * 名录查名要把识图原名和 GBIF 接受名都试一遍：同物异名时往往只有一个在名录里。
+ *
+ * countryCode 缺省视为中国，行为与改动前一致；传入非 CN 时返回空名录状态，
+ * 标签、稀有度加成、灭绝门三条通道一起失效，避免「标签没了但档位还按保护种加成」。
  */
 export function lookupListed(input: {
   scientificName?: string | null;
@@ -189,8 +207,11 @@ export function lookupListed(input: {
   label?: string | null;
   /** 驯养个体：名录四项全豁免，家犬不领狼的二级。 */
   domesticated?: boolean;
+  /** 拍摄地国别；无或 CN 才套中国名录。 */
+  countryCode?: string | null;
 }): CnStatus {
   if (input.domesticated) return EMPTY_CN_STATUS;
+  if (!isListJurisdiction(input.countryCode)) return EMPTY_CN_STATUS;
   const names = [input.scientificName?.trim(), input.taxonKey?.trim()].filter(
     (n): n is string => Boolean(n),
   );
@@ -214,7 +235,7 @@ export function statusTagsFrom(listed: CnStatus, introduced = false): StatusTag[
   return tags;
 }
 
-/** 中国国家重点保护。查不到 = 非名录内。 */
+/** 中国国家重点保护。查不到 = 非名录内。境外拍摄不套（见 isListJurisdiction）。 */
 export function lookupCnProtected(
   scientificName: string | null | undefined,
   chineseName?: string | null,

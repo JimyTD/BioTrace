@@ -75,6 +75,8 @@ export {
   lookupCnStatus,
   lookupCnProtected,
   lookupListed,
+  isListJurisdiction,
+  LIST_JURISDICTION,
   EMPTY_CN_STATUS,
   statusTagsFrom,
   type CnStatus,

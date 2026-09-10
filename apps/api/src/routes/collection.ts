@@ -1,5 +1,5 @@
 import { Hono } from "hono";
-import { and, desc, eq, inArray } from "drizzle-orm";
+import { and, desc, eq, inArray, isNull, or } from "drizzle-orm";
 import { requireUser, type Variables } from "../auth.js";
 import { db } from "../db/index.js";
 import { collectionEntries, observations, petCollectionEntries } from "../db/schema.js";
@@ -44,6 +44,57 @@ async function taxonHasIntroducedAlert(
       eq(observations.status, "settled"),
       eq(observations.alertIntroduced, true),
       eq(observations.domesticated, domesticated),
+    ),
+    columns: { id: true },
+  });
+  return Boolean(row);
+}
+
+/**
+ * 图鉴聚合没有国别，保护标签按「这一物种在中国境内拍没拍过」定。
+ *
+ * 图鉴页展示的是「你遇见过它」，只要国内遇见过，中国名录对这一格就成立；
+ * 只在国外拍过的物种，图鉴里不挂中国保护级。口径与观察页逐条判定保持一致，
+ * 无国别视为中国（见 rarity/cn-status isListJurisdiction）。
+ */
+const LIST_JURISDICTION_COUNTRIES = ["CN", ""] as const;
+
+async function listedTaxonKeysForUser(
+  userId: string,
+  domesticated: boolean,
+): Promise<Set<string>> {
+  const rows = await db.query.observations.findMany({
+    where: and(
+      eq(observations.userId, userId),
+      inArray(observations.status, ["pending_settle", "settled"]),
+      eq(observations.domesticated, domesticated),
+      or(
+        eq(observations.countryCode, LIST_JURISDICTION_COUNTRIES[0]),
+        eq(observations.countryCode, LIST_JURISDICTION_COUNTRIES[1]),
+        isNull(observations.countryCode),
+      ),
+    ),
+    columns: { taxonKey: true },
+  });
+  return new Set(rows.map((o) => o.taxonKey).filter((k): k is string => Boolean(k)));
+}
+
+async function hasListedTaxonForUser(
+  userId: string,
+  taxonKey: string,
+  domesticated: boolean,
+): Promise<boolean> {
+  const row = await db.query.observations.findFirst({
+    where: and(
+      eq(observations.userId, userId),
+      eq(observations.taxonKey, taxonKey),
+      inArray(observations.status, ["pending_settle", "settled"]),
+      eq(observations.domesticated, domesticated),
+      or(
+        eq(observations.countryCode, LIST_JURISDICTION_COUNTRIES[0]),
+        eq(observations.countryCode, LIST_JURISDICTION_COUNTRIES[1]),
+        isNull(observations.countryCode),
+      ),
     ),
     columns: { id: true },
   });
@@ -180,8 +231,8 @@ collectionRoutes.get("/", async (c) => {
     orderBy: [desc(collectionEntries.updatedAt)],
   });
 
-  const alertedTaxa = await introducedTaxonKeys(user.id, false);
-
+  const alertedTaxa = await introducedTaxonKeys(user.id, true);
+  const listedTaxa = await listedTaxonKeysForUser(user.id, false);
   const payload = await Promise.all(
     rows.map(async (entry) => {
       let coverUrl: string | null = null;
@@ -197,6 +248,7 @@ collectionRoutes.get("/", async (c) => {
       }
       return serializeCollectionEntry(entry, coverUrl, {
         alertIntroduced: alertedTaxa.has(entry.taxonKey),
+        listJurisdiction: listedTaxa.has(entry.taxonKey),
         taxonomy,
       });
     }),
@@ -317,10 +369,12 @@ collectionRoutes.get("/:id", async (c) => {
   }
 
   const alerted = await taxonHasIntroducedAlert(user.id, entry.taxonKey, false);
+  const listed = await hasListedTaxonForUser(user.id, entry.taxonKey, false);
 
   return c.json({
     entry: serializeCollectionEntry(entry, coverUrl, {
       alertIntroduced: Boolean(alerted),
+      listJurisdiction: listed,
       taxonomy,
     }),
     sightings: await sightingsForTaxon(user.id, entry.taxonKey, false),
