@@ -55,32 +55,21 @@ function locationText(obs: Observation) {
 }
 
 /**
- * 软档理由句：识图作业把模型的 ineligibility_reason_zh 写进 notes 首段。
- * 「影像/标本」分型在落库时没有单独字段，这里按 notes 内容回读分型；
- * 分不出就用通用句，不猜。
+ * 软档理由句：识图作业把模型的 ineligibility_reason_zh 写进 notes 首段
+ * （prompt 定义「不合格时必填」，故正常必有）。有就直接显示模型原话，
+ * 无则一句兜底——不分型、不猜，模型必填的东西不为它准备多套文案。
  */
 function softReasonText(obs: Observation): string {
   const notes = (obs.notes ?? "").trim();
-  const generic = t("detail.softReasonGeneric");
-  if (!notes) return generic;
-  const reasonMatch = notes.match(/^([^·]+)(?:\s*·\s*(.*))?$/);
-  const reason = reasonMatch?.[1]?.trim() ?? "";
-  const rest = reasonMatch?.[2]?.trim() ?? "";
-  const kindLine = `${reason} ${rest}`;
-  if (/标本/.test(kindLine)) {
-    return reason ? t("detail.softReasonSpecimen", { reason }) : t("detail.softReasonSpecimen", { reason: t("error.identifySoftDefaultReason") });
-  }
-  if (/影像|画布|油画|画作|挂画|海报|屏幕|书页|印刷|照片|直播|描绘/.test(kindLine)) {
-    return reason ? t("detail.softReasonDepiction", { reason }) : t("detail.softReasonDepiction", { reason: t("error.identifySoftDefaultReason") });
-  }
-  return generic;
+  if (!notes) return t("detail.softReasonFallback");
+  return notes.split("·")[0]?.trim() || t("detail.softReasonFallback");
 }
 
 /**
- * 留影档的「简介」：这类照片没有科普短文，但识图 agent 一定给了
- * 不合格理由（「看起来是个普通茶杯，没有找到生物」那类话），落库时
- * 写进 notes 首段。这里回读出来当这张照片的注——总比「暂无简介」强。
- * 万一 notes 空（老数据或 agent 真没给），回落到一句中性的兜底话。
+ * 留影档的「留影」块：这类照片没有科普短文，但识图 agent 给了不合格理由
+ * （「看起来是个普通茶杯，没有找到生物」那类话），落库时写进 notes 首段。
+ * 这里回读出来当这张照片的注——总比「暂无简介」强。
+ * 万一 notes 空，回落到一句兜底话（只留一种兜底，不为老数据分情况）。
  */
 function keepsakeReasonText(obs: Observation): string {
   const notes = (obs.notes ?? "").trim();
@@ -434,14 +423,13 @@ export default function ObservationDetailPage({ userId }: { userId?: string }) {
 
       {softEncounter && obs ? (
         <div className="detail-soft-reason">
-          <p className="muted">{t("detail.softReasonTitle")}</p>
           <p className="detail-soft-reason-text">{softReasonText(obs)}</p>
         </div>
       ) : null}
 
-      {keepsake ? (
+      {keepsake && !softEncounter ? (
         <section className="detail-block">
-          <h2 className="section-title">{t("detail.blurb")}</h2>
+          <h2 className="section-title">{t("detail.keepsakeSealTitle")}</h2>
           {/* 留影没有科普简介，但识图 agent 一定给了不合格理由；那句话就是这张的注 */}
           <p className="blurb">{keepsakeReasonText(obs)}</p>
           {obs.description ? <p className="muted detail-caption">{obs.description}</p> : null}
