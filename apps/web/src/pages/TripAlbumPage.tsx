@@ -55,11 +55,12 @@ function statusBadge(obs: Observation) {
   if (obs.status === "pending_settle") {
     return <span className="badge warn">{t("status.pending_settle")}</span>;
   }
-  if (isKeepsakeError(obs.error)) {
-    return <span className="badge soft">{t("status.keepsake")}</span>;
-  }
-  if (isSoftEncounterError(obs.error)) {
-    return <span className="badge soft">{t("status.softEncounter")}</span>;
+  /* 软档/留影不挂徽章：片框说明行已写印章文字（detail.softSealAlbum /
+     detail.keepsakeSeal），再挂一枚就是同一信息说两遍。返回 null 而非
+     往下掉——掉的末尾分支是 status.settled「已收录」，会把不进图鉴的照片
+     说成已收录。 */
+  if (isKeepsakeError(obs.error) || isSoftEncounterError(obs.error)) {
+    return null;
   }
   if (obs.status === "failed") {
     /* 红字只留给真故障（服务挂/额度尽/Key 没配）；不进图鉴不是错误 */

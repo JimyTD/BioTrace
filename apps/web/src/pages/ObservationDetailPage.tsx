@@ -392,7 +392,7 @@ export default function ObservationDetailPage({ userId }: { userId?: string }) {
           {obs.status === "failed" ? (
             <span className={isNotAFault(obs.error) ? "badge soft" : "badge danger"}>
               {/* 留影 status=settled 走不到这里；此处只管老硬拦码与太粗。
-                  留影的「不在册」由上面的 KeepsakeSeal 与 status.keepsake 承担 */}
+                  软档/留影的标识由上面的 KeepsakeSeal / SoftEncounterSeal 承担 */}
               {isNotCollectibleError(obs.error)
                 ? t("status.notCollectible")
                 : failedCoarse
@@ -400,7 +400,6 @@ export default function ObservationDetailPage({ userId }: { userId?: string }) {
                   : t("status.failed")}
             </span>
           ) : null}
-          {keepsake ? <span className="badge soft">{t("status.keepsake")}</span> : null}
           {obs.domesticated ? <ListTag tag="domesticated" /> : null}
         </div>
         <ListTagRow
@@ -429,8 +428,8 @@ export default function ObservationDetailPage({ userId }: { userId?: string }) {
 
       {keepsake && !softEncounter ? (
         <section className="detail-block">
-          <h2 className="section-title">{t("detail.keepsakeSealTitle")}</h2>
-          {/* 留影没有科普简介，但识图 agent 一定给了不合格理由；那句话就是这张的注 */}
+          <h2 className="section-title">{t("detail.keepsakeSeal")}</h2>
+          {/* 没有科普简介，但识图 agent 给了不合格理由，那句话就是这张的注 */}
           <p className="blurb">{keepsakeReasonText(obs)}</p>
           {obs.description ? <p className="muted detail-caption">{obs.description}</p> : null}
         </section>

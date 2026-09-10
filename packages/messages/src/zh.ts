@@ -151,14 +151,11 @@ const zhCore = {
   "status.failed": "未能认定",
   "status.tooCoarse": "结论偏粗",
   "status.notCollectible": "无法收录",
-  "status.softEncounter": "未相遇",
-  "status.keepsake": "留影",
 
-  "detail.softSeal": "NC · 未收录",
-  "detail.softSealAlbum": "未收录",
-  "detail.keepsakeSeal": "留影 · 不在册",
+  "detail.softSeal": "非实拍生物",
+  "detail.softSealAlbum": "非实拍",
+  "detail.keepsakeSeal": "普通照片",
   "detail.keepsakeReasonFallback": "去寻访一些生命的美好吧",
-  "detail.keepsakeSealTitle": "留影",
   "detail.softReasonFallback": "转发为虚，眼见为实哦",
 
   "settle.opening": "请稍候…",
@@ -372,7 +369,7 @@ const zhCore = {
   "detail.locationInvalid": "位置无效，请在地图上重新确认",
   "detail.locationSaveFailed": "保存位置失败",
   "detail.pinLede": "拖动地图，把拍摄地点对准准星，再确认",
-  "detail.pinConfirm": "确认此处",
+  "detail.pinConfirm": "就是这",
 
   "rank.kingdom": "界",
   "rank.phylum": "门",

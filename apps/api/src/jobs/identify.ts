@@ -230,8 +230,10 @@ export function enqueueIdentify(opts: IdentifyOpts) {
 
       /* 软档（2026-09-07 拍板）：影像/标本上的真生物。识别放行、全套字段保留，
          但不进结算（无稀有度/taxonKey/图鉴），国别与可读地名照常判定。
-         status=settled 让详情页按「已识别」渲染，错误码 identify_soft_encounter
-         驱动前端「未相遇」徽章与理由文案。 */
+         status=settled 让详情页按「已识别」渲染；错误码 identify_soft_encounter
+         驱动前端印章（detail.softSeal「非实拍生物」）与理由文案。
+         注意：不进图鉴靠 taxonKey=null 挡，不靠 status——任何按 settled
+         查收录的地方都必须同时排 taxonKey。 */
       if (soft) {
         console.log(
           `[identify] soft encounter obs=${opts.observationId} kind=${soft.kind}`,
