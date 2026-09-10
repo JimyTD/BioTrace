@@ -31,9 +31,12 @@ function applyError(id: ProviderId, message: string): ErrorKind {
     markProviderNoKey(id);
     return kind;
   }
+  // Free-tier RPD (`GenerateRequestsPerDayPerProjectPerModel-FreeTier`) is released on a
+  // rolling window: Google returns `retryDelay` of ~9-60s (measured 2026-09-10). A fixed
+  // 12h cool-down burned the whole day. Use Google's own delay, same as `rate_limited`.
   const coolMs =
     kind === "daily_exhausted"
-      ? 12 * 60 * 60_000
+      ? parseRetryDelayMs(message)
       : kind === "rate_limited"
         ? parseRetryDelayMs(message)
         : kind === "transient"
@@ -129,12 +132,17 @@ export async function identifyWithFallback(input: IdentifyInput): Promise<Identi
           const message = err instanceof Error ? err.message : String(err);
           const kind = classifyProviderError(message);
           const nextCool = coolRemainingMs("gemini");
-          console.warn(`[identify] Gemini failed (${kind}): ${message.slice(0, 160)}`);
+          const maxTries = kind === "transient" ? 2 : 3;
+          console.warn(
+            `[identify] Gemini failed (${kind}) try=${geminiTries}/${maxTries} cool=${Math.ceil(nextCool / 1000)}s: ${message.slice(0, 160)}`,
+          );
 
+          // RPD is a rolling window and 429s do not consume quota (measured 2026-09-10),
+          // so waiting for `retryDelay` and retrying is free and keeps us on Gemini.
           const retryGemini =
             nextCool > 0 &&
             nextCool <= waitMax &&
-            ((kind === "rate_limited" && geminiTries < 3) ||
+            (((kind === "rate_limited" || kind === "daily_exhausted") && geminiTries < 3) ||
               (kind === "transient" && geminiTries < 2));
           if (retryGemini) {
             continue;
