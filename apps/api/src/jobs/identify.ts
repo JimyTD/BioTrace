@@ -280,6 +280,15 @@ export function enqueueIdentify(opts: IdentifyOpts) {
          status=settled 让详情页按「已识别」渲染；错误码 identify_keepsake
          驱动前端中性灰「留影」徽章；标题走 subject_title_zh（agent 短名）。 */
       if (keepsake) {
+        /* 保险 A（2026-09-10 议题3）：代码推翻过模型结论时留痕。
+           没有这条，线上误伤只能靠猜——那 4 只猫查了半天就是这个原因。 */
+        if (keepsake.override) {
+          console.warn(
+            `[identify] eligibility overridden obs=${opts.observationId} ` +
+              `from=${keepsake.override.from} to=${keepsake.override.to} hit="${keepsake.override.hit}" ` +
+              `name="${result.common_name_zh}" reason="${result.ineligibility_reason_zh}"`,
+          );
+        }
         console.log(`[identify] keepsake obs=${opts.observationId} kind=${keepsake.kind}`);
         const fresh = await db.query.observations.findFirst({
           where: eq(observations.id, opts.observationId),

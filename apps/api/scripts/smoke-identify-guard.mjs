@@ -171,6 +171,79 @@ check("mock wild sparrow", mock.domesticated === false && mock.breed_zh === null
   );
 }
 
+// 议题3回归（2026-09-10）：翻盘只看结论字段，不扫科普描述
+{
+  const catTaxonomy = emptyTaxonomy();
+  catTaxonomy.kingdom = { name_la: "Animalia", name_zh: "动物界" };
+  catTaxonomy.species = { name_la: "Felis catus", name_zh: "家猫" };
+
+  const livingCat = {
+    ...mock,
+    subject_kind: "living_organism",
+    eligibility: "collectible",
+    common_name_zh: "布偶猫",
+    scientific_name: "Felis catus",
+    taxonomy: catTaxonomy,
+    ineligibility_reason_zh: "",
+  };
+
+  // 1. 家养布偶猫：名字含「布偶」但它是真实猫品种，必须放行
+  const ragdoll = {
+    ...livingCat,
+    blurb_zh: "布偶猫（Ragdoll）是人工选育的宠物猫品种，以身体松弛如“布偶”著称。",
+  };
+  check("ragdoll cat passes", evaluateEligibility(ragdoll).ok === true);
+
+  // 2. 描述里提到玩具的真猫：主体是活猫，不能因为画面里有玩具就被推翻
+  const catWithToyInBlurb = {
+    ...livingCat,
+    common_name_zh: "家猫",
+    blurb_zh: "图中这只长毛黑猫正趴在地面，背上还趴着一个狐獴造型的玩具。",
+    notes: "猫背上有玩具。",
+  };
+  check("cat with toy in blurb passes", evaluateEligibility(catWithToyInBlurb).ok === true);
+
+  // 3. 名字本身就是器物、且模型没给界 → 仍要拦住（翻盘该起作用的场景）
+  const plushBear = {
+    ...livingCat,
+    subject_kind: "living_organism",
+    common_name_zh: "毛绒玩具熊",
+    blurb_zh: "这是一只熊。",
+    taxonomy: emptyTaxonomy(),
+  };
+  const pbGate = evaluateEligibility(plushBear);
+  check(
+    "plush toy name still blocked",
+    pbGate.ok === true && "keepsake" in pbGate && pbGate.keepsake.kind === "artifact_or_toy",
+  );
+
+  // 4. 保险 B：模型给了界（kingdom 非空）→ 代码无权翻盘，直接放行
+  const plushWithKingdom = { ...plushBear, taxonomy: catTaxonomy };
+  const pkGate = evaluateEligibility(plushWithKingdom);
+  check(
+    "kingdom present blocks override",
+    pkGate.ok === true && !("keepsake" in pkGate),
+  );
+
+  // 5. 保险 A：翻盘时留痕，能还原是谁改的、命中了哪个词
+  check(
+    "override recorded",
+    pbGate.ok === true &&
+      "keepsake" in pbGate &&
+      pbGate.keepsake.override?.from === "living_organism" &&
+      pbGate.keepsake.override?.to === "artifact_or_toy" &&
+      pbGate.keepsake.override?.hit === "毛绒",
+  );
+
+  // 6. 未被翻盘时不留痕
+  check(
+    "no override when clean",
+    evaluateEligibility(ragdoll).ok === true &&
+      !("keepsake" in evaluateEligibility(ragdoll) &&
+        evaluateEligibility(ragdoll).keepsake?.override),
+  );
+}
+
 const userId = randomUUID();
 await db.insert(users).values({
   id: userId,
