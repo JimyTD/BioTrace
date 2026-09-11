@@ -120,8 +120,8 @@ export default function LoginPage({
   const submitLabel =
     mode === "login"
       ? busy
-        ? t("auth.loggingIn")
-        : t("auth.login")
+        ? t("common.loggingIn")
+        : t("common.login")
       : mode === "register"
         ? busy
           ? t("auth.registering")
@@ -129,17 +129,12 @@ export default function LoginPage({
         : resetCodeSent
           ? busy
             ? t("auth.resetting")
-            : t("auth.resetAction")
+            : t("common.resetPassword")
           : busy
             ? t("auth.sending")
             : t("auth.sendResetCode");
 
-  const lede =
-    mode === "login"
-      ? t("auth.lede")
-      : mode === "register"
-        ? t("auth.registerLede")
-        : t("auth.forgotPassword");
+  const lede = mode === "reset" ? t("auth.forgotPassword") : t("app.lede");
 
   const locked = busy || turning;
 
@@ -215,7 +210,7 @@ export default function LoginPage({
               {mode !== "reset" || resetCodeSent ? (
                 <label className="field">
                   <span className="muted">
-                    {mode === "reset" ? t("common.newPassword") : t("auth.passwordLabel")}
+              {mode === "reset" ? t("common.newPassword") : t("common.password")}
                   </span>
                   <input
                     className="input"
