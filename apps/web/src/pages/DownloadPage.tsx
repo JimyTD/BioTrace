@@ -64,15 +64,16 @@ export default function DownloadPage() {
               <>
                 <p className="download-readme-title">{t("download.install")}</p>
                 <ol>
-                  <li>{t("download.step1")}</li>
                   <li>{t("download.step2")}</li>
                   <li>{t("download.step3")}</li>
                 </ol>
               </>
             )}
-            <Link className="text-link" to="/">
-              {t("download.openWeb")}
-            </Link>
+            {!ios && (
+              <Link className="text-link" to="/">
+                {t("download.openWeb")}
+              </Link>
+            )}
           </div>
         </div>
       </div>
