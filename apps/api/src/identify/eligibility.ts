@@ -19,17 +19,6 @@ export type EligibilitySoft = {
   reasonZh: string;
 };
 
-/**
-/**
- * 翻盘留痕（2026-09-10 议题3）：代码凭关键词推翻了模型结论时，记下原判、改判与命中的词。
- * 仅用于诊断与事后复核，不参与判定。
- */
-export type EligibilityOverride = {
-  from: SubjectKind;
-  to: SubjectKind;
-  hit: string;
-};
-
 /** 识别留影档（2026-09-08 拍板）：没生物 / 生物仅背景 / 分不清 / 人 / 器物。
  * 照片本身就该留在相册——识别不报错、不给稀有度、不进图鉴，仅此而已。
  * 标题走 subject_title_zh（agent 给的短名），识别不出来也不补分类信息。
@@ -37,7 +26,6 @@ export type EligibilityOverride = {
 export type EligibilityKeepsake = {
   kind: SubjectKind;
   reasonZh: string;
-  override?: EligibilityOverride | null;
 };
 
 export type EligibilityDecision =
@@ -59,19 +47,6 @@ export type EligibilityDecision =
       keepsake: EligibilityKeepsake;
     };
 
-/**
- * 器物/影像提示词（2026-09-10 收窄，见 docs/wip/识别链路-议题.md 议题3）。
- *
- * 只用来扫模型给出的「结论性」字段：ineligibility_reason_zh 与 common_name_zh。
- * 不再扫 blurb_zh / notes —— 那是科普描述，天然会提到别的东西
- * （真猫背上趴着个玩具、馆藏标本旁边有模型），拿描述里的词去推翻结论必然误伤。
- *
- * 已移除「布偶」：布偶猫是真实猫品种（apps/api/data/breeds/cat.json），
- * 曾导致家养布偶猫被整只判成工艺品。
- */
-const ARTIFACT_HINT =
-  /玩具|手办|雕像|塑像|毛绒|公仔|卡通|漫画|动漫|插画|绘本|书页|截图|玩偶/;
-
 function looksHuman(result: IdentifyResult): boolean {
   const sci = result.scientific_name.trim().toLowerCase();
   if (/\bhomo\b/.test(sci) || sci.includes("homo sapiens")) return true;
@@ -84,26 +59,14 @@ function looksHuman(result: IdentifyResult): boolean {
 }
 
 /**
- * 仅当模型自己判定为活体、但其给出的「结论性文字」里出现器物/影像词时，才推翻。
- *
- * 扫描范围刻意收窄到两个字段：
- *   - ineligibility_reason_zh：模型主动给的不合格理由（最可信的翻盘依据）
- *   - common_name_zh：模型起的中文名（如「毛绒玩具熊」，名字本身就是器物）
- *
- * 刻意不扫 blurb_zh / notes：那两段是科普正文，出现「玩具」「模型」等词
- * 只说明画面里有这些东西，不足以否定「主体是活物」的结论。
- *
- * 注意：common_name_zh 仍需保留扫描，因为「毛绒玩具熊」这类主体名确实落在名字里；
- * 但已移除会误伤真实物种名的词（布偶猫、模型鸟等）。
- */
-function looksArtifactOrDepiction(result: IdentifyResult): boolean {
-  const hay = `${result.common_name_zh} ${result.ineligibility_reason_zh}`;
-  return ARTIFACT_HINT.test(hay);
-}
-
-/**
  * Gate before settle/rarity: only field organisms may become collectible
  * (alive or dead; empty shells count). Missing/invalid fields default to no.
+ *
+ * 器物词翻盘已于 2026-09-11 删除（见 docs/wip/识别链路-议题.md 议题3）。
+ * 原设计是「模型判活体但结论文字出现器物词时改判器物」，实测误伤远大于收益：
+ * 布偶猫（真实猫品种）被「布偶」命中、真猫背上趴着玩具被「玩具」命中，
+ * 而它防的「模型把毛绒熊标成活体」场景从未被观测到。
+ * 代码凭只言片语断言，比它要防的模型呆得多——模型看的是图，关键词看的是字。
  *
  * 软档规则（2026-09-07 拍板）：subject_kind 为 depiction_or_media / specimen、
  * 且模型给出了真实身份（非空 common_name_zh 或 scientific_name）、
@@ -117,27 +80,11 @@ function looksArtifactOrDepiction(result: IdentifyResult): boolean {
 export function evaluateEligibility(result: IdentifyResult): EligibilityDecision {
   let kind = result.subject_kind;
   let eligibility = result.eligibility;
-  let overridden: EligibilityOverride | null = null;
-
   const kingdomLa = result.taxonomy.kingdom?.name_la?.trim() ?? "";
 
   if (looksHuman(result)) {
     kind = "human";
     eligibility = "not_collectible";
-  } else if (kind === "living_organism" && looksArtifactOrDepiction(result)) {
-    /* 保险 B：模型给了界就不许翻。它已经认定主体是真生物，
-       拿一个关键词去推翻它站不住——真要翻，得是模型连界都没给的时候。 */
-    if (!kingdomLa) {
-      overridden = {
-        from: kind,
-        to: "artifact_or_toy",
-        hit: ARTIFACT_HINT.exec(
-          `${result.common_name_zh} ${result.ineligibility_reason_zh}`,
-        )?.[0] ?? "",
-      };
-      kind = "artifact_or_toy";
-      eligibility = "not_collectible";
-    }
   }
 
   const collectible = eligibility === "collectible" && kind === "living_organism";
@@ -149,7 +96,6 @@ export function evaluateEligibility(result: IdentifyResult): EligibilityDecision
       keepsake: {
         kind,
         reasonZh: result.ineligibility_reason_zh.trim() || t("error.identifyGenericFailed"),
-        override: overridden,
       },
     };
   }
@@ -189,7 +135,6 @@ export function evaluateEligibility(result: IdentifyResult): EligibilityDecision
     keepsake: {
       kind,
       reasonZh,
-      override: overridden,
     },
   };
 }

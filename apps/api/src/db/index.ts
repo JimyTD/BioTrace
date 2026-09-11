@@ -152,6 +152,14 @@ export async function migrate() {
   await ensureColumn("observations", "accepted_taxonomy_json", "accepted_taxonomy_json TEXT");
   await ensureColumn("observations", "identify_provider", "identify_provider TEXT");
   await ensureColumn("observations", "identify_model", "identify_model TEXT");
+  /* 2026-09-11 加：模型原始判断留底。删掉器物词翻盘后代码不再改模型结论，
+     模型说了什么必须能查，否则误判无从复盘。纯日志性质，不参与业务。 */
+  await ensureColumn(
+    "observations",
+    "identify_subject_kind",
+    "identify_subject_kind TEXT",
+  );
+  await ensureColumn("observations", "identify_reason", "identify_reason TEXT");
   await ensureColumn(
     "observations",
     "domesticated",

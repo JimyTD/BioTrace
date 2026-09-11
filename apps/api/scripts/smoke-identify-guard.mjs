@@ -203,7 +203,9 @@ check("mock wild sparrow", mock.domesticated === false && mock.breed_zh === null
   };
   check("cat with toy in blurb passes", evaluateEligibility(catWithToyInBlurb).ok === true);
 
-  // 3. 名字本身就是器物、且模型没给界 → 仍要拦住（翻盘该起作用的场景）
+  // 3. 器物词翻盘已于 2026-09-11 删除：模型判活体时，名字/理由含器物词也不再推翻。
+  //    模型看的是图，代码凭中文关键词断言比它要防的模型呆得多。
+  //    「毛绒玩具熊」这类模型自相矛盾的极端场景改由 prompt 契约约束。
   const plushBear = {
     ...livingCat,
     subject_kind: "living_organism",
@@ -212,35 +214,33 @@ check("mock wild sparrow", mock.domesticated === false && mock.breed_zh === null
     taxonomy: emptyTaxonomy(),
   };
   const pbGate = evaluateEligibility(plushBear);
+  /* 无界 → 归留影（第2段「认不出界」规则，与器物词无关）。
+     关键断言：kind 仍是模型给的 living_organism，没被改成 artifact_or_toy。 */
   check(
-    "plush toy name still blocked",
-    pbGate.ok === true && "keepsake" in pbGate && pbGate.keepsake.kind === "artifact_or_toy",
-  );
-
-  // 4. 保险 B：模型给了界（kingdom 非空）→ 代码无权翻盘，直接放行
-  const plushWithKingdom = { ...plushBear, taxonomy: catTaxonomy };
-  const pkGate = evaluateEligibility(plushWithKingdom);
-  check(
-    "kingdom present blocks override",
-    pkGate.ok === true && !("keepsake" in pkGate),
-  );
-
-  // 5. 保险 A：翻盘时留痕，能还原是谁改的、命中了哪个词
-  check(
-    "override recorded",
+    "no artifact override anymore",
     pbGate.ok === true &&
       "keepsake" in pbGate &&
-      pbGate.keepsake.override?.from === "living_organism" &&
-      pbGate.keepsake.override?.to === "artifact_or_toy" &&
-      pbGate.keepsake.override?.hit === "毛绒",
+      pbGate.keepsake.kind === "living_organism",
   );
 
-  // 6. 未被翻盘时不留痕
+  // 4. 模型自己判 artifact_or_toy 时照旧拦（这条不依赖关键词，是模型自己的结论）
+  const selfToy = {
+    ...livingCat,
+    subject_kind: "artifact_or_toy",
+    eligibility: "not_collectible",
+    common_name_zh: "毛绒玩具熊",
+    ineligibility_reason_zh: "毛绒玩具，非活体",
+  };
+  const stGate = evaluateEligibility(selfToy);
   check(
-    "no override when clean",
-    evaluateEligibility(ragdoll).ok === true &&
-      !("keepsake" in evaluateEligibility(ragdoll) &&
-        evaluateEligibility(ragdoll).keepsake?.override),
+    "model judged toy still keepsake",
+    stGate.ok === true && "keepsake" in stGate && stGate.keepsake.kind === "artifact_or_toy",
+  );
+
+  // 5. 留影档不再携带 override 字段（翻盘留痕已随翻盘一并删除）
+  check(
+    "keepsake has no override field",
+    "keepsake" in stGate && !("override" in stGate.keepsake),
   );
 }
 

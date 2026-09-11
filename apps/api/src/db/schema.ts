@@ -110,6 +110,14 @@ export const observations = sqliteTable(
     /** 真正出货的模型名（TokenHub 视觉链档位；Gemini 为 GEMINI_MODEL） */
     identifyModel: text("identify_model"),
     /**
+     * 识图模型原始判断（subject_kind 原值），仅用于诊断与复盘，不参与业务逻辑。
+     * 2026-09-11 加：删掉器物词翻盘后，代码不再改模型结论，
+     * 模型说了什么必须留底，否则误判无从查证。
+     */
+    identifySubjectKind: text("identify_subject_kind"),
+    /** 模型自己写的不合格理由原文（ineligibility_reason_zh），同为日志性质 */
+    identifyReason: text("identify_reason"),
+    /**
      * 驯化位。识图 null 落库前折成 false（按 wild）。旧行缺省 false，不回刷。
      */
     domesticated: integer("domesticated", { mode: "boolean" }).notNull().default(false),
