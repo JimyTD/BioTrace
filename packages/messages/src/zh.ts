@@ -116,6 +116,9 @@ const zhCore = {
 
   "album.back": "旅途",
   "album.liftPhoto": "拿起这张",
+  /* 相册格的按钮名（aria-label）：读屏念的，不走主题覆盖——
+     「请过目」「启封」脱离封条这个视觉隐喻单独听没有信息 */
+  "album.openObservation": "看看是什么",
   "album.addPhotos": "上传照片",
   "album.upload": "上传并识别",
   "album.uploading": "上传中…",
@@ -148,7 +151,6 @@ const zhCore = {
   "detail.softSealAlbum": "非实拍",
   "detail.keepsakeSeal": "普通照片",
 
-  "settle.claiming": "收录中…",
   "settle.failed": "操作失败，请重试",
   "settle.notPending": "这条没有结论可看。",
   "settle.rarity": "稀有度",
@@ -777,6 +779,7 @@ export const zhFlavor = {
   "settle.open": "看看是什么",
   "settle.opening": "揭晓中…",
   "settle.claim": "收进图鉴",
+  "settle.claiming": "收录中…",
   "settle.backAlbum": "返回相册",
   "collection.title": "图鉴",
   "collection.lede": "收下的证书，都在这里。",

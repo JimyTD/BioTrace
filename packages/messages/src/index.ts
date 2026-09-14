@@ -1,4 +1,5 @@
 import { zh, zhFlavor, type MessageKey, type ThemedMessageKey } from "./zh.js";
+import { clearVoice, daylightVoice } from "./voices/index.js";
 
 const catalogs = {
   zh,
@@ -14,16 +15,20 @@ export const defaultLocale: Locale = "zh";
  * 覆盖表只写与基础文案不同的 key；当前仅 zh，加语言时按语言分表。
  * 服务端不调 setMessageVoice，恒为 default。
  *
- * 目前两套皮肤都用 default：清透换的是观感不是说法。机制留着，
- * 将来真有一套自带叙事的皮肤（比如深海）再加覆盖表。
+ * 两张表在 voices/ 下，一个皮肤一张，由 THEME_META 指过来：
+ * · clear    —— 清透：沿用改造前的老文案（请过目 / 正在显影… / 收下）
+ * · daylight —— 日光图版：拆封与图版语汇（启封 / 启封中… / 入册 / 入册中… / 定名图版）
+ * 没表的皮肤走基础表；将来再加皮肤就再加一张表（不是改这个联合类型以外的地方）。
  */
-export type VoiceId = "default";
+export type VoiceId = "default" | "clear" | "daylight";
 
 /** 可文案区 key 全集（= zhFlavor 的键）：运行时守卫用。只有可文案区 key 才允许走 voice 覆盖，固定区一律走基础表。 */
 const themedKeys: ReadonlySet<ThemedMessageKey> = new Set<string>(Object.keys(zhFlavor)) as ReadonlySet<ThemedMessageKey>;
 
 const voices: Record<VoiceId, Partial<Record<ThemedMessageKey, string>>> = {
   default: {},
+  clear: clearVoice,
+  daylight: daylightVoice,
 };
 
 export const VOICE_IDS = Object.keys(voices) as VoiceId[];
