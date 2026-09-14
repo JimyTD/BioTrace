@@ -148,7 +148,6 @@ const zhCore = {
   "detail.softSealAlbum": "非实拍",
   "detail.keepsakeSeal": "普通照片",
 
-  "settle.opening": "揭晓中…",
   "settle.claiming": "收录中…",
   "settle.failed": "操作失败，请重试",
   "settle.notPending": "这条没有结论可看。",
@@ -157,7 +156,6 @@ const zhCore = {
   "settle.locationImprecise": "无定位时按中国常见度评定",
   "settle.alertIntroduced": "当地引入/关注种",
   "settle.alertHint": "依据该国公开名录判定",
-  "settle.backAlbum": "返回相册",
 
   "rarity.N": "N · 常见",
   "rarity.R": "R · 少见",
@@ -769,7 +767,9 @@ export const zhFlavor = {
   "settle.title": "识别结果",
   "settle.lede": "已经识别出这是什么了。",
   "settle.open": "看看是什么",
+  "settle.opening": "揭晓中…",
   "settle.claim": "收进图鉴",
+  "settle.backAlbum": "返回相册",
   "settle.volumeSlotLit": "{volume} · {slot} 已点亮",
   "settle.volumeSlotLitMore": "{volume} · {slot} 已点亮，另有 {count} 格",
 
