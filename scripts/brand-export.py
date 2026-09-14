@@ -201,7 +201,7 @@ def web_share() -> None:
         "b{font-size:82px;font-weight:700;letter-spacing:-.03em;margin-top:34px}"
         "em{font-style:normal;font-size:34px;opacity:.75;margin-top:10px;letter-spacing:.04em}"
         "</style>"
-        f"<div class='box'>{mark(FRAMED, 190)}<b>BioTrace</b><em>路上遇见的，都有名字</em></div>"
+        f"<div class='box'>{mark(FRAMED, 190)}<b>BioTrace</b><em>识尽众生，山海入怀</em></div>"
     )
     out = WEB / "og.png"
     shot(html, w, h, out)

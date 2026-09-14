@@ -307,7 +307,7 @@
               <div class="face" id="face">
             <div class="mast">
               <h2 class="brand">BioTrace</h2>
-              <p class="lede" id="lede">翻开相册，记下路上遇见的。</p>
+              <p class="lede" id="lede">识尽众生，山海入怀</p>
               <div class="rule" aria-hidden></div>
             </div>
             <form class="lid-form" id="form">
@@ -358,9 +358,7 @@
         if (phase !== "closed") return;
         mode = next;
         const register = next === "register";
-        document.getElementById("lede").textContent = register
-          ? "记下路上遇见的，从这一本开始。"
-          : "翻开相册，记下路上遇见的。";
+        document.getElementById("lede").textContent = "识尽众生，山海入怀";
         document.getElementById("submit").textContent = register ? "创建账号" : "登录";
         document.getElementById("toRegister").hidden = register;
         document.getElementById("toLogin").hidden = !register;
