@@ -58,7 +58,7 @@ export default function MeSecurityPage() {
           />
         </label>
         <button className="btn secondary" type="submit" disabled={busy}>
-          {busy ? t("me.changingPassword") : t("me.changePasswordAction")}
+          {busy ? t("common.saving") : t("me.changePasswordAction")}
         </button>
         {msg ? <p className="muted">{msg}</p> : null}
         {err ? <p className="error">{err}</p> : null}

@@ -79,11 +79,9 @@ export default function MeAboutPage() {
         </div>
         {nativeAndroid ? (
           <>
-            <p className="muted">
-              {localVersion
-                ? t("me.appVersion", { version: localVersion.versionName })
-                : t("me.appVersionUnknown")}
-            </p>
+            {localVersion ? (
+              <p className="muted">{t("me.appVersion", { version: localVersion.versionName })}</p>
+            ) : null}
             <div className="row me-actions">
               <button className="btn secondary" type="button" disabled={busy} onClick={() => void checkUpdate()}>
                 {busy && !pendingUpdate ? t("me.checkingUpdate") : t("me.checkUpdate")}
