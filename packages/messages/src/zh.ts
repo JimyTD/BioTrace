@@ -769,8 +769,8 @@ export const zhFlavor = {
   "onboard.collectionLede": "认出一种生命，就点亮一格。",
 
   "trips.title": "旅途",
-  "trips.lede": "每一次出门，都是一本新相册。",
-  "trips.empty": "还没有旅途。写下名字，翻开第一页。",
+  "trips.lede": "所行之处，皆归于此。",
+  "trips.empty": "还没有旅途。山海未远，等你启程。",
   "album.empty": "册页还空着。上传照片，开始记录。",
   "album.pendingHint": "结论已经落笔。",
   "album.readyToast": "刚拍的，有名字了。",
