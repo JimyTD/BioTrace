@@ -209,6 +209,7 @@ export default function TripManagePage({ userId }: { userId: string }) {
           </form>
 
           <form className="me-section stack" onSubmit={onSaveMeta}>
+            <h2 className="me-section-title">{t("trips.metaTitle")}</h2>
             <label className="row trip-meta-toggle">
               <input
                 type="checkbox"
