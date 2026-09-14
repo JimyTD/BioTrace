@@ -19,7 +19,7 @@ export const defaultLocale: Locale = "zh";
  */
 export type VoiceId = "default";
 
-/** 固定区 key 全集：运行时守卫用。覆盖表漏进固定 key 时，t() 不认。 */
+/** 可文案区 key 全集（= zhFlavor 的键）：运行时守卫用。只有可文案区 key 才允许走 voice 覆盖，固定区一律走基础表。 */
 const themedKeys: ReadonlySet<ThemedMessageKey> = new Set<string>(Object.keys(zhFlavor)) as ReadonlySet<ThemedMessageKey>;
 
 const voices: Record<VoiceId, Partial<Record<ThemedMessageKey, string>>> = {

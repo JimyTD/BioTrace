@@ -24,4 +24,4 @@ alwaysApply: true
 - 模型 Prompt、开发者日志、纯技术错误原文（落库前应尽量映射为 code）
 - 用户自己输入的内容（旅途标题、描述等）
 
-> 完整文案规范（分区机制、术语口径、新增文案硬约束）见 [`docs/features/文案规范.md`](docs/features/文案规范.md)。
+> 完整机制见 [`docs/features/文案工程规范.md`](docs/features/文案工程规范.md)；怎么写见 [`docs/features/文案撰写规范.md`](docs/features/文案撰写规范.md)。
