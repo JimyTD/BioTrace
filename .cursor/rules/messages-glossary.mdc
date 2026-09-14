@@ -12,6 +12,7 @@ alwaysApply: true
 - 新增或改 UI 文案：先加/改 message key，再在 Web/API 引用 key
 - 状态名、按钮、空态、错误提示、确认语、稀有度标签、结算文案等同理
 - API 返回给前端的用户可读错误：优先稳定 **code**（如 `identify_unavailable`），由 messages 翻译；不要把长中文硬编码进路由
+- 改主表或 voice 覆盖表后**必须**跑 `pnpm check:copy`
 
 ## 禁止
 
@@ -23,10 +24,4 @@ alwaysApply: true
 - 模型 Prompt、开发者日志、纯技术错误原文（落库前应尽量映射为 code）
 - 用户自己输入的内容（旅途标题、描述等）
 
-## voice（皮肤说法）边界
-
-文案分固定区 / 可文案区，机制见 [`docs/features/文案分区.md`](../../docs/features/文案分区.md)。
-voice 覆盖表**只能写可文案区**（`zhFlavor`，类型 `ThemedMessageKey`）；固定区 key（稀有度、
-状态名、阶元词、名录定义、错误码、admin、套册内容、确认语）永不可覆盖。成套组（nav 四词、
-点亮词族）要换全换。改主表或 voice 覆盖表后**必须**跑 `pnpm check:copy`
-（一键跑 check-zh + check-voice 两道校验闸）。
+> 完整文案规范（分区机制、术语口径、新增文案硬约束）见 [`docs/features/文案规范.md`](docs/features/文案规范.md)。

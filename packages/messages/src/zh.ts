@@ -5,7 +5,7 @@
  * - zhFlavor：可文案区（叙事包装）。品牌句、导语、空态、仪式用语——voice 可换说法。
  *
  * 两区末尾合并为 zh。key 全体不变、不增不减，调用方零改动。
- * 判定准则见 docs/features/文案分区.md。
+ * 判定准则见 docs/features/文案规范.md。
  */
 const zhCore = {
   "app.name": "BioTrace",
