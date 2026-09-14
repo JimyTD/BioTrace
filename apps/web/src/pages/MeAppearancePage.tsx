@@ -40,7 +40,6 @@ export default function MeAppearancePage({
   return (
     <div className="stack page-me">
       <MeSubHead title={t("me.appearance")} />
-      <p className="lede">{t("me.appearanceLede")}</p>
 
       <div className="me-menu">
         {THEME_IDS.map((id) => {

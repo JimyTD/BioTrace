@@ -802,7 +802,6 @@ export const zhFlavor = {
   "tree3d.notCollectedBranch": "这一支还没去过",
   "tree3d.growing": "正在生长这棵树…",
   "map.empty": "还没有落点。补标照片位置，就会出现在这里。",
-  "me.appearanceLede": "换一套皮肤，换个地方看照片。",
   "detail.reidentifyPlaceholder": "说说它的特征、地点和线索吧",
 } as const;
 
