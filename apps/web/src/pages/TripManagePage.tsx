@@ -219,14 +219,6 @@ export default function TripManagePage({ userId }: { userId: string }) {
               <span>{t("trips.metaManual")}</span>
             </label>
             <p className="muted">{t("trips.metaManualHint")}</p>
-            <p className="muted">
-              {trip.autoDateSummary || trip.autoPlaceSummary
-                ? t("trips.autoPreview", {
-                    date: trip.autoDateSummary || "—",
-                    place: trip.autoPlaceSummary || "—",
-                  })
-                : t("trips.autoPreviewEmpty")}
-            </p>
             {metaManual ? (
               <>
                 <label className="muted" htmlFor="trip-manual-date">
