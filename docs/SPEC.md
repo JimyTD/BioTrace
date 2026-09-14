@@ -90,7 +90,7 @@ docs/        筹划 + 本实现规格
 
 - **API**：`PATCH /api/observations/:id/location`，body `{ lat, lng }`（有限、纬 ±90、经 ±180）。写坐标后，若已有 `finestReliableRank` 则复用 `computeSettle` 重算 `countryCode` / `countrySource` / `locationPrecise` / `alertIntroduced` / `rarity`（及 settle 同类字段）；**不改** `status`、不开包、不 `enqueueIdentify`。已 `settled` 时 `upsertCollectionFromObservation` 刷新图鉴档位。
 - **analyzing 竞态**：允许补标只写坐标；[`jobs/identify.ts`](../apps/api/src/jobs/identify.ts) 在 `computeSettle` 前再读库内最新 lat/lng（Prompt 仍可用上传闭包坐标）。
-- **UI**：观察详情大图在上；名字 / 学名 / 稀有度徽章（色底）/ 简介 / 分类 / 记录（时间、位置、鉴定、坐标）均展开；重识别与删除沉底。「设位置 / 改位置」→ `/observations/:id/pin`；**挪地图 + 中心准星 +「确认此处」**（不手打地址）。足迹图 `/map` 底图铺满主区，选中为底部条（图+名，点进详情），不在地图上弹卡。天地图审图号与 attribution 留在图面右下角。底图与足迹图共用 [`map/style.ts`](../apps/web/src/map/style.ts)（缩放上限；瓦片失败：备用天地图 key → 内置简图）。
+- **UI**：观察详情大图在上；名字 / 学名 / 稀有度徽章（色底）/ 简介 / 分类 / 记录（时间、位置、识别、坐标）均展开；重识别与删除沉底。「设位置 / 改位置」→ `/observations/:id/pin`；**挪地图 + 中心准星 +「确认此处」**（不手打地址）。足迹图 `/map` 底图铺满主区，选中为底部条（图+名，点进详情），不在地图上弹卡。天地图审图号与 attribution 留在图面右下角。底图与足迹图共用 [`map/style.ts`](../apps/web/src/map/style.ts)（缩放上限；瓦片失败：备用天地图 key → 内置简图）。
 - **文案**：`detail.setLocation` 等，均在 `packages/messages`。
 
 验收：无 GPS 可识图开包；补标后上地图；海外点国别正确（如福冈→JP）；俗名/分类不变。
@@ -366,13 +366,13 @@ Prompt 里的 `country` 已按观察点国家传，没有写死中国。
 
 ### 3.5 引入/关注种警示（与稀有度分通道）
 
-产品原则（见 [`planning/05-技术方案.md`](./planning/05-技术方案.md) C.4）：结算揭示；文案「当地引入/关注种」；国家级；无国家不警示；**仅种/亚种可靠鉴定**才警示；**不**折进稀有度。驯养不另开例外：按折叠后的种查表（家犬 = `Canis lupus`）。  
+产品原则（见 [`planning/05-技术方案.md`](./planning/05-技术方案.md) C.4）：结算揭示；文案「当地引入/关注种」；国家级；无国家不警示；**仅种/亚种可靠识别**才警示；**不**折进稀有度。驯养不另开例外：按折叠后的种查表（家犬 = `Canis lupus`）。  
 （相对 05 旧表述「弱结算能对上名录仍可警示」：已废止，以本节与代码种级闸门为准。）
 
 ```text
 computeSettle
   → resolveIntroducedAlert（introduced/）
-      → 无国家 / 非种级可靠鉴定 → false
+      → 无国家 / 非种级可靠识别 → false
       → 查 introduced-index ∪ introduced-seed overlay
       → 二项名精确匹配（禁止属名模糊）
   → 写 alertIntroduced → 开包/详情/图鉴与保护名录同一行芯片（`tags`）；相册格仍用 intro-tag

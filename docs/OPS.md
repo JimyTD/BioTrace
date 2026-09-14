@@ -645,7 +645,7 @@ sudo tar czf /root/biotrace-data.tgz -C /opt/biotrace data
 1. `http://106.53.188.20/` 前端加载 HTTP 200
 2. `http://106.53.188.20/api/health` 返回 `{"ok":true}`
 3. 登录成功并种下 `bt_session`（HTTP 阶段非 Secure）
-4. 创建旅途 → 上传 → 专家鉴定中 → 鉴定完成 → 请过目/收下 → 图鉴
+4. 创建旅途 → 上传 → 识别中 → 识别完成 → 看看是什么 → 收进图鉴
 5. 有 GPS 的点出现在地图，瓦片正常（控制台无 `[map]` warn）
 6. 识图：Gemini 可调用，或日额尽自动切 GLM
 7. `docker compose restart` 后数据仍在（`/opt/biotrace/data`）
