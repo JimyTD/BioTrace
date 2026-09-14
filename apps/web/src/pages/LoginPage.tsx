@@ -134,7 +134,7 @@ export default function LoginPage({
             ? t("auth.sending")
             : t("auth.sendResetCode");
 
-  const lede = mode === "reset" ? t("auth.forgotPassword") : t("app.lede");
+  const lede = mode === "reset" ? t("auth.forgotPassword") : t("app.tagline");
 
   const locked = busy || turning;
 

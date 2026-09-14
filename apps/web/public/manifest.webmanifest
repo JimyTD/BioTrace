@@ -1,7 +1,7 @@
 {
   "name": "BioTrace",
   "short_name": "BioTrace",
-  "description": "路上遇见的，都有名字。",
+  "description": "识尽众生，山海入怀。",
   "start_url": "/",
   "scope": "/",
   "display": "standalone",

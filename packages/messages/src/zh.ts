@@ -763,8 +763,7 @@ const zhCore = {
 
 /** 可文案区（叙事包装）：voice 覆盖表只能写这里的 key（ThemedMessageKey）。 */
 export const zhFlavor = {
-  "app.tagline": "路上遇见的，都有名字",
-  "app.lede": "翻开相册，记下路上遇见的。",
+  "app.tagline": "识尽众生，山海入怀",
   "nav.trips": "旅途",
   "nav.map": "地图",
   "nav.collection": "图鉴",
