@@ -5,11 +5,24 @@ import type { Rarity } from "../api";
 import { volumeCeremonyBgUrl, volumeSealCompleteUrl } from "../themes";
 import { themeSlot, type SettleStagePhase } from "../themes/slots";
 
+/**
+ * 美术走查页（路由 /dev/settle-art），用户走不到。
+ * 这一页自己的说明文字**直接写明文**，不落 packages/messages ——
+ * 那是用户可见文案的术语表，走查页的文案进去会被计入改造工作量、也可能被皮肤 voice 覆盖。
+ * 见 docs/features/文案工程规范.md §一（例外）。
+ */
+
 /** 中性样张，跟着皮肤走；勿写死某一皮肤目录。 */
 const SAMPLE_PHOTO = "/trips/_sample-photo.jpg";
 const RARITIES: Rarity[] = ["N", "R", "SR", "SSR", "UR", "LR", "XR"];
 
 const PHASES: SettleStagePhase[] = ["sealed", "revealing", "open"];
+
+const PHASE_LABEL: Record<SettleStagePhase, string> = {
+  sealed: "封缄",
+  revealing: "揭示中",
+  open: "展出",
+};
 
 export default function SettleArtPreviewPage() {
   // ?phase= / ?rarity= 让走查能直接落在某一阶段，不必点按钮
@@ -38,18 +51,12 @@ export default function SettleArtPreviewPage() {
   return (
     <div className="stack settle-page settle-art-preview">
       <header className="page-head">
-        <h1 className="page-title">{t("settle.preview.title")}</h1>
-        <p className="lede">{t("settle.preview.lede")}</p>
+        <h1 className="page-title">开包美术预览</h1>
+        <p className="lede">只看叠层效果，不走识别接口。点阶段切换封缄 / 揭示 / 展出。</p>
       </header>
 
-      <div className="settle-preview-phases" role="tablist" aria-label={t("settle.preview.phases")}>
-        {(
-          [
-            ["sealed", "settle.preview.phaseSealed"],
-            ["revealing", "settle.preview.phaseReveal"],
-            ["open", "settle.preview.phaseOpen"],
-          ] as const
-        ).map(([id, key]) => (
+      <div className="settle-preview-phases" role="tablist" aria-label="开包阶段">
+        {PHASES.map((id) => (
           <button
             key={id}
             type="button"
@@ -58,7 +65,7 @@ export default function SettleArtPreviewPage() {
             aria-selected={phase === id}
             onClick={() => setPhase(id)}
           >
-            {t(key)}
+            {PHASE_LABEL[id]}
           </button>
         ))}
       </div>
@@ -68,7 +75,7 @@ export default function SettleArtPreviewPage() {
           <SettleStage
             phase={phase}
             photoUrl={photoUrl}
-            photoAlt={t("settle.preview.sampleName")}
+            photoAlt="示例标本"
             rarity={rarity}
             mark={{ when: params.get("when"), where: params.get("where") }}
             onRevealed={onRevealed}
@@ -76,17 +83,17 @@ export default function SettleArtPreviewPage() {
           {phase === "sealed" ? (
             <div className="settle-actions">
               <button className="btn" type="button" onClick={() => setPhase("revealing")}>
-                {t("settle.open")}
+                请过目
               </button>
             </div>
           ) : null}
-          {phase === "revealing" ? <p className="muted">{t("settle.opening")}</p> : null}
+          {phase === "revealing" ? <p className="muted">请稍候…</p> : null}
           {phase === "open" ? (
             <div className="settle-reveal stack">
-              <strong className="settle-name">{t("settle.preview.sampleName")}</strong>
+              <strong className="settle-name">示例标本</strong>
               <span className="muted">{t(`rarity.${rarity}` as MessageKey)}</span>
               <button className="btn" type="button" disabled>
-                {t("settle.claim")}
+                收下
               </button>
             </div>
           ) : null}
@@ -94,7 +101,7 @@ export default function SettleArtPreviewPage() {
       </div>
 
       <div className="stack">
-        <p className="muted section-kicker">{t("settle.rarity")}</p>
+        <p className="muted section-kicker">稀有度</p>
         <div className="settle-preview-phases">
           {RARITIES.map((r) => (
             <button
@@ -113,7 +120,7 @@ export default function SettleArtPreviewPage() {
       </div>
 
       <div className="stack">
-        <p className="muted section-kicker">{t("settle.volumeCeremonyCompleteTitle")}</p>
+        <p className="muted section-kicker">整册点亮</p>
         <div className="modal-panel volume-ceremony is-complete settle-preview-ceremony">
           <img
             className="ceremony-bg"
@@ -123,14 +130,14 @@ export default function SettleArtPreviewPage() {
           />
           <img className="ceremony-seal" src={volumeSealCompleteUrl()} alt="" aria-hidden />
           <div className="ceremony-body stack">
-            <p className="muted section-kicker">{t("settle.volumeCeremonyCompleteTitle")}</p>
-            <p className="volume-ceremony-line">{t("settle.preview.ceremonySample")}</p>
+            <p className="muted section-kicker">整册点亮</p>
+            <p className="volume-ceremony-line">「潮间带」整册点亮（预览）</p>
           </div>
         </div>
       </div>
 
       <Link className="btn secondary" to="/">
-{t("common.back")}
+        {t("common.back")}
       </Link>
     </div>
   );
