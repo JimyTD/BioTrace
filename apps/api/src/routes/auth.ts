@@ -241,7 +241,7 @@ authRoutes.post("/reset-password", async (c) => {
 
   // Force re-login with new password.
   clearSessionCookie(c);
-  return c.json({ ok: true as const, message: t("auth.resetOk") });
+  return c.json({ ok: true as const, message: t("auth.passwordChanged") });
 });
 
 authRoutes.post("/logout", async (c) => {
