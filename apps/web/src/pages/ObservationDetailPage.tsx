@@ -56,25 +56,23 @@ function locationText(obs: Observation) {
 
 /**
  * 软档理由句：识图作业把模型的 ineligibility_reason_zh 写进 notes 首段
- * （prompt 定义「不合格时必填」，故正常必有）。有就直接显示模型原话，
- * 无则一句兜底——不分型、不猜，模型必填的东西不为它准备多套文案。
+ * （prompt 定义「不合格时必填」，故正常必有）。有就显示模型原话；
+ * 没有（老数据）就不显示理由块——模型必填的字段不为它准备兜底话。
  */
-function softReasonText(obs: Observation): string {
+function softReasonText(obs: Observation): string | null {
   const notes = (obs.notes ?? "").trim();
-  if (!notes) return t("detail.softReasonFallback");
-  return notes.split("·")[0]?.trim() || t("detail.softReasonFallback");
+  if (!notes) return null;
+  return notes.split("·")[0]?.trim() || null;
 }
 
 /**
  * 留影档的「留影」块：这类照片没有科普短文，但识图 agent 给了不合格理由
  * （「看起来是个普通茶杯，没有找到生物」那类话），落库时写进 notes 首段。
- * 这里回读出来当这张照片的注——总比「暂无简介」强。
- * 万一 notes 空，回落到一句兜底话（只留一种兜底，不为老数据分情况）。
+ * 这里回读出来当这张照片的注；notes 空（老数据）就不显示这行。
  */
-function keepsakeReasonText(obs: Observation): string {
+function keepsakeReasonText(obs: Observation): string | null {
   const notes = (obs.notes ?? "").trim();
-  if (notes) return notes;
-  return t("detail.keepsakeReasonFallback");
+  return notes || null;
 }
 
 function TaxonomyList({
@@ -346,6 +344,8 @@ export default function ObservationDetailPage({ userId }: { userId?: string }) {
     /* 留影档没有分类阶元（taxonomy 全 null），标题与理由已足够，不摆空表 */
     !keepsake;
   const failHint = obs?.status === "failed" ? identifyErrorHint(obs.error) : null;
+  const softReason = obs ? softReasonText(obs) : null;
+  const keepsakeReason = obs ? keepsakeReasonText(obs) : null;
   const hasCoords = obs ? hasValidCoords(obs.lat, obs.lng) : false;
   const identifyName = obs ? identifyDisplayName(obs.identifyProvider, obs.identifyModel) : null;
   const acceptedSci = obs && !noCollection ? acceptedScientificIfDifferent(obs) : null;
@@ -420,9 +420,9 @@ export default function ObservationDetailPage({ userId }: { userId?: string }) {
         </div>
       ) : null}
 
-      {softEncounter && obs ? (
+      {softEncounter && softReason ? (
         <div className="detail-soft-reason">
-          <p className="detail-soft-reason-text">{softReasonText(obs)}</p>
+          <p className="detail-soft-reason-text">{softReason}</p>
         </div>
       ) : null}
 
@@ -430,7 +430,7 @@ export default function ObservationDetailPage({ userId }: { userId?: string }) {
         <section className="detail-block">
           <h2 className="section-title">{t("detail.keepsakeSeal")}</h2>
           {/* 没有科普简介，但识图 agent 给了不合格理由，那句话就是这张的注 */}
-          <p className="blurb">{keepsakeReasonText(obs)}</p>
+          {keepsakeReason ? <p className="blurb">{keepsakeReason}</p> : null}
           {obs.description ? <p className="muted detail-caption">{obs.description}</p> : null}
         </section>
       ) : !noCatalogEntry ? (

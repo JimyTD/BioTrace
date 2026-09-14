@@ -149,8 +149,6 @@ const zhCore = {
   "detail.softSeal": "非实拍生物",
   "detail.softSealAlbum": "非实拍",
   "detail.keepsakeSeal": "普通照片",
-  "detail.keepsakeReasonFallback": "去寻访一些生命的美好吧",
-  "detail.softReasonFallback": "转发为虚，眼见为实哦",
 
   "settle.opening": "请稍候…",
   "settle.claiming": "收录中…",
@@ -348,7 +346,7 @@ const zhCore = {
   "detail.reidentifyConfirmAction": "确认重新识别",
   "detail.reidentifyFailed": "重新识别失败",
   "detail.unnamed": "未命名观察",
-  "detail.acceptedScientificName": "现用 {name}",
+  "detail.acceptedScientificName": "现用学名：{name}",
   "detail.location": "位置",
   "detail.breed": "品种",
   "detail.breedUnknown": "品种不详",
