@@ -364,7 +364,7 @@ const zhCore = {
   "rank.suborder": "亚目",
   "rank.superclass": "总纲",
   "rank.subclass": "亚纲",
-  "rank.division": "部",
+  "rank.division": "门",
   "rank.domain": "域",
 
   "common.unknown": "未知",
