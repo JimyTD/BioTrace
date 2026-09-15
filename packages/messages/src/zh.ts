@@ -197,10 +197,6 @@ const zhCore = {
   "collection.speciesCount": "{count} 种",
   "collection.speciesSearch": "筛选名字",
   "collection.speciesNoMatch": "没有匹配的收录",
-  /* 物种卡的「历次遇见」为空：实测可达（entry 按 userId 判、sightings 按「你所在的旅途」判，
-     退出旅途等情况下 entry 还在而 sightings 为空）。不能复用 collection.empty——
-     那句是「去旅途里拍点什么」，可卡上明明写着「首次收录 {date}」，是指错路。 */
-  "collection.speciesSightingsEmpty": "还没有别的遇见",
   "collection.speciesFilterAll": "全部",
   "collection.speciesSortRecent": "最近",
   "collection.speciesSortRarity": "稀有度",

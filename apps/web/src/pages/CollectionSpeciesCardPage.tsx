@@ -185,11 +185,12 @@ export default function CollectionSpeciesCardPage() {
           </div>
           <ListTagRow tags={entry.tags} />
 
-          <h2 className="section-title">{t("collection.speciesSightings")}</h2>
-          {sightings.length === 0 ? (
-            <p className="muted">{t("collection.speciesSightingsEmpty")}</p>
-          ) : (
-            <div className="species-sightings">
+          {/* 历次遇见为空时不写任何话：那一格既说不出「数据有误」，也不是真指路
+              （正常流程不产生这个状态，见清单 collection 行）。整节连标题一起不渲染。 */}
+          {sightings.length > 0 ? (
+            <>
+              <h2 className="section-title">{t("collection.speciesSightings")}</h2>
+              <div className="species-sightings">
               {sightings.map((item) => (
                 <button
                   key={item.observationId}
@@ -218,8 +219,9 @@ export default function CollectionSpeciesCardPage() {
                   <span className="muted">{shortDate(item.occurredAt)}</span>
                 </button>
               ))}
-            </div>
-          )}
+              </div>
+            </>
+          ) : null}
         </>
       ) : null}
     </div>

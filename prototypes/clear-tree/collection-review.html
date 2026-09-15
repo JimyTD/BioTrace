@@ -25,6 +25,17 @@
   .keep{font-size:13px;line-height:2;background:#fffdf7;border:1px solid var(--line);border-radius:6px;padding:12px 15px;margin:8px 0}
   .keep .k{font-family:ui-monospace,Consolas,monospace;font-size:11.5px;color:var(--muted)}
   .keep b{color:var(--green)}
+  /* 编号候选块（与 trips-final.html 同一套样式） */
+  .ab{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin:8px 0}
+  @media(max-width:900px){.ab{grid-template-columns:1fr}}
+  .side{background:#fffdf7;border:1px solid var(--line);border-radius:6px;padding:11px 13px}
+  .side.now{border-top:2px solid var(--ok)} .side.prop{border-top:2px solid var(--muted)}
+  .side .tag{font-size:11.5px;letter-spacing:.5px;margin-bottom:7px;font-weight:600;color:var(--ok)}
+  .phone{background:#fdfcf8;border:1px solid var(--line);border-radius:10px;padding:14px 15px;max-width:420px}
+  .phone .ptitle{font-size:19px;margin:0 0 2px}
+  .phone .lede{color:var(--muted);font-size:13.5px;margin:0;max-width:42ch}
+  .phone .lede.new{color:var(--ok);font-weight:600}
+  .why{font-size:12.5px;color:var(--muted);margin-top:8px;padding-top:7px;border-top:1px dashed var(--line)}
   .dim{color:var(--muted)}
 </style>
 </head>
@@ -70,8 +81,8 @@
   <b>实测（不是推理）</b>：把演示库里一条已收录观察的 <code>trip_id</code> 挪到一个不存在的旅途，再打开物种卡——<br>
   <img src="shots/species-empty-sightings.png" alt="物种卡空态实测" style="width:280px;margin:8px 0;border:1px solid #ddd4c2;border-radius:8px"><br>
   卡上写着「首次收录 2026/8/31」，下面却是「还没有遇见。去旅途里拍点什么。」<br><br>
-  <b>所以走 B，已落</b>：新增固定区 <code>collection.speciesSightingsEmpty</code>「还没有别的遇见」（用同族的「遇见」，不再指错路），
-  <code>CollectionSpeciesCardPage.tsx:190</code> 改指它。
+  <b>已落（按你的决定改法）</b>：<b>那句空态整句删掉，连「历次遇见」这一节一起不渲染</b>（<code>sightings.length &gt; 0</code> 才画标题与列表）——
+  正如你说的，它既说不出「数据有误」，也不是真指路；「总要写点啥」不是理由。<code>collection.speciesSightingsEmpty</code> 已删。
 </div>
 <div class="box w">
   <b>你的归纳基本对，但我要更正上一轮的一句话。</b>我上轮写「退出旅途等情况下 entry 还在、sightings 为空」——<b>这是错的</b>。<br>
@@ -121,48 +132,102 @@
   <b>事实</b>：这条在<b>可文案区</b>，但两套皮肤的覆盖表里都没有它——所以现在<b>日光用户也看到「收下的证书」</b>。
 </div>
 <div class="box d">
-  <b>两稿都废，撤回</b>（「你收录的，都在这里。」「收进图鉴的，都在这里。」）。第二稿错在还是按动词填空。
-  按你说的，先把<b>项目里已定稿的 lede 全捞出来</b>，看它们的语法：
+  <b>三稿全废，撤回</b>。两处硬错：<br>
+  ① <b>拿 <code>onboard.*</code> 当依据</b>——onboard 是<b>待审</b>模块（清单里状态就是"待审"），
+  <code>trips-final.html</code> 当时还专门写过「到 onboard 那轮一并处理」。我自己记过「别拿未审模块的文案当依据」，又犯一次。<br>
+  ② <b>没按定稿的方法走</b>：<code>trips.lede</code> 当初是<b>编号候选 + 各自理由 + 我标倾向</b>（L1/L2/L3、E1/E2/E3），你拍板 L2+E3；
+  方向也是你给的——<b>「短句对句、有气魄、给用户分量」，不要平铺直叙</b>。我这次却自己在填字。
 </div>
-<table>
-<tr><th style="width:30%">已定稿的 lede</th><th>文案</th></tr>
-<tr><td class="k">onboard.tripLede</td><td class="now">出门一趟，就攒下一本新相册。</td></tr>
-<tr><td class="k">onboard.mapLede</td><td class="now">地图上，留着你走过的每一个点。</td></tr>
-<tr><td class="k">onboard.collectionLede</td><td class="now">认出一种生命，就点亮一格。</td></tr>
-<tr><td class="k">trips.lede</td><td class="now">所行之处，皆归于此。</td></tr>
-<tr><td class="k">settle.lede</td><td class="now">已经识别出这是什么了。</td></tr>
-<tr><td class="k">collection.lede（待改）</td><td class="why">收下的证书，都在这里。</td></tr>
-</table>
 <div class="box">
-  <b>它们共同的语法（这才是方法）：</b><br>
-  ① <b>8–16 字，一句话</b>；② 里面必有一个<b>具体动作或物件</b>（攒下一本相册 / 走过的点 / 点亮一格 / 所行之处 / 收下的证书）；
-  ③ <b>口语与文言两档</b>——同一层的选择决定档位（onboard 三句全口语，trips 一句全文言）；
-  ④ 「你」<b>只嵌在动作里</b>出现（「留着你走过的每一个点」），<b>从不做主语</b>——「你收录的，都在这里」就死在这一条；
-  ⑤ 句号收尾（lede 是创作类，不受"短句不用句号"约束）。
+  <b>可依据的（都已过/已定）</b>：<code>trips.lede</code>「所行之处，皆归于此。」（L2，你拍板）·
+  <code>settle.lede</code>「已经识别出这是什么了。」（常规版定稿）·
+  清透的 <code>settle.lede</code>「这趟遇见的生命，现在有名字了。」·
+  日光的 <code>settle.lede</code>「此行所见，已录其名。」·
+  定稿 slogan「识尽众生，山海入怀」。<br>
+  <b>不采信</b>：<code>onboard.*</code>（待审）、<code>album.*</code>（待审）、<code>tree3d.*</code>（待审）等一切未过模块。
 </div>
-<div class="box d">
-  <b>第三稿（按上面这套语法写，并接各层自己的定稿）：</b>
+
+<h3>基础表（常规兜底）</h3>
+<div class="ab">
+  <div class="side now">
+    <div class="tag">B1（我倾向）</div>
+    <div class="phone"><div class="ptitle">图鉴</div><div class="lede new">所见所识，皆录于此。</div></div>
+    <div class="why">接 <code>trips.lede</code> 那副对句骨架（所…皆…于此），换成图鉴的词「录」；八字两句，收得住。它是兜底，与主题句同档但不抢。</div>
+  </div>
+  <div class="side prop">
+    <div class="tag">B2</div>
+    <div class="phone"><div class="ptitle">图鉴</div><div class="lede">识得万物，皆归此册。</div></div>
+    <div class="why">呼应 slogan 的「众生」气魄，落点在「册」；代价是「万物」略大——这一页只有你拍到的。</div>
+  </div>
 </div>
-<table>
-<tr><th style="width:18%">层</th><th style="width:28%">新稿</th><th>接哪句、为什么</th></tr>
-<tr>
-  <td>基础表（常规兜底）</td>
-  <td class="new">点亮过的，都在这儿。</td>
-  <td class="why">接 <code>onboard.collectionLede</code>「认出一种生命，就点亮一格。」——<b>点亮</b>是全 app 已有的动作（整册点亮 / 未点亮 / 已点亮 N 界），基础表用它自己的词，不说「证书」也不说「图版」。口语档。</td>
-</tr>
-<tr>
-  <td>清透 <code>voices/clear.ts</code></td>
-  <td class="new">收下的都有名字，一张一张，都归在这儿。</td>
-  <td class="why">接清透自己的 <code>settle.lede</code>「这趟遇见的生命，现在有名字了。」——<b>名字</b>是它那套的词；「一张一张」是纸的质感，也是它「证书」那套物件的量词；「归」呼应 <code>trips.lede</code> 的「皆归于此」。</td>
-</tr>
-<tr>
-  <td>日光 <code>voices/daylight.ts</code></td>
-  <td class="new">所录之图版，皆入此册。</td>
-  <td class="why">接日光自己的 <code>settle.lede</code>「此行所见，已录其名。」——同一副文言骨架（所见 / 所录），与 <code>trips.lede</code> 同档；<b>入册</b>是它的 claim 词、<b>图版</b>是它的物件。</td>
-</tr>
-</table>
+<div class="ab">
+  <div class="side now">
+    <div class="tag">B3</div>
+    <div class="phone"><div class="ptitle">图鉴</div><div class="lede">所识之物，皆录于此。</div></div>
+    <div class="why">比 B1 更短、更平；好处是绝不抢戏，坏处是「所识之物」略干。</div>
+  </div>
+  <div class="side prop">
+    <div class="tag">B4</div>
+    <div class="phone"><div class="ptitle">图鉴</div><div class="lede">收进图鉴的，都在这里。</div></div>
+    <div class="why">口语档、最平实；与主题句不同档，适合当"什么都不说错"的兜底，但没分量。</div>
+  </div>
+</div>
+
+<h3>清透（<code>voices/clear.ts</code>）</h3>
+<div class="ab">
+  <div class="side now">
+    <div class="tag">Q1（我倾向）</div>
+    <div class="phone"><div class="ptitle">图鉴</div><div class="lede new">收下的证书，都归在这儿了。</div></div>
+    <div class="why">保留它自己的物件「证书」（你早先定的：证书留在主题层），动词换成「归」——接 <code>trips.lede</code> 的「皆归于此」；句尾「了」是它那套的说话方式（「现在有名字了」）。</div>
+  </div>
+  <div class="side prop">
+    <div class="tag">Q2</div>
+    <div class="phone"><div class="ptitle">图鉴</div><div class="lede">收下的都有名字，都归在这儿了。</div></div>
+    <div class="why">把「名字」提上来（接它自己的 <code>settle.lede</code>）；比 Q1 多一句交代，也长一点。</div>
+  </div>
+</div>
+<div class="ab">
+  <div class="side now">
+    <div class="tag">Q3</div>
+    <div class="phone"><div class="ptitle">图鉴</div><div class="lede">遇见过的，都归在这儿了。</div></div>
+    <div class="why">最轻、最口语；代价是把「证书」这个物件丢了，清透少一层仪式感。</div>
+  </div>
+  <div class="side prop">
+    <div class="tag">Q4</div>
+    <div class="phone"><div class="ptitle">图鉴</div><div class="lede">收下的都归了册，一张一张，都有名字。</div></div>
+    <div class="why">最长、最有纸的质感；代价是这一页是列表页，可能偏重。</div>
+  </div>
+</div>
+
+<h3>日光图版（<code>voices/daylight.ts</code>）</h3>
+<div class="ab">
+  <div class="side now">
+    <div class="tag">R1（我倾向）</div>
+    <div class="phone"><div class="ptitle">图鉴</div><div class="lede new">所录之图版，皆入此册。</div></div>
+    <div class="why">接它自己的 <code>settle.lede</code>「此行所见，已录其名。」——同一副文言骨架（所见 / 所录）；「入册」是它的 claim 词、「图版」是它的物件。</div>
+  </div>
+  <div class="side prop">
+    <div class="tag">R2</div>
+    <div class="phone"><div class="ptitle">图鉴</div><div class="lede">图版所录，皆入此册。</div></div>
+    <div class="why">更短更收；代价是「图版所录」把物件放在前面，略绕。</div>
+  </div>
+</div>
+<div class="ab">
+  <div class="side now">
+    <div class="tag">R3</div>
+    <div class="phone"><div class="ptitle">图鉴</div><div class="lede">此行所录，皆入图版。</div></div>
+    <div class="why">与它的 <code>settle.lede</code> 最贴（此行所见 / 此行所录）；代价是「入图版」不如「入册」像动作。</div>
+  </div>
+  <div class="side prop">
+    <div class="tag">R4</div>
+    <div class="phone"><div class="ptitle">图鉴</div><div class="lede">所录皆入册，一版一版，都有名字。</div></div>
+    <div class="why">最长、最有册页感；与清透的 Q4 同构，两套皮肤会显得像同一句。</div>
+  </div>
+</div>
+
 <div class="box d">
-  <b>这三句等你点头再落</b>（创作类文案不拍板不动生产文件）。要改哪句直接说，或直接给我句子。
+  <b>我倾向 B1 + Q1 + R1。</b>四组编号你各挑一个（或直接给我句子），挑了我就落
+  （<code>zh.ts</code> 基础表 + <code>voices/clear.ts</code> + <code>voices/daylight.ts</code>），跑双闸后单独提交。
 </div>
 
 <h2>二、保留 20 条（逐条展开，按类别分组）</h2>
