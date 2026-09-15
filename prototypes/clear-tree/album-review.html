@@ -1,0 +1,133 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<title>album · 逐条审阅（v2 · 补去句号）</title>
+<style>
+  :root{--paper:#f6f2e9;--ink:#2a241c;--muted:#857a67;--line:#ddd4c2;--warn:#c2703c;--ok:#5c7a4a;--red:#b03a2e;--green:#2F4A3C}
+  *{box-sizing:border-box}
+  body{margin:0;padding:26px 30px 60px;background:var(--paper);color:var(--ink);font:15px/1.7 "PingFang SC","Microsoft YaHei",system-ui,sans-serif}
+  h1{font-size:20px;margin:0 0 4px}
+  .sub{color:var(--muted);font-size:13px;margin:0 0 6px}
+  h2{font-size:15.5px;margin:28px 0 8px;padding-bottom:6px;border-bottom:1px solid var(--line)}
+  h3{font-size:14px;margin:18px 0 4px}
+  table{width:100%;border-collapse:collapse;font-size:13.5px;background:#fffdf7;margin-top:8px}
+  th,td{border:1px solid var(--line);padding:7px 10px;text-align:left;vertical-align:top}
+  th{background:#efe9dc;font-weight:600;color:var(--muted);font-size:12.5px}
+  td.k{font-family:ui-monospace,Consolas,monospace;font-size:12px;color:var(--muted)}
+  td.pt{font-family:ui-monospace,Consolas,monospace;font-size:11px;color:var(--muted)}
+  .now{color:var(--ink)} .new{color:var(--ok);font-weight:600} .del{color:var(--red);text-decoration:line-through}
+  .why{color:var(--muted);font-size:12.5px}
+  .box{background:#fffdf7;border:1px solid var(--line);border-left:3px solid var(--green);padding:11px 14px;margin:12px 0;font-size:13.5px}
+  .box.w{border-left-color:var(--warn)} .box.d{border-left-color:var(--red)}
+  .box b{color:var(--green)} .box.w b{color:var(--warn)} .box.d b{color:var(--red)}
+  code{font-family:ui-monospace,Consolas,monospace;font-size:12px;background:#efe9dc;padding:1px 4px;border-radius:3px}
+  .keep{font-size:13px;line-height:2;background:#fffdf7;border:1px solid var(--line);border-radius:6px;padding:12px 15px;margin:8px 0}
+  .keep .k{font-family:ui-monospace,Consolas,monospace;font-size:11.5px;color:var(--muted)}
+  .keep b{color:var(--green)}
+  .dim{color:var(--muted)}
+</style>
+</head>
+<body>
+
+<h1>album · 逐条审阅（v2）</h1>
+<p class="sub">25 条 key。v2 的修正：<b>上一版漏了纪律 1（去句号）</b>——这一节里一堆短提示 / 错误条都带句号，现补上，该改从 1 条变 11 条。</p>
+
+<h2>〇、这一节的文案在哪</h2>
+<div class="box">
+  相册页 `TripAlbumPage.tsx`（上传区 · 胶片墙 · 确认框）· 共用：<code>album.reliableTo</code> 也在详情页与结算页 ·
+  服务端：<code>album.fileTooLarge</code> 在 <code>apps/api/src/routes/trips.ts:428</code>（400 返回，前端显示）。<br>
+  <span class="dim">没有示意图：胶片墙要有照片与识别结果才出得来。</span>
+</div>
+
+<h2>一、待改</h2>
+
+<h3>该删：0 条</h3>
+<div class="box">
+  这一节唯一该删的两条 <code>album.liftPhoto</code>「拿起这张」与 <code>album.openObservation</code>「看看是什么」已随全仓删 <code>aria-label</code> 清掉（2026-09-15）。
+</div>
+
+<h3>该合并：0 条</h3>
+<div class="box">
+  <code>uploadPartial</code> / <code>uploadPartialDup</code> / <code>uploadPartialMixed</code> 看着像分型冗余，<b>报的是三件不同的事</b>（只有失败 / 只有重复 / 重复 + 失败），按功能性规则 7 保留。<br>
+  <code>uploading</code> 与 <code>uploadingProgress</code> 是「无进度 / 有进度」两态（`TripAlbumPage.tsx:512-517` 三元），也不合并。
+</div>
+
+<h3>该改措辞：11 条</h3>
+<div class="box w">
+  <b>纪律 1：短句 / 状态 / 提示 / 按钮一律无句号。</b>这一节的 toast、错误条、提示句几乎全带句号，而它的同族 <code>pickFailed</code>「无法打开相册或相机，请重试」<b>本来就是无句号的</b>——同一节里两种写法。
+  下面 10 条只删句号，语义一个字不改；第 11 条同时删一句同义反复。
+</div>
+<table>
+<tr><th style="width:26%">key</th><th style="width:34%">现状 → 建议</th><th>渲染点</th></tr>
+<tr><td class="k">album.cameraQualityHint</td><td><span class="now">系统相机拍完再上传，比直接在这里拍更清晰。</span><br>→ <span class="new">…更清晰</span></td><td class="pt">`TripAlbumPage.tsx:591`</td></tr>
+<tr><td class="k">album.tooManyPhotos</td><td><span class="now">一次最多选择 {max} 张，已截取前 {max} 张。</span><br>→ <span class="new">…已截取前 {max} 张</span></td><td class="pt">`:368` toast</td></tr>
+<tr><td class="k">album.uploadPartial</td><td><span class="now">完成 {ok} 张，失败 {fail} 张。</span><br>→ <span class="new">…失败 {fail} 张</span></td><td class="pt">`:475` toast</td></tr>
+<tr><td class="k">album.uploadPartialDup</td><td><span class="now">完成 {ok} 张；有 {dup} 张与已有照片重复，已跳过。</span><br>→ <span class="new">…已跳过</span></td><td class="pt">`:472` toast</td></tr>
+<tr><td class="k">album.uploadPartialMixed</td><td><span class="now">完成 {ok} 张；重复 {dup} 张，其他失败 {fail} 张。</span><br>→ <span class="new">…其他失败 {fail} 张</span></td><td class="pt">`:465`、`:474`</td></tr>
+<tr><td class="k">album.uploadAllFailed</td><td><span class="now">全部上传失败，请稍后重试。</span><br>→ <span class="new">…请稍后重试</span></td><td class="pt">`:467`</td></tr>
+<tr><td class="k">album.duplicatePhoto</td><td><span class="now">这张照片与已有记录重复，不能再传。</span><br>→ <span class="new">…不能再传</span></td><td class="pt">`:461`</td></tr>
+<tr><td class="k">album.fileTooLarge</td><td><span class="now">照片太大，请压缩到 {maxMb}MB 以内再传。</span><br>→ <span class="new">…以内再传</span></td><td class="pt">服务端 `apps/api/src/routes/trips.ts:428`</td></tr>
+<tr><td class="k">album.pendingHint</td><td><span class="now">结论已经落笔。</span><br>→ <span class="new">结论已经落笔</span></td><td class="pt">`TripAlbumPage.tsx:743` 待开包格</td></tr>
+<tr><td class="k">album.readyToast</td><td><span class="now">刚拍的，有名字了。</span><br>→ <span class="new">刚拍的，有名字了</span></td><td class="pt">`:173` toast</td></tr>
+<tr><td class="k">album.uploadAllDuplicates</td><td><span class="now">这些照片都已经上传过了，没有新照片加入。</span><br>→ <span class="new">这些照片都已经上传过了</span></td><td class="pt">`:462` — 后半句是前半句的推论（功能性规则 2 禁同义反复），连同句号一起去掉</td></tr>
+</table>
+
+<h3>句号保留：2 条（写清为什么）</h3>
+<div class="box">
+  <span class="k">album.deleteConfirm</span>「确定删除这张观察照片？删除后相册与地图都会同步消失。」— `TripAlbumPage.tsx:777` — <b>两段各自独立的信息</b>（问一句 + 说清连带影响），缺了看不懂，句号合规。<br>
+  <span class="k">album.empty</span>「册页还空着。上传照片，开始记录。」— `:647` — 同样是「陈述 + 出路」两段独立信息（清单里已认定这条句号合规）。
+</div>
+
+<h2>二、保留 14 条（逐条展开，按类别分组）</h2>
+
+<h3>导航 / 主按钮（4）</h3>
+<div class="keep">
+  <span class="k">album.back</span> <b>旅途</b> — `TripAlbumPage.tsx:532` 返回链接（「← 旅途」）— 名词说去哪<br>
+  <span class="k">album.addPhotos</span> <b>上传照片</b> — `:580` 按钮 — 无照片态的主入口<br>
+  <span class="k">album.upload</span> <b>上传并识别</b> — `:517` 主按钮 — 说清按下之后会发生什么<br>
+  <span class="k">album.pickGallery</span> <b>从相册选择</b> — `:610` 按钮 — 与「拍照」分开，两条入口各自说清
+</div>
+
+<h3>上传过程（4）</h3>
+<div class="keep">
+  <span class="k">album.uploading</span> <b>上传中…</b> — `:516` — 无进度时的加载态<br>
+  <span class="k">album.uploadingProgress</span> <b>上传中 {current}/{total}…</b> — `:512` — 有进度时给进度<br>
+  <span class="k">album.takePhoto</span> <b>拍照</b> — `:588`（无照片态）· `:602`（选图态）— 同一动作同一个词<br>
+  <span class="k">album.filesChosen</span> <b>已选 {count} 张</b> — `:619` — 选中数量，事实
+</div>
+
+<h3>上传失败 / 入口失败（1）</h3>
+<div class="keep">
+  <span class="k">album.pickFailed</span> <b>无法打开相册或相机，请重试</b> — `:410` 错误条 — <b>本就是无句号的那一条</b>（其余同族按它对齐）
+</div>
+
+<h3>胶片墙（2）</h3>
+<div class="keep">
+  <span class="k">album.reliableTo</span> <b>可靠到：{rank}</b> — `TripAlbumPage.tsx:736` 胶片角标 · `ObservationDetailPage.tsx:386` · `ObservationSettlePage.tsx:246` — 三处共用，术语一致<br>
+  <span class="k">album.uploadedBy</span> <b>{name}</b> — `TripAlbumPage.tsx:753` 胶片署名 — 纯占位符
+</div>
+
+<h3>删除（2）</h3>
+<div class="keep">
+  <span class="k">album.delete</span> <b>删除</b> — `:767` 按钮 · `:778` 确认框确认键 — 危险动作，动词直给<br>
+  <span class="k">album.deleteConfirm</span> <b>确定删除这张观察照片？删除后相册与地图都会同步消失。</b> — `:777` — 说清连带影响（句号保留，见上）
+</div>
+
+<h3>空态（1）</h3>
+<div class="keep">
+  <span class="k">album.empty</span> <b>册页还空着。上传照片，开始记录。</b> — `:647` 空态（可文案区）— 陈述 + 出路（句号保留，见上）
+</div>
+
+<h2>三、要你定</h2>
+<div class="box d">
+  ① 上面 11 条（10 条去句号 + <code>uploadAllDuplicates</code> 去尾句去句号）——认不认？<br>
+  ② 两条保留句号的（<code>deleteConfirm</code> / <code>empty</code>）——同意留着吗？<br>
+  ③ 上一版问过、你没答的两条：<code>tooManyPhotos</code> 的两个「{max}」要不要缩成「一次最多 {max} 张（已取前 {max} 张）」；<code>uploadPartialMixed</code> 与 <code>uploadPartialDup</code> 同一事实两种说法要不要统一。<span class="dim">（我倾向都不动。）</span>
+</div>
+<p style="margin-top:16px;font-size:13px;color:var(--muted)">
+  本页零改动。定了我改 <code>zh.ts</code>，跑 <code>check:copy</code> 与 <code>check-dead-keys</code> 与 <code>tsc -b</code>，单独提交。
+</p>
+
+</body>
+</html>
