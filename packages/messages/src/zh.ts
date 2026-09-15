@@ -770,7 +770,7 @@ export const zhFlavor = {
   "settle.claiming": "收录中…",
   "settle.backAlbum": "返回相册",
   "collection.title": "图鉴",
-  "collection.lede": "收下的证书，都在这里。",
+  "collection.lede": "所见所识，皆录于此。",
   "collection.empty": "还没有遇见。去旅途里拍点什么。",
   "collection.volumeDone": "整册点亮",
   "collection.volumeStampEmpty": "未点亮",

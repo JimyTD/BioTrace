@@ -12,6 +12,7 @@ import type { ThemedMessageKey } from "../zh.js";
  * 不编：文档里没有「图版册怎么入册」「用什么章」这类设定——要立也得先定叙事、再写词。
  */
 export const daylightVoice: Partial<Record<ThemedMessageKey, string>> = {
+  "collection.lede": "所录之图版，皆入此册。",
   "settle.title": "定名图版",
   "settle.lede": "此行所见，已录其名。",
   "settle.open": "启封",
