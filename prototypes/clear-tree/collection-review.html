@@ -73,6 +73,15 @@
   <b>所以走 B，已落</b>：新增固定区 <code>collection.speciesSightingsEmpty</code>「还没有别的遇见」（用同族的「遇见」，不再指错路），
   <code>CollectionSpeciesCardPage.tsx:190</code> 改指它。
 </div>
+<div class="box w">
+  <b>这东西到底有没有用——直说：</b><br>
+  · <b>那句空态文案本身，用处很小。</b>它只做到「不指错路」；用户看到它也不会因此做什么（过不了「能据此行动吗」这一问）。但空态总得写点什么、不能留白，所以留最短的一句就够。<br>
+  · <b>真正有价值的是查出来的那个不一致</b>：图鉴里会出现「有这个物种，但历次遇见是空的」。这是<b>数据层的怪</b>，文案只是把它盖住。要不要根治，三个方向：<br>
+  &nbsp;&nbsp;① 让 entry 也按旅途判 → 退出旅途时图鉴里那条会消失（你不再拥有它）；<br>
+  &nbsp;&nbsp;② 让 sightings 也按 userId 判 → 图鉴里会显示你自己拍过的全部，含已退出旅途的那些；<br>
+  &nbsp;&nbsp;③ 不修，只留这句空态（它罕见）。<br>
+  <b>这是逻辑改动，不在文案范围内</b>——你定方向我再动，动手前会先复述计划。
+</div>
 
 <h3>② 空态句式不一：同族里两条是「单句 + 句号」</h3>
 <table>
@@ -104,17 +113,32 @@
 <tr><td class="k">collection.lede</td><td class="now">收下的证书，都在这里。</td><td class="pt">CollectionPage.tsx:155（图鉴首页 lede）</td></tr>
 </table>
 <div class="box w">
-  <b>事实</b>：这条在<b>可文案区</b>，但两套皮肤的覆盖表里都没有它——所以现在<b>日光用户也看到「收下的证书」</b>。<br>
-  <b>你说三条都重写。这是我的稿</b>——每条用各层自己的动词（基础表「收录」/ 清透「收下」/ 日光「入册」），这样三层各说各的话、不会互相串味：
+  <b>事实</b>：这条在<b>可文案区</b>，但两套皮肤的覆盖表里都没有它——所以现在<b>日光用户也看到「收下的证书」</b>。
+</div>
+<div class="box d">
+  <b>上一稿「你收录的，都在这里。」是废稿，撤回。</b>错在拿「各层自己的动词」当方法——按动词填空只会得到小学生句。
+  重写的办法是<b>接着每层已经定稿的那句话往下说</b>：每层都有一句定稿的 settle lede，那才是这层真正的声音。
 </div>
 <table>
-<tr><th style="width:26%">层</th><th style="width:34%">现在</th><th>新稿</th></tr>
-<tr><td>基础表（常规兜底）</td><td class="now">收下的证书，都在这里。</td><td class="new">你收录的，都在这里。</td></tr>
-<tr><td>清透 <code>voices/clear.ts</code></td><td class="why">无覆盖 → 显示基础表</td><td class="new">收下的都在这里，随时可以翻看。</td></tr>
-<tr><td>日光 <code>voices/daylight.ts</code></td><td class="why">无覆盖 → 显示基础表</td><td class="new">入册的图版，都收在这里。</td></tr>
+<tr><th style="width:20%">层</th><th style="width:30%">新稿</th><th>接着哪句定稿、为什么</th></tr>
+<tr>
+  <td>基础表（常规兜底）</td>
+  <td class="new">收进图鉴的，都在这里。</td>
+  <td class="why">基础表只用它自己的词（<b>收进图鉴</b>），不带「你」、不带任何一套皮肤的语气。与 <code>trips.lede</code>「所行之处，皆归于此。」同一档的收束感，但更平——它是兜底，不该比主题句更响。</td>
+</tr>
+<tr>
+  <td>清透 <code>voices/clear.ts</code></td>
+  <td class="new">收下的都有名字，一张一张，都在这里。</td>
+  <td class="why">接清透自己的 <code>settle.lede</code>「这趟遇见的生命，现在有名字了。」——<b>名字</b>是它那套的词；「一张一张」是纸的质感，也是它「证书」那套物件的量词。</td>
+</tr>
+<tr>
+  <td>日光 <code>voices/daylight.ts</code></td>
+  <td class="new">所录之图版，皆入此册。</td>
+  <td class="why">接日光自己的 <code>settle.lede</code>「此行所见，已录其名。」——同一副文言骨架（所见 / 所录）；<b>入册</b>是它的 claim 词、<b>图版</b>是它的物件。</td>
+</tr>
 </table>
 <div class="box d">
-  <b>这三句等你点头再落</b>（创作类文案不拍板不动生产文件）。要改哪句直接说。
+  <b>这三句等你点头再落</b>（创作类文案不拍板不动生产文件）。要改哪句直接说，或直接给我句子。
 </div>
 
 <h2>二、保留 20 条（逐条展开，按类别分组）</h2>
