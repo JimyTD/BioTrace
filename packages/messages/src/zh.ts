@@ -149,7 +149,6 @@ const zhCore = {
 
   "settle.failed": "操作失败，请重试",
   "settle.notPending": "这条没有结论可看。",
-  "settle.rarity": "稀有度",
   "settle.tierWeak": "稀有度按已确认层级评定",
   "settle.locationImprecise": "无定位时按中国常见度评定",
   "settle.alertIntroduced": "当地引入/关注种",
