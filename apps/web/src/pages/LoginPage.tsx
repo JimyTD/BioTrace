@@ -146,7 +146,7 @@ export default function LoginPage({
             <img className="brand-mark" src="/brand/icon-tile-framed.svg" alt="" width={76} height={76} />
             <h1 className="login-brand">{t("app.name")}</h1>
             <p className="lede">{lede}</p>
-            <div className="login-rule" aria-hidden />
+            <div className="login-rule" />
           </div>
 
           <div className="login-colophon">
@@ -267,7 +267,7 @@ export default function LoginPage({
             ) : null}
           </div>
         </div>
-        <div className="login-page-back" aria-hidden />
+        <div className="login-page-back" />
       </div>
     </div>
   );

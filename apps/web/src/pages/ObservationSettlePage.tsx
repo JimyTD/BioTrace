@@ -1,7 +1,7 @@
 import { useCallback, useEffect, useState } from "react";
 import { Link, useLocation, useNavigate, useParams } from "react-router-dom";
-import { formatRank, hasMessage, t, type MessageKey } from "@biotrace/messages";
-import { acceptedScientificIfDifferent, api, type Observation, type Rarity, type SettleVolumesResult } from "../api";
+import { formatRank, hasMessage, t } from "@biotrace/messages";
+import { acceptedScientificIfDifferent, api, type Observation, type SettleVolumesResult } from "../api";
 import { identifyByLine } from "../identifyLabel";
 import { useBackClose } from "../androidBack";
 import { ListTagRow } from "../components/ListTagRow";
@@ -11,11 +11,6 @@ import { peekObservation, rememberObservation } from "../pageCache";
 import { petBreedLabel } from "../petIdentity";
 import { peekLiftBackground } from "../photoLiftHandoff";
 import { volumeCeremonyBgUrl, volumeSealCompleteUrl } from "../themes";
-
-function rarityLabel(r: Rarity | null) {
-  if (!r) return "—";
-  return t(`rarity.${r}` as MessageKey);
-}
 
 function msgKey(key: string): string {
   return hasMessage(key) ? t(key) : key;
@@ -231,9 +226,6 @@ export default function ObservationSettlePage({ userId }: { userId?: string }) {
                 <p className="muted">{t("settle.opening")}</p>
               ) : (
                 <>
-                  {obs.rarity ? (
-                    <span className="sr-only">{rarityLabel(obs.rarity)}</span>
-                  ) : null}
                   <strong className="settle-name">{title}</strong>
                   {obs.scientificName ? <span className="muted">{obs.scientificName}</span> : null}
                   {acceptedSci ? (
@@ -304,27 +296,22 @@ export default function ObservationSettlePage({ userId }: { userId?: string }) {
       ) : null}
 
       {phase === "claimed" && ceremony ? (
-        <div className="modal-backdrop volume-ceremony-backdrop" role="presentation">
+        <div className="modal-backdrop volume-ceremony-backdrop">
           <div
             className={`modal-panel volume-ceremony${
               ceremony.kind === "complete" ? " is-complete" : ""
             }`}
-            role="dialog"
-            aria-modal="true"
-            aria-labelledby="volume-ceremony-title"
           >
             <img
               className="ceremony-bg"
               src={volumeCeremonyBgUrl(ceremony.kind === "complete" ? "complete" : "slot")}
               alt=""
-              aria-hidden
             />
             {ceremony.kind === "complete" ? (
               <img
                 className="ceremony-seal"
                 src={volumeSealCompleteUrl()}
                 alt=""
-                aria-hidden
               />
             ) : null}
             <div className="ceremony-body stack">

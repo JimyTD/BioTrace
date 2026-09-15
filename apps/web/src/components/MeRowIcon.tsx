@@ -93,7 +93,7 @@ function Glyph({ name }: { name: MeRowIconName }) {
 export function MeRowIcon({ name }: { name: MeRowIconName }) {
   const tint = TINT[name];
   return (
-    <span className={`me-row-icon tint-${tint}`} aria-hidden>
+    <span className={`me-row-icon tint-${tint}`}>
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round">
         <Glyph name={name} />
       </svg>

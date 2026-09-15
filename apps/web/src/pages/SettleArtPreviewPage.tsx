@@ -55,14 +55,12 @@ export default function SettleArtPreviewPage() {
         <p className="lede">只看叠层效果，不走识别接口。点阶段切换封缄 / 揭示 / 展出。</p>
       </header>
 
-      <div className="settle-preview-phases" role="tablist">
+      <div className="settle-preview-phases">
         {PHASES.map((id) => (
           <button
             key={id}
             type="button"
-            role="tab"
             className={`btn secondary${phase === id ? " is-active" : ""}`}
-            aria-selected={phase === id}
             onClick={() => setPhase(id)}
           >
             {PHASE_LABEL[id]}
@@ -126,9 +124,8 @@ export default function SettleArtPreviewPage() {
             className="ceremony-bg"
             src={volumeCeremonyBgUrl("complete")}
             alt=""
-            aria-hidden
           />
-          <img className="ceremony-seal" src={volumeSealCompleteUrl()} alt="" aria-hidden />
+          <img className="ceremony-seal" src={volumeSealCompleteUrl()} alt="" />
           <div className="ceremony-body stack">
             <p className="muted section-kicker">整册点亮</p>
             <p className="volume-ceremony-line">「潮间带」整册点亮（预览）</p>

@@ -82,12 +82,12 @@ export default function CollectionPetsPage() {
                 to={`/collection/pets/${entry.id}`}
                 onClick={() => saveContentScroll("collection-pets")}
               >
-                <span className="pet-plate-mount" aria-hidden />
+                <span className="pet-plate-mount" />
                 <span className={sheetClass(faces.length)}>
                   {faces.length > 0 ? (
                     faces.map((url) => <img key={url} src={url} alt="" />)
                   ) : (
-                    <span className="pet-plate-empty" aria-hidden />
+                    <span className="pet-plate-empty" />
                   )}
                 </span>
                 <strong className="pet-plate-name">{name}</strong>

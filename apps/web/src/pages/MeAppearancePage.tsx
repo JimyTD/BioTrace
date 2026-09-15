@@ -50,7 +50,6 @@ export default function MeAppearancePage({
               key={id}
               type="button"
               className="me-row theme-row"
-              aria-pressed={on}
               onClick={() => pick(id)}
             >
               <span className="theme-row-main">

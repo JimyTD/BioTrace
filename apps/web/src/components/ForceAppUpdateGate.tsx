@@ -60,12 +60,9 @@ export default function ForceAppUpdateGate({ enabled }: { enabled: boolean }) {
   }
 
   return (
-    <div className="modal-backdrop force-update-backdrop" role="presentation">
+    <div className="modal-backdrop force-update-backdrop">
       <div
         className="modal-panel stack"
-        role="dialog"
-        aria-modal="true"
-        aria-labelledby="force-update-title"
       >
         <h2 id="force-update-title" className="section-title">
           {t("me.forceUpdateTitle")}

@@ -43,16 +43,16 @@ export function SettlePackStage({
     >
       {/* 零件一次渲全，哪一段亮、摆在哪都由 CSS 按阶段类名定。
           见 docs/features/皮肤主题.md §2.3 */}
-      <img className="settle-pack-bg" src={settlePackBgUrl()} alt="" aria-hidden />
+      <img className="settle-pack-bg" src={settlePackBgUrl()} alt="" />
 
       <div className="settle-photo-mat">
         <div className="settle-photo-window">
           <img className="settle-photo-img" src={photoUrl} alt={photoAlt} />
         </div>
-        <img className="settle-photo-frame" src={settlePhotoFrameUrl()} alt="" aria-hidden />
+        <img className="settle-photo-frame" src={settlePhotoFrameUrl()} alt="" />
       </div>
 
-      <img className="settle-pack-shell" src={settlePackSealedUrl()} alt="" aria-hidden />
+      <img className="settle-pack-shell" src={settlePackSealedUrl()} alt="" />
 
       {rarity ? <RaritySeal rarity={rarity} /> : null}
     </div>

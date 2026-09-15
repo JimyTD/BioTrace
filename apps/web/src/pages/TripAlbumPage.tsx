@@ -619,7 +619,7 @@ export default function TripAlbumPage({ userId }: { userId: string }) {
             {t("album.filesChosen", { count: files.length })}
           </span>
           {previewUrls.length > 0 ? (
-            <div className="pick-thumbs" aria-hidden>
+            <div className="pick-thumbs">
               {previewUrls.map((url) => (
                 <img key={url} src={url} alt="" />
               ))}
@@ -678,7 +678,7 @@ export default function TripAlbumPage({ userId }: { userId: string }) {
               }}
             >
               {/* 零件一次渲全，摆在哪由皮肤的 CSS 定。见 docs/features/皮肤主题.md §2.3 */}
-              <span className="film-tile-mount" aria-hidden />
+              <span className="film-tile-mount" />
               <span className="film-tile-window">
                 <img
                   className="film-tile-photo"
@@ -692,10 +692,10 @@ export default function TripAlbumPage({ userId }: { userId: string }) {
                   }
                 />
               </span>
-              <img className="film-tile-frame" src={tripFilmFrameUrl()} alt="" aria-hidden />
+              <img className="film-tile-frame" src={tripFilmFrameUrl()} alt="" />
               <span className="film-tile-seal">{t("settle.open")}</span>
               <span className="film-tile-badge">{statusBadge(obs)}</span>
-              <span className="film-tile-mark" aria-hidden>
+              <span className="film-tile-mark">
                 <span className="film-tile-mark-date">{tileDate(obs)}</span>
                 <span className="film-tile-mark-no">{tileNo(index)}</span>
               </span>

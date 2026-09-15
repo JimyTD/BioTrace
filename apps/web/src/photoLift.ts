@@ -41,7 +41,6 @@ export const flyEaseOut: LiftPlayer = async ({
 function makeFlyer(photoUrl: string) {
   const flyer = document.createElement("div");
   flyer.className = "photo-lift-flyer";
-  flyer.setAttribute("aria-hidden", "true");
   const img = document.createElement("img");
   img.src = photoUrl;
   img.alt = "";

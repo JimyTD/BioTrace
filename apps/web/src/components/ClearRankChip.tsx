@@ -9,7 +9,7 @@ import type { RaritySealProps } from "../themes/slots";
  */
 export function ClearRankChip({ rarity }: RaritySealProps) {
   return (
-    <span className={`reveal-rank rarity-${rarity}`} aria-hidden>
+    <span className={`reveal-rank rarity-${rarity}`}>
       {rarity}
     </span>
   );

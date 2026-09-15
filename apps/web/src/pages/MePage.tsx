@@ -50,7 +50,7 @@ export default function MePage({
 
       <Link className="me-identity" to="/me/profile">
         {/* 首字母牌：零件常在，日光把它关着（见 styles.css .me-avatar） */}
-        <span className="me-avatar" aria-hidden>
+        <span className="me-avatar">
           {displayName.slice(0, 1).toUpperCase()}
         </span>
         <strong>{displayName}</strong>
@@ -65,7 +65,7 @@ export default function MePage({
             limit: String(identifyQuota.limit),
           })}
           {/* 用量条：同上，零件常在、日光关着。比例由 --bar-ratio 传给 CSS */}
-          <span className="tint-bar me-quota-bar" aria-hidden />
+          <span className="tint-bar me-quota-bar" />
         </p>
       ) : null}
 
@@ -73,14 +73,14 @@ export default function MePage({
         <Link className="me-row" to="/me/security">
           <MeRowIcon name="security" />
           <span>{t("me.accountSecurity")}</span>
-          <span className="me-row-go" aria-hidden>
+          <span className="me-row-go">
             ›
           </span>
         </Link>
         <Link className="me-row" to="/me/identify">
           <MeRowIcon name="identify" />
           <span>{t("me.identifyAdvanced")}</span>
-          <span className="me-row-go" aria-hidden>
+          <span className="me-row-go">
             ›
           </span>
         </Link>
@@ -89,7 +89,7 @@ export default function MePage({
           <span>{t("me.appearance")}</span>
           <span className="me-row-side">
             <span className="muted">{themeName}</span>
-            <span className="me-row-go" aria-hidden>
+            <span className="me-row-go">
               ›
             </span>
           </span>
@@ -97,14 +97,14 @@ export default function MePage({
         <button className="me-row" type="button" onClick={onOpenHelp}>
           <MeRowIcon name="help" />
           <span>{t("me.help")}</span>
-          <span className="me-row-go" aria-hidden>
+          <span className="me-row-go">
             ›
           </span>
         </button>
         <Link className="me-row" to="/me/about">
           <MeRowIcon name="about" />
           <span>{t("me.about")}</span>
-          <span className="me-row-go" aria-hidden>
+          <span className="me-row-go">
             ›
           </span>
         </Link>

@@ -66,7 +66,7 @@ function AdminStoredPhoto({ src, variant }: { src: string; variant: "thumb" | "d
 
   const lightbox = open
     ? createPortal(
-        <div className="admin-lightbox" role="dialog" aria-modal="true">
+        <div className="admin-lightbox">
           <div className="admin-lightbox-bar">
             <span>
               {size

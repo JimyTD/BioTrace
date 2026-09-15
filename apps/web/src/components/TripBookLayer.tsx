@@ -72,15 +72,15 @@ function CoverClone({ coverUrl }: { coverUrl: string | null }) {
     /* 飞起来的那张就是列表封面的复制品，零件和栅格必须跟 TripsPage 一致 */
     <div className="trip-cover-slot">
       <div className="trip-cover">
-        <span className="trip-cover-media" aria-hidden />
+        <span className="trip-cover-media" />
         <span className="trip-cover-window">
           {coverUrl ? (
             <img className="trip-cover-photo" src={coverUrl} alt="" />
           ) : (
-            <span className="trip-cover-placeholder" aria-hidden />
+            <span className="trip-cover-placeholder" />
           )}
         </span>
-        <img className="trip-cover-frame" src={tripCoverFrameUrl()} alt="" aria-hidden />
+        <img className="trip-cover-frame" src={tripCoverFrameUrl()} alt="" />
       </div>
     </div>
   );
@@ -200,15 +200,13 @@ export default function TripBookLayer({ tripId, children }: Props) {
       <div
         className={`trip-book-layer is-${phase}`}
         ref={layerRef}
-        aria-modal="true"
-        role="dialog"
       >
         <div className="trip-book-mat" ref={matRef} />
         <div className="trip-book-pages" ref={pagesRef}>
           {children}
         </div>
         {origin ? (
-          <div className="trip-book-cover" ref={coverRef} aria-hidden>
+          <div className="trip-book-cover" ref={coverRef}>
             <CoverClone coverUrl={origin.coverUrl} />
           </div>
         ) : null}

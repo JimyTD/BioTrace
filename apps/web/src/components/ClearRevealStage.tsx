@@ -158,34 +158,34 @@ export function ClearRevealStage({
       {/* 压在底下的两张。是道具不是数据——空卡纸，不放照片：
           给「这一张在最上面」一个交代，又不假造别人拍了什么。
           真要摆同旅途的兄弟照片得让结算页多取一次，那是数据不是皮肤 */}
-      <span className="reveal-under reveal-under-l" aria-hidden />
-      <span className="reveal-under reveal-under-r" aria-hidden />
+      <span className="reveal-under reveal-under-l" />
+      <span className="reveal-under reveal-under-r" />
 
       {/* 照片浮上来时边上漫开的一层柔光，散掉就没了 */}
-      <span className="reveal-bloom" aria-hidden />
+      <span className="reveal-bloom" />
 
       {/* 包一层 wrap：拿起的抬升动画、落章后回落都落在它身上，
           卡片本体只留震颤，两层 transform 不打架 */}
       <div className="reveal-card-wrap">
         {/* 流光描边：贴卡纸外壁的一圈光，LR/XR 四色常驻流转 */}
-        <span className="reveal-edge" aria-hidden />
+        <span className="reveal-edge" />
         <div className="reveal-card">
           <span className="reveal-window">
             <img className="reveal-photo" src={photoUrl} alt={photoAlt} />
             {/* 光柱：窗口裁剪保证出发点就是照片底边、左右就是照片两边 */}
-            <span className="reveal-beam" aria-hidden />
+            <span className="reveal-beam" />
             {/* 档色成色：定色拍从中央漫开的一层档色 */}
-            <span className={`reveal-tint tint-${grade}`} aria-hidden />
+            <span className={`reveal-tint tint-${grade}`} />
             {/* 心搏白光：定色中段照片透亮一拍 */}
-            <span className="reveal-pulse" aria-hidden />
+            <span className="reveal-pulse" />
             {/* 白闪：定色开闸的一瞬 */}
-            <span className="reveal-flash" aria-hidden />
+            <span className="reveal-flash" />
             {/* 扫光：从左到右一道，UR/SSR 递弱 */}
-            <span className="reveal-sheen" aria-hidden />
+            <span className="reveal-sheen" />
           </span>
           {/* 卡纸下沿那行字。和相册格上那行是同一种东西：写在实物上，不是界面文字 */}
           {when || where ? (
-            <span className="reveal-mark" aria-hidden>
+            <span className="reveal-mark">
               <span>{when}</span>
               <span className="reveal-mark-where">{where}</span>
             </span>
@@ -193,10 +193,10 @@ export function ClearRevealStage({
         </div>
         {/* 光尘与星闪：数量按档位，位置随机——演员是 JS 派的，戏码开关在 CSS */}
         {dust.map((m) => (
-          <span key={m.key} className="dust" style={moteStyle(m)} aria-hidden />
+          <span key={m.key} className="dust" style={moteStyle(m)} />
         ))}
         {sparks.map((m) => (
-          <span key={m.key} className="spark" style={moteStyle(m)} aria-hidden />
+          <span key={m.key} className="spark" style={moteStyle(m)} />
         ))}
       </div>
 

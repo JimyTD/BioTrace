@@ -264,7 +264,7 @@ function OnboardFolio({
         <p className="onboard-lede" onClick={onAdvance}>
           {t(ledeKey)}
         </p>
-        <div className="onboard-rule" aria-hidden onClick={onAdvance} />
+        <div className="onboard-rule" onClick={onAdvance} />
         <div className={`onboard-actions${last ? " is-done" : ""}`}>
           {last ? null : (
             <button
@@ -300,7 +300,7 @@ function OnboardCover() {
       <div className="onboard-cover-window">
         <img src={SAMPLE_PHOTO} alt="" />
       </div>
-      <img className="onboard-cover-frame" src={tripCoverFrameUrl()} alt="" aria-hidden />
+      <img className="onboard-cover-frame" src={tripCoverFrameUrl()} alt="" />
     </div>
   );
 }
@@ -311,7 +311,7 @@ function OnboardStamp() {
       <div className="onboard-stamp-photo">
         <img src={SAMPLE_PHOTO} alt="" />
       </div>
-      <img className="onboard-stamp-frame" src={volumeStampFrameUrl()} alt="" aria-hidden />
+      <img className="onboard-stamp-frame" src={volumeStampFrameUrl()} alt="" />
     </div>
   );
 }
@@ -355,7 +355,7 @@ function OnboardMap() {
 
   return (
     <div className="onboard-map" ref={foldRef}>
-      <canvas className="onboard-basemap" ref={canvasRef} aria-hidden />
+      <canvas className="onboard-basemap" ref={canvasRef} />
       <span className="onboard-map-attrib">{t("map.simpleBasemapAttribution")}</span>
       {MAP_DOTS.map((dot) => (
         <i

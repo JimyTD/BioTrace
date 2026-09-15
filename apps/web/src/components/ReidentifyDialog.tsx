@@ -40,11 +40,9 @@ export default function ReidentifyDialog({
   }
 
   return (
-    <div className="modal-backdrop" role="presentation" onClick={() => !busy && onCancel()}>
+    <div className="modal-backdrop" onClick={() => !busy && onCancel()}>
       <div
         className="modal-panel stack"
-        role="dialog"
-        aria-modal="true"
         onClick={(e) => e.stopPropagation()}
       >
         <h2 className="section-title">{t("detail.reidentify")}</h2>

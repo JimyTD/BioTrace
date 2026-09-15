@@ -15,7 +15,7 @@ import { t } from "@biotrace/messages";
 export default function KeepsakeSeal() {
   return (
     <span className="soft-seal" title={t("detail.keepsakeSeal")}>
-      <svg className="soft-seal-svg" viewBox="0 0 140 44" aria-hidden>
+      <svg className="soft-seal-svg" viewBox="0 0 140 44">
         <rect
           x="1.5"
           y="1.5"

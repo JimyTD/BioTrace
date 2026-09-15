@@ -24,11 +24,9 @@ export default function ConfirmDialog({
   if (!open) return null;
 
   return (
-    <div className="modal-backdrop" role="presentation" onClick={onCancel}>
+    <div className="modal-backdrop" onClick={onCancel}>
       <div
         className="modal-panel stack"
-        role="dialog"
-        aria-modal="true"
         onClick={(e) => e.stopPropagation()}
       >
         {title ? <h2 className="section-title">{title}</h2> : null}

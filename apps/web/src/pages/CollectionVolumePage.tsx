@@ -42,18 +42,17 @@ function StampParts({
   return (
     <>
       {/* 卡纸本体不画东西，但抬照片的动画量的就是它这只盒子 */}
-      <span className="stamp-face" aria-hidden />
+      <span className="stamp-face" />
       <span className="stamp-photo">
         {photoUrl ? (
           <img src={photoUrl} alt={label} />
         ) : (
           <>
-            <span className="stamp-photo-empty" aria-hidden />
+            <span className="stamp-photo-empty" />
             <img
               className="stamp-plate"
               src={plateUrl}
               alt=""
-              aria-hidden
               onError={(e) => {
                 e.currentTarget.style.display = "none";
               }}
@@ -61,7 +60,7 @@ function StampParts({
           </>
         )}
       </span>
-      <img className="stamp-frame" src={volumeStampFrameUrl()} alt="" aria-hidden />
+      <img className="stamp-frame" src={volumeStampFrameUrl()} alt="" />
     </>
   );
 }

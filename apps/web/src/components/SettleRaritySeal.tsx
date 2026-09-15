@@ -69,7 +69,7 @@ export function SettleRaritySeal({ rarity }: RaritySealProps) {
 
   return (
     <div className={`settle-rarity-seal rarity-${rarity}`}>
-      <svg className="settle-rarity-seal-svg" viewBox="0 0 128 128" aria-hidden>
+      <svg className="settle-rarity-seal-svg" viewBox="0 0 128 128">
         <defs>
           <FillGradient rarity={rarity} id={fillId} />
           <linearGradient id={shineId} x1="0%" y1="0%" x2="100%" y2="100%">

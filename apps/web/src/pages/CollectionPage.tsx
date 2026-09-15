@@ -198,13 +198,12 @@ export default function CollectionPage() {
                         if (fallback instanceof HTMLElement) fallback.hidden = false;
                       }}
                     />
-                    <div className="volume-tile-placeholder" hidden aria-hidden />
+                    <div className="volume-tile-placeholder" hidden />
                     {vol.completed ? (
                       <img
                         className="volume-tile-seal"
                         src={volumeSealCompleteUrl()}
                         alt=""
-                        aria-hidden
                       />
                     ) : null}
                   </div>
@@ -221,7 +220,6 @@ export default function CollectionPage() {
                   <span
                     className="tint-bar volume-tile-bar"
                     style={volumeBarStyle(vol)}
-                    aria-hidden
                   />
                 </button>
               ))}
@@ -243,12 +241,12 @@ export default function CollectionPage() {
               <span className="muted">
                 {t("collection.speciesCount", { count: entryCount })}
               </span>
-              <span className="me-row-go" aria-hidden>
+              <span className="me-row-go">
                 ›
               </span>
             </span>
             {/* 种的照片门面。零件常在、日光关着；没有封面就不占格子 */}
-            <div className="collection-faces" aria-hidden>
+            <div className="collection-faces">
               {faces.map((entry) => (
                 <img key={entry.id} src={entry.coverDisplayUrl ?? ""} alt="" loading="lazy" />
               ))}
@@ -265,11 +263,11 @@ export default function CollectionPage() {
               <span className="muted">
                 {t("collection.petsCount", { count: petCount })}
               </span>
-              <span className="me-row-go" aria-hidden>
+              <span className="me-row-go">
                 ›
               </span>
             </span>
-            <div className="collection-faces" aria-hidden>
+            <div className="collection-faces">
               {petFaces.map((url, i) => (
                 <img key={`${i}-${url}`} src={url} alt="" loading="lazy" />
               ))}
@@ -286,12 +284,12 @@ export default function CollectionPage() {
               <span className="muted">
                 {t("collection.treeCount", { count: kingdomCount })}
               </span>
-              <span className="me-row-go" aria-hidden>
+              <span className="me-row-go">
                 ›
               </span>
             </span>
             {/* 收集树门。零件常在、日光关着；src 只在声明了 collection 域的皮肤上才有 */}
-            <div className="collection-tree-door" aria-hidden>
+            <div className="collection-tree-door">
               {treeDoorUrl ? <img src={treeDoorUrl} alt="" loading="lazy" /> : null}
             </div>
           </Link>

@@ -104,9 +104,6 @@ export default function CollectionSpeciesPage() {
       {!loading && rows.length > 0 ? (
         <>
           <div className="species-toolbar">
-            <label className="sr-only" htmlFor="collection-species-q">
-              {t("collection.speciesSearch")}
-            </label>
             <input
               id="collection-species-q"
               className="input"
@@ -116,11 +113,10 @@ export default function CollectionSpeciesPage() {
               autoComplete="off"
             />
             {rarityChips.length > 1 ? (
-              <div className="species-chips" role="group">
+              <div className="species-chips">
                 <button
                   type="button"
                   className={`species-chip${rarityFilter === null ? " is-on" : ""}`}
-                  aria-pressed={rarityFilter === null}
                   onClick={() => setRarityFilter(null)}
                 >
                   {t("collection.speciesFilterAll")}
@@ -130,7 +126,6 @@ export default function CollectionSpeciesPage() {
                     key={r}
                     type="button"
                     className={`species-chip${rarityFilter === r ? " is-on" : ""}`}
-                    aria-pressed={rarityFilter === r}
                     onClick={() => setRarityFilter(rarityFilter === r ? null : r)}
                   >
                     {r}
@@ -138,13 +133,12 @@ export default function CollectionSpeciesPage() {
                 ))}
               </div>
             ) : null}
-            <div className="species-sort" role="group">
+            <div className="species-sort">
               {sorts.map((item) => (
                 <button
                   key={item.id}
                   type="button"
                   className={`species-sort-btn${sort === item.id ? " is-on" : ""}`}
-                  aria-pressed={sort === item.id}
                   onClick={() => setSort(item.id)}
                 >
                   {item.label}
@@ -166,7 +160,7 @@ export default function CollectionSpeciesPage() {
                   {entry.coverDisplayUrl ? (
                     <img className="species-index-thumb" src={entry.coverDisplayUrl} alt="" />
                   ) : (
-                    <span className="species-index-thumb is-empty" aria-hidden />
+                    <span className="species-index-thumb is-empty" />
                   )}
                   <span className="species-index-copy">
                     <strong>{entryName(entry)}</strong>

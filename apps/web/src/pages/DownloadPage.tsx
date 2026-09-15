@@ -40,7 +40,7 @@ export default function DownloadPage() {
             <img className="brand-mark" src="/brand/icon-tile-framed.svg" alt="" width={76} height={76} />
             <h1 className="login-brand">{t("app.name")}</h1>
             <p className="lede">{t("app.tagline")}</p>
-            <div className="login-rule" aria-hidden />
+            <div className="login-rule" />
           </div>
           <div className="login-colophon">
             {wechat ? <p className="muted">{t("download.wechat")}</p> : null}

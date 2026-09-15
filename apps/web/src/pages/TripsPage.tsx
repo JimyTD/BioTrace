@@ -81,9 +81,6 @@ export default function TripsPage({
       </header>
 
       <form className="trip-create-inline" onSubmit={onCreate}>
-        <label className="sr-only" htmlFor="trip-title">
-          {t("trips.createLabel")}
-        </label>
         <input
           id="trip-title"
           className="input"
@@ -107,9 +104,6 @@ export default function TripsPage({
       ) : (
         <div className="trip-join-panel">
           <form className="trip-create-inline" onSubmit={onJoin}>
-            <label className="sr-only" htmlFor="trip-join-code">
-              {t("trips.joinLabel")}
-            </label>
             <input
               id="trip-join-code"
               className="input"
@@ -189,15 +183,15 @@ export default function TripsPage({
                 }}
               >
                 {/* 零件一次渲全，摆在哪由皮肤的 CSS 定。见 docs/features/皮肤主题.md §2.3 */}
-                <span className="trip-cover-media" aria-hidden />
+                <span className="trip-cover-media" />
                 <span className="trip-cover-window">
                   {trip.coverDisplayUrl ? (
                     <img className="trip-cover-photo" src={trip.coverDisplayUrl} alt="" />
                   ) : (
-                    <span className="trip-cover-placeholder" aria-hidden />
+                    <span className="trip-cover-placeholder" />
                   )}
                 </span>
-                <img className="trip-cover-frame" src={tripCoverFrameUrl()} alt="" aria-hidden />
+                <img className="trip-cover-frame" src={tripCoverFrameUrl()} alt="" />
                 <span className="trip-cover-share">{t("trips.sharedBadge")}</span>
                 <strong className="trip-cover-title">{trip.title}</strong>
                 <span className="muted trip-cover-mark">{tripMetaLine(trip)}</span>

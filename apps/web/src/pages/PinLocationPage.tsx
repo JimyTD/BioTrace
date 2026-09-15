@@ -108,7 +108,7 @@ export default function PinLocationPage() {
 
       <div className="map-wrap map-wrap-pin">
         <div ref={containerRef} className="map-pin-canvas" />
-        <div className="map-pin-crosshair" aria-hidden="true">
+        <div className="map-pin-crosshair">
           <span className="map-pin-crosshair-dot" />
         </div>
       </div>
