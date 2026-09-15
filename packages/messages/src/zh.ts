@@ -294,7 +294,7 @@ const zhCore = {
   "me.identifyQuota": "今日平台识图：{used}/{limit}",
   "me.identifyQuotaUnlimited": "今日平台识图：未限制",
   "me.identifyQuotaHint": "自备 Key 不计，每天按 UTC 零点重置",
-  "me.identifyKeyLede": "OpenAI 兼容接口；打开开关后只用你的 Key，失败不回落平台",
+  "me.identifyKeyLede": "OpenAI 兼容接口；打开开关后只用你的 Key",
   "me.identifyUseOwnKey": "使用我的识图 Key",
   "me.identifyBaseUrl": "Base URL",
   "me.identifyModel": "模型名",
