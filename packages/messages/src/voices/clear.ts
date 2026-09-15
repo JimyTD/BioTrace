@@ -17,7 +17,7 @@ import type { ThemedMessageKey } from "../zh.js";
  * 「创作类要发散，不是说明」——不描述这一页有什么，说你和这些收藏的关系；无句号（2026-09-15 用户定）。
  */
 export const clearVoice: Partial<Record<ThemedMessageKey, string>> = {
-  "settle.lede": "这趟遇见的生命，现在有名字了。",
+  "settle.lede": "这次旅途遇见的生命，现在有名字了",
   "settle.open": "请过目",
   "settle.opening": "正在显影…",
   "settle.claim": "收下",

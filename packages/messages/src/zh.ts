@@ -759,7 +759,7 @@ export const zhFlavor = {
   "trips.empty": "还没有旅途。山海未远，等你启程",
   "album.empty": "册页还空着。上传照片，开始记录",
   "album.pendingHint": "结论已经落笔",
-  "album.readyToast": "刚拍的，有名字了",
+  "album.readyToast": "快来看看它的庐山真面目吧！",
 
   "settle.title": "识别结果",
   "settle.lede": "已经识别出这是什么了",
@@ -774,7 +774,6 @@ export const zhFlavor = {
   "collection.volumeDone": "整册点亮",
   "collection.volumeStampEmpty": "未点亮",
   "collection.speciesSightings": "历次遇见",
-  "tree3d.statEmpty": "等待第一次相遇",
   "tree3d.noFootprint": "尚无足迹",
   "tree3d.notCollectedSpecies": "尚未拍到过",
   "tree3d.notCollectedBranch": "这一支尚未去过",

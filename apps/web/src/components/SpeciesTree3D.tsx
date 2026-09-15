@@ -172,11 +172,11 @@ export default function SpeciesTree3D({
         ))}
       </div>
 
-      {tree ? (
+      {/* 计数行只在有收录时出现。一条都没有时整行不渲染：树是全骨架、一格未点亮，
+          那本身就是「还没有收录」，再写一行字是把「空」说一遍。 */}
+      {tree && tree.totalGot > 0 ? (
         <div className="tree3d-stat">
-          {tree.totalGot > 0
-            ? t("tree3d.statGot", { count: tree.totalGot })
-            : t("tree3d.statEmpty")}
+          {t("tree3d.statGot", { count: tree.totalGot })}
         </div>
       ) : null}
 

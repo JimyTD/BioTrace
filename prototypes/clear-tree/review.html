@@ -2,7 +2,7 @@
 <html lang="zh-CN">
 <head>
 <meta charset="utf-8">
-<title>文案审阅 · 当前一块</title>
+<title>文案审阅 · 四条（②③④ 有更新）</title>
 <style>
   :root{--paper:#f6f2e9;--ink:#2a241c;--muted:#857a67;--line:#ddd4c2;--warn:#c2703c;--ok:#5c7a4a;--red:#b03a2e;--green:#2F4A3C}
   *{box-sizing:border-box}
@@ -22,6 +22,9 @@
   .box.w{border-left-color:var(--warn)} .box.d{border-left-color:var(--red)}
   .box b{color:var(--green)} .box.w b{color:var(--warn)} .box.d b{color:var(--red)}
   code{font-family:ui-monospace,Consolas,monospace;font-size:12px;background:#efe9dc;padding:1px 4px;border-radius:3px}
+  .phone{background:#fdfcf8;border:1px solid var(--line);border-radius:10px;padding:12px 15px;margin:6px 0}
+  .phone .lede{color:var(--ok);font-weight:600;font-size:14.5px;margin:0}
+  .phone .lede.now{color:var(--ink);font-weight:400}
   .keep{font-size:13px;line-height:2;background:#fffdf7;border:1px solid var(--line);border-radius:6px;padding:12px 15px;margin:8px 0}
   .keep .k{font-family:ui-monospace,Consolas,monospace;font-size:11.5px;color:var(--muted)}
   .keep b{color:var(--green)}
@@ -30,73 +33,56 @@
 </head>
 <body>
 
-<h1>文案审阅 · 当前一块：common</h1>
-<p class="sub">这是<b>唯一的审阅页</b>（2026-09-15 起）：每轮只放当前这一块的逐条审阅，过完一块就换成下一块——刷新即可，不用再记新地址。此前逐模块的演示页已删（git 历史里可查）。</p>
+<h1>文案审阅 · 四条</h1>
+<p class="sub">唯一的审阅页（刷新即可）。四条都已定（2026-09-15 用户定）：① 保持原句 · ② 换掉原句 · ③ 整行不渲染并删 key · ④ 去掉后半句。</p>
 
+<h2>③ <code>tree3d.statEmpty</code>——已定：整行不渲染 + 删 key</h2>
 <div class="box">
-  <b>刚过完的两块</b>：<code>rank</code>（17 条，只改 1 条：<code>rank.division</code>「部」→「门」——division 在植物/真菌/藻类就是门这一级，已提交）· <code>share</code>（25 条，改 2 条，已提交）。<br>
-  <b>这一块</b>：<code>common</code>，15 条通用词。
+  <b>它可达（核过）</b>：显示条件是 <code>SpeciesTree3D.tsx:176-180</code> 的 <code>tree.totalGot &gt; 0 ? statGot : statEmpty</code>（一条收录都没有时）；「物种树」那一行在 <code>CollectionPage.tsx:231</code> 的闸是 <code>!loading || volumes.length &gt; 0</code>——<b>与收录数无关</b>，新用户进图鉴点「物种树」就会走到它。
 </div>
-
-<h2>〇、这一节的文案在哪</h2>
-<div class="box">
-  `common.*` 是全局通用词，散在几乎所有页面：确认框（<code>ConfirmDialog.tsx</code>）、返回链接（<code>MeSubHead.tsx</code> 等 5 处）、各页 catch 兜底、表单的「保存中…/已保存」、登录页。另有 1 条在 <code>packages/messages/src/index.ts:73</code>（<code>formatRank</code> 的兜底）。
-</div>
-
-<h2>一、待改</h2>
-
-<h3>该删：0 条 / 该合并：0 条 / 该改措辞：0 条</h3>
-<div class="box">
-  这一节 15 条全是通用词，逐条核完<b>没有可动项</b>：<br>
-  · 没有重复句（<code>password</code>「密码」与 <code>newPassword</code>「新密码」是两个不同字段；<code>confirm</code>「确认」与 <code>confirmTitle</code>「请确认」一个是按钮一个是标题）；<br>
-  · 没有句号问题（15 条全无句号，包括两条失败句 <code>loadFailed</code>「加载失败」、<code>deleteFailed</code>「删除失败」——它们是各页 catch 的最短兜底，短到不需要出路）；<br>
-  · 没有分型冗余（<code>saving</code>/<code>deleting</code>、<code>login</code>/<code>loggingIn</code>、<code>saved</code> 都是不同状态）。
-</div>
-
-<h2>二、保留 15 条（逐条展开）</h2>
-
-<h3>确认框（3）</h3>
-<div class="keep">
-  <span class="k">common.confirmTitle</span> <b>请确认</b> — `TripAlbumPage.tsx:776` · `ObservationDetailPage.tsx:527` 确认框标题<br>
-  <span class="k">common.confirm</span> <b>确认</b> — `ConfirmDialog.tsx:46` 确认键默认文案（各页可覆盖成动词）<br>
-  <span class="k">common.cancel</span> <b>取消</b> — `ConfirmDialog.tsx:38` · `TripsPage.tsx:127` · `TripAlbumPage.tsx:614` · `PinLocationPage.tsx:106` · `ReidentifyDialog.tsx:63`
-</div>
-
-<h3>返回（1）</h3>
-<div class="keep">
-  <span class="k">common.back</span> <b>返回</b> — `ObservationDetailPage.tsx:357` · `ObservationSettlePage.tsx:184` · `SettleArtPreviewPage.tsx:137` · `OnboardInsert.tsx:289` · `MeSubHead.tsx:11` — 箭头在 JSX 里（`← {t("common.back")}`），文案本身只是「返回」
-</div>
-
-<h3>状态 / 反馈（4）</h3>
-<div class="keep">
-  <span class="k">common.saving</span> <b>保存中…</b> — `TripManagePage.tsx:206,246` · `PinLocationPage.tsx:121` · `MeSecurityPage.tsx:61` · `MeProfilePage.tsx:55` · `MeIdentifyPage.tsx:150`<br>
-  <span class="k">common.saved</span> <b>已保存</b> — `TripManagePage.tsx:248` · `MeProfilePage.tsx:30`<br>
-  <span class="k">common.deleting</span> <b>删除中…</b> — `TripManagePage.tsx:336` · `TripAlbumPage.tsx:767` · `ObservationDetailPage.tsx:520`<br>
-  <span class="k">common.unknown</span> <b>未知</b> — `packages/messages/src/index.ts:73`（`formatRank` 拿不到阶元时的兜底）
-</div>
-
-<h3>失败兜底（2）</h3>
-<div class="keep">
-  <span class="k">common.loadFailed</span> <b>加载失败</b> — 各页 catch（`TripsPage.tsx:33` · `TripManagePage.tsx:51` · `TripAlbumPage.tsx:219` · `PinLocationPage.tsx:73` · `ObservationDetailPage.tsx:169` · `CollectionSpeciesCardPage.tsx:60` · `CollectionPetCardPage.tsx:71` …）<br>
-  <span class="k">common.deleteFailed</span> <b>删除失败</b> — `TripAlbumPage.tsx:504` · `ObservationDetailPage.tsx:287` — 与上面一条按动作分开
-</div>
-
-<h3>账号字段 / 登录（5）</h3>
-<div class="keep">
-  <span class="k">common.password</span> <b>密码</b> — `LoginPage.tsx:213` 输入框标签<br>
-  <span class="k">common.newPassword</span> <b>新密码</b> — `LoginPage.tsx:213`（重置模式）· `MeSecurityPage.tsx:48`<br>
-  <span class="k">common.login</span> <b>登录</b> — `LoginPage.tsx:124` 主按钮<br>
-  <span class="k">common.loggingIn</span> <b>登录中…</b> — `LoginPage.tsx:123`<br>
-  <span class="k">common.resetPassword</span> <b>重置密码</b> — `LoginPage.tsx:132`
-</div>
-
-<h2>三、要你定</h2>
 <div class="box d">
-  ① 这一块<b>没有要改的</b>——认不认？（认了我就在清单里标「已审·无改动」，像 <code>nav</code> 那样。）<br>
-  ② 一处做法不一致（不是文案问题，是写法）：<code>common.back</code>「返回」的箭头写在 JSX 里，而 <code>tree3d.backToTree</code>「← 返回树」的箭头写在文案里。<span class="dim">（我倾向不动：一个是通用词、一个是页面专属词，两处都能用。）</span>
+  <b>但这一行不该有</b>：树是整棵渲染出来的（全骨架，不依赖收录），一格都没点亮本身就是「还没有收录」——那一行字是把「空」再说一遍。它还跨区：计数句 <code>statGot</code> 在固定区（<code>zh.ts:213</code>），空态句在可文案区（<code>zh.ts:777</code>）。
+</div>
+<div class="box">
+  <b>已落</b>：<code>SpeciesTree3D.tsx:175-181</code> 改成只在 <code>tree.totalGot &gt; 0</code> 时渲染；<code>tree3d.statEmpty</code> 从主表删除（全仓只有那一处引用，无 voice 覆盖）。
+</div>
+
+<h2>① <code>album.pendingHint</code>——已定：保持原句「结论已经落笔」</h2>
+<div class="box d">
+  我写的十来版全废：「可以看了」/「等你认识它」/「你和它，只隔一张照片」/「一面之缘，它已被认出」/「它还没跟你打过照面」/「这一张，已有回音」/「就欠你一眼」/「拍的时候不知道，现在有答案了」……不是说明句，就是往一句提示上硬加修饰。
+</div>
+<div class="box">
+  <b>你定的：保持原句</b>——「结论已经落笔」（<code>zh.ts:761</code>）。<br>
+  <span class="dim">渲染点：<code>TripAlbumPage.tsx:742-744</code>，只在 <code>pending_settle</code> 时出现；同格还有徽章「识别完成」与封条「请过目」（清透的 <code>settle.open</code>）。</span>
+</div>
+
+<h2>② <code>album.readyToast</code>——已定：「快来看看它的庐山真面目吧！」</h2>
+<div class="box d">
+  <b>原句「刚拍的，有名字了」两处不对</b>：<br>
+  · <b>「刚拍的」是假话</b>：触发条件只有 <code>pendingCount &gt; prevPending.current</code>（<code>TripAlbumPage.tsx:150,171-179</code>），而 <code>prevPending</code> 初值是 0——进相册时册里本来就有待开包的（几天前拍的、没打开的）会弹；共享旅途里别人传的、重新识别回到待开包的，也会弹。<br>
+  · <b>「有名字了」是从结算页搬来的落点</b>：<code>settle.lede</code> 最初是「揭示这次旅途遇见的生命。」（<code>4d95102</code>/<code>dd06ca6</code>），<code>0568e41</code>/<code>495894e</code>（2026-08-10）一整套换说法时改成「这趟遇见的生命，现在有名字了。」；而 <code>album.readyToast</code> 在<b>同一天</b>从「有观察可以开包了」改成「刚才那只，有名字了。」→「刚拍的，有名字了。」——同一个落点落到两处，开包页说一遍、顶部再说一遍。
+</div>
+<div class="box">
+  <b>已落</b>：<code>zh.ts:762</code> = <span class="new">快来看看它的庐山真面目吧！</span>（你写的；感叹号保留，是全表第一条——此前 <code>packages/messages/src</code> 里 <code>！</code> 为 0 处）。它不说照片来历，所以「谁拍的、什么时候拍的」都不成立。<br>
+  <b>同批还改了结算页那句</b>：<code>voices/clear.ts:20</code> 从「这趟遇见的生命，现在有名字了。」改成 <span class="new">这次旅途遇见的生命，现在有名字了</span>（回到你最初那句的「这次旅途」；按纪律 1 去掉末尾句号）。
+</div>
+
+<h2>④ <code>me.identifyKeyLede</code>——已定：去掉后半句</h2>
+<div class="box">
+  <b>现在（代码里）</b>：<span class="new">OpenAI 兼容接口；打开开关后只用你的 Key</span><br>
+  · 去掉的是「，失败不回落平台」；前半保留——配 Key 时必须对上的信息。<br>
+  <span class="dim">渲染点：<code>MeIdentifyPage.tsx:93</code> 说明行</span>
+</div>
+
+<h2>四条都已定</h2>
+<div class="box">
+  ① <code>album.pendingHint</code> 保持「结论已经落笔」<br>
+  ② <code>album.readyToast</code> =「快来看看它的庐山真面目吧！」（另：<code>settle.lede</code> 改回「这次旅途遇见的生命，现在有名字了」）<br>
+  ③ <code>tree3d.statEmpty</code> 整行不渲染并删 key<br>
+  ④ <code>me.identifyKeyLede</code> =「OpenAI 兼容接口；打开开关后只用你的 Key」
 </div>
 <p style="margin-top:16px;font-size:13px;color:var(--muted)">
-  本页零改动。定了我改 <code>zh.ts</code>，跑 <code>check:copy</code> 与 <code>check-dead-keys</code> 与 <code>tsc -b</code>，单独提交。
+  四条代码已落；另有一页专看 ①② 在界面上的样子与位置：<code>prototypes/clear-tree/album-two-lines.html</code>。
 </p>
 
 </body>
