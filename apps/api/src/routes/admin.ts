@@ -692,12 +692,12 @@ adminRoutes.get("/files/:observationId/:filename", async (c) => {
   }
   const rel = `${obsId}/${filename}`;
   if (rel.includes("..")) {
-    return c.json({ error: t("error.invalidPath"), code: "invalid_path" }, 400);
+    return c.json({ error: t("error.notFound"), code: "invalid_path" }, 400);
   }
   const absolute = normalize(join(env.uploadDir, rel));
   const root = normalize(env.uploadDir + sep);
   if (!absolute.startsWith(root)) {
-    return c.json({ error: t("error.invalidPath"), code: "invalid_path" }, 400);
+    return c.json({ error: t("error.notFound"), code: "invalid_path" }, 400);
   }
   try {
     await access(absolute);

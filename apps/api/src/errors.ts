@@ -8,7 +8,7 @@ const known: Record<string, MessageKey> = {
   "file must be an image": "error.fileMustBeImage",
   "GEMINI_API_KEY is not set": "error.geminiKeyMissing",
   "confirm phrase mismatch": "error.confirmPhraseMismatch",
-  identify_too_coarse: "error.identifyTooCoarse",
+  identify_too_coarse: "status.tooCoarse",
   identify_quota: "error.identifyQuota",
   identify_daily_limit: "error.identifyDailyLimit",
   identify_user_key_incomplete: "error.identifyUserKeyIncomplete",

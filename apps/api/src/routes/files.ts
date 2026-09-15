@@ -21,7 +21,7 @@ fileRoutes.get("/:observationId/:filename", async (c) => {
   const filename = c.req.param("filename");
   const rel = `${observationId}/${filename}`;
   if (rel.includes("..")) {
-    return c.json({ error: t("error.invalidPath"), code: "invalid_path" }, 400);
+    return c.json({ error: t("error.notFound"), code: "invalid_path" }, 400);
   }
 
   const row = await db.query.observations.findFirst({
@@ -40,7 +40,7 @@ fileRoutes.get("/:observationId/:filename", async (c) => {
   const absolute = normalize(join(env.uploadDir, rel));
   const root = normalize(env.uploadDir + sep);
   if (!absolute.startsWith(root)) {
-    return c.json({ error: t("error.invalidPath"), code: "invalid_path" }, 400);
+    return c.json({ error: t("error.notFound"), code: "invalid_path" }, 400);
   }
 
   try {

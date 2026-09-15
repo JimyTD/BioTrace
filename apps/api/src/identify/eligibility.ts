@@ -95,7 +95,7 @@ export function evaluateEligibility(result: IdentifyResult): EligibilityDecision
       ok: true,
       keepsake: {
         kind,
-        reasonZh: result.ineligibility_reason_zh.trim() || t("error.identifyGenericFailed"),
+        reasonZh: result.ineligibility_reason_zh.trim(),
       },
     };
   }
@@ -111,22 +111,15 @@ export function evaluateEligibility(result: IdentifyResult): EligibilityDecision
         ok: true,
         soft: {
           kind,
-          reasonZh:
-            result.ineligibility_reason_zh.trim() || t("error.identifySoftDefaultReason"),
+          reasonZh: result.ineligibility_reason_zh.trim(),
         },
       };
     }
   }
 
-  const reasonZh =
-    result.ineligibility_reason_zh.trim() ||
-    (kind === "human"
-      ? t("error.identifyHumanReason")
-      : kind === "artifact_or_toy" ||
-          kind === "depiction_or_media" ||
-          kind === "specimen"
-        ? t("error.identifyNotLivingReason")
-        : t("error.identifyNotOrganismReason"));
+  /* 不合格理由由模型必填（prompt 定义），此处不再兜底：
+     上游必填的字段不为它准备多套文案（同 detail.softReasonFallback 那次）。 */
+  const reasonZh = result.ineligibility_reason_zh.trim();
 
   /* 留影档：其余一切（无生物、仅背景、分不清、人、器物）都不再拦，
      照片留在相册，只是不进图鉴。硬拦（红字）只留给真故障。 */

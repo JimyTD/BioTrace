@@ -31,7 +31,7 @@ export function identifyErrorPrimary(code: string | null | undefined): string {
   if (!code) return t("error.identifyGenericFailed");
   if (isKeepsakeError(code) || isNotCollectibleError(code)) return t("error.identifyKeepsake");
   if (isSoftEncounterError(code)) return t("error.identifySoftEncounter");
-  if (code === "identify_too_coarse") return t("error.identifyTooCoarse");
+  if (code === "identify_too_coarse") return t("status.tooCoarse");
   if (code === "identify_quota") return t("error.identifyQuota");
   if (code === "identify_daily_limit") return t("error.identifyDailyLimit");
   if (code === "identify_user_key_incomplete") return t("error.identifyUserKeyIncomplete");
