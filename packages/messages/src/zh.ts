@@ -750,9 +750,9 @@ export const zhFlavor = {
   "nav.collection": "图鉴",
   "nav.me": "我的",
 
-  "onboard.tripLede": "出门一趟，就攒下一本新相册。",
-  "onboard.mapLede": "地图上，留着你走过的每一个点。",
-  "onboard.collectionLede": "认出一种生命，就点亮一格。",
+  "onboard.tripLede": "出门一趟，带回一点远方。",
+  "onboard.mapLede": "你走过的地方，连成了一条路。",
+  "onboard.collectionLede": "认识一种生命，世界就大一点。",
 
   "trips.title": "旅途",
   "trips.lede": "所行之处，皆归于此。",
