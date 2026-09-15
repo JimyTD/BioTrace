@@ -255,7 +255,7 @@ function NodeCard({
       {node.got > 0 ? (
         <button type="button" className="tree3d-card-go" onClick={onOpenList}>
           {t("tree3d.viewCollection")}
-          <em>{t("tree3d.gotCountGo", { count: node.got })}</em>
+          <em>{t("tree3d.gotCount", { count: node.got })} ›</em>
         </button>
       ) : sealed ? (
         <button type="button" className="tree3d-card-go off" disabled>

@@ -1,0 +1,159 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<title>tree3d · 逐条审阅（v2 · 书面语调性）</title>
+<style>
+  :root{--paper:#f6f2e9;--ink:#2a241c;--muted:#857a67;--line:#ddd4c2;--warn:#c2703c;--ok:#5c7a4a;--red:#b03a2e;--green:#2F4A3C}
+  *{box-sizing:border-box}
+  body{margin:0;padding:26px 30px 60px;background:var(--paper);color:var(--ink);font:15px/1.7 "PingFang SC","Microsoft YaHei",system-ui,sans-serif}
+  h1{font-size:20px;margin:0 0 4px}
+  .sub{color:var(--muted);font-size:13px;margin:0 0 6px}
+  h2{font-size:15.5px;margin:28px 0 8px;padding-bottom:6px;border-bottom:1px solid var(--line)}
+  h3{font-size:14px;margin:18px 0 4px}
+  table{width:100%;border-collapse:collapse;font-size:13.5px;background:#fffdf7;margin-top:8px}
+  th,td{border:1px solid var(--line);padding:7px 10px;text-align:left;vertical-align:top}
+  th{background:#efe9dc;font-weight:600;color:var(--muted);font-size:12.5px}
+  td.k{font-family:ui-monospace,Consolas,monospace;font-size:12px;color:var(--muted)}
+  td.pt{font-family:ui-monospace,Consolas,monospace;font-size:11px;color:var(--muted)}
+  .now{color:var(--ink)} .new{color:var(--ok);font-weight:600} .del{color:var(--red);text-decoration:line-through}
+  .why{color:var(--muted);font-size:12.5px}
+  .box{background:#fffdf7;border:1px solid var(--line);border-left:3px solid var(--green);padding:11px 14px;margin:12px 0;font-size:13.5px}
+  .box.w{border-left-color:var(--warn)} .box.d{border-left-color:var(--red)}
+  .box b{color:var(--green)} .box.w b{color:var(--warn)} .box.d b{color:var(--red)}
+  code{font-family:ui-monospace,Consolas,monospace;font-size:12px;background:#efe9dc;padding:1px 4px;border-radius:3px}
+  .keep{font-size:13px;line-height:2;background:#fffdf7;border:1px solid var(--line);border-radius:6px;padding:12px 15px;margin:8px 0}
+  .keep .k{font-family:ui-monospace,Consolas,monospace;font-size:11.5px;color:var(--muted)}
+  .keep b{color:var(--green)}
+  .dim{color:var(--muted)}
+</style>
+</head>
+<body>
+
+<h1>tree3d · 逐条审阅（v2）</h1>
+<p class="sub">27 条 key。v2 的变化：调性定为<b>书面语</b>（你定），改措辞从 1 条变 5 条；①③ 按你的同意改。</p>
+
+<h2>〇、这一节的文案在哪（没法截图，说明理由）</h2>
+<div class="box">
+  tree3d 的说法长在 <b>3D 画布</b>（`TreeScene.ts` 里用 `textContent` 直接写）、<b>概要卡</b>与<b>收录抽屉</b>（`SpeciesTree3D.tsx` 的 JSX）上，
+  要登录 + 有收录数据才出得来，所以这一页不做示意图——<b>逐条列出、改完你在真机看</b>。<br>
+  <span class="dim">渲染点：画布 `TreeScene.ts` · 卡片/抽屉 `SpeciesTree3D.tsx` · 根节点名 `treeModel.ts` · 启动态 `CollectionTreePage.tsx`。</span>
+</div>
+
+<h2>一、待改</h2>
+
+<h3>该删：0 条</h3>
+<div class="box">
+  唯一该删的 <code>tree3d.close</code> 已随全仓删 <code>aria-label</code> 一并清掉（2026-09-15）。<br>
+  其余 27 条都有真实渲染点，也没有重复句——<code>noChildren</code> 与 <code>noFurtherRank</code> 看着像，其实是<b>两种状态</b>（前者：有子级但未分组；后者：<code>node.ch.length === 0</code>，没有子节点），不能合。
+</div>
+
+<h3>该合并：1 条 <span class="dim">（已同意）</span></h3>
+<table>
+<tr><th style="width:30%">key</th><th style="width:24%">文案</th><th>依据 / 改法</th></tr>
+<tr>
+  <td class="k">tree3d.gotCountGo</td>
+  <td class="del">{count} 项 ›</td>
+  <td>与 <code>gotCount</code>「{count} 项」<b>同源，只差一个「›」</b>。<code>gotCount</code> 用在画布节点副标签（`TreeScene.ts:2611,2651`，`textContent` 写不了箭头），<code>gotCountGo</code> 只用在卡片按钮（`SpeciesTree3D.tsx:258`）。<br>
+  <span class="why">改法：删掉这个 key，按钮里的「›」写成独立元素。收益 1 条 key；代价改一处 JSX。</span></td>
+</tr>
+</table>
+
+<h3>该改措辞：5 条（书面化）</h3>
+<div class="box w">
+  <b>调性（2026-09-15 你定）：树的这一节用书面语。</b>理由成立——树的语境是分类骨架 + 拉丁名 + 阶元（「此设备不支持 WebGL2」「尚未细分到更下一级」本来就是这套），
+  口语那几条是混进来的，读着像两个人在说话。<b>只换语气，不换事实</b>：能只改「还没 → 尚未」的就不换词。
+</div>
+<table>
+<tr><th style="width:26%">key</th><th style="width:28%">现状 → 建议</th><th>依据</th></tr>
+<tr>
+  <td class="k">tree3d.noChildren</td>
+  <td><span class="now">这一支还没有细分</span><br>→ <span class="new">这一支尚未细分</span></td>
+  <td>`SpeciesTree3D.tsx:236` 卡片 meta。同族的 <code>noFurtherRank</code> 就是「尚未细分到更下一级」——两条本就该同腔。</td>
+</tr>
+<tr>
+  <td class="k">tree3d.notCollectedSpecies</td>
+  <td><span class="now">还没拍到过</span><br>→ <span class="new">尚未拍到过</span></td>
+  <td>`:268` 副文案（种级）。只改语气，动作词「拍到」不动。</td>
+</tr>
+<tr>
+  <td class="k">tree3d.notCollectedBranch</td>
+  <td><span class="now">这一支还没去过</span><br>→ <span class="new">这一支尚未去过</span></td>
+  <td>`:268` 副文案（非种级）。同上，只改语气。</td>
+</tr>
+<tr>
+  <td class="k">tree3d.budNext</td>
+  <td><span class="now">还有 {count} 个</span><br>→ <span class="new">余 {count} 个</span></td>
+  <td>`TreeScene.ts:2722` 翻批按钮。<b>量词「个」保留</b>——已核：`batchTotal` 是「这一扇的子级数 / 焦点自身的种数」（`:568` 注释、`:2031`、`:2134`），不是收录物，不该用「项」。</td>
+</tr>
+<tr>
+  <td class="k">tree3d.backToTree</td>
+  <td><span class="now">← 回到树</span><br>→ <span class="new">← 返回树</span></td>
+  <td>`SpeciesTree3D.tsx:301` 抽屉返回。箭头按你说的<b>不动</b>，只把「回到」换「返回」——与「尚未 / 余 / 不可收录」同腔。<span class="dim">（这条是我按调性推的，你要留「回到」也行。）</span></td>
+</tr>
+</table>
+
+<h3>核过、不改：<code>budNext</code>/<code>budPrev</code> 的量词</h3>
+<div class="box">
+  我一开始怀疑它该跟规范 §三 的量词口径走（树上条目用「项」），<b>核完发现「个」是对的</b>：<code>batchTotal</code> 装的是「这一扇的子级数 / 焦点自身的种数」——`TreeScene.ts:568` 注释原话「这一扇一共多少子级、每页几个」，赋值处 `:2031`、`:2134`。<br>
+  它不是「收录物」，所以不该用「项」；「个」是通用量词，两种情形都成立。<b>v2 只改 budNext 的语气（还有 → 余），量词不动。</b>
+</div>
+
+<h2>二、保留 21 条（逐条展开，按类别分组）</h2>
+
+<h3>锚点 / 导航词（3）</h3>
+<div class="keep">
+  <span class="k">tree3d.crumbRoot</span> <b>全树</b> — `SpeciesTree3D.tsx:161` 面包屑首页按钮 — 页面级锚点词，与根节点名「生命」分工清楚<br>
+  <span class="k">tree3d.rootLife</span> <b>生命</b> — `treeModel.ts:191` 骨架根节点名（Vita）— 根节点的显示名<br>
+  <span class="k">tree3d.viewCollection</span> <b>查看收录</b> — `:257` 卡片按钮 — 用「收录」：规范 §三 的口径是树上叫收录、「图鉴」是页面名
+</div>
+
+<h3>数量 / 状态（6）</h3>
+<div class="keep">
+  <span class="k">tree3d.statGot</span> <b>已收录 {count} 项</b> — `SpeciesTree3D.tsx:178` 顶部统计 — 规范 §三 的原句<br>
+  <span class="k">tree3d.gotCount</span> <b>{count} 项</b> — `TreeScene.ts:2611,2651` 画布节点副标签 — 同上，量词「项」<br>
+  <span class="k">tree3d.childGroup</span> <b>{count} {rank}</b> — `:234` 卡片 meta — 按子级<b>实际</b>阶元分组统计，不写死「62 纲」那种假话（代码注释 `:217-220`）<br>
+  <span class="k">tree3d.focusMeta</span> <b>{la} · {rank}</b> — `TreeScene.ts:2715` 焦点标题副行 — 拉丁名 · 阶元（技术字段，成套）<br>
+  <span class="k">tree3d.focusMetaPage</span> <b>{la} · {rank} · {cur}/{total}</b> — `:2709` — 同上，多一段翻批页码<br>
+  <span class="k">tree3d.budPrev</span> <b>前 {count} 个</b> — `:2724` 翻批按钮 — 与 budNext 成对，量词同（见上）
+</div>
+
+<h3>空态 / 无收录（3）</h3>
+<div class="keep">
+  <span class="k">tree3d.statEmpty</span> <b>等待第一次相遇</b> — `SpeciesTree3D.tsx:179` 顶部统计（可文案区）— 创作类空态，与「尚无足迹」成套<br>
+  <span class="k">tree3d.noFootprint</span> <b>尚无足迹</b> — `:267` 卡片按钮主文案（disabled）— 主句，本就是书面<br>
+  <span class="k">tree3d.noFurtherRank</span> <b>尚未细分到更下一级</b> — `:229` 卡片 meta — 本就是书面，<b>v2 起它是这一族的腔调基准</b>
+</div>
+
+<h3>不可收录（2）</h3>
+<div class="keep">
+  <span class="k">tree3d.notCollectible</span> <b>不可收录</b> — `SpeciesTree3D.tsx:262` 卡片按钮 — 主句<br>
+  <span class="k">tree3d.notCollectibleHint</span> <b>病毒不进入图鉴</b> — `:263` 副文案 — 事实句，说清为什么不可收录
+</div>
+
+<h3>抽屉 / 清单（3）</h3>
+<div class="keep">
+  <span class="k">tree3d.sheetSum</span> <b>这一支下有 {count} 项收录</b> — `SpeciesTree3D.tsx:310` 抽屉 header — 数量 + 范围<br>
+  <span class="k">tree3d.sheetCap</span> <b>（显示前 {shown} 项）</b> — `:311` — 说清只列了前 N 项，不是全部<br>
+  <span class="k">tree3d.unnamed</span> <b>未命名</b> — `:320` 条目名兜底 — 上游没名字时的兜底
+</div>
+
+<h3>加载 / 失败（4）</h3>
+<div class="keep">
+  <span class="k">tree3d.growing</span> <b>正在生长这棵树…</b> — `CollectionTreePage.tsx:86` 建树启动态（可文案区）— 加载态，动作 + 中…<br>
+  <span class="k">tree3d.buildFailed</span> <b>建树失败</b> — `SpeciesTree3D.tsx:69` catch 兜底 — 最短的真失败句<br>
+  <span class="k">tree3d.webglFailed</span> <b>WebGL 初始化失败</b> — `:112` catch 兜底 — 与上一条区分（建树 vs 渲染器）<br>
+  <span class="k">tree3d.webgl2</span> <b>此设备不支持 WebGL2</b> — `TreeScene.ts:592` throw — 说清是设备能力问题
+</div>
+
+<h2>三、要你定</h2>
+<div class="box d">
+  ① 上面 5 条书面化（<code>noChildren</code> / <code>notCollectedSpecies</code> / <code>notCollectedBranch</code> / <code>budNext</code> / <code>backToTree</code>）——认不认？<br>
+  ② <b>「树的调性＝书面语」要不要记成一条口径</b>（供 <code>rank</code> / <code>listTag</code> / 物种树相关文案沿用）？按「加之前必须请示」问你，你说加我才加。
+</div>
+<p style="margin-top:16px;font-size:13px;color:var(--muted)">
+  本页零改动。定了我改 <code>zh.ts</code>（+ 视情况 <code>SpeciesTree3D.tsx</code>），跑 <code>check:copy</code> 与 <code>check-dead-keys</code> 与 <code>tsc -b</code>，单独提交。
+</p>
+
+</body>
+</html>
