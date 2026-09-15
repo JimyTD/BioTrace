@@ -1,0 +1,134 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<title>share · 逐条审阅</title>
+<style>
+  :root{--paper:#f6f2e9;--ink:#2a241c;--muted:#857a67;--line:#ddd4c2;--warn:#c2703c;--ok:#5c7a4a;--red:#b03a2e;--green:#2F4A3C}
+  *{box-sizing:border-box}
+  body{margin:0;padding:26px 30px 60px;background:var(--paper);color:var(--ink);font:15px/1.7 "PingFang SC","Microsoft YaHei",system-ui,sans-serif}
+  h1{font-size:20px;margin:0 0 4px}
+  .sub{color:var(--muted);font-size:13px;margin:0 0 6px}
+  h2{font-size:15.5px;margin:28px 0 8px;padding-bottom:6px;border-bottom:1px solid var(--line)}
+  h3{font-size:14px;margin:18px 0 4px}
+  table{width:100%;border-collapse:collapse;font-size:13.5px;background:#fffdf7;margin-top:8px}
+  th,td{border:1px solid var(--line);padding:7px 10px;text-align:left;vertical-align:top}
+  th{background:#efe9dc;font-weight:600;color:var(--muted);font-size:12.5px}
+  td.k{font-family:ui-monospace,Consolas,monospace;font-size:12px;color:var(--muted)}
+  td.pt{font-family:ui-monospace,Consolas,monospace;font-size:11px;color:var(--muted)}
+  .now{color:var(--ink)} .new{color:var(--ok);font-weight:600} .del{color:var(--red);text-decoration:line-through}
+  .why{color:var(--muted);font-size:12.5px}
+  .box{background:#fffdf7;border:1px solid var(--line);border-left:3px solid var(--green);padding:11px 14px;margin:12px 0;font-size:13.5px}
+  .box.w{border-left-color:var(--warn)} .box.d{border-left-color:var(--red)}
+  .box b{color:var(--green)} .box.w b{color:var(--warn)} .box.d b{color:var(--red)}
+  code{font-family:ui-monospace,Consolas,monospace;font-size:12px;background:#efe9dc;padding:1px 4px;border-radius:3px}
+  .keep{font-size:13px;line-height:2;background:#fffdf7;border:1px solid var(--line);border-radius:6px;padding:12px 15px;margin:8px 0}
+  .keep .k{font-family:ui-monospace,Consolas,monospace;font-size:11.5px;color:var(--muted)}
+  .keep b{color:var(--green)}
+  .dim{color:var(--muted)}
+</style>
+</head>
+<body>
+
+<h1>share · 逐条审阅</h1>
+<p class="sub">25 条 key。界面部分在「管理旅途」页（`TripManagePage.tsx`）；<b>9 条是服务端返回的错误文案</b>，由 `apps/api/src/routes/trips.ts:134-142` 那张 code→key 映射表发出来。</p>
+
+<h2>〇、这一节的文案在哪</h2>
+<div class="box">
+  管理旅途页 `TripManagePage.tsx`（共享一节 · 成员列表 · 离开/删除）· 服务端 `apps/api/src/routes/trips.ts`（9 条错误，前端用 error 条显示）·
+  共用：<code>share.you</code>「我」还在详情页与相册页用（`ObservationDetailPage.tsx:463`、`TripAlbumPage.tsx:754`）。<br>
+  <span class="dim">没有示意图：这一节要有同行成员才出得来。</span>
+</div>
+
+<h2>一、待改</h2>
+
+<h3>该删：0 条</h3>
+<div class="box">
+  25 条都有真实渲染点：界面 16 条（管理旅途页）+ 服务端 9 条（错误码映射 + 直接返回）。没有空转的句子。
+</div>
+
+<h3>该合并：0 条</h3>
+<div class="box">
+  <code>copyCode</code>「复制邀请码」/ <code>copied</code>「已复制」· <code>kick</code>「移出」/ <code>kicking</code>「移出中…」· <code>leave</code>「离开共享旅途」/ <code>leaving</code>「离开中…」——<b>三对都是「动作 / 进行中」两态</b>，各有渲染点，不合并。<br>
+  <code>actionFailed</code>「操作失败」与 <code>auth.failed</code>「操作失败，请重试」、<code>settle.failed</code> 同源，<b>也不合并</b>——规范 §二 例外：可文案区的 key 必须独立（voice 覆盖按 key 生效）。但措辞要对齐，见下。
+</div>
+
+<h3>该改措辞：2 条</h3>
+<table>
+<tr><th style="width:28%">key</th><th style="width:30%">现状 → 建议</th><th>依据 / 渲染点</th></tr>
+<tr>
+  <td class="k">share.actionFailed</td>
+  <td><span class="now">操作失败</span><br>→ <span class="new">操作失败，请重试</span></td>
+  <td><b>失败句要给一条出路。</b>同族的 <code>auth.failed</code>、<code>settle.failed</code> 都是「操作失败，请重试」，只有它光说失败。<br>
+  <span class="pt">`TripManagePage.tsx:128`（开关失败）· `:162`（离开失败）· `:174`（移出失败）</span></td>
+</tr>
+<tr>
+  <td class="k">share.allowJoinHint</td>
+  <td><span class="now">打开后朋友可用邀请码加入（最多 10 人）；关闭后码仍有效但进不来。</span><br>→ <span class="new">…但进不来</span></td>
+  <td><b>纪律 1：短说明无句号。</b>它是一个开关的说明（分号连成一句），同族的 <code>inviteMissing</code>、<code>copyFailed</code> 都无句号。<br>
+  <span class="pt">`TripManagePage.tsx:281`</span></td>
+</tr>
+</table>
+
+<h3>句号保留：2 条（写清为什么）</h3>
+<div class="box">
+  <span class="k">share.leaveConfirm</span>「离开后将收回本趟共享带来的图鉴与套册进度；你上传的照片会移到一本同名私有旅途。」— `TripManagePage.tsx:155`（`window.confirm`）— 两段各自独立的信息（进度怎么算 / 照片去哪），缺了看不懂。<br>
+  <span class="k">share.dissolveHint</span>「有同行成员时，删除旅途会解散共享：各自带走自己的照片，到一本同名私有旅途，共享进度收回。」— `:322` — 一个完整说明，含冒号分列的三段信息。
+</div>
+
+<h2>二、保留 23 条（逐条展开，按类别分组）</h2>
+
+<h3>标题（1）</h3>
+<div class="keep">
+  <span class="k">share.section</span> <b>共享旅途</b> — `TripManagePage.tsx:253` 小节标题 — 与「共享」这条线的术语一致
+</div>
+
+<h3>邀请码（6）</h3>
+<div class="keep">
+  <span class="k">share.inviteCode</span> <b>邀请码</b> — `:257` 输入框标签<br>
+  <span class="k">share.copyCode</span> <b>复制邀请码</b> — `:269` 按钮 — 动词直给<br>
+  <span class="k">share.copied</span> <b>已复制</b> — `:269` 同一按钮（复制后 2 秒）— 状态回执<br>
+  <span class="k">share.copyFailed</span> <b>复制失败，请稍后重试</b> — `:144`、`:150` 错误条 — 给出路<br>
+  <span class="k">share.inviteMissing</span> <b>邀请码尚未生成，请先打开「允许持码加入」再试</b> — `:137` — 说清先做什么，且点出了开关的名字<br>
+  <span class="k">share.allowJoin</span> <b>允许持码加入</b> — `:279` 开关标签 — 开关名与提示里引用的名字一致
+</div>
+
+<h3>成员（5）</h3>
+<div class="keep">
+  <span class="k">share.members</span> <b>同行成员</b> — `:284` — 「同行」是这条术语线的词<br>
+  <span class="k">share.admin</span> <b>管理员</b> — `:291` 成员行后缀 — 与「仅管理员可操作」同一个词<br>
+  <span class="k">share.you</span> <b>我</b> — `:290` · `ObservationDetailPage.tsx:463` · `TripAlbumPage.tsx:754` — 三处共用，一个概念一个词<br>
+  <span class="k">share.kick</span> <b>移出</b> — `:300` 按钮 — 不说「删除」，因为人还在、只是不在这趟<br>
+  <span class="k">share.kicking</span> <b>移出中…</b> — `:300` 同按钮 — 进行中
+</div>
+
+<h3>离开 / 解散（4）</h3>
+<div class="keep">
+  <span class="k">share.leave</span> <b>离开共享旅途</b> — `:313` 按钮 — 危险动作说全<br>
+  <span class="k">share.leaving</span> <b>离开中…</b> — `:313` — 进行中<br>
+  <span class="k">share.leaveConfirm</span> <b>离开后将收回本趟共享带来的图鉴与套册进度；你上传的照片会移到一本同名私有旅途。</b> — `:155` — 说清连带（句号保留，见上）<br>
+  <span class="k">share.dissolveHint</span> <b>有同行成员时，删除旅途会解散共享：各自带走自己的照片，到一本同名私有旅途，共享进度收回。</b> — `:322` — 只在有成员时出现，说清解散规则（句号保留，见上）
+</div>
+
+<h3>服务端错误（7）</h3>
+<div class="keep">
+  <span class="k">share.inviteInvalid</span> <b>邀请码无效</b> — `apps/api/src/routes/trips.ts:136`、`:166`<br>
+  <span class="k">share.inviteClosed</span> <b>这趟旅途暂不允许加入</b> — `:138` — 「暂」留了余地<br>
+  <span class="k">share.tripFull</span> <b>这趟旅途已满员（最多 10 人）</b> — `:139` — 给具体上限<br>
+  <span class="k">share.notAdmin</span> <b>仅管理员可操作</b> — `:136` — 说清为什么不行<br>
+  <span class="k">share.notMember</span> <b>不是这趟旅途的成员</b> — `:141`、`:363`<br>
+  <span class="k">share.cannotKickSelf</span> <b>不能移出自己，请使用离开</b> — `:140` — 指出该用哪个功能<br>
+  <span class="k">share.invalidShare</span> <b>共享设置无效</b> — `:329`
+</div>
+
+<h2>三、要你定</h2>
+<div class="box d">
+  ① 上面 2 条（<code>actionFailed</code> 补「请重试」；<code>allowJoinHint</code> 去句号）——认不认？<br>
+  ② <b>「最多 10 人」写死在两处</b>（<code>tripFull</code>「已满员（最多 10 人）」与 <code>allowJoinHint</code>「（最多 10 人）」）——将来上限一变要改两处。要不要只留一处、另一处不说数字？<span class="dim">（我倾向不动：两处都在用户看得见的语境里，数字直接给更省事。）</span>
+</div>
+<p style="margin-top:16px;font-size:13px;color:var(--muted)">
+  本页零改动。定了我改 <code>zh.ts</code>，跑 <code>check:copy</code> 与 <code>check-dead-keys</code> 与 <code>tsc -b</code>，单独提交。
+</p>
+
+</body>
+</html>

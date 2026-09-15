@@ -95,7 +95,7 @@ const zhCore = {
   "share.copyFailed": "复制失败，请稍后重试",
   "share.inviteMissing": "邀请码尚未生成，请先打开「允许持码加入」再试",
   "share.allowJoin": "允许持码加入",
-  "share.allowJoinHint": "打开后朋友可用邀请码加入（最多 10 人）；关闭后码仍有效但进不来。",
+  "share.allowJoinHint": "打开后朋友可用邀请码加入（最多 10 人）；关闭后码仍有效但无法进入",
   "share.members": "同行成员",
   "share.admin": "管理员",
   "share.you": "我",
@@ -112,7 +112,7 @@ const zhCore = {
   "share.notMember": "不是这趟旅途的成员",
   "share.cannotKickSelf": "不能移出自己，请使用离开",
   "share.invalidShare": "共享设置无效",
-  "share.actionFailed": "操作失败",
+  "share.actionFailed": "操作失败，请重试",
 
   "album.back": "旅途",
   "album.addPhotos": "上传照片",
