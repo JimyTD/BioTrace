@@ -1,0 +1,168 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<title>collection · 逐条审阅</title>
+<style>
+  :root{--paper:#f6f2e9;--ink:#2a241c;--muted:#857a67;--line:#ddd4c2;--warn:#c2703c;--ok:#5c7a4a;--red:#b03a2e;--green:#2F4A3C}
+  *{box-sizing:border-box}
+  body{margin:0;padding:26px 30px 60px;background:var(--paper);color:var(--ink);font:15px/1.7 "PingFang SC","Microsoft YaHei",system-ui,sans-serif}
+  h1{font-size:20px;margin:0 0 4px}
+  .sub{color:var(--muted);font-size:13px;margin:0 0 6px}
+  h2{font-size:15.5px;margin:28px 0 8px;padding-bottom:6px;border-bottom:1px solid var(--line)}
+  h3{font-size:14px;margin:18px 0 4px}
+  table{width:100%;border-collapse:collapse;font-size:13.5px;background:#fffdf7;margin-top:8px}
+  th,td{border:1px solid var(--line);padding:7px 10px;text-align:left;vertical-align:top}
+  th{background:#efe9dc;font-weight:600;color:var(--muted);font-size:12.5px}
+  td.k{font-family:ui-monospace,Consolas,monospace;font-size:12px;color:var(--muted)}
+  td.pt{font-family:ui-monospace,Consolas,monospace;font-size:11px;color:var(--muted)}
+  .now{color:var(--ink)} .new{color:var(--ok);font-weight:600} .del{color:var(--red);text-decoration:line-through}
+  .why{color:var(--muted);font-size:12.5px}
+  .box{background:#fffdf7;border:1px solid var(--line);border-left:3px solid var(--green);padding:11px 14px;margin:12px 0;font-size:13.5px}
+  .box.w{border-left-color:var(--warn)} .box.d{border-left-color:var(--red)}
+  .box b{color:var(--green)} .box.w b{color:var(--warn)} .box.d b{color:var(--red)}
+  code{font-family:ui-monospace,Consolas,monospace;font-size:12px;background:#efe9dc;padding:1px 4px;border-radius:3px}
+  .keep{font-size:13px;line-height:2;background:#fffdf7;border:1px solid var(--line);border-radius:6px;padding:12px 15px;margin:8px 0}
+  .keep .k{font-family:ui-monospace,Consolas,monospace;font-size:11.5px;color:var(--muted)}
+  .keep b{color:var(--green)}
+  .dim{color:var(--muted)}
+</style>
+</head>
+<body>
+
+<h1>collection · 逐条审阅</h1>
+<p class="sub">26 条 · 跨 6 个页面 · <b>状态：①②③ 已落（提交待回填）；④ 三句待你点头</b></p>
+
+<div class="box">
+  <b>先说结论：这一族比前几个干净。</b>三条术语线各自统一，没有互相打架：<br>
+  · <b>收录</b>：已收录 / 首次收录 / 加载图鉴失败<br>
+  · <b>遇见</b>：还没有遇见 / 历次遇见<br>
+  · <b>点亮</b>：整册点亮 / 未点亮 / 已点亮 {count} 界<br>
+  问题集中在<b>空态句式</b>与<b>两条被共用的文案</b>上。
+</div>
+
+<h2>〇、真实页面（不是示意图）</h2>
+<p class="sub">无头 Edge 跑 <code>127.0.0.1:5173</code> + 演示库，清透皮肤。</p>
+<div style="display:flex;gap:18px;flex-wrap:wrap;margin-top:8px">
+  <div>
+    <p class="sub" style="margin:0 0 6px">图鉴首页 <code>/collection</code></p>
+    <img src="shots/coll-index.png" alt="图鉴首页" style="width:290px;border:1px solid #ddd4c2;border-radius:8px">
+  </div>
+  <div>
+    <p class="sub" style="margin:0 0 6px">物种索引 <code>/collection/species</code></p>
+    <img src="shots/coll-species.png" alt="物种索引" style="width:290px;border:1px solid #ddd4c2;border-radius:8px">
+  </div>
+</div>
+
+<h2>一、改动 4 组（涉及 6 条 key）</h2>
+
+<h3>① <code>collection.empty</code> 被两处共用，其中一处指错路</h3>
+<table>
+<tr><th style="width:30%">渲染点</th><th>现状</th></tr>
+<tr><td class="pt">CollectionSpeciesPage.tsx:101<br>（物种索引 · 一条都没收录）</td><td class="now">还没有遇见。去旅途里拍点什么。</td></tr>
+<tr><td class="pt">CollectionSpeciesCardPage.tsx:190<br>（物种卡 · 「历次遇见」为空）</td><td class="now">还没有遇见。去旅途里拍点什么。</td></tr>
+</table>
+<div class="box d">
+  <b>查明结论：这个空态真的会出现，A 不成立。</b>根因是<b>两边的「属于你的」定义不一样</b>：<br>
+  · <code>rebuildCollectionTaxonForUser</code>（决定 entry 在不在，<code>shared-progress.ts:146-183</code>）：只按 <code>userId + taxonKey + status='settled'</code>，<b>不看旅途</b>；<br>
+  · <code>sightingsForTaxon</code>（决定历次遇见，<code>routes/collection.ts:104-129</code>）：按 <code>tripId ∈ 你所在的旅途</code> 查。<br>
+  所以「有收录就有历次遇见」不成立——退出旅途等情况下，entry 还在、sightings 却为空。<br><br>
+  <b>实测（不是推理）</b>：把演示库里一条已收录观察的 <code>trip_id</code> 挪到一个不存在的旅途，再打开物种卡——<br>
+  <img src="shots/species-empty-sightings.png" alt="物种卡空态实测" style="width:280px;margin:8px 0;border:1px solid #ddd4c2;border-radius:8px"><br>
+  卡上写着「首次收录 2026/8/31」，下面却是「还没有遇见。去旅途里拍点什么。」<br><br>
+  <b>所以走 B，已落</b>：新增固定区 <code>collection.speciesSightingsEmpty</code>「还没有别的遇见」（用同族的「遇见」，不再指错路），
+  <code>CollectionSpeciesCardPage.tsx:190</code> 改指它。
+</div>
+
+<h3>② 空态句式不一：同族里两条是「单句 + 句号」</h3>
+<table>
+<tr><th style="width:34%">key</th><th style="width:34%">现值</th><th>建议</th></tr>
+<tr><td class="k">collection.volumesEmpty</td><td class="now">还没有套册。</td><td class="new">还没有套册</td></tr>
+<tr><td class="k">collection.speciesNoMatch</td><td class="now">没有匹配的收录。</td><td class="new">没有匹配的收录</td></tr>
+<tr><td class="k">collection.empty</td><td class="why">还没有遇见。去旅途里拍点什么。（两段 → 句号合规）</td><td class="why">—</td></tr>
+<tr><td class="k">collection.petsEmpty</td><td class="why">还没有宠物收录。拍到家养动物就会出现在这里。（两段 → 句号合规）</td><td class="why">—</td></tr>
+</table>
+<div class="box">
+  <b>理由</b>：规则 1——只有「多个各自独立的信息单元」才用句号。同族另两条空态是两段（陈述 + 出路）所以带句号；
+  这两条是单句，句号去掉才对得上。
+</div>
+
+<h3>③ <code>speciesCount</code> 与 <code>petsCount</code> 两条同文案</h3>
+<table>
+<tr><th style="width:34%">key</th><th style="width:22%">现值</th><th>渲染点</th></tr>
+<tr><td class="k">collection.speciesCount</td><td class="now">{count} 种</td><td class="pt">CollectionPage.tsx:242（「已收录」行右）</td></tr>
+<tr><td class="k">collection.petsCount</td><td class="now">{count} 种</td><td class="pt">CollectionPage.tsx:264（「宠物」行右）</td></tr>
+</table>
+<div class="box">
+  <b>建议</b>：合并成一条（都在固定区，不涉及主题覆盖粒度）。<br>
+  <b>理由</b>：同一句话、同一个位置（两行右侧的计数），留两个 key 只会日后改一个忘一个。
+</div>
+
+<h3>④ <code>collection.lede</code>：「证书」是清透的说法，但这条两套皮肤都显示</h3>
+<table>
+<tr><th style="width:30%">key</th><th style="width:34%">现值</th><th>渲染点</th></tr>
+<tr><td class="k">collection.lede</td><td class="now">收下的证书，都在这里。</td><td class="pt">CollectionPage.tsx:155（图鉴首页 lede）</td></tr>
+</table>
+<div class="box w">
+  <b>事实</b>：这条在<b>可文案区</b>，但两套皮肤的覆盖表里都没有它——所以现在<b>日光用户也看到「收下的证书」</b>。<br>
+  <b>你说三条都重写。这是我的稿</b>——每条用各层自己的动词（基础表「收录」/ 清透「收下」/ 日光「入册」），这样三层各说各的话、不会互相串味：
+</div>
+<table>
+<tr><th style="width:26%">层</th><th style="width:34%">现在</th><th>新稿</th></tr>
+<tr><td>基础表（常规兜底）</td><td class="now">收下的证书，都在这里。</td><td class="new">你收录的，都在这里。</td></tr>
+<tr><td>清透 <code>voices/clear.ts</code></td><td class="why">无覆盖 → 显示基础表</td><td class="new">收下的都在这里，随时可以翻看。</td></tr>
+<tr><td>日光 <code>voices/daylight.ts</code></td><td class="why">无覆盖 → 显示基础表</td><td class="new">入册的图版，都收在这里。</td></tr>
+</table>
+<div class="box d">
+  <b>这三句等你点头再落</b>（创作类文案不拍板不动生产文件）。要改哪句直接说。
+</div>
+
+<h2>二、保留 20 条（逐条展开，按类别分组）</h2>
+<p class="sub">每行：<code>key</code> · 文案 · 渲染点 · 判断依据</p>
+<div class="keep">
+<b>图鉴首页（6）</b><br>
+<span class="k">collection.title</span>「图鉴」— <code>CollectionPage.tsx:154</code> h1（也作套册页的兜底标题 <code>CollectionVolumePage.tsx:236</code>）— 页面名，两个字<br>
+<span class="k">collection.volumeProgress</span>「{lit}/{total}」— <code>CollectionPage.tsx:214</code>、<code>CollectionVolumePage.tsx:229</code> — 纯数值，不解释<br>
+<span class="k">collection.volumeDone</span>「整册点亮」— 同上两处，点亮满册时替掉数值 — <b>与 <code>settle.volumeCeremonyCompleteTitle</code> 同文案，但不合并</b>：它在可文案区，合并进固定区会丢掉主题覆盖粒度（规范 §二）<br>
+<span class="k">collection.volumeStampEmpty</span>「未点亮」— <code>CollectionVolumePage.tsx:294</code> 空格子的 <code>title</code> — 两字，不解释<br>
+<span class="k">collection.treeCount</span>「已点亮 {count} 界」— <code>CollectionPage.tsx:285</code> — 「界」是物种树的术语，如实<br>
+<span class="k">collection.speciesTitle</span>「已收录」— <code>CollectionPage.tsx:239</code> 行标签、<code>CollectionSpeciesPage.tsx:94</code> h1、<code>CollectionSpeciesCardPage.tsx:131,141</code> 返回标签与兜底标题 — 四个位置同一个词，是同一个概念<br>
+<br>
+<b>导航 / 返回（1）</b><br>
+<span class="k">collection.volumeBack</span>「图鉴」— 4 处返回标签（<code>CollectionVolumePage.tsx:213</code>、<code>CollectionSpeciesPage.tsx:92</code>、<code>CollectionPetsPage.tsx:54</code>、<code>SpeciesTree3D.tsx:157</code>）— 四处都回图鉴，用同一个词是对的（key 名叫 volumeBack 但文案是「图鉴」，名字与用途不符，属命名问题、不是文案问题，本轮不动）<br>
+<br>
+<b>筛选 / 排序（5）</b><br>
+<span class="k">collection.speciesSearch</span>「筛选名字」— <code>CollectionSpeciesPage.tsx:112</code> 输入框 placeholder — 说清输入框收什么<br>
+<span class="k">collection.speciesFilterAll</span>「全部」— <code>:122</code> 稀有度筛选第一个 chip — 两字<br>
+<span class="k">collection.speciesSortRecent</span>「最近」· <span class="k">collection.speciesSortRarity</span>「稀有度」· <span class="k">collection.speciesSortName</span>「名字」— <code>:80-82</code> 排序三选 — 三个都是名词，成套<br>
+<br>
+<b>卡片（3）</b><br>
+<span class="k">collection.speciesFirstCollected</span>「首次收录 {date}」— <code>CollectionSpeciesCardPage.tsx:183</code>、<code>CollectionPetCardPage.tsx:192</code> — 事实 + 日期<br>
+<span class="k">collection.speciesSightings</span>「历次遇见」— <code>CollectionSpeciesCardPage.tsx:188</code> 小节标题 — 「遇见」这条术语线的词<br>
+<span class="k">collection.petsSightingCount</span>「{count} 次」— <code>CollectionPetsPage.tsx:95</code> 宠物卡角标 — 与「{count} 种」区分得开（种 = 种类数，次 = 次数）<br>
+<br>
+<b>宠物（2）</b><br>
+<span class="k">collection.petsTitle</span>「宠物」— <code>CollectionPetsPage.tsx:56</code> h1、<code>CollectionPage.tsx:261</code> 行标签、<code>CollectionPetCardPage.tsx:52,141</code> — 同 speciesTitle，一个概念一个词<br>
+<span class="k">collection.petsEmpty</span>「还没有宠物收录。拍到家养动物就会出现在这里。」— <code>CollectionPetsPage.tsx:63</code> — 同族空态里写得最好的一条（陈述 + 出路，句号合规）<br>
+<br>
+<b>物种树（1）</b><br>
+<span class="k">collection.treeTitle</span>「物种树」— <code>CollectionPage.tsx:282</code> 行标签、<code>CollectionSpeciesCardPage.tsx:141</code>、<code>CollectionPetCardPage.tsx:49</code> 返回标签 — 页面名<br>
+<br>
+<b>失败态（2）</b><br>
+<span class="k">collection.loadFailed</span>「加载图鉴失败」— 4 处 catch 兜底（<code>CollectionPage.tsx:83</code>、<code>CollectionTreePage.tsx:73</code>、<code>CollectionSpeciesPage.tsx:53</code>、<code>CollectionPetsPage.tsx:31</code>）— 最短的真失败句<br>
+<span class="k">collection.volumesLoadFailed</span>「加载套册失败」— <code>CollectionVolumePage.tsx:105,107</code> — 比上一条具体（这一页就是套册）
+</div>
+
+<h2>三、要你定</h2>
+<div class="box d">
+  ① 物种卡那个空态：<b>A 删分支</b>（我先核接口确认走不到）还是 <b>B 拆 key 另给一句</b>？<br>
+  ② 两条单句空态去掉句号——认不认？<br>
+  ③ <code>speciesCount</code> 与 <code>petsCount</code> 合并——认不认？<br>
+  ④ 日光的 <code>collection.lede</code> 要不要自己的说法？（要的话你给句子，或我先写一稿给你挑；不要就共用这一句。）
+</div>
+<p style="margin-top:16px;font-size:13px;color:var(--muted)">
+  本页零改动。定了我改 <code>zh.ts</code>（+ 视情况 <code>CollectionSpeciesCardPage.tsx</code> 与 <code>voices/daylight.ts</code>），跑 <code>check:copy</code> 与 <code>check-dead-keys</code>，单独提交。
+</p>
+
+</body>
+</html>

@@ -187,7 +187,7 @@ export default function CollectionSpeciesCardPage() {
 
           <h2 className="section-title">{t("collection.speciesSightings")}</h2>
           {sightings.length === 0 ? (
-            <p className="muted">{t("collection.empty")}</p>
+            <p className="muted">{t("collection.speciesSightingsEmpty")}</p>
           ) : (
             <div className="species-sightings">
               {sightings.map((item) => (

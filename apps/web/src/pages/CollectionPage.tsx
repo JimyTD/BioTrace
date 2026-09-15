@@ -261,7 +261,7 @@ export default function CollectionPage() {
             <span>{t("collection.petsTitle")}</span>
             <span className="me-row-side">
               <span className="muted">
-                {t("collection.petsCount", { count: petCount })}
+                {t("collection.speciesCount", { count: petCount })}
               </span>
               <span className="me-row-go">
                 ›

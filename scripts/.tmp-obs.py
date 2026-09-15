@@ -46,6 +46,29 @@ def main() -> None:
         conn.execute("update observations set error = 'identify_keepsake', notes = ? where id = ?", (notes, full[0]))
         conn.commit()
         print("已改为留影档:", full[0], "| notes 长度:", len(notes))
+    if args and args[0] == "unlink":
+        # 实验：把某条已收录观察挪到一个不存在的旅途 → entry 仍在（rebuild 不看旅途），
+        # 但 sightings 查「你所在的旅途」就查不到 → 物种卡的「历次遇见」会空
+        obs_id = args[1]
+        row = conn.execute(
+            "select id, trip_id, taxon_key from observations where id like ?", (obs_id + "%",)
+        ).fetchone()
+        if not row:
+            print("没找到", obs_id)
+            return
+        entry = conn.execute(
+            "select id from collection_entries where taxon_key = ?", (row[2],)
+        ).fetchone()
+        conn.execute("update observations set trip_id = 'zzz-nonexistent' where id = ?", (row[0],))
+        conn.commit()
+        print("原 trip_id:", row[1])
+        print("观察:", row[0], "| taxon:", row[2])
+        print("物种卡:", "/collection/species/" + (entry[0] if entry else "(无 entry)"))
+    if args and args[0] == "relink":
+        obs_id, trip = args[1], args[2]
+        conn.execute("update observations set trip_id = ? where id like ?", (trip, obs_id + "%"))
+        conn.commit()
+        print("已恢复 trip_id =", trip)
     if args and args[0] == "settled":
         obs_id = args[1]
         conn.execute(
