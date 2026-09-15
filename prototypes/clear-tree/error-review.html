@@ -31,7 +31,7 @@
 <body>
 
 <h1>error · 逐条审阅（重出）</h1>
-<p class="sub">30 条 · 实算有引用、无死 key · <b>状态：待拍板，本页零改动</b></p>
+<p class="sub">30 条 → <b>24 条</b> · <b>状态：已落（<code>cdbfa40</code>）</b>——8 条改动全部落完并提交，本页自此是记录，不再是待批提案</p>
 
 <div class="box">
   <b>这个模块的特殊性（2026-09-08 你定的红字纪律）</b>：它是全表唯一<b>混装两类东西</b>的模块——
@@ -116,6 +116,27 @@
   <b>代价（与 detail 那次同一代价）</b>：老数据里 <code>notes</code> 为空时，那几处就没有理由句——详情页的理由块<b>已经不渲染空</b>
   （<code>softReasonText()</code> 返回 null，<code>ObservationDetailPage.tsx</code> 有值才画），不会露出空白。
   <span class="dim">注：<code>eligibility.ts:98</code> 用的是 <code>error.identifyGenericFailed</code>「识别失败了喂」——那条是你定的情绪缓冲样例，保留，那处也只把兜底改成空。</span>
+</div>
+
+<h2>一·附：⑥ 的代价——新老数据在页面上的区别（真截图）</h2>
+<div class="box">
+  ⑥ 删掉兜底后，<b>老数据</b>（模型没写理由、<code>notes</code> 为空）那几处会少一行理由句。下面是真机截图
+  （无头 Edge 跑 <code>127.0.0.1:5173</code> + 演示库，同一条观察、只改 <code>notes</code>）：
+</div>
+<div style="display:flex;gap:18px;flex-wrap:wrap;margin-top:10px">
+  <div>
+    <p class="sub" style="margin:0 0 6px"><b>老数据</b>（notes 为空）——那行不出现，页面直接到「记录」</p>
+    <img src="shots/keepsake-old.png" alt="老数据：留影档没有理由句" style="width:300px;border:1px solid #ddd4c2;border-radius:8px">
+  </div>
+  <div>
+    <p class="sub" style="margin:0 0 6px"><b>新数据</b>（模型写了理由）——多一行「看起来是个普通茶杯，没有找到生物」</p>
+    <img src="shots/keepsake-new.png" alt="新数据：留影档带理由句" style="width:300px;border:1px solid #ddd4c2;border-radius:8px">
+  </div>
+</div>
+<div class="box w">
+  <b>结论</b>：老数据那处<b>没有空白、没有占位</b>——详情页的理由块有值才画（<code>softReasonText()</code> 返回 null 时不渲染），页面直接往下走。
+  新数据由 prompt 保证必填（<code>prompt.ts:63</code>）。<br>
+  <span class="dim">演示做法：把演示库里一条 <code>settled</code> 观察临时改成留影档，先截 <code>notes</code> 为空、再截 <code>notes</code> 有值，随后还原（脚本 <code>scripts/.tmp-obs.py</code>）。</span>
 </div>
 
 <h2>二、保留 22 条（逐条展开，按类别分组）</h2>
