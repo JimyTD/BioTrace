@@ -81,7 +81,6 @@ export default function CollectionPetsPage() {
                 className="pet-plate"
                 to={`/collection/pets/${entry.id}`}
                 onClick={() => saveContentScroll("collection-pets")}
-                aria-label={`${name}，${t("collection.petsSightingCount", { count })}`}
               >
                 <span className="pet-plate-mount" aria-hidden />
                 <span className={sheetClass(faces.length)}>

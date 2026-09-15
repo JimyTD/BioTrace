@@ -115,10 +115,6 @@ const zhCore = {
   "share.actionFailed": "操作失败",
 
   "album.back": "旅途",
-  "album.liftPhoto": "拿起这张",
-  /* 相册格的按钮名（aria-label）：读屏念的，不走主题覆盖——
-     「请过目」「启封」脱离封条这个视觉隐喻单独听没有信息 */
-  "album.openObservation": "看看是什么",
   "album.addPhotos": "上传照片",
   "album.upload": "上传并识别",
   "album.uploading": "上传中…",
@@ -197,7 +193,6 @@ const zhCore = {
   "collection.volumesEmpty": "还没有套册。",
   "collection.volumesLoadFailed": "加载套册失败",
   "collection.volumeProgress": "{lit}/{total}",
-  "collection.volumeOpen": "打开套册",
   "collection.volumeBack": "图鉴",
   "collection.speciesTitle": "已收录",
   "collection.speciesCount": "{count} 种",
@@ -230,7 +225,6 @@ const zhCore = {
   "tree3d.sheetSum": "这一支下有 {count} 项收录",
   "tree3d.sheetCap": "（显示前 {shown} 项）",
   "tree3d.unnamed": "未命名",
-  "tree3d.close": "关闭",
   "tree3d.webgl2": "此设备不支持 WebGL2",
   "tree3d.buildFailed": "建树失败",
   "tree3d.webglFailed": "WebGL 初始化失败",
@@ -276,7 +270,6 @@ const zhCore = {
   "volume.woodland_edge.slot.small_carnivoran": "中小型食肉",
 
   "map.openTrip": "打开所属旅途",
-  "map.openDetail": "查看详情",
   "map.loadFailed": "地图加载失败",
   "map.observationFallback": "观察",
   /** 天地图 attribution；审图号以官网首页 mapdrawingApprovalNumber 为准，换号时改这里。 */
@@ -786,7 +779,6 @@ export const zhFlavor = {
   "collection.empty": "还没有遇见。去旅途里拍点什么。",
   "collection.volumeDone": "整册点亮",
   "collection.volumeStampEmpty": "未点亮",
-  "collection.stampLift": "拿起细看",
   "collection.speciesSightings": "历次遇见",
   "tree3d.statEmpty": "等待第一次相遇",
   "tree3d.noFootprint": "尚无足迹",

@@ -170,7 +170,6 @@ export default function CollectionPage() {
                   type="button"
                   className={`volume-tile${sourceId === vol.id ? " is-open-source" : ""}`}
                   data-volume-id={vol.id}
-                  aria-label={t("collection.volumeOpen")}
                   onPointerDown={(e) => {
                     const cover = e.currentTarget.querySelector(".volume-tile-cover");
                     if (cover instanceof HTMLElement) {

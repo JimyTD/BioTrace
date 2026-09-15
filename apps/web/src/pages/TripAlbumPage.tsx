@@ -660,7 +660,6 @@ export default function TripAlbumPage({ userId }: { userId: string }) {
             <button
               type="button"
               className="film-tile-link"
-              aria-label={liftable(obs) ? t("album.liftPhoto") : t("album.openObservation")}
               onPointerDown={(e) => {
                 const windowEl = e.currentTarget.querySelector(".film-tile-window");
                 if (windowEl instanceof HTMLElement && liftable(obs)) {

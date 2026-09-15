@@ -55,7 +55,7 @@ export default function SettleArtPreviewPage() {
         <p className="lede">只看叠层效果，不走识别接口。点阶段切换封缄 / 揭示 / 展出。</p>
       </header>
 
-      <div className="settle-preview-phases" role="tablist" aria-label="开包阶段">
+      <div className="settle-preview-phases" role="tablist">
         {PHASES.map((id) => (
           <button
             key={id}

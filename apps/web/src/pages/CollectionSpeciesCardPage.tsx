@@ -156,7 +156,6 @@ export default function CollectionSpeciesCardPage() {
               type="button"
               className={`species-card-cover${liftSourceId === entry.coverObservationId ? " is-lift-source" : ""}`}
               data-obs-id={entry.coverObservationId}
-              aria-label={t("collection.stampLift")}
               onPointerDown={(e) => {
                 setPhotoLiftHandoff({
                   observationId: entry.coverObservationId!,
@@ -197,7 +196,6 @@ export default function CollectionSpeciesCardPage() {
                   type="button"
                   className={`species-sighting${liftSourceId === item.observationId ? " is-lift-source" : ""}`}
                   data-obs-id={item.observationId}
-                  aria-label={t("collection.stampLift")}
                   onPointerDown={(e) => {
                     const media = e.currentTarget.querySelector(".species-sighting-photo");
                     if (!(media instanceof HTMLElement)) return;

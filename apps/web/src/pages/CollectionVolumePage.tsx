@@ -264,7 +264,6 @@ export default function CollectionVolumePage() {
                     type="button"
                     className={`stamp stamp-lit${sourceHidden ? " is-lift-source" : ""}`}
                     data-obs-id={slot.coverObservationId}
-                    aria-label={t("collection.stampLift")}
                     onPointerDown={(e) => {
                       const media = e.currentTarget.querySelector(".stamp-face");
                       if (!(media instanceof HTMLElement)) return;

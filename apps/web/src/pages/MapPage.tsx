@@ -209,7 +209,6 @@ export default function MapPage() {
       el.type = "button";
       el.className = "map-dot";
       el.dataset.obsId = obs.id;
-      el.setAttribute("aria-label", obsTitle(obs));
       el.addEventListener("click", (ev) => {
         ev.stopPropagation();
         selectObservation(obs);
@@ -236,7 +235,7 @@ export default function MapPage() {
       {error ? <p className="map-empty error">{error}</p> : null}
       {sheet ? (
         <div className="map-sheet" ref={sheetRef}>
-          <Link className="map-sheet-main" to={obsHref(sheet)} aria-label={t("map.openDetail")}>
+          <Link className="map-sheet-main" to={obsHref(sheet)}>
             <img className="map-sheet-thumb" src={sheet.displayUrl} alt="" />
             <span className="map-sheet-copy">
               <strong>{obsTitle(sheet)}</strong>

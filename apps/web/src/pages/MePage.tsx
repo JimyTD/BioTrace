@@ -69,7 +69,7 @@ export default function MePage({
         </p>
       ) : null}
 
-      <nav className="me-menu" aria-label={t("me.title")}>
+      <nav className="me-menu">
         <Link className="me-row" to="/me/security">
           <MeRowIcon name="security" />
           <span>{t("me.accountSecurity")}</span>

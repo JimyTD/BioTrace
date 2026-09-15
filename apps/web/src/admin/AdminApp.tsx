@@ -66,7 +66,7 @@ function AdminStoredPhoto({ src, variant }: { src: string; variant: "thumb" | "d
 
   const lightbox = open
     ? createPortal(
-        <div className="admin-lightbox" role="dialog" aria-modal="true" aria-label={t("admin.photo.stored")}>
+        <div className="admin-lightbox" role="dialog" aria-modal="true">
           <div className="admin-lightbox-bar">
             <span>
               {size
@@ -101,7 +101,6 @@ function AdminStoredPhoto({ src, variant }: { src: string; variant: "thumb" | "d
         className={variant === "thumb" ? "admin-photo-btn admin-photo-btn-thumb" : "admin-photo-btn admin-photo-btn-detail"}
         onClick={() => setOpen(true)}
         title={t("admin.photo.open")}
-        aria-label={t("admin.photo.open")}
       >
         <img src={src} alt="" className={variant === "thumb" ? "admin-thumb" : "admin-photo-preview"} />
       </button>

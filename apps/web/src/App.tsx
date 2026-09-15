@@ -190,7 +190,7 @@ function AppShell({
             </PageOverlay>
           ) : null}
         </main>
-        <nav className="nav" aria-label={t("app.name")}>
+        <nav className="nav">
           <NavLink to="/" end>
             {t("nav.trips")}
           </NavLink>

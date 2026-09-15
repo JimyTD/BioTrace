@@ -189,7 +189,7 @@ def build() -> str:
     body = "\n  ".join(parts)
     return (
         f'<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 {CANVAS:.0f} {CANVAS:.0f}" '
-        f'fill="currentColor" role="img" aria-label="BioTrace">\n  {body}\n</svg>\n'
+        f'fill="currentColor">\n  {body}\n</svg>\n'
     )
 
 
@@ -217,7 +217,7 @@ def main() -> None:
     )
     big = (
         f'<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 {CANVAS:.0f} {CANVAS:.0f}" '
-        f'fill="currentColor" role="img" aria-label="BioTrace">\n'
+        f'fill="currentColor">\n'
         f"  {framed()}\n"
         f'  <g transform="translate({c} {c}) scale({SNAIL_IN_FRAME}) translate({-c} {-c})">\n'
         f"  {inner}\n  </g>\n</svg>\n"
@@ -240,7 +240,7 @@ def main() -> None:
     fit = (STRIP_GAP - 6) / MARK_H
     band = (
         f'<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 {CANVAS:.0f} {CANVAS:.0f}" '
-        f'fill="currentColor" role="img" aria-label="BioTrace">\n'
+        f'fill="currentColor">\n'
         f"  {strip()}\n"
         f'  <g transform="translate({c} {c}) scale({fit:.3f}) translate({-c} {-c})">\n'
         f"  {inner}\n  </g>\n</svg>\n"

@@ -116,7 +116,7 @@ export default function CollectionSpeciesPage() {
               autoComplete="off"
             />
             {rarityChips.length > 1 ? (
-              <div className="species-chips" role="group" aria-label={t("collection.speciesSortRarity")}>
+              <div className="species-chips" role="group">
                 <button
                   type="button"
                   className={`species-chip${rarityFilter === null ? " is-on" : ""}`}
@@ -130,7 +130,6 @@ export default function CollectionSpeciesPage() {
                     key={r}
                     type="button"
                     className={`species-chip${rarityFilter === r ? " is-on" : ""}`}
-                    aria-label={rarityLabel(r)}
                     aria-pressed={rarityFilter === r}
                     onClick={() => setRarityFilter(rarityFilter === r ? null : r)}
                   >

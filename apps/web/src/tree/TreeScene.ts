@@ -2738,7 +2738,6 @@ export class TreeScene {
     el.style.visibility = "visible";
     el.style.pointerEvents = "auto";
     if (el.textContent !== text) el.textContent = text;
-    if (el.getAttribute("aria-label") !== text) el.setAttribute("aria-label", text);
   }
 
   // ═══════════════════════ 渲染 ═══════════════════════

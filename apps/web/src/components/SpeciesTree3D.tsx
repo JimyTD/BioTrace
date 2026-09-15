@@ -268,7 +268,7 @@ function NodeCard({
           <em>{node.lvl >= 6 ? t("tree3d.notCollectedSpecies") : t("tree3d.notCollectedBranch")}</em>
         </button>
       )}
-      <button type="button" className="tree3d-card-x" onClick={onClose} aria-label={t("tree3d.close")}>
+      <button type="button" className="tree3d-card-x" onClick={onClose}>
         ×
       </button>
     </div>
