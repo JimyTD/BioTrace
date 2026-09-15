@@ -326,11 +326,11 @@ node node_modules/tsx/dist/cli.mjs scripts/smoke-rarity-scale.ts
 ```
 
 断言两条：每个锚点与用户标注相差不超过一档；灭绝名录内的物种必须落 XR。
-基准是入库的固件 [`scripts/fixtures/rarity-anchors-glm-5.1.json`](../apps/api/scripts/fixtures/rarity-anchors-glm-5.1.json)
+基准是入库的固件 [`apps/api/scripts/fixtures/rarity-anchors-glm-5.1.json`](../apps/api/scripts/fixtures/rarity-anchors-glm-5.1.json)
 （2026-08-19 那轮验收的原始记录）。**固件必须入库**：`scripts/out/` 被 gitignore，
 拿「out/ 里最新一份」当基准的话换台机器就跑不起来，而且不同算法版本的记录回放必然失败，选错文件会得到假的 FAIL。
 
-只改了**题面**则回归看不出来（它回放的是已记录的模型答案）——题面改动用 `scripts/rarity-probe-axis.ts` 单题核。
+只改了**题面**则回归看不出来（它回放的是已记录的模型答案）——题面改动用 `apps/api/scripts/rarity-probe-axis.ts` 单题核。
 
 2026-08-19 · 62 锚点 · `glm-5.1` · 采样 3 次：**命中 38 / 62，≤1 档 62 / 62，无差两档以上**。
 驯化身份注入后回放同一份固件：命中 37 / 62（家猫因不再走 indoor 从 N 落到 R，标注本就写 N–R 均可），≤1 档仍 62 / 62。
@@ -383,8 +383,8 @@ computeSettle
 | [`introduced/`](../apps/api/src/introduced/) | 匹配与加载 |
 | [`introduced-index.json`](../apps/api/data/introduced-index.json) | 公开主索引：GRIIS Country Compendium（全球）+ GBIF GRIIS-China 覆盖 CN |
 | [`introduced-seed.json`](../apps/api/data/introduced-seed.json) | 手写补丁（漏种/别名，如清道夫） |
-| `scripts/build-introduced-index.ts` | 重建索引：`pnpm --filter @biotrace/api introduced:build`（可缓存 Compendium CSV） |
-| `scripts/smoke-introduced.mjs` | 命中/不命中冒烟（含 JP/US 样例） |
+| `apps/api/scripts/build-introduced-index.ts` | 重建索引：`pnpm --filter @biotrace/api introduced:build`（可缓存 Compendium CSV） |
+| `apps/api/scripts/smoke-introduced.mjs` | 命中/不命中冒烟（含 JP/US 样例） |
 
 名录口径：保留 Compendium 全部引入/外来记录（**不**仅 `isInvasive`）。TW/HK/MO 源行（若有）并入 `CN`，与结算 `iso3166` 一致。  
 图鉴：`GET /api/collection` 对野生种聚合「任意已结算**野生**观察曾 `alertIntroduced`」；宠物卡对驯养观察做同样聚合。驯养**不豁免**引入提示：家犬与狼同种，当地不产这种就亮。  

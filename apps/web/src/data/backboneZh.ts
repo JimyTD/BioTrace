@@ -28,7 +28,7 @@
  * 靠肉眼根本发现不了。第一版就写错了 17 个。
  *
  * ── GBIF 的分类和教科书不一样，别按常识填 ───────────────────
- * 实测（scripts/probe-rank.py）：
+ * 实测（scripts/probe-mixed-rank.py）：
  *   · **没有 Reptilia（爬行纲）** —— Squamata 有鳞、Testudines 龟鳖、
  *     Crocodylia 鳄、Sphenodontia 喙头 都是**纲**，直接挂在 Chordata 下
  *   · **没有 Actinopterygii（辐鳍鱼纲）** —— 鱼类的「目」（Cypriniformes

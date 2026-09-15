@@ -101,7 +101,7 @@ features 里完全没有的主题，等它落地后在 features 新建，不是�
 | 议题还在讨论、正式文档写不了 | 注释里**写清结论本身**（参数、口径、为什么），不写"见 wip/xxx" |
 | 确实需要指向讨论过程 | 用**不带路径**的说法，如"见物种树结构议题 §4.4"，并在正式文档里留一节承接 |
 
-**先例**：`treeModel.ts`、`export-backbone.py` 原引 `docs/wip/物种树-拍板铁律.md`，铁律迁进 `docs/features/物种树.md` 后注释已改指新位置。
+**先例**：`treeModel.ts`、`export-backbone.py` 原引 WIP 里那份「物种树拍板铁律」（该文件已随归档删除），铁律迁进 `docs/features/物种树.md` 后注释已改指新位置。
 
 ### 清理时的收尾动作
 

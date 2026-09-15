@@ -7,7 +7,7 @@
 > **快速试错场**（改渲染参数不必启动整个前端）。
 >
 > 还没拍板的（标签圆点 / 竖屏取景 / 中文补表）：见 docs/wip/ 下的物种树结构议题（仍在讨论）。
-> 已拍板与已落地的：见 [`docs/features/物种树.md`](../../../docs/features/物种树.md)。
+> 已拍板与已落地的：见 [`docs/features/物种树.md`](../../docs/features/物种树.md)。
 
 ## 怎么看
 
@@ -19,7 +19,7 @@ Web dev server 起着的话直接开 `http://127.0.0.1:5173/proto/clear-tree/dev
 - 总览：`http://127.0.0.1:5173/devpages/tree-2up.html`（右栏 v1 参照）
 - 各层级：`http://127.0.0.1:5173/devpages/tree-levels.html`（右栏 v2，按 `?lv=` 同深度下钻）
 - 大扇出两案：`http://127.0.0.1:5173/devpages/tree-fanout.html`（A / B / v2 三栏，见
-[`结构议题附录`](../../../docs/features/物种树.md)）
+[`结构议题附录`](../../docs/features/物种树.md)）
 - 标签全留 vs 降圆点：`http://127.0.0.1:5173/devpages/tree-labels.html`（左全留叠瓦，右 `?labels=old`）
 
 两页都由 dev server 挂出，不必另起静态服务器。
@@ -40,7 +40,6 @@ python -m http.server 8099
 | **`v2-roots.html`** | **视觉基准。** 三段式布局（树冠 / 近地 / 根系）的交互原型，单文件约 1900 行 vanilla WebGL2。正式实现是从它移植的 |
 | `device.html` | **手机尺寸预览。** 六种机型 + 横竖屏 + 并排对比桌面。关键：缩放作用在外层，iframe 里的 `innerWidth` 是**真实值**（393 而非缩放后），所以页面自己的响应式计算（`SQ` 压缩、标签排布）是真的 |
 | `v1-canopy.html` | 早期版本：只有树冠、没有根系。留作对照 |
-| `index.html` | v1 的旧副本，已无用 —— 可删 |
 
 ### `v2-roots.html` 的实验开关
 

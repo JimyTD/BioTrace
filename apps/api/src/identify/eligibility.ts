@@ -62,7 +62,8 @@ function looksHuman(result: IdentifyResult): boolean {
  * Gate before settle/rarity: only field organisms may become collectible
  * (alive or dead; empty shells count). Missing/invalid fields default to no.
  *
- * 器物词翻盘已于 2026-09-11 删除（见 docs/wip/识别链路-议题.md 议题3）。
+ * 器物词翻盘已于 2026-09-11 删除（闸门口径见 docs/SPEC.md §1.2 与
+ * docs/features/识图护栏.md §5）。
  * 原设计是「模型判活体但结论文字出现器物词时改判器物」，实测误伤远大于收益：
  * 布偶猫（真实猫品种）被「布偶」命中、真猫背上趴着玩具被「玩具」命中，
  * 而它防的「模型把毛绒熊标成活体」场景从未被观测到。
@@ -71,9 +72,9 @@ function looksHuman(result: IdentifyResult): boolean {
  * 软档规则（2026-09-07 拍板）：subject_kind 为 depiction_or_media / specimen、
  * 且模型给出了真实身份（非空 common_name_zh 或 scientific_name）、
  * 且有界（taxonomy.kingdom.name_la 非空）→ 识别放行为软档；
- * 没身份或没界 → 照旧拦死 identify_not_living。
+ * 没身份或没界 → 归留影档（2026-09-08 起不再有硬拦）。
  *
- * 翻盘收敛（2026-09-10 拍板，议题3）：代码凭关键词推翻模型结论，只在模型
+ * 翻盘收敛（2026-09-10 拍板）：代码凭关键词推翻模型结论，只在模型
  * 「错得很离谱」时才允许。模型若已给出界（kingdom 非空），说明它认定主体是真
  * 生物，此时禁止翻盘——这与 prompt 契约一致（不合格时 taxonomy 各级为 null）。
  */
