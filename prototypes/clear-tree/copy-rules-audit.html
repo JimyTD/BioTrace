@@ -1,0 +1,101 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<title>文案守则 · 逐条对</title>
+<style>
+  :root{
+    --paper:#f6f2e9; --ink:#2a241c; --muted:#857a67;
+    --line:#ddd4c2; --warn:#c2703c; --ok:#5c7a4a; --green:#2F4A3C; --red:#b03a2e;
+  }
+  *{box-sizing:border-box}
+  body{margin:0; padding:28px 32px 64px; background:var(--paper); color:var(--ink);
+       font:14.5px/1.7 "PingFang SC","Microsoft YaHei",system-ui,sans-serif}
+  h1{font-size:20px; margin:0 0 4px}
+  .sub{color:var(--muted); font-size:13px; margin:0 0 10px}
+  h2{font-size:15px; margin:30px 0 10px; padding-bottom:6px; border-bottom:1px solid var(--line)}
+  .box{background:#fffdf7; border:1px solid var(--line); border-left:3px solid var(--warn); padding:12px 15px; margin:14px 0; font-size:13.5px}
+  .box.g{border-left-color:var(--green)}
+  .box b{color:var(--warn)} .box.g b{color:var(--green)}
+  table{width:100%; border-collapse:collapse; font-size:13px; background:#fffdf7; margin-top:8px}
+  th,td{border:1px solid var(--line); padding:7px 9px; text-align:left; vertical-align:top}
+  th{background:#efe9dc; font-weight:600; color:var(--muted); font-size:12.5px}
+  td.r{width:22%; font-size:12.5px}
+  td.rule{width:38%}
+  .keep{color:var(--ok); font-weight:600}
+  .cut{color:var(--red); font-weight:600}
+  .doubt{color:var(--warn); font-weight:600}
+  code{font-family:ui-monospace,Consolas,monospace; font-size:11.5px; background:#efe9dc; padding:1px 4px; border-radius:3px}
+</style>
+</head>
+<body>
+
+<h1>文案守则 · 逐条对</h1>
+<p class="sub">把现存所有文案守则摆出来，一条条过。你的判断优先——这是你要亲自把关的那一步。</p>
+
+<div class="box">
+  <b>先记住你的洞察</b>：这些守则<b>大多也是踩坑记录堆出来的</b>，不是设计出来的。堆得越多，agent 越会「处处遵守」，
+  写出来越蹩脚——同一个需求，约束更少的模型反而更好。<b>所以这轮的目标是「砍」，不是「加」。</b>
+</div>
+
+<h2>A. 文案语感基准.md</h2>
+<table>
+<tr><th class="rule">原文</th><th class="r">我的判断</th></tr>
+<tr><td class="rule">对用户一律「你」，禁用「您」</td><td class="r"><span class="keep">留</span>。清晰、有用，不干扰创作。</td></tr>
+<tr><td class="rule">对生命一律「它」</td><td class="r"><span class="keep">留</span>。</td></tr>
+<tr><td class="rule">不出现昵称化（「小家伙」「这位」）</td><td class="r"><span class="keep">留</span>。</td></tr>
+<tr><td class="rule">黄金句式：现状句 + 行动句（<code>trips.empty</code> 为样板）</td><td class="r"><span class="doubt">存疑</span>。把一种句式封「黄金」，会让所有空态长成一个模子。</td></tr>
+<tr><td class="rule">界面句 ≤ 2 短句；单句静态字 ≤ 14，超了拆句或移固定区</td><td class="r"><span class="doubt">存疑</span>。这是 lint 级硬线，逼人「为短而断句」，正是蹩脚句的来源之一。</td></tr>
+<tr><td class="rule">仪式句允许 <code>·</code> 分隔，不按散文句法审</td><td class="r"><span class="keep">留</span>。</td></tr>
+<tr><td class="rule">句号收尾，禁感叹号；toast 可无标点</td><td class="r"><span class="cut">冲突</span>。与下面 C1「尽量不用句号」<b>直接打架</b>，必须二选一。</td></tr>
+<tr><td class="rule">疑问句只在真提问时用，不用反问做语气装饰</td><td class="r"><span class="keep">留</span>。</td></tr>
+<tr><td class="rule">五大隐喻家族白名单；<b>跨家族混搭禁止</b></td><td class="r"><span class="doubt">存疑</span>。「白名单 + 禁止混搭」是很重的约束，容易把句子锁进五套说法里。</td></tr>
+<tr><td class="rule">术语口径：统一「收录」；量词 格 / 本 / 项；项 ≠ 种</td><td class="r"><span class="keep">留</span>。术语统一是真有用。</td></tr>
+<tr><td class="rule">新增文案硬约束①：先查能不能复用 common，不许直接新建</td><td class="r"><span class="keep">留</span>。</td></tr>
+<tr><td class="rule">新增文案硬约束②：不做无意义兜底</td><td class="r"><span class="keep">留</span>（但「兜底」判断容易过头，见 C4）。</td></tr>
+<tr><td class="rule">lint 只拦 5 项（感叹号 / 您 / 静态字 / 家族组 / 占位符）；文采节奏意境人评</td><td class="r"><span class="keep">留</span>。这条本身是对的——关键是别拿 lint 当文采标准。</td></tr>
+</table>
+
+<h2>B. 文案分区.md</h2>
+<div class="box g">你已明说本轮不讨论分区，这组我原样摆着，不动。</div>
+<table>
+<tr><th class="rule">原文</th><th class="r">我的判断</th></tr>
+<tr><td class="rule">固定区判定三问（功能指代 / 事实合规 / 安全后果）</td><td class="r">本次不动</td></tr>
+<tr><td class="rule">四道闸门（结构 / 类型 / 运行时 / 校验）</td><td class="r">本次不动</td></tr>
+<tr><td class="rule">成套覆盖组（nav 四词、点亮族…要换全换）</td><td class="r">本次不动</td></tr>
+<tr><td class="rule">加新文案流程（判定 → 放对区 → 跑 check-voice）</td><td class="r">本次不动</td></tr>
+</table>
+
+<h2>C. 进度文档 · 文案纪律（本轮沿用）</h2>
+<table>
+<tr><th class="rule">原文</th><th class="r">我的判断</th></tr>
+<tr><td class="rule">C1 尽量不用句号（多段独立信息除外）</td><td class="r"><span class="cut">冲突</span>。与 A7「句号收尾」打架；且「尽量」被我当成硬线，砍出过干瘪句。</td></tr>
+<tr><td class="rule">C2 禁同义反复</td><td class="r"><span class="doubt">存疑</span>。我用它砍过好句（「界面轻到几乎不见」）。「反复」的界在哪，谁定？</td></tr>
+<tr><td class="rule">C3 亲切短句优于完整陈述</td><td class="r"><span class="doubt">存疑</span>。它可能正是「大白话」的源头——亲切 ≠ 短 ≠ 好。</td></tr>
+<tr><td class="rule">C4 说明性文案过「存在意义」三问，皆否 → 删</td><td class="r"><span class="doubt">存疑</span>。三问是<b>淘汰工具</b>，我用它否定过「识万物」这种好修辞。用错对象就变凶器。</td></tr>
+<tr><td class="rule">C5 事实正确 ≠ 需要告诉用户</td><td class="r"><span class="keep">留</span>。</td></tr>
+<tr><td class="rule">C6 与界面已有元素重复的文字删</td><td class="r"><span class="keep">留</span>（但同样容易过头）。</td></tr>
+<tr><td class="rule">C7 提案至少覆盖「删 / 合并 / 改措辞」三类</td><td class="r"><span class="keep">留</span>。这是审查方法，不是造句规则。</td></tr>
+<tr><td class="rule">C8 判据用于淘汰，不用于生成</td><td class="r"><span class="keep">留</span>。这条最关键，但我自己反复违反。</td></tr>
+</table>
+
+<h2>D. messages-glossary.mdc（机制类）</h2>
+<table>
+<tr><th class="rule">原文</th><th class="r">我的判断</th></tr>
+<tr><td class="rule">用户可见中文必须落 <code>packages/messages</code>，经 <code>t()</code></td><td class="r"><span class="keep">留</span>。工程机制，与创作无关。</td></tr>
+<tr><td class="rule">禁在业务代码硬编码用户可见中文</td><td class="r"><span class="keep">留</span>。</td></tr>
+<tr><td class="rule">voice 覆盖表只能写可文案区；改后跑 <code>check:copy</code></td><td class="r"><span class="keep">留</span>。</td></tr>
+</table>
+
+<div class="box">
+  <b>我这一遍读下来的总感觉</b>：真正「管创作」的那几条（A4 / A5 / A7 / A9 / C1 / C2 / C3 / C4）才是把人带沟里的，
+  它们大多是<b>审查尺子</b>，却被当成<b>造句模板</b>。机制类（B / D / 工程纪律）不干扰创作，可以留。
+  逐条怎么处置，你定。
+</div>
+
+<p style="margin-top:16px; font-size:13px; color:var(--muted)">
+  本页零改动。你一条条对，说「留 / 改 / 删」，我照着改文档。
+</p>
+
+</body>
+</html>

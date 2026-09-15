@@ -1,0 +1,230 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<title>auth.* 文案位置对照</title>
+<style>
+  :root{
+    --paper:#f6f2e9; --ink:#2a241c; --muted:#857a67;
+    --line:#ddd4c2; --warn:#c2703c; --ok:#5c7a4a;
+  }
+  *{box-sizing:border-box}
+  body{
+    margin:0; padding:28px 32px 64px;
+    background:var(--paper); color:var(--ink);
+    font:15px/1.7 "PingFang SC","Microsoft YaHei",system-ui,sans-serif;
+  }
+  h1{font-size:20px; margin:0 0 4px}
+  .sub{color:var(--muted); font-size:13px; margin:0 0 24px}
+  h2{
+    font-size:15px; margin:32px 0 12px; padding-bottom:6px;
+    border-bottom:1px solid var(--line);
+  }
+  .grid{display:grid; grid-template-columns:1fr 1fr; gap:18px}
+  .card{
+    background:#fffdf7; border:1px solid var(--line);
+    border-radius:5px; padding:14px 16px;
+  }
+  .card.flag{border-color:var(--warn); box-shadow:0 0 0 2px rgba(194,112,60,.13)}
+  .key{font-family:ui-monospace,Consolas,monospace; font-size:12.5px; color:var(--muted)}
+  .val{font-size:16px; margin:6px 0 8px}
+  .val em{background:#fff2c8; font-style:normal; padding:0 2px}
+  .meta{font-size:12.5px; color:var(--muted); margin:3px 0}
+  .meta b{color:var(--ink); font-weight:600}
+  .tags{margin-top:9px; display:flex; gap:6px; flex-wrap:wrap}
+  .tag{
+    font-size:11.5px; padding:1px 7px; border-radius:9px;
+    border:1px solid var(--line); color:var(--muted);
+  }
+  .tag.hot{color:var(--warn); border-color:var(--warn)}
+  .tag.ok{color:var(--ok); border-color:var(--ok)}
+  .act{
+    margin-top:10px; padding-top:9px; border-top:1px dashed var(--line);
+    font-size:13px;
+  }
+  .act .do{color:var(--warn); font-weight:600}
+  .note{
+    margin:16px 0 0; padding:12px 14px; background:#fffdf7;
+    border-left:3px solid var(--warn); font-size:13px;
+  }
+  code{
+    font-family:ui-monospace,Consolas,monospace; font-size:12px;
+    background:#efe9dc; padding:1px 4px; border-radius:3px;
+  }
+</style>
+</head>
+<body>
+
+<h1>auth.* 文案位置对照</h1>
+<p class="sub">37 条 · 全部有引用（死 key 0）· 橙框 = 本轮提议改动 · 电脑看更佳</p>
+
+<h2>一、品牌标语（跨页复用，最该先看）</h2>
+<div class="grid">
+
+  <div class="card flag">
+    <div class="key">auth.lede</div>
+    <div class="val">翻开相册，记下路上遇见的。</div>
+    <div class="meta"><b>渲染在哪</b>：登录页 139 行（login 模式标题下方）+ <b>下载页 42 行</b></div>
+    <div class="meta"><b>频率</b>：每次开 App / 下载页——<b>全表最高频之一</b></div>
+    <div class="meta"><b>架构问题</b>：它挂在 <code>auth</code> 区，却被下载页当品牌标语用</div>
+    <div class="tags"><span class="tag hot">跨模块挪用</span><span class="tag hot">带句号</span></div>
+    <div class="act"><span class="do">建议</span>：移到 <code>app.tagline</code> 旁边做品牌句，或新增 <code>app.lede</code>；去句号</div>
+  </div>
+
+  <div class="card flag">
+    <div class="key">app.tagline（对照）</div>
+    <div class="val">路上遇见的，都有名字</div>
+    <div class="meta"><b>关系</b>：这是真·品牌标语，与 <code>auth.lede</code> 语义几乎重复</div>
+    <div class="meta"><b>问题</b>：两句都在说「路上遇见的」，一个在 772 行一个在 774 行</div>
+    <div class="tags"><span class="tag hot">疑似重复</span></div>
+    <div class="act"><span class="do">待定</span>：两句都要，还是合一句？</div>
+  </div>
+
+</div>
+
+<h2>二、与 admin 区同值（可复用 common）</h2>
+<div class="grid">
+
+  <div class="card flag">
+    <div class="key">auth.passwordLabel</div>
+    <div class="val">密码</div>
+    <div class="meta"><b>同值</b>：<code>admin.password</code></div>
+    <div class="tags"><span class="tag">同值 2 处</span></div>
+    <div class="act"><span class="do">建议</span>：收进 common 复用（admin 区你已定跳过，但 auth 侧可改指）</div>
+  </div>
+
+  <div class="card flag">
+    <div class="key">auth.login</div>
+    <div class="val">登录</div>
+    <div class="meta"><b>同值</b>：<code>admin.loginAction</code></div>
+    <div class="tags"><span class="tag">同值 2 处</span></div>
+    <div class="act"><span class="do">建议</span>：同上</div>
+  </div>
+
+  <div class="card flag">
+    <div class="key">auth.loggingIn</div>
+    <div class="val">登录中…</div>
+    <div class="meta"><b>同值</b>：<code>admin.loggingIn</code></div>
+    <div class="tags"><span class="tag">同值 2 处</span></div>
+    <div class="act"><span class="do">建议</span>：同上</div>
+  </div>
+
+  <div class="card flag">
+    <div class="key">auth.resetAction</div>
+    <div class="val">重置密码</div>
+    <div class="meta"><b>同值</b>：<code>admin.resetPasswordAction</code></div>
+    <div class="tags"><span class="tag">同值 2 处</span></div>
+    <div class="act"><span class="do">建议</span>：同上</div>
+  </div>
+
+</div>
+
+<h2>三、带句号的（按你的纪律该去）</h2>
+<div class="grid">
+
+  <div class="card flag">
+    <div class="key">auth.devHint</div>
+    <div class="val">仅本机/调试可用。生产请使用邮箱与密码登录。</div>
+    <div class="meta"><b>渲染在哪</b>：登录页 270 行，开发登录按钮下方</div>
+    <div class="meta"><b>频率</b>：<b>仅开发/调试环境</b>——正式用户永远看不到</div>
+    <div class="tags"><span class="tag">极低频</span><span class="tag hot">带句号×2</span></div>
+    <div class="act"><span class="do">建议</span>：改「仅本机调试可用」——后半句「生产请用邮箱登录」是废话，开发者都懂</div>
+  </div>
+
+  <div class="card flag">
+    <div class="key">auth.registerLede</div>
+    <div class="val">填写邮箱与密码，创建账号。</div>
+    <div class="meta"><b>渲染在哪</b>：登录页 141 行（register 模式标题下）</div>
+    <div class="meta"><b>问题</b>：下方就是邮箱框+密码框+「创建账号」按钮，<b>三样全在界面上</b></div>
+    <div class="tags"><span class="tag hot">与界面重复</span><span class="tag hot">带句号</span></div>
+    <div class="act"><span class="do">建议</span>：删整条（符合「与界面已有元素重复就删」）</div>
+  </div>
+
+  <div class="card flag">
+    <div class="key">auth.resetSent</div>
+    <div class="val">若该邮箱已注册，你将收到重置码。请检查收件箱（含垃圾邮件）。</div>
+    <div class="meta"><b>渲染在哪</b>：API 138 行返回，前端提示条</div>
+    <div class="meta"><b>频率</b>：忘记密码时——低频但<b>用户正焦虑</b></div>
+    <div class="tags"><span class="tag">双句号</span><span class="tag ok">但合法</span></div>
+    <div class="act"><span class="do">判断</span>：两段独立信息（①已发送 ②查收件箱），<b>句号保留</b>——符合你规则四</div>
+  </div>
+
+  <div class="card flag">
+    <div class="key">auth.resetOk</div>
+    <div class="val">密码已更新，请用新密码登录。</div>
+    <div class="meta"><b>渲染在哪</b>：API 244 行</div>
+    <div class="meta"><b>问题</b>：「请用新密码登录」是废话——重置完当然是登新密码</div>
+    <div class="tags"><span class="tag hot">同义反复</span></div>
+    <div class="act"><span class="do">建议</span>：改「密码已更新」即可</div>
+  </div>
+
+</div>
+
+<h2>四、术语腔（低频 + 不能行动 → 按你的判据该用术语，现已是术语，OK）</h2>
+<div class="grid">
+
+  <div class="card">
+    <div class="key">auth.invalidEmail</div>
+    <div class="val">请输入有效邮箱</div>
+    <div class="meta"><b>频率</b>：填错时高频</div>
+    <div class="tags"><span class="tag ok">保留</span></div>
+    <div class="act">表单校验，短促直给，不动</div>
+  </div>
+
+  <div class="card">
+    <div class="key">auth.invalidRegister</div>
+    <div class="val">请填写有效邮箱，密码至少 8 位</div>
+    <div class="meta"><b>频率</b>：注册填错时</div>
+    <div class="tags"><span class="tag ok">保留</span></div>
+    <div class="act">一次说清两个约束，不动</div>
+  </div>
+
+  <div class="card">
+    <div class="key">auth.invalidCredentials</div>
+    <div class="val">邮箱或密码不正确</div>
+    <div class="meta"><b>频率</b>：登录失败，中频</div>
+    <div class="tags"><span class="tag ok">保留</span></div>
+    <div class="act">安全惯例不指明哪个错，不动</div>
+  </div>
+
+  <div class="card">
+    <div class="key">auth.rateLimited</div>
+    <div class="val">请求过于频繁，请稍后再试</div>
+    <div class="meta"><b>引用 5 处</b>——全表复用最多的错误之一</div>
+    <div class="tags"><span class="tag ok">保留</span></div>
+    <div class="act">5 个接口共用，不动</div>
+  </div>
+
+</div>
+
+<h2>五、邮件文案（不在 App 内，但用户会读到）</h2>
+<div class="grid">
+
+  <div class="card">
+    <div class="key">auth.resetMailSubject</div>
+    <div class="val">BioTrace 密码重置码</div>
+    <div class="meta"><b>位置</b>：邮件标题</div>
+    <div class="tags"><span class="tag ok">保留</span></div>
+    <div class="act">邮件标题要自明，不能太文艺，不动</div>
+  </div>
+
+  <div class="card">
+    <div class="key">auth.resetMailText / Html</div>
+    <div class="val">你的 BioTrace 密码重置码是：{code}\n\n15 分钟内有效。…</div>
+    <div class="meta"><b>位置</b>：邮件正文</div>
+    <div class="tags"><span class="tag ok">保留</span></div>
+    <div class="act">含时效与安全提示，都是必要信息，不动</div>
+  </div>
+
+</div>
+
+<p class="note">
+  <b>本轮结论</b>：auth 模块 37 条无死 key。真正值得动的只有三类——
+  ① <code>auth.lede</code> 被下载页挪用且挂在错区（还可能与 <code>app.tagline</code> 重复）；
+  ② <code>registerLede</code> 与界面三元素重复，该删；
+  ③ <code>devHint</code> / <code>resetOk</code> 有同义反复与废话。
+  带句号的只有这 4 条，其中 <code>resetSent</code> 是双独立信息，按你规则四该保留句号。
+</p>
+
+</body>
+</html>

@@ -1,0 +1,195 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>软档 / 留影 文案位置对照</title>
+<style>
+  * { box-sizing: border-box; }
+  body { margin:0; padding:24px; background:#f5f3ef; color:#22262b;
+    font-family:-apple-system,"Segoe UI","PingFang SC","Microsoft YaHei",sans-serif; line-height:1.6; }
+  h1 { font-size:20px; margin:0 0 4px; }
+  .sub { color:#6b7280; font-size:13px; margin-bottom:24px; }
+  .grid { display:grid; grid-template-columns:repeat(auto-fill,minmax(340px,1fr)); gap:20px; }
+  .card { background:#fff; border:1px solid #e3e0da; border-radius:12px; padding:16px; }
+  .card h2 { font-size:14px; margin:0 0 2px; }
+  .key { font-family:ui-monospace,Menlo,Consolas,monospace; font-size:11px; color:#8a6d3b;
+    background:#fdf6e3; padding:1px 5px; border-radius:4px; display:inline-block; margin-bottom:10px; }
+
+  .where { font-size:12px; color:#6b7280; margin-bottom:10px; padding-left:14px;
+    border-left:3px solid #d8d3ca; }
+  .where b { color:#444; font-weight:600; }
+
+  .trigger { font-size:11px; margin-bottom:12px; }
+  .tag { display:inline-block; padding:1px 7px; border-radius:10px; font-size:11px; }
+  .t-rare { background:#fde8e8; color:#a33; }
+  .t-mid  { background:#fdf1dc; color:#96650b; }
+  .t-often{ background:#e4f0e4; color:#3a6b3a; }
+
+  .mock { background:#faf8f5; border:1px dashed #d5cfc4; border-radius:8px;
+    padding:12px; margin-bottom:10px; }
+  .mock-label { font-size:10px; color:#9a948a; letter-spacing:.5px; margin-bottom:6px; }
+
+  .album-tile { width:104px; background:#fff; border:1px solid #ddd8cf; border-radius:6px;
+    padding:6px; text-align:center; }
+  .album-tile .ph { height:62px; background:linear-gradient(135deg,#cfd8cf,#aebba9);
+    border-radius:4px; margin-bottom:5px; }
+  .album-tile .nm { font-size:11px; font-weight:600; }
+  .album-tile .seal { font-size:10px; color:#8b8578; }
+
+  .detail-head { }
+  .detail-head .t { font-size:17px; font-weight:600; }
+  .seal-box { display:inline-block; border:1.5px solid #b9b3a6; color:#7a7466;
+    padding:1px 8px; border-radius:3px; font-size:11px; margin-right:5px; }
+  .badge-soft { display:inline-block; background:#eeece7; color:#6b6659;
+    padding:1px 7px; border-radius:9px; font-size:11px; }
+  .blurb-title { font-size:11px; color:#9a948a; margin-top:9px; }
+  .reason-block { background:#fff; border:1px solid #e6e2da; border-radius:5px;
+    padding:7px 9px; font-size:11px; margin-top:4px; }
+  .reason-title { color:#8b8578; font-size:10px; margin-bottom:2px; }
+
+  .cmp { font-size:12px; }
+  .cmp .row { display:flex; gap:6px; padding:3px 0; align-items:baseline; }
+  .cmp .lb { flex:0 0 26px; font-size:10px; padding:1px 0; text-align:center; border-radius:3px; }
+  .lb-now { background:#efe9df; color:#8a7a5f; }
+  .lb-new { background:#e3efe3; color:#3a6b3a; }
+  .cmp .tx { flex:1; }
+  .cmp .tx.now { color:#7a7466; }
+  .cmp .tx.new { color:#2f5c2f; }
+  .verdict { margin-top:9px; padding-top:8px; border-top:1px solid #eeebe4; font-size:11px; color:#555; }
+  .verdict b { color:#a33; }
+</style>
+</head>
+<body>
+
+<h1>软档 / 留影 —— 文案到底出现在哪</h1>
+<div class="sub">左：真实渲染位置模拟　右：出现频率 + 当前文案 vs 建议。橙框 = 该文案所在位置。</div>
+
+<div class="grid">
+
+  <!-- 1 相册片框 -->
+  <div class="card">
+    <h2>相册片框</h2>
+    <span class="key">detail.softSealAlbum</span>
+    <div class="where">相册页 <b>TripAlbumPage</b> 719 行<br>每个片框下方一行小字</div>
+    <div class="trigger"><span class="tag t-often">高频</span> 每张软档照片都显示</div>
+    <div class="mock">
+      <div class="mock-label">相册里的样子</div>
+      <div class="album-tile">
+        <div class="ph"></div>
+        <div class="nm">东北虎</div>
+        <div class="seal" style="border:1px solid #c00;border-radius:3px;">未收录</div>
+      </div>
+    </div>
+    <div class="cmp">
+      <div class="row"><span class="lb lb-now">现</span><span class="tx now">未收录</span></div>
+      <div class="row"><span class="lb lb-new">改</span><span class="tx new">未收录（不动）</span></div>
+    </div>
+    <div class="verdict">窄容器，2–3 字上限。这条本身没问题，<b>保留</b>。</div>
+  </div>
+
+  <!-- 2 详情页印章 -->
+  <div class="card">
+    <h2>详情页印章</h2>
+    <span class="key">detail.softSeal</span>
+    <div class="where">详情页 <b>ObservationDetailPage</b><br>标题下方徽章区，与稀有度徽章并排</div>
+    <div class="trigger"><span class="tag t-often">高频</span> 打开软档照片必见</div>
+    <div class="mock">
+      <div class="mock-label">详情页头部</div>
+      <div class="detail-head">
+        <div class="t">东北虎</div>
+        <div style="margin-top:5px">
+          <span class="seal-box" style="border-color:#c00;color:#c00;">NC · 未收录</span>
+          <span class="badge-soft">未相遇</span>
+        </div>
+      </div>
+    </div>
+    <div class="cmp">
+      <div class="row"><span class="lb lb-now">现</span><span class="tx now">NC · 未收录</span></div>
+      <div class="row"><span class="lb lb-new">改</span><span class="tx new">NC · 未收录（不动）</span></div>
+    </div>
+    <div class="verdict">已拍板过（与 SSR 徽章同构），<b>保留</b>。</div>
+  </div>
+
+  <!-- 3 软档理由块（核心争议） -->
+  <div class="card" style="border-color:#d9b8b8;">
+    <h2>软档理由块 —— 争议点</h2>
+    <span class="key">detail.softReasonTitle / Depiction / Specimen / Generic</span>
+    <div class="where">详情页 437 行「简介」<b>上方</b><br>独立灰块，标题 + 正文两行</div>
+    <div class="trigger"><span class="tag t-mid">中频</span> 打开软档照片必见，但用户不细看</div>
+    <div class="mock">
+      <div class="mock-label">当前渲染</div>
+      <div class="reason-block">
+        <div class="reason-title" style="border:1px solid #c00;border-radius:3px;">为何不进图鉴</div>
+        <div style="border:1px solid #c00;border-radius:3px;">认出它是东北虎（标本）。馆藏标本不是野外相遇，不计入图鉴。</div>
+      </div>
+    </div>
+    <div class="cmp">
+      <div class="row"><span class="lb lb-now">现</span><span class="tx now">认出它是东北虎（标本）。馆藏标本不是野外相遇，不计入图鉴。</span></div>
+      <div class="row"><span class="lb lb-new">A</span><span class="tx new">识别完成，但非实拍个体</span></div>
+      <div class="row"><span class="lb lb-new">B</span><span class="tx new">认出它是东北虎，转发为虚，眼见为实哦</span></div>
+    </div>
+    <div class="verdict"><b>你说的问题在这</b>：既不像人话（"不算野外相遇"生造），又不精确。A 走术语，B 走文案，二选一。</div>
+  </div>
+
+  <!-- 4 留影兜底 -->
+  <div class="card" style="border-color:#d9b8b8;">
+    <h2>留影「简介」兜底</h2>
+    <span class="key">detail.keepsakeReasonFallback</span>
+    <div class="where">详情页 444 行，<b>「简介」标题下</b><br>notes 为空时才出现（极少数）</div>
+    <div class="trigger"><span class="tag t-rare">极低频</span> 模型没给理由才兜底</div>
+    <div class="mock">
+      <div class="mock-label">当前渲染（标题竟是「简介」）</div>
+      <div class="reason-block">
+        <div class="blurb-title" style="border:1px solid #c00;border-radius:3px;">简介</div>
+        <div style="border:1px solid #c00;border-radius:3px;">这张里没找到可收集的生物，照片留下了。</div>
+      </div>
+    </div>
+    <div class="cmp">
+      <div class="row"><span class="lb lb-now">现</span><span class="tx now">这张里没找到可收集的生物，照片留下了。</span></div>
+      <div class="row"><span class="lb lb-new">改</span><span class="tx new">去寻访一些生命的美好吧</span></div>
+    </div>
+    <div class="verdict">你的句子更好：给情绪出路，不解释机制。但<b>标题还写「简介」就错位</b>，要一起改。</div>
+  </div>
+
+  <!-- 5 「转发为虚」现在在哪 -->
+  <div class="card" style="border-color:#c9a;">
+    <h2>「转发为虚」当前实际位置</h2>
+    <span class="key">error.identifySoftEncounter</span>
+    <div class="where">identifyErrors.ts 33 行<br><b>只在 status=failed 失败块</b>（424 行）</div>
+    <div class="trigger"><span class="tag t-rare">几乎不出现</span> 见下方说明</div>
+    <div class="mock">
+      <div class="mock-label">失败块（红字区）</div>
+      <div class="reason-block" style="border-color:#e8c9c9;background:#fdf6f6;">
+        <div style="color:#a33;">转发为虚，眼见为实哦</div>
+      </div>
+    </div>
+    <div class="cmp">
+      <div class="row"><span class="lb lb-now">问</span><span class="tx">软档照片能看到这句吗？</span></div>
+      <div class="row"><span class="lb lb-new">答</span><span class="tx new">不能 —— 软档 status=settled，走不到 failed 块</span></div>
+    </div>
+    <div class="verdict"><b>错配</b>：你给的好句子，软档用户永远看不到；它现在挂在真故障区。</div>
+  </div>
+
+  <!-- 6 术语 vs 文案判据 -->
+  <div class="card" style="background:#fbfaf7;">
+    <h2>判据：什么时候用术语 / 文案</h2>
+    <div class="mock" style="background:#fff;">
+      <table style="width:100%;font-size:11px;border-collapse:collapse;">
+        <tr style="color:#8b8578;"><td style="padding:3px 0;">判据</td><td>术语</td><td>文案</td></tr>
+        <tr><td style="padding:3px 0;">频率</td><td>低频边缘</td><td>高频必经</td></tr>
+        <tr><td style="padding:3px 0;">能否行动</td><td>不能</td><td>能</td></tr>
+        <tr><td style="padding:3px 0;">有无情绪</td><td>无</td><td>有</td></tr>
+        <tr><td style="padding:3px 0;">概念熟不熟</td><td>业务规则</td><td>日常经验</td></tr>
+      </table>
+    </div>
+    <div class="verdict">
+      「野外相遇」四条<b>全中术语侧</b> → 该用术语。<br><br>
+      反例：<code>识别失败了喂</code> 虽低频，但用户会沮丧 → 需要情绪缓冲 → 该用文案。<br><br>
+      所以<b>不能一刀切</b>，按四条判据逐条定。
+    </div>
+  </div>
+
+</div>
+</body>
+</html>

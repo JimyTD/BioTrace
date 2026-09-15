@@ -1,0 +1,180 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<title>download 模块 · 现状</title>
+<style>
+  :root{
+    --paper:#f6f2e9; --ink:#2a241c; --muted:#857a67; --line:#ddd4c2;
+    --warn:#c2703c; --ok:#5c7a4a; --red:#b03a2e; --green:#2F4A3C; --gray:#8b8578;
+  }
+  *{box-sizing:border-box}
+  body{margin:0;padding:26px 30px 60px;background:var(--paper);color:var(--ink);
+       font:15px/1.7 "PingFang SC","Microsoft YaHei",system-ui,sans-serif}
+  h1{font-size:20px;margin:0 0 4px}
+  .sub{color:var(--muted);font-size:13px;margin:0 0 6px}
+  .path{font-family:ui-monospace,Consolas,monospace;font-size:11.5px;color:var(--muted);margin:0 0 14px}
+  h2{font-size:15.5px;margin:28px 0 6px;padding-bottom:6px;border-bottom:1px solid var(--line)}
+  .box{background:#fffdf7;border:1px solid var(--line);border-left:3px solid var(--green);
+       padding:11px 14px;margin:10px 0;font-size:13.5px}
+  .box.w{border-left-color:var(--warn)}
+  .box.d{border-left-color:var(--red)}
+  .box b{color:var(--green)} .box.w b{color:var(--warn)} .box.d b{color:var(--red)}
+  code{font-family:ui-monospace,Consolas,monospace;font-size:12px;background:#efe9dc;padding:1px 4px;border-radius:3px}
+
+  .ab{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin:8px 0}
+  @media(max-width:900px){.ab{grid-template-columns:1fr}}
+  .side{background:#fffdf7;border:1px solid var(--line);border-radius:6px;padding:11px 13px}
+  .side.now{border-top:2px solid var(--red)}
+  .side.prop{border-top:2px solid var(--ok)}
+  .side .tag{font-size:11.5px;letter-spacing:.5px;margin-bottom:7px;font-weight:600}
+  .side.now .tag{color:var(--red)} .side.prop .tag{color:var(--ok)}
+  .why{font-size:12.5px;color:var(--muted);margin-top:8px;padding-top:7px;border-top:1px dashed var(--line)}
+
+  /* 页面模拟 */
+  .page{background:#fffdf7;border:1px solid var(--line);border-radius:8px;padding:16px 18px;margin:10px 0;max-width:520px}
+  .page .t{font-size:17px;margin-bottom:2px}
+  .muted{color:var(--muted);font-size:12.5px;line-height:1.65;margin:6px 0}
+  .btn{display:inline-block;background:var(--green);color:#fff;border-radius:4px;padding:6px 16px;font-size:13px;margin:6px 0}
+  .lnk{display:inline-block;color:var(--green);font-size:12.5px;margin:6px 0;border-bottom:1px solid var(--green)}
+  .ol{margin:6px 0 6px 4px;padding:0;list-style:none}
+  .ol li{color:var(--muted);font-size:12.5px;line-height:1.9}
+  .ol li .n{display:inline-block;width:15px;color:var(--gray)}
+  .rmt{font-size:12.5px;color:var(--ink);margin:8px 0 2px;font-weight:600}
+  .dup{background:#fbe9e3;border-radius:3px;padding:0 3px}
+  .old{color:var(--red)} .new{color:var(--ok)} .dim{color:var(--muted)}
+  table{width:100%;border-collapse:collapse;font-size:13px;background:#fffdf7;margin-top:8px}
+  th,td{border:1px solid var(--line);padding:6px 9px;text-align:left;vertical-align:top}
+  th{background:#efe9dc;font-weight:600;color:var(--muted);font-size:12.5px}
+  td.k{font-family:ui-monospace,Consolas,monospace;font-size:11.5px;color:var(--muted)}
+</style>
+</head>
+<body>
+
+<h1>download 模块 · 现状</h1>
+<p class="sub">10 条。6 条带句号；真正的问题是「条件渲染分支下文案互相重复、或对当前用户成废话」</p>
+<p class="path">packages/messages/src/zh.ts:47-56 · apps/web/src/pages/DownloadPage.tsx</p>
+
+<div class="box">
+  <b>先说结论</b>：<code>title</code> / <code>cta</code> / <code>install</code> 是页面标题、主按钮、小节名，短且准，保留。
+  <b>真正值得看三处</b>：① 六条带句号；② <code>step1</code> 与 <code>wechat</code> 说同一件事、且对已用浏览器的用户是废话；
+  ③ iOS 场景下「使用浏览器版本」被渲染两次。
+</div>
+
+<h2>一、句号（6 条）</h2>
+<p class="path">zh.ts:50-56 · 都是短句 / 提示 / 列表项，按纪律一律去句号</p>
+<div class="ab">
+  <div class="side now">
+    <div class="tag">现状</div>
+    <div class="page">
+      <div class="muted">请用系统浏览器打开本页（微信内无法下载）。</div>
+      <div class="muted">点击「下载」。</div>
+      <div class="muted">若系统提示未知来源，允许后即可安装。</div>
+      <div class="muted">暂时没有可下载的安装包。</div>
+      <div class="muted">请点击右上角，选择在浏览器中打开。</div>
+      <div class="muted">目前只有安卓版，请用浏览器打开网页。</div>
+    </div>
+    <div class="why">6 条结尾全是「。」</div>
+  </div>
+  <div class="side prop">
+    <div class="tag">建议</div>
+    <div class="page">
+      <div class="muted">请用系统浏览器打开本页（微信内无法下载）</div>
+      <div class="muted">点击「下载」</div>
+      <div class="muted">若系统提示未知来源，允许后即可安装</div>
+      <div class="muted">暂时没有可下载的安装包</div>
+      <div class="muted">请点击右上角，选择在浏览器中打开</div>
+      <div class="muted">目前只有安卓版，请用浏览器打开网页</div>
+    </div>
+    <div class="why">只去句号，措辞一个字不动</div>
+  </div>
+</div>
+
+<h2>二、step1 与 wechat 说同一件事</h2>
+<p class="path">DownloadPage.tsx:46（wechat 提示）· 67（ol 第 1 步）</p>
+<div class="ab">
+  <div class="side now">
+    <div class="tag">现状 · 在微信里打开</div>
+    <div class="page">
+      <div class="muted dup">请点击右上角，选择在浏览器中打开。</div>
+      <div class="rmt">安装</div>
+      <div class="ol">
+        <li><span class="n">1</span><span class="dup">请用系统浏览器打开本页（微信内无法下载）。</span></li>
+        <li><span class="n">2</span>点击「下载」。</li>
+        <li><span class="n">3</span>若系统提示未知来源，允许后即可安装。</li>
+      </div>
+    </div>
+    <div class="why">
+      ① 两条<b>都在说「去浏览器打开」</b>——微信提示说一遍，安装第 1 步又说一遍<br>
+      ② 换成非微信（用户已经在系统浏览器）时，第 1 步「请用系统浏览器打开本页」是<b>废话</b>——他就在浏览器里
+    </div>
+  </div>
+  <div class="side prop">
+    <div class="tag">建议</div>
+    <div class="page">
+      <div class="muted">请点击右上角，选择在浏览器中打开</div>
+      <div class="rmt">安装</div>
+      <div class="ol">
+        <li><span class="n">1</span>点击「下载」</li>
+        <li><span class="n">2</span>若系统提示未知来源，允许后即可安装</li>
+      </div>
+    </div>
+    <div class="why">
+      删 <code>download.step1</code>，「去浏览器」交给 <code>download.wechat</code> 单独负责。<br>
+      连带：前端 <code>ol</code> 少一个 <code>li</code>（DownloadPage.tsx:67）
+    </div>
+  </div>
+</div>
+
+<h2>三、iOS 场景「使用浏览器版本」出现两次</h2>
+<p class="path">DownloadPage.tsx:49（colophon 按钮）· 62（ios 提示）· 74（readme 底部链接）</p>
+<div class="ab">
+  <div class="side now">
+    <div class="tag">现状 · iOS 打开</div>
+    <div class="page">
+      <span class="lnk dup">使用浏览器版本</span>
+      <div class="muted dup">目前只有安卓版，请用浏览器打开网页。</div>
+      <span class="lnk dup">使用浏览器版本</span>
+    </div>
+    <div class="why">
+      同一个 <code>download.openWeb</code>「使用浏览器版本」<b>渲染了两处</b>（colophon 按钮 + readme 底部链接）；<br>
+      中间的 <code>download.ios</code> 又说了一遍「请用浏览器打开网页」，三句一个意思
+    </div>
+  </div>
+  <div class="side prop">
+    <div class="tag">建议</div>
+    <div class="page">
+      <span class="lnk">使用浏览器版本</span>
+      <div class="muted">目前只有安卓版，请用浏览器打开网页</div>
+    </div>
+    <div class="why">
+      iOS 场景下 colophon 已给出「使用浏览器版本」，<b>readme 底部那个链接不再渲染</b>（或反过来，二选一）。<br>
+      连带：DownloadPage.tsx:73-75 加 iOS 条件
+    </div>
+  </div>
+</div>
+
+<h2>四、其余保留</h2>
+<table>
+<tr><th style="width:26%">key</th><th style="width:40%">文案</th><th>判断</th></tr>
+<tr><td class="k">download.title</td><td>下载</td><td>页面标题（<code>document.title</code>），保留</td></tr>
+<tr><td class="k">download.cta</td><td>下载</td><td>主按钮，保留（与 title 同字但场景不同，不合并）</td></tr>
+<tr><td class="k">download.install</td><td>安装</td><td>readme 小节名，保留</td></tr>
+<tr><td class="k">download.step2</td><td>点击「下载」</td><td>步骤指引，保留（去句号）；与按钮文字同义，若嫌啰嗦可并入 step3</td></tr>
+<tr><td class="k">download.step3</td><td>若系统提示未知来源，允许后即可安装</td><td>有效提示（安卓装 APK 会撞），保留（去句号）</td></tr>
+<tr><td class="k">download.openWeb</td><td>使用浏览器版本</td><td>链接文字，保留；需处理第三节的 iOS 重复</td></tr>
+<tr><td class="k">download.missing</td><td>暂时没有可下载的安装包</td><td>空态，保留（去句号）</td></tr>
+</table>
+
+<div class="box w">
+  <b>拿不准、留给你定的一处</b>：<code>download.step2</code>「点击「下载」」——按钮自己就写着「下载」，
+  再配一条文字说「点击下载」算不算与界面元素重复（纪律 6）？我倾向<b>保留</b>：它在「安装」的编号步骤里，
+  是步骤指引不是说明；但你要觉得啰嗦，我就把它并进 step3。
+</div>
+
+<p style="margin-top:16px;font-size:13px;color:var(--muted)">
+  本页零改动。上面三节要落哪些，你定。
+</p>
+
+</body>
+</html>

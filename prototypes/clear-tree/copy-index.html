@@ -1,0 +1,109 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<title>文案改造 · 演示总览</title>
+<style>
+  :root{
+    --paper:#f6f2e9; --ink:#2a241c; --muted:#857a67; --line:#ddd4c2;
+    --warn:#c2703c; --ok:#5c7a4a; --red:#b03a2e; --green:#2F4A3C; --gray:#8b8578;
+  }
+  *{box-sizing:border-box}
+  body{margin:0;padding:26px 30px 60px;background:var(--paper);color:var(--ink);
+       font:15px/1.7 "PingFang SC","Microsoft YaHei",system-ui,sans-serif}
+  h1{font-size:20px;margin:0 0 4px}
+  .sub{color:var(--muted);font-size:13px;margin:0 0 16px}
+  h2{font-size:15.5px;margin:28px 0 6px;padding-bottom:6px;border-bottom:1px solid var(--line)}
+  .box{background:#fffdf7;border:1px solid var(--line);border-left:3px solid var(--green);
+       padding:11px 14px;margin:10px 0;font-size:13.5px}
+  .box b{color:var(--green)}
+  code{font-family:ui-monospace,Consolas,monospace;font-size:12px;background:#efe9dc;padding:1px 4px;border-radius:3px}
+  a{color:var(--green)}
+  table{width:100%;border-collapse:collapse;font-size:13px;background:#fffdf7;margin-top:8px}
+  th,td{border:1px solid var(--line);padding:6px 9px;text-align:left;vertical-align:top}
+  th{background:#efe9dc;font-weight:600;color:var(--muted);font-size:12.5px}
+  td.k{font-family:ui-monospace,Consolas,monospace;font-size:11.5px;color:var(--muted)}
+  .st{font-weight:600;white-space:nowrap}
+  .st.done{color:var(--ok)} .st.none{color:var(--gray)}
+  .st.skip{color:var(--muted)} .st.todo{color:var(--warn)}
+  .dim{color:var(--muted)}
+</style>
+</head>
+<body>
+
+<h1>文案改造 · 演示总览</h1>
+<p class="sub">24 个模块 · 实算合计 <b>743 条</b>（可文案区 40 / 固定区 703）· 状态以 <code>git log</code> 为准，出处 <code>docs/features/文案改造-进度.md</code></p>
+
+<div class="box">
+  <b>本目录是过程材料，不提交。</b>每个模块的页分三种：<b>待拍板页</b>（改动按「现状 / 建议 / 理由」展开，等你点头）、
+  <b>记录页</b>（已落地的，顶部标「状态：已落（提交号）」，不再当提案）、<b>过程页</b>（更早几轮的重想 / 对照，多为已废弃）。
+  规范见 <code>docs/features/文案撰写规范.md</code>（怎么写）、<code>文案工程规范.md</code>（机制）。
+</div>
+
+<h2>一、已改（8 个模块）</h2>
+<table>
+<tr><th style="width:11%">模块</th><th style="width:6%">条数</th><th style="width:8%">状态</th><th style="width:22%">提交</th><th style="width:22%">演示页</th><th>结论一句话</th></tr>
+<tr><td class="k">app</td><td>3</td><td class="st done">已改</td><td class="k">7f565ab</td><td><a href="brandline-compare.html">brandline-compare</a> · <a href="brandline-options.html">options</a> · <a href="brandline-shortlist.html">shortlist</a></td><td>品牌句定为「识尽众生，山海入怀」；<code>tagline</code>/<code>lede</code> 合并为一个 key</td></tr>
+<tr><td class="k">me</td><td>40</td><td class="st done">已改</td><td class="k">f95e1eb · dd5a2f4</td><td><a href="me-review.html">me-review</a>（记录页，保留 37 条已逐条展开）</td><td>删 <code>changingPassword</code>/<code>appVersionUnknown</code>/<code>appearanceLede</code>；4 条改措辞</td></tr>
+<tr><td class="k">detail</td><td>34</td><td class="st done">已改</td><td class="k">70572f7</td><td><a href="detail-review.html">detail-review</a>（记录页）</td><td><code>acceptedScientificName</code> 补名词；删两条上游必填的兜底话</td></tr>
+<tr><td class="k">trips</td><td>32</td><td class="st done">已改</td><td class="k">8919ba9 · 8106469 · 2516313</td><td><a href="trips-final.html">trips-final</a>（记录页）</td><td>旅途信息一节定稿为三句名词短语；删多余预览两条；两条创作类定稿</td></tr>
+<tr><td class="k">auth</td><td>31</td><td class="st done">已改</td><td class="k">a8106ab</td><td><a href="auth-review.html">auth-review</a>（记录页）</td><td>删 <code>resetOk</code>；<code>invalidEmail</code> 统一「请填写」；<code>failed</code> 改中性；<code>registering</code> 改「创建中…」</td></tr>
+<tr><td class="k">settle</td><td>22</td><td class="st done">已改<span class="dim">（主题待拍）</span></td><td class="k">55a2870 · e05dbfd · 4a8e09b · 0eba8aa</td><td><a href="settle-review.html">settle-review</a> · <a href="settle-base-copy.html">base-copy</a> · <a href="settle-voices-proposal.html">voices-proposal</a> · <a href="settle-theme-proposal.html">theme-proposal</a></td><td>删 8 条走查页 key；常规版 7 条定稿；套册 8 条收回固定区；<b>两套主题说法待拍板</b></td></tr>
+<tr><td class="k">download</td><td>9</td><td class="st done">已改</td><td class="k">d2f93aa</td><td><a href="download-review.html">download-review</a></td><td>删 step1；6 条去句号；iOS 去重复链接</td></tr>
+<tr><td class="k">theme</td><td>4</td><td class="st done">已改</td><td class="k">9fb3387</td><td><a href="theme-review.html">theme-review</a></td><td>2 条说明去句号，删与皮肤名重复的半句</td></tr>
+</table>
+
+<h2>二、已审 · 无改动（1）</h2>
+<table>
+<tr><th style="width:11%">模块</th><th style="width:6%">条数</th><th style="width:8%">状态</th><th>结论</th></tr>
+<tr><td class="k">nav</td><td>4</td><td class="st none">无改动</td><td>四个导航锚点词（成套组），无可动项</td></tr>
+</table>
+
+<h2>三、跳过（2，用户明示）</h2>
+<table>
+<tr><th style="width:11%">模块</th><th style="width:6%">条数</th><th style="width:8%">状态</th><th>原因</th></tr>
+<tr><td class="k">admin</td><td>323</td><td class="st skip">跳过</td><td>后台术语，本轮及后续跳过</td></tr>
+<tr><td class="k">volume</td><td>30</td><td class="st skip">跳过</td><td>「套册不管」，内容数据非界面文案</td></tr>
+</table>
+
+<h2>四、免检待核（3，到步再核）</h2>
+<table>
+<tr><th style="width:11%">模块</th><th style="width:6%">条数</th><th style="width:8%">状态</th><th>前判</th></tr>
+<tr><td class="k">rank</td><td>17</td><td class="st todo">待核</td><td>国标译名</td></tr>
+<tr><td class="k">listTag</td><td>10</td><td class="st todo">待核</td><td>法规定义</td></tr>
+<tr><td class="k">rarity</td><td>7</td><td class="st todo">待核</td><td>档位锚点</td></tr>
+</table>
+
+<h2>五、待审（10）</h2>
+<table>
+<tr><th style="width:11%">模块</th><th style="width:6%">条数</th><th style="width:8%">状态</th><th>备注</th></tr>
+<tr><td class="k">error</td><td>30</td><td class="st todo">待审</td><td><span class="dim">已有旧页 <a href="error-review.html">error-review</a> · <a href="error-where-used.html">error-where-used</a>（更早几轮，需重出）</span></td></tr>
+<tr><td class="k">collection</td><td>28</td><td class="st todo">待审</td><td><span class="dim">与 settle 同族：「收下的证书」里的「证书」在主题层</span></td></tr>
+<tr><td class="k">tree3d</td><td>28</td><td class="st todo">待审</td><td></td></tr>
+<tr><td class="k">album</td><td>26</td><td class="st todo">待审</td><td><span class="dim">空态句式与 <code>trips.empty</code> 同腔，需一起看</span></td></tr>
+<tr><td class="k">share</td><td>25</td><td class="st todo">待审</td><td><span class="dim">管理页里的十几条归这里，别与 trips 重复审</span></td></tr>
+<tr><td class="k">common</td><td>15</td><td class="st todo">待审</td><td><span class="dim">全在固定区，按新规则不与主题文本合并</span></td></tr>
+<tr><td class="k">map</td><td>7</td><td class="st todo">待审</td><td></td></tr>
+<tr><td class="k">onboard</td><td>6</td><td class="st todo">待审</td><td><span class="dim"><code>onboard.tripLede</code> 与 trips 改前的 lede 几乎同句，一起看</span></td></tr>
+<tr><td class="k">status</td><td>6</td><td class="st todo">待审</td><td></td></tr>
+<tr><td class="k">identify</td><td>6</td><td class="st todo">待审</td><td></td></tr>
+</table>
+
+<h2>六、更早几轮的过程页（多已废弃）</h2>
+<div class="box">
+  <a href="appearance-lede.html">appearance-lede</a> —— <b>已废弃</b>：它重想的 <code>me.appearanceLede</code> 已被<b>整条删除</b>（<code>dd5a2f4</code>，用户选「删掉这句」），此页只剩历史价值。<br>
+  <a href="usage-positions.html">usage-positions</a>（各句真实位置）· <a href="soft-keepsake-map.html">soft-keepsake-map</a>（软档/留影分布）·
+  <a href="copy-rules-audit.html">copy-rules-audit</a> · <a href="rules-17-audit.html">rules-17-audit</a> · <a href="a-series-source.html">a-series-source</a> ·
+  <a href="app-review.html">app-review</a> · <a href="auth-map.html">auth-map</a> · <a href="rank-review.html">rank-review</a> · <a href="volume-review.html">volume-review</a><br>
+  <span class="dim">物种树那几页（<code>v1-canopy</code> / <code>v2-roots</code> / <code>device</code> / <code>shots/</code>）不属文案改造，见本目录 README。</span>
+</div>
+
+<h2>七、还挂着的事</h2>
+<div class="box">
+  1. <b>settle 两套主题说法</b>：清透（老文案 + 1 处美化）、日光图版（只留有据的）；日光要不要一套图版叙事，待定。见 <a href="settle-voices-proposal.html">voices-proposal</a>。<br>
+  2. <b>可文案区现有 34 条要回头审一遍</b>：按「默认不入主题」原则，查有没有「没想好就放进去」的。独立小项，不混进逐模块改造。<br>
+  3. <b>下一批待审模块</b>：error(30) → collection(28) → tree3d(28) → album(26) → share(25) → common(15) → map(7) → onboard(6) → status(6) → identify(6)。
+</div>
+
+</body>
+</html>

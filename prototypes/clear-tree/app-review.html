@@ -1,0 +1,77 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<title>app 模块 · 现状</title>
+<style>
+  :root{
+    --paper:#f6f2e9; --ink:#2a241c; --muted:#857a67; --line:#ddd4c2;
+    --warn:#c2703c; --ok:#5c7a4a; --red:#b03a2e; --green:#2F4A3C; --gray:#8b8578;
+  }
+  *{box-sizing:border-box}
+  body{margin:0;padding:26px 30px 60px;background:var(--paper);color:var(--ink);
+       font:15px/1.7 "PingFang SC","Microsoft YaHei",system-ui,sans-serif}
+  h1{font-size:20px;margin:0 0 4px}
+  .sub{color:var(--muted);font-size:13px;margin:0 0 6px}
+  .path{font-family:ui-monospace,Consolas,monospace;font-size:11.5px;color:var(--muted);margin:0 0 14px}
+  h2{font-size:15.5px;margin:28px 0 6px;padding-bottom:6px;border-bottom:1px solid var(--line)}
+  .box{background:#fffdf7;border:1px solid var(--line);border-left:3px solid var(--green);
+       padding:11px 14px;margin:10px 0;font-size:13.5px}
+  .box.w{border-left-color:var(--warn)}
+  .box b{color:var(--green)} .box.w b{color:var(--warn)}
+  code{font-family:ui-monospace,Consolas,monospace;font-size:12px;background:#efe9dc;padding:1px 4px;border-radius:3px}
+  table{width:100%;border-collapse:collapse;font-size:13px;background:#fffdf7;margin-top:8px}
+  th,td{border:1px solid var(--line);padding:7px 9px;text-align:left;vertical-align:top}
+  th{background:#efe9dc;font-weight:600;color:var(--muted);font-size:12.5px}
+  td.k{font-family:ui-monospace,Consolas,monospace;font-size:11.5px;color:var(--muted)}
+  .keep{color:var(--ok);font-weight:600}
+  .zone{font-size:11.5px;color:var(--muted)}
+</style>
+</head>
+<body>
+
+<h1>app 模块 · 现状</h1>
+<p class="sub">4 条。品牌门面（name / loading / tagline）+ 登录与下载页的引导句</p>
+<p class="path">zh.ts:11-12（固定区）· zh.ts:766-767（可文案区）· MeAboutPage.tsx:76-77 · LoginPage.tsx:137,147-148 · DownloadPage.tsx:41-42</p>
+
+<div class="box">
+  <b>先说结论：4 条全保留，零改动。</b>
+  品牌名是概念锚点；加载态是全站标准件；<code>tagline</code> 与 <code>lede</code> 在<b>可文案区</b>，是叙事句，
+  带句号本来就合规（不套界面短句纪律）。<b>没有可删、可合并、可改措辞的项</b>。
+</div>
+
+<h2>逐条判断</h2>
+<table>
+<tr><th style="width:20%">key</th><th style="width:28%">文案</th><th style="width:12%">区</th><th>渲染位置与判断</th></tr>
+<tr>
+  <td class="k">app.name</td><td>BioTrace</td><td class="zone">固定</td>
+  <td>登录 / 下载 / 关于页标题、顶栏 wordmark、nav 无障碍名。<span class="keep">品牌锚点，不改</span></td>
+</tr>
+<tr>
+  <td class="k">app.loading</td><td>加载中…</td><td class="zone">固定</td>
+  <td>全站约 20 处加载态（各页 + admin）。<span class="keep">标准件，省略号体例统一，不改</span></td>
+</tr>
+<tr>
+  <td class="k">app.tagline</td><td>路上遇见的，都有名字</td><td class="zone">可文案</td>
+  <td>关于页品牌标语。<span class="keep">叙事句，无句号，保留</span></td>
+</tr>
+<tr>
+  <td class="k">app.lede</td><td>翻开相册，记下路上遇见的。</td><td class="zone">可文案</td>
+  <td>登录页（login/register 模式）与下载页的引导句。<span class="keep">叙事句，可文案区允许句号，保留</span></td>
+</tr>
+</table>
+
+<h2>一处跨模块观察（留到 auth 再处理）</h2>
+<p class="path">LoginPage.tsx:137</p>
+<div class="box w">
+  <code>const lede = mode === "reset" ? t("auth.forgotPassword") : t("app.lede");</code><br>
+  reset 模式下，登录页 mast 的引导句变成 <code>auth.forgotPassword</code>「忘记密码」——
+  一个按钮词被挪去当引导句。这是 <b>auth 的 key</b>，不属于 app 模块，我到 <b>auth</b> 时一并提。
+</div>
+
+<p style="margin-top:16px;font-size:13px;color:var(--muted)">
+  本页零改动。app 模块建议标「已审·无改动」。
+</p>
+
+</body>
+</html>

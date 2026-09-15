@@ -1,0 +1,205 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<title>settle.open 出现在哪三处</title>
+<style>
+  body{margin:0;padding:26px 30px 60px;background:#f6f2e9;color:#2a241c;
+       font:15px/1.7 "PingFang SC","Microsoft YaHei",system-ui,sans-serif}
+  h1{font-size:20px;margin:0 0 4px}
+  .sub{color:#857a67;font-size:13px;margin:0 0 14px}
+  h2{font-size:15.5px;margin:30px 0 8px;padding-bottom:6px;border-bottom:1px solid #ddd4c2}
+  code{font-family:ui-monospace,Consolas,monospace;font-size:12px;background:#efe9dc;padding:1px 4px;border-radius:3px}
+  .box{background:#fffdf7;border:1px solid #ddd4c2;border-left:3px solid #2F4A3C;
+       padding:11px 14px;margin:10px 0;font-size:13.5px}
+  .box.w{border-left-color:#c2703c} .box.d{border-left-color:#b03a2e}
+  .box b{color:#2F4A3C} .box.w b{color:#c2703c} .box.d b{color:#b03a2e}
+  .cols{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:18px;margin-top:12px}
+  .col{background:#fffdf7;border:1px solid #ddd4c2;border-radius:8px;padding:14px}
+  .col h3{margin:0 0 2px;font-size:14px}
+  .col .who{font-size:12px;color:#857a67;margin:0 0 12px}
+  .lbl{font-size:11.5px;color:#857a67;font-family:ui-monospace,Consolas,monospace;margin:14px 0 6px}
+
+  /* ── 相册格（真实值近似）────────────────────────────────── */
+  .skin{--plate:#f3f0e9;--lip:8%;--lipb:13.3%;--mount:#6a6357;--ink:#333b41;--muted:#8d979e;
+        --line:rgba(120,140,155,.13);--accent:#444e55;--cta:#d9531e;--cta-ink:#fffaf7;--rbtn:999px;
+        --atmo:radial-gradient(ellipse 130% 90% at 50% 12%,#fff 0%,#f8fbfc 42%,#eef3f6 100%);
+        --veil:rgba(240,243,245,.9)}
+  .skin.day{--plate:#efe6d6;--lip:8%;--lipb:8%;--mount:#5c5347;--ink:#1f2a24;--muted:#6b6258;
+        --line:rgba(42,64,51,.14);--accent:#3a322c;--cta:#d3543c;--cta-ink:#fffaf7;--rbtn:10px;
+        --atmo:radial-gradient(ellipse 120% 70% at 8% -18%,rgba(212,168,120,.34) 0%,transparent 56%);
+        --veil:rgba(240,232,216,.9)}
+  .tile{width:172px;position:relative;background:var(--plate);border-radius:3px;
+        box-shadow:0 2px 6px rgba(50,70,90,.10),0 10px 22px rgba(50,70,90,.12);
+        padding:var(--lip) var(--lip) var(--lipb);transform:rotate(-.5deg)}
+  .win{aspect-ratio:1;background:linear-gradient(135deg,#cfd8de,#aebcc6);border-radius:2px;
+       display:grid;place-items:center;color:#fff;font-size:11px;letter-spacing:.08em}
+  .skin.day .win{background:linear-gradient(135deg,#d8cdb6,#bfae92)}
+  .seal{position:absolute;left:-8%;right:-8%;top:38%;z-index:4;display:flex;align-items:center;
+        justify-content:center;padding:.55em .4em .6em;background-color:var(--veil);
+        background-image:var(--atmo);background-size:cover;color:var(--accent);
+        font-weight:700;font-size:.82rem;letter-spacing:.22em;line-height:1;transform:rotate(-1.4deg);
+        box-shadow:inset 0 1px 0 var(--line),0 1px 0 rgba(0,0,0,.12),0 3px 8px rgba(0,0,0,.18)}
+  .badge{position:absolute;left:calc(var(--lip) + 4px);top:calc(var(--lip) + 4px);z-index:3;
+         background:rgba(255,255,255,.86);color:var(--muted);font-size:11px;padding:2px 7px;border-radius:999px}
+
+  /* ── 结算页（真实值近似）────────────────────────────────── */
+  .page{background:var(--bg1,#eef3f6);border-radius:8px;padding:14px;margin-top:6px}
+  .skin .page{background:#eef3f6} .skin.day .page{background:#ebe6dc}
+  .page-title{font-size:17px;font-weight:600;margin:0}
+  .lede{font-size:12.5px;color:var(--muted);margin:2px 0 10px}
+  .card{background:#fff;border-radius:12px;padding:12px;box-shadow:0 2px 8px rgba(50,70,90,.10)}
+  .skin.day .card{background:#fbf7ef}
+  .shot{aspect-ratio:4/3;background:linear-gradient(135deg,#cfd8de,#aebcc6);border-radius:6px;
+        display:grid;place-items:center;color:#fff;font-size:11px;letter-spacing:.08em;margin-bottom:12px}
+  .skin.day .shot{background:linear-gradient(135deg,#d8cdb6,#bfae92)}
+  .btn{border:0;border-radius:var(--rbtn);padding:10px 16px;background:var(--cta);color:var(--cta-ink);
+       font:inherit;font-size:13.5px;width:100%}
+  .sr{font-size:12px;color:#857a67;font-family:ui-monospace,Consolas,monospace;background:#efe9dc;
+      padding:6px 9px;border-radius:4px;display:block;margin-top:8px}
+</style>
+</head>
+<body>
+
+<h1><code>settle.open</code> 出现在哪三处</h1>
+
+<div class="box d">
+  <b>状态：已作废（2026-09-15）</b>——用户定「读屏名不是需求」，<b>全仓 <code>aria-label</code> 已删</b>（19 处），第三处那个名字连同
+  <code>album.liftPhoto</code> / <code>album.openObservation</code> 一起删掉了。<code>settle.open</code> 回到单一 key：
+  <b>封条与结算页按钮都走主题说法</b>。本页第 ③ 节关于读屏的说明仍可读，但「拆 key」那部分已不成立。
+</div>
+<p class="sub">按真实 CSS 值近似渲染（字体、照片用占位）。真实位置：<code>ObservationSettlePage.tsx:225</code> · <code>TripAlbumPage.tsx:663,697</code></p>
+
+<div class="box w">
+  <b>为什么值得单独看：</b><code>settle.open</code> 不只用在结算页按钮上——它还写着<b>相册里「待开包」那格的封条</b>（横穿照片、甩出卡纸两侧、斜 1.4°），
+  以及那格的<b>无障碍名</b>。所以把按钮改词，相册墙上会跟着变。下面三列分别是「现在」「清透说法」「日光说法」放回去的样子。
+</div>
+
+<div class="cols">
+
+  <div class="col skin">
+    <h3>现在（两套皮肤都用它）</h3>
+    <p class="who">基础表 <code>settle.open</code>「看看是什么」</p>
+
+    <div class="lbl">① 相册 · 待开包格（封条）</div>
+    <div class="tile">
+      <span class="badge">识别完成</span>
+      <span class="win">照片</span>
+      <span class="seal">看看是什么</span>
+    </div>
+
+    <div class="lbl">② 结算页 · 封蜡态（按钮）</div>
+    <div class="page">
+      <p class="page-title">识别结果</p>
+      <p class="lede">已经识别出这是什么了。</p>
+      <div class="card">
+        <div class="shot">照片</div>
+        <button class="btn">看看是什么</button>
+      </div>
+    </div>
+    <span class="sr">③ aria-label：看看是什么</span>
+  </div>
+
+  <div class="col skin">
+    <h3>清透 · 主题说法</h3>
+    <p class="who">覆盖表 <code>settle.open</code>「请过目」（老文案）</p>
+
+    <div class="lbl">① 相册 · 待开包格（封条）</div>
+    <div class="tile">
+      <span class="badge">识别完成</span>
+      <span class="win">照片</span>
+      <span class="seal">请过目</span>
+    </div>
+
+    <div class="lbl">② 结算页 · 封蜡态（按钮）</div>
+    <div class="page">
+      <p class="page-title">鉴定证书</p>
+      <p class="lede">这趟遇见的生命，现在有名字了。</p>
+      <div class="card">
+        <div class="shot">照片</div>
+        <button class="btn">请过目</button>
+      </div>
+    </div>
+    <span class="sr">③ aria-label：看看是什么（已拆出，不跟按钮走）</span>
+  </div>
+
+  <div class="col skin day">
+    <h3>日光图版 · 主题说法</h3>
+    <p class="who">覆盖表 <code>settle.open</code>「启封」（有据：拆封）</p>
+
+    <div class="lbl">① 相册 · 待开包格（封条）</div>
+    <div class="tile">
+      <span class="badge">识别完成</span>
+      <span class="win">照片</span>
+      <span class="seal">启封</span>
+    </div>
+
+    <div class="lbl">② 结算页 · 封蜡态（按钮）</div>
+    <div class="page">
+      <p class="page-title">定名图版</p>
+      <p class="lede">此行所见，已录其名。</p>
+      <div class="card">
+        <div class="shot">照片</div>
+        <button class="btn">启封</button>
+      </div>
+    </div>
+    <span class="sr">③ aria-label：看看是什么（已拆出，不跟按钮走）</span>
+  </div>
+
+</div>
+
+<h2>③ 先说清：读屏是什么，这里为什么有两句话</h2>
+<div class="box">
+  <b>读屏 = 一类给看不见屏幕的人用的软件。</b>iPhone 上叫「旁白」，安卓上叫「TalkBack」，Windows 上叫「讲述人」。
+  打开之后它会把屏幕上的东西<b>念出来</b>；用的人不看屏幕，靠听、靠滑。系统滑到哪个按钮，就念那个按钮的<b>名字</b>。<br><br>
+  <b>相册里为什么要有这个名字：</b>相册里<b>每一格照片整个就是一个按钮</b>，可屏幕上它没有文字——只有照片和那条白带。
+  看得见的人靠白带知道「这格能点」；看不见的人什么都没有，只能听系统念。不挂名字，读屏只会念「按钮」两个字，用户不知道按下去会怎样。<br><br>
+  <b>为什么两处不能是同一句：</b>白带是<b>画在照片上的一条带子</b>，读屏用户看不到它——单独听「请过目」三个字，他不知道按了会去哪；
+  「看看是什么」说的是<b>按了会去哪</b>，他听得懂。所以一条是给眼睛的、一条是给耳朵的。<br><br>
+  <b>这事为什么会冒出来：</b><code>settle.open</code> 原来<b>一个 key 同时用在三处</b>——结算页按钮（有文字）、相册封条（有带子）、相册按钮名（没东西）。
+  前两处跟着主题改没问题，第三处不行，所以要拆开。
+</div>
+<p class="sub" style="margin:8px 0 0">这东西在 app 里到处都是：16 个文件里都有（底部四个导航、地图标记、图鉴卡片…）。凡是「没有文字的按钮」都得有个能被念出来的名字。</p>
+
+<h2>④ 真东西（不是示意图）</h2>
+<div class="box">
+  下面是<b>真应用</b>里那个「待开包」的格——左：真截图（无头 Edge 跑 <code>127.0.0.1:5173</code>，清透皮肤）；右：同一个格在真 DOM 里的样子（<code>--dump-dom</code> 抓的）。
+</div>
+<div style="display:flex;gap:22px;align-items:flex-start;flex-wrap:wrap;margin-top:10px">
+  <img src="shots/album-pending-seal.png" alt="真实相册里的待开包格"
+       style="width:300px;border:1px solid #ddd4c2;border-radius:8px">
+  <pre style="flex:1;min-width:380px;margin:0;background:#fffdf7;border:1px solid #ddd4c2;border-radius:8px;
+       padding:12px 14px;font-size:12px;line-height:1.65;overflow:auto;white-space:pre-wrap;
+       font-family:ui-monospace,Consolas,monospace;color:#2a241c">&lt;article class="film-tile is-pending"&gt;
+  &lt;button class="film-tile-link" <b style="color:#b03a2e">aria-label="看看是什么"</b>&gt;   ← 读屏念的名字
+    &lt;span class="film-tile-window"&gt;&lt;img alt="识别完成"&gt;&lt;/span&gt;
+    &lt;span class="film-tile-seal"&gt;<b style="color:#5c7a4a">请过目</b>&lt;/span&gt;          ← 看得见的封条（清透说法）
+    &lt;span class="badge warn"&gt;识别完成&lt;/span&gt;
+    &lt;span class="film-tile-mark"&gt;08-25 · 04&lt;/span&gt;
+    &lt;span class="film-tile-caption"&gt;结论已经落笔。 · 我&lt;/span&gt;
+  &lt;/button&gt;
+&lt;/article&gt;
+
+同页另外 8 格的 aria-label：<b>拿起这张</b>（能拿起的那类）</pre>
+</div>
+<div class="box w">
+  <b>两句话的区别就在这张图上</b>：照片上那条白带（<b>请过目</b>）是清透的说法，跟着主题走；
+  同一个按钮读屏念的名字是 <b>看看是什么</b>，不跟主题走——读屏用户听不到那条白带。
+</div>
+
+<h2>看完之后的判断（我的）</h2>
+<div class="box">
+  <b>封条那处其实是最合的一处</b>：它本来就是一条「封」横穿照片，日光的「启封」正好说的是这个动作；清透的「请过目」也站得住。
+  我原来「密排小标签会显得端着」的理由站不住——<b>封条只在「待开包」的格上出现</b>（<code>.film-tile.is-pending</code>），是短暂状态，不是一墙几十个。
+</div>
+<div class="box d">
+  <b>但无障碍名那处我建议拆开。</b>屏幕阅读器念的是「按钮：请过目 / 启封」——它不读图、看不见封条，需要的是「点它会去哪」。
+  基础词「看看是什么」才是能据此行动的。<b>所以拆法改为</b>：封条与按钮走主题说法，<b>aria-label 单独留基础词</b>（或改写成更明确的「打开识别结果」）。
+</div>
+
+<p style="margin-top:16px;font-size:13px;color:#857a67">
+  本页零改动。你看完给个话：封条要不要跟着改（我倾向要）、aria-label 拆不拆（我倾向拆）。
+</p>
+
+</body>
+</html>

@@ -1,0 +1,196 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<title>settle 模块 · 待拍板</title>
+<style>
+  :root{
+    --paper:#f6f2e9; --ink:#2a241c; --muted:#857a67; --line:#ddd4c2;
+    --warn:#c2703c; --ok:#5c7a4a; --red:#b03a2e; --green:#2F4A3C; --gray:#8b8578;
+  }
+  *{box-sizing:border-box}
+  body{margin:0;padding:26px 30px 60px;background:var(--paper);color:var(--ink);
+       font:15px/1.7 "PingFang SC","Microsoft YaHei",system-ui,sans-serif}
+  h1{font-size:20px;margin:0 0 4px}
+  .sub{color:var(--muted);font-size:13px;margin:0 0 6px}
+  .path{font-family:ui-monospace,Consolas,monospace;font-size:11.5px;color:var(--muted);margin:0 0 14px}
+  h2{font-size:15.5px;margin:30px 0 6px;padding-bottom:6px;border-bottom:1px solid var(--line)}
+  .box{background:#fffdf7;border:1px solid var(--line);border-left:3px solid var(--green);
+       padding:11px 14px;margin:10px 0;font-size:13.5px}
+  .box.w{border-left-color:var(--warn)}
+  .box b{color:var(--green)} .box.w b{color:var(--warn)}
+  code{font-family:ui-monospace,Consolas,monospace;font-size:12px;background:#efe9dc;padding:1px 4px;border-radius:3px}
+
+  .ab{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin:8px 0}
+  @media(max-width:900px){.ab{grid-template-columns:1fr}}
+  .side{background:#fffdf7;border:1px solid var(--line);border-radius:6px;padding:11px 13px}
+  .side.now{border-top:2px solid var(--red)}
+  .side.prop{border-top:2px solid var(--ok)}
+  .side .tag{font-size:11.5px;letter-spacing:.5px;margin-bottom:7px;font-weight:600}
+  .side.now .tag{color:var(--red)} .side.prop .tag{color:var(--ok)}
+  .why{font-size:12.5px;color:var(--muted);margin-top:8px;padding-top:7px;border-top:1px dashed var(--line)}
+
+  .phone{background:#fdfcf8;border:1px solid var(--line);border-radius:10px;padding:16px 16px 18px;max-width:380px}
+  .phone .ptitle{font-size:17px;margin:0 0 2px;font-weight:600}
+  .phone .lede{color:var(--muted);font-size:12.5px;margin:0 0 12px}
+  .phone .card{border:1px solid var(--line);border-radius:8px;padding:12px;background:#fff}
+  .phone .nm{font-size:15px;font-weight:600;margin:0 0 2px}
+  .phone .muted{color:var(--muted);font-size:12px;margin:4px 0;line-height:1.6}
+  .phone .btn{display:inline-block;background:var(--green);color:#fff;border-radius:4px;padding:6px 16px;font-size:13px;margin:8px 6px 0 0}
+  .phone .btn.sec{background:#e7e0d1;color:var(--ink)}
+  .phone .chip{display:inline-block;border:1px solid var(--line);border-radius:3px;padding:1px 6px;font-size:11.5px;color:var(--muted);margin-right:5px}
+  .phone .kicker{color:var(--muted);font-size:11.5px;margin:12px 0 4px;letter-spacing:.4px}
+  .phone .big{font-size:14px;margin:0}
+
+  .dup{background:#fbe9e3;border-radius:3px;padding:0 3px}
+  .old{color:var(--red)} .new{color:var(--ok)} .dim{color:var(--muted)}
+  .keep{font-size:13px;line-height:2;background:#fffdf7;border:1px solid var(--line);border-radius:6px;
+        padding:12px 15px;margin:8px 0}
+  .keep .k{font-family:ui-monospace,Consolas,monospace;font-size:11.5px;color:var(--muted)}
+  .keep b{color:var(--green)}
+</style>
+</head>
+<body>
+
+<h1>settle 模块 · 待拍板</h1>
+
+<div class="box w">
+  <b>状态：部分已落（<code>55a2870</code>）</b>——本页第三节列的 8 条 <code>settle.preview.*</code>（美术预览页）已从术语表删除、改明文
+  （走查页文案不落术语表，规则见《文案工程规范》§一）。第一节「证书」与第二节五处存疑<b>仍待拍板</b>；主题化另见 <code>settle-theme-proposal.html</code>。
+</div>
+<p class="sub">30 条 · 开包页(20) / 美术预览页(7) / 标签提示(2) / 相册印章(1) / 服务端(1)。<b>1 处拍板项，5 处存疑，24 条保留。</b></p>
+<p class="path">packages/messages/src/zh.ts:151-168, 777-789 · apps/web/src/pages/ObservationSettlePage.tsx · SettleArtPreviewPage.tsx · components/ListTagRow.tsx · apps/api/src/routes/observations.ts:189</p>
+
+<div class="box">
+  <b>先说结论</b>：这是目前<b>文案质量最高</b>的模块——「请过目」「收下」「封缄 / 揭示 / 展出」「点亮一格 / 整册点亮」已经是一套完整的仪式语感，
+  24 条一个字都不用动。真正要你定的只有一件事：<b>「证书」这个词</b>。
+</div>
+
+<div class="box w">
+  <b>先排掉一个坑</b>：<code>settle.alertHint</code>「依据该国公开名录判定」在页面里搜不到 <code>t("settle.alertHint")</code>，
+  看着像死 key——其实它是 <code>ListTagRow.tsx:18</code> 映射表里的 <b>title 提示</b>（鼠标悬停才显示）。<b>是活的</b>，不动。
+</div>
+
+<h2>一、要你拍板的：「证书」这个词</h2>
+<p class="path">zh.ts:777（<code>settle.title</code>）· 同族：zh.ts 里的 <code>collection.lede</code>「收下的证书，都在这里」· 出处：docs/features/品牌叙事.md §3</p>
+<div class="ab">
+  <div class="side now">
+    <div class="tag">现状 · 保留「证书」</div>
+    <div class="phone">
+      <div class="ptitle">鉴定证书</div>
+      <div class="lede">这趟遇见的生命，现在有名字了。</div>
+      <div class="card">
+        <div class="nm">赤狐</div>
+        <div class="muted">Vulpes vulpes</div>
+        <div class="kicker">稀有度</div>
+        <span class="chip">当地引入/关注种</span>
+      </div>
+      <span class="btn">请过目</span>
+    </div>
+    <div class="why">
+      「证书」承载的是<b>权威命名</b>的心智——用户收下的是「一份被认定的身份」。<br>
+      代价：它是机构语汇，与博物图册的叙事有一层轻微的隔。
+    </div>
+  </div>
+  <div class="side prop">
+    <div class="tag">另一种 · 改「定名样片」</div>
+    <div class="phone">
+      <div class="ptitle">定名样片</div>
+      <div class="lede">这趟遇见的生命，现在有名字了。</div>
+      <div class="card">
+        <div class="nm">赤狐</div>
+        <div class="muted">Vulpes vulpes</div>
+        <div class="kicker">稀有度</div>
+        <span class="chip">当地引入/关注种</span>
+      </div>
+      <span class="btn">请过目</span>
+    </div>
+    <div class="why">
+      进入「标本 / 图版」的叙事，和「请过目」「收下」「封缄」是同一套语言。<br>
+      代价：权威感减弱——「样片」听着不如「证书」像一份被认定的东西。
+    </div>
+  </div>
+</div>
+
+<div class="box w">
+  <b>这条不是我提的新问题</b>——<code>docs/features/品牌叙事.md §3</code> 把它记为<b>唯一还没拍板的用词问题</b>（那份文档还特意提醒：不要因为整篇「冲印叙事」已作废就以为这条也自动作废）。
+  我没擅自动它。要定就一起定：<code>settle.title</code> 与 <code>collection.lede</code> 是同一族，改一个就得改另一个。
+</div>
+
+<h2>二、存疑五处（我不擅自动，你定）</h2>
+
+<div class="box w">
+  <b>存疑 ① · <code>settle.failed</code>「这次没成」</b><br>
+  它是两个场景共用的兜底：进页面加载失败（ObservationSettlePage.tsx:111）、点「收下」失败（:141）。话很亲切，但<b>没给出路</b>——
+  过三问的第一问「能据此行动吗」是否。对比同仓的 <code>me.updateFailed</code>「更新失败，请检查网络后重试」是给了下一步的。<br>
+  <b>我倾向补一句出路</b>（如「这次没成，再试一次」），但它是你早前定的语气，所以不擅动。
+</div>
+
+<div class="box w">
+  <b>存疑 ② · <code>settle.claim</code>「收下」/ <code>settle.claiming</code>「收录中…」</b><br>
+  同一次点击的按钮和加载态用了两个词。它们其实<b>视角不同</b>：按钮是用户的动作（收下这张），加载态是系统的动作（收进图鉴）。
+  口径上也说得通（<code>术语口径</code>规定树上收录物统一「收录」）。<b>我倾向不动</b>，但摆出来让你判断这是不是想要的对比。
+</div>
+
+<div class="box w">
+  <b>存疑 ③ · <code>settle.opening</code>「请稍候…」</b><br>
+  全表唯一一个「客套式」加载态——其它都是「加载中…」「检查中…」「下载中…」这种「动作 + 中…」。它出现在揭示动画进行中的那一瞬（几百毫秒）。<br>
+  <b>我倾向不动</b>：这一页整体是仪式语感，「请稍候」比「揭示中…」更像这一页该说的话。
+</div>
+
+<div class="box w">
+  <b>存疑 ④ · <code>settle.lede</code>「这趟遇见的生命，现在有名字了。」</b><br>
+  这是创作类。它没毛病，但里面「<b>遇见 + 名字</b>」这个组合，在品牌句那一轮被你判过「关键词拼贴」（原话是「路上遇见的，都有名字」）。
+  同一对词在这里出现，我不确定你是不是也嫌它。<b>我倾向不动</b>（它是开包页的说明句，不是门面句），但既然撞上了就报给你。
+</div>
+
+<div class="box w">
+  <b>存疑 ⑤ · <code>settle.preview.phaseReveal</code>「揭示中」</b><br>
+  美术预览页的三个阶段名里，另两个是名词（<code>封缄</code> / <code>展出</code>），只有它是「动作 + 中」。<br>
+  <b>我倾向不动</b>：它标的是「正在揭示」这个进行态，和另外两个静态阶段本来就不同；而且这一页是美术走查用的。
+</div>
+
+<h2>三、保留 24 条（逐条展开，供审）</h2>
+<div class="keep">
+<b>开包页 · 启封与收下（4）</b><br>
+<span class="k">settle.open</span>「请过目」— ObservationSettlePage.tsx:225（启封按钮）、TripAlbumPage.tsx:663/697（片框印章）— 仪式语感，短<br>
+<span class="k">settle.backAlbum</span>「返回旅途相册」— :302 — 带限定词，比裸「相册」清楚（对比 <code>trips.manageBack</code>）<br>
+<span class="k">settle.rarity</span>「稀有度」— SettleArtPreviewPage.tsx:97 — 小节名<br>
+<span class="k">settle.notPending</span>「这条没有结论可看。」— observations.ts:189 — 服务端错误；完整句，句号按规则保留<br>
+<br>
+<b>开包页 · 两处评级说明（2）</b><br>
+<span class="k">settle.tierWeak</span>「稀有度按已确认层级评定」— :258 — 说清了为什么这次评级不一样<br>
+<span class="k">settle.locationImprecise</span>「无定位时按中国常见度评定」— :261、ObservationDetailPage.tsx:483 — 同上，且被详情页复用<br>
+<br>
+<b>引入种标签（2）</b><br>
+<span class="k">settle.alertIntroduced</span>「当地引入/关注种」— ListTagRow.tsx:9（标签文字）、TripAlbumPage.tsx:731 — 一个标签容纳两类提示<br>
+<span class="k">settle.alertHint</span>「依据该国公开名录判定」— ListTagRow.tsx:18（悬停提示）— 见上文那个坑<br>
+<br>
+<b>套册点灯仪式（6）</b><br>
+<span class="k">settle.volumeSlotLit</span>「{volume} · {slot} 已点亮」— :55 · <span class="k">settle.volumeSlotLitMore</span>「…，另有 {count} 格」— :56<br>
+<span class="k">settle.volumeCompleted</span>「「{volume}」整册点亮」— :43 · <span class="k">settle.volumeCompletedMore</span>「「{volume}」等 {count} 本整册点亮」— :44<br>
+<span class="k">settle.volumeToCollection</span>「去图鉴看看」— :338 — 带出路的按钮<br>
+<span class="k">settle.volumeContinue</span>「继续旅途」— :341<br>
+<br>
+<b>点灯仪式的标题（2）</b><br>
+<span class="k">settle.volumeCeremonyTitle</span>「点亮一格」— :334 · <span class="k">settle.volumeCeremonyCompleteTitle</span>「整册点亮」— :333、SettleArtPreviewPage.tsx:116/126 — 两个标题成对<br>
+<br>
+<b>美术预览页（7）</b><br>
+<span class="k">settle.preview.title</span>「开包美术预览」— :41<br>
+<span class="k">settle.preview.lede</span>「只看叠层效果，不走识别接口。点阶段切换封缄 / 揭示 / 展出。」— :42 — 两段独立信息，句号按规则保留<br>
+<span class="k">settle.preview.phases</span>「开包阶段」— :45 — tablist 的无障碍名<br>
+<span class="k">settle.preview.phaseSealed</span>「封缄」— :48 · <span class="k">settle.preview.phaseReveal</span>「揭示中」— :49（见存疑 ⑤）· <span class="k">settle.preview.phaseOpen</span>「展出」— :50<br>
+<span class="k">settle.preview.sampleName</span>「示例标本」— :71/86 — 样张名<br>
+<span class="k">settle.preview.ceremonySample</span>「「潮间带」整册点亮（预览）」— :127 — 仪式样张行<br>
+<br>
+<b>另（1）</b><br>
+<span class="k">settle.claim</span> / <span class="k">settle.claiming</span> / <span class="k">settle.opening</span> / <span class="k">settle.failed</span> / <span class="k">settle.lede</span> / <span class="k">settle.title</span> — 见第二、第一节
+</div>
+
+<p style="margin-top:16px;font-size:13px;color:var(--muted)">
+  <b>要你拍的</b>：第一节「证书」这个词改不改（连带 <code>collection.lede</code>）；第二节五处存疑是否维持不动。
+  定了我改 <code>zh.ts</code>（若动证书还要改 <code>collection.lede</code>），跑 <code>pnpm check:copy</code>，单独提交 <code>settle</code>。
+</p>
+
+</body>
+</html>

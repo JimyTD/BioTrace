@@ -1,0 +1,129 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<title>品牌句 · 第二轮</title>
+<style>
+  :root{
+    --paper:#f6f2e9; --ink:#2a241c; --muted:#857a67;
+    --line:#ddd4c2; --warn:#c2703c; --ok:#5c7a4a; --green:#2F4A3C;
+  }
+  *{box-sizing:border-box}
+  body{margin:0; padding:28px 32px 64px; background:var(--paper); color:var(--ink);
+       font:15px/1.75 "PingFang SC","Microsoft YaHei",system-ui,sans-serif}
+  h1{font-size:20px; margin:0 0 4px}
+  .sub{color:var(--muted); font-size:13px; margin:0 0 8px}
+  h2{font-size:15px; margin:30px 0 12px; padding-bottom:6px; border-bottom:1px solid var(--line)}
+  .box{background:#fffdf7; border:1px solid var(--line); border-left:3px solid var(--warn); padding:12px 15px; margin:14px 0; font-size:13.5px}
+  .box.g{border-left-color:var(--green)}
+  .box b{color:var(--warn)}
+  .box.g b{color:var(--green)}
+  .box ol{margin:8px 0 0; padding-left:20px}
+  .box li{margin:4px 0}
+  .card{background:#fffdf7; border:1px solid var(--line); border-radius:5px; padding:14px 16px; margin-bottom:11px}
+  .card.pick{border-color:var(--warn); box-shadow:0 0 0 2px rgba(194,112,60,.13)}
+  .say{font-size:20px; margin:0 0 8px; letter-spacing:.02em}
+  .why{font-size:13px; color:var(--muted); margin:3px 0}
+  .dir{font-size:11.5px; color:var(--muted); letter-spacing:.04em; margin-bottom:6px}
+  .tags{margin-top:8px; display:flex; gap:6px; flex-wrap:wrap}
+  .tag{font-size:11.5px; padding:1px 7px; border-radius:9px; border:1px solid var(--line); color:var(--muted)}
+  .tag.ok{color:var(--ok); border-color:var(--ok)}
+  .tag.hot{color:var(--warn); border-color:var(--warn)}
+  .rec{font-size:12.5px; color:var(--ok); font-weight:600; margin-top:6px}
+  code{font-family:ui-monospace,Consolas,monospace; font-size:12px; background:#efe9dc; padding:1px 4px; border-radius:3px}
+  .sim{margin-top:14px; padding:12px 15px; background:#fffdf7; border:1px solid var(--line); border-radius:5px}
+  .sim .lab{font-size:12px; color:var(--muted); margin-bottom:8px}
+  .phone{background:var(--green); border-radius:7px; padding:20px 18px 16px; color:#EFE9D8; text-align:center; margin-bottom:10px}
+  .phone .brand{font-size:15px; letter-spacing:.12em; margin-bottom:10px; opacity:.9}
+  .phone .slogan{font-size:17px; line-height:1.6}
+</style>
+</head>
+<body>
+
+<h1>品牌句 · 第二轮</h1>
+<p class="sub">一个 key，三处共用（关于页 slogan + 登录页 + 下载页）。句子全部重起，不再从旧句派生。</p>
+
+<div class="box">
+  <b>上一轮我为什么想不好（你要的答案）</b>
+  <ol>
+    <li><b>在「派生」不是创作</b>：盯着旧句改（有名字→认得出来），跟上一轮被批的毛病一样。</li>
+    <li><b>用分析回避创作</b>：位置分析、结构建议都是安全的智力活；写一句好话要担被否的风险，我躲开了。</li>
+    <li><b>优化「可辩护」而非「好」</b>：每条都配「代价是…」，是不敢下判断。</li>
+    <li><b>把「路上遇见的」当不能动的锚</b>，新意锁死在这个短语里。</li>
+    <li><b>怕错</b>：能力弱的模型反而敢下重手。</li>
+  </ol>
+</div>
+
+<h2>候选 · 同一句用三处</h2>
+
+<div class="card pick">
+  <div class="dir">方向：关系 / 把主体性还给它们</div>
+  <div class="say">它们有名字，等你认出来</div>
+  <div class="why">主语是「它们」不是「你」——路边的生命本来就有身份，缺的是被你认出来。app 做的事被放在"它们等你"的关系里。</div>
+  <div class="why">「等你」带一点被需要感，比「帮你认」高级。</div>
+  <div class="tags"><span class="tag ok">有主体</span><span class="tag ok">三处都成立</span></div>
+  <div class="rec">▸ 我最推荐这条</div>
+</div>
+
+<div class="card">
+  <div class="dir">方向：发现（「原来」的惊喜）</div>
+  <div class="say">原来路边的一切，都有名字</div>
+  <div class="why">「原来」二字是用户认出它时的那声惊讶，把 app 的价值写成一次认知翻转。</div>
+  <div class="why">代价：稍长，做 slogan 略软。</div>
+  <div class="tags"><span class="tag">有情绪</span><span class="tag hot">略长</span></div>
+</div>
+
+<div class="card">
+  <div class="dir">方向：主张（命名即看见）</div>
+  <div class="say">叫得出名字，才算真的看见</div>
+  <div class="why">一个可辩的主张：认不出，等于没看见。解释了为什么要用这个 app，而不只是描述它。</div>
+  <div class="why">代价：略绕，且是"你不够"的口气，可能硌人。</div>
+  <div class="tags"><span class="tag ok">有观点</span><span class="tag hot">口气偏硬</span></div>
+</div>
+
+<div class="card">
+  <div class="dir">方向：尺度（好奇心）</div>
+  <div class="say">身边的生命，比你认得多</div>
+  <div class="why">把"你不认识它们"说成一件有趣的事，而不是你的短板。</div>
+  <div class="why">代价：只说出了"多"，没说 app 干什么。</div>
+  <div class="tags"><span class="tag ok">门槛低</span><span class="tag hot">没产品信息</span></div>
+</div>
+
+<div class="card">
+  <div class="dir">方向：动作（最直白）</div>
+  <div class="say">拍一下，它就有名字</div>
+  <div class="why">最短、最像产品本身，三处都读得通。</div>
+  <div class="why">代价：偏功能，少了品牌气味；且跟旧句「都有名字」共用了"名字"这个词。</div>
+  <div class="tags"><span class="tag hot">偏功能</span><span class="tag">最短</span></div>
+</div>
+
+<div class="card">
+  <div class="dir">方向：收藏 / 图鉴</div>
+  <div class="say">把路边的生命，收成图鉴</div>
+  <div class="why">说清产品（图鉴），「收」呼应已有词汇。</div>
+  <div class="why">代价：像功能说明，做 slogan 缺记忆点。</div>
+  <div class="tags"><span class="tag hot">像说明书</span></div>
+</div>
+
+<h2>同一句，三处长这样</h2>
+<div class="sim">
+  <div class="lab">关于页（slogan 正位）</div>
+  <div class="phone"><div class="brand">B I O T R A C E</div><div class="slogan">它们有名字，等你认出来</div></div>
+  <div class="lab" style="margin-top:12px">登录页（回归位）</div>
+  <div class="phone"><div class="brand">B I O T R A C E</div><div class="slogan">它们有名字，等你认出来</div></div>
+  <div class="lab" style="margin-top:12px">下载页（招新位）</div>
+  <div class="phone"><div class="brand">B I O T R A C E</div><div class="slogan">它们有名字，等你认出来</div></div>
+</div>
+
+<div class="box g">
+  <b>我这次的判断</b>：推荐第一条「它们有名字，等你认出来」。它把 app 从"工具"挪到了"你和它们之间的事"，
+  三处都成立、都不像说明书。<b>但你既然用别的模型出了更好的，直接把你那几条给我</b>——
+  我想看它们好在哪，比我自己再猜十轮有用。
+</div>
+
+<p style="margin-top:16px; font-size:13px; color:var(--muted)">
+  本页零改动。定哪条，我再动 <code>zh.ts</code>（一个 key，三处；<code>app.tagline</code> 与 <code>app.lede</code> 合并）。
+</p>
+
+</body>
+</html>

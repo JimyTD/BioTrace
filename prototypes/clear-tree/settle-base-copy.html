@@ -1,0 +1,177 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<title>settle · 常规版文案（先定「是什么」）</title>
+<style>
+  :root{
+    --paper:#f6f2e9; --ink:#2a241c; --muted:#857a67; --line:#ddd4c2;
+    --warn:#c2703c; --ok:#5c7a4a; --red:#b03a2e; --green:#2F4A3C; --gray:#8b8578;
+  }
+  *{box-sizing:border-box}
+  body{margin:0;padding:26px 30px 60px;background:var(--paper);color:var(--ink);
+       font:15px/1.7 "PingFang SC","Microsoft YaHei",system-ui,sans-serif}
+  h1{font-size:20px;margin:0 0 4px}
+  .sub{color:var(--muted);font-size:13px;margin:0 0 6px}
+  .path{font-family:ui-monospace,Consolas,monospace;font-size:11.5px;color:var(--muted);margin:0 0 14px}
+  h2{font-size:15.5px;margin:30px 0 6px;padding-bottom:6px;border-bottom:1px solid var(--line)}
+  .box{background:#fffdf7;border:1px solid var(--line);border-left:3px solid var(--green);
+       padding:11px 14px;margin:10px 0;font-size:13.5px}
+  .box.w{border-left-color:var(--warn)}
+  .box b{color:var(--green)} .box.w b{color:var(--warn)}
+  code{font-family:ui-monospace,Consolas,monospace;font-size:12px;background:#efe9dc;padding:1px 4px;border-radius:3px}
+  table{width:100%;border-collapse:collapse;font-size:13px;background:#fffdf7;margin-top:8px}
+  th,td{border:1px solid var(--line);padding:6px 9px;text-align:left;vertical-align:top}
+  th{background:#efe9dc;font-weight:600;color:var(--muted);font-size:12.5px}
+  td.k{font-family:ui-monospace,Consolas,monospace;font-size:11.5px;color:var(--muted)}
+  td.what{color:var(--ink)}
+  td.base{color:var(--green);font-weight:600}
+  td.cur{color:var(--muted)}
+  .dim{color:var(--muted)}
+  .same{color:var(--muted);font-weight:400}
+</style>
+</head>
+<body>
+
+<h1>settle · 常规版文案</h1>
+
+<div class="box">
+  <b>状态：已落（<code>e05dbfd</code>）</b>——7 条常规版全部落地（<code>lede</code> 按你改的写成「已经识别出这是什么了。」）。<br>
+  · <b>「证书」已从基础表退出</b>（<code>title</code> → 「识别结果」），收进主题层——<code>品牌叙事.md §3</code> 那个悬案由此解开：基础表不替它做决定。<br>
+  · <code>settle.failed</code> 与 <code>auth.failed</code> 同句但<b>不合并</b>，理由已写进《文案工程规范》§二（主题 key 必须独立）。<br>
+  · <b>本页一处自相矛盾，我按清单落的</b>：表里给 <code>volumeCeremonyTitle</code>/<code>CompleteTitle</code> 写了新说法（新点亮一格 / 新集齐一整本），下面的清单却说这 8 条不动。两条<b>没动</b>——要改的话一句话。<br>
+  · 两套主题说法待写。
+</div>
+<p class="sub">先定「这个东西是什么」，再写常规（保守、表意清晰、当兜底）。主题说法留到下一轮。</p>
+<p class="path">packages/messages/src/zh.ts:151-160, 775-786 · apps/web/src/pages/ObservationSettlePage.tsx · 主题化筛选见 settle-theme-proposal.html</p>
+
+<div class="box">
+  <b>三层分工</b>：基础表（本页，保守兜底）→ 日光图版说法 → 清透说法。谁都没覆盖时落基础表，所以基础表<b>不需要好看，只需要不会读错</b>。<br>
+  <b>由此带出一件事</b>：现在基础表里的「请过目」「收下」「点亮一格」其实是<b>仪式语感</b>，按新分工它们该挪进主题表——基础表换保守说法。
+</div>
+
+<h2>一、15 条：这个东西到底是什么（再定常规）</h2>
+<table>
+<tr><th style="width:22%">key</th><th style="width:34%">它是什么（位置 / 作用 / 什么时候出现）</th><th style="width:24%">常规（保守）</th><th>现在基础表里的</th></tr>
+
+<tr>
+  <td class="k">settle.title</td>
+  <td class="what">这一页的名字。一次识别出结果后落在这一页——用户在这里<b>决定收不收下</b>；还没收下时，它不算进图鉴。</td>
+  <td class="base">识别结果</td>
+  <td class="cur">鉴定证书</td>
+</tr>
+<tr>
+  <td class="k">settle.lede</td>
+  <td class="what">标题下的一句话，交代<b>这一页拿到了什么</b>。</td>
+  <td class="base">已经认出这是什么了。</td>
+  <td class="cur">这趟遇见的生命，现在有名字了。</td>
+</tr>
+<tr>
+  <td class="k">settle.open</td>
+  <td class="what">启封按钮。照片还盖着，<b>点它才开始揭晓</b>（识别已经跑完了，这一步只是揭晓）。</td>
+  <td class="base">看看是什么</td>
+  <td class="cur">请过目</td>
+</tr>
+<tr>
+  <td class="k">settle.opening</td>
+  <td class="what">揭晓进行中的<b>加载态</b>，几百毫秒；演完就出结果。</td>
+  <td class="base">揭晓中…</td>
+  <td class="cur">请稍候…</td>
+</tr>
+<tr>
+  <td class="k">settle.claim</td>
+  <td class="what">主按钮。<b>按下去才真正收进图鉴</b>（结算完成）；不按就等于没要这次结果。</td>
+  <td class="base">收进图鉴</td>
+  <td class="cur">收下</td>
+</tr>
+<tr>
+  <td class="k">settle.failed</td>
+  <td class="what">失败兜底：进页面加载失败、或点「收进图鉴」失败时显示（正常显示的是服务端原话，它只在异常时回落）。</td>
+  <td class="base">操作失败，请重试</td>
+  <td class="cur">这次没成</td>
+</tr>
+<tr>
+  <td class="k">settle.backAlbum</td>
+  <td class="what">回退按钮，回这趟旅途的相册。只在还没收下时出现。</td>
+  <td class="base">返回相册</td>
+  <td class="cur">返回旅途相册</td>
+</tr>
+
+<tr><td colspan="4" style="background:#f3efe4;font-size:12px;color:var(--muted)">↓ 以下 8 条属于同一个东西：<b>收下之后，套册里有一格被点亮</b>（或集齐一整本）时弹出的那层通知</td></tr>
+
+<tr>
+  <td class="k">settle.volumeCeremonyTitle</td>
+  <td class="what">弹层的<b>小标题</b>——这次点亮的是「一格」。</td>
+  <td class="base">新点亮一格</td>
+  <td class="cur">点亮一格</td>
+</tr>
+<tr>
+  <td class="k">settle.volumeCeremonyCompleteTitle</td>
+  <td class="what">弹层的<b>小标题</b>——这次点亮的是「一整本」。</td>
+  <td class="base">新集齐一整本</td>
+  <td class="cur">整册点亮</td>
+</tr>
+<tr>
+  <td class="k">settle.volumeSlotLit</td>
+  <td class="what">弹层<b>正文</b>：哪一本、哪一格被点亮。</td>
+  <td class="base same">（已清楚，不动）{volume} · {slot} 已点亮</td>
+  <td class="cur">{volume} · {slot} 已点亮</td>
+</tr>
+<tr>
+  <td class="k">settle.volumeSlotLitMore</td>
+  <td class="what">弹层正文：<b>一次点亮了多格</b>时，先说第一格，再说还有几格。</td>
+  <td class="base same">（已清楚，不动）…，另有 {count} 格</td>
+  <td class="cur">…，另有 {count} 格</td>
+</tr>
+<tr>
+  <td class="k">settle.volumeCompleted</td>
+  <td class="what">弹层正文：<b>某一本集齐了</b>。</td>
+  <td class="base same">（已清楚，不动）「{volume}」整册点亮</td>
+  <td class="cur">「{volume}」整册点亮</td>
+</tr>
+<tr>
+  <td class="k">settle.volumeCompletedMore</td>
+  <td class="what">弹层正文：<b>一次集齐了多本</b>。</td>
+  <td class="base same">（已清楚，不动）「{volume}」等 {count} 本整册点亮</td>
+  <td class="cur">「{volume}」等 {count} 本整册点亮</td>
+</tr>
+<tr>
+  <td class="k">settle.volumeToCollection</td>
+  <td class="what">弹层<b>主按钮</b>：去看刚收进图鉴的东西。</td>
+  <td class="base same">（已清楚，不动）去图鉴看看</td>
+  <td class="cur">去图鉴看看</td>
+</tr>
+<tr>
+  <td class="k">settle.volumeContinue</td>
+  <td class="what">弹层<b>次按钮</b>：关掉弹层，回旅途。</td>
+  <td class="base same">（已清楚，不动）继续旅途</td>
+  <td class="cur">继续旅途</td>
+</tr>
+</table>
+
+<h2>二、常规版要改的只有 7 条</h2>
+<div class="box">
+  <code>title</code> 鉴定证书 → <b>识别结果</b><br>
+  <code>lede</code> 这趟遇见的生命，现在有名字了。 → <b>已经认出这是什么了。</b><br>
+  <code>open</code> 请过目 → <b>看看是什么</b><br>
+  <code>opening</code> 请稍候… → <b>揭晓中…</b>（与全表「X中…」的加载态写法一致）<br>
+  <code>claim</code> 收下 → <b>收进图鉴</b>（说清按下去发生什么）<br>
+  <code>failed</code> 这次没成 → <b>操作失败，请重试</b>（补出路；与 <code>auth.failed</code> 现在同句，可考虑上提到 common 区）<br>
+  <code>backAlbum</code> 返回旅途相册 → <b>返回相册</b><br>
+  <br>
+  其余 8 条（套册点灯那层）<b>常规版就是现在这样</b>——它们本来就是描述事实的，不算仪式语感。
+</div>
+
+<div class="box w">
+  <b>两条要你顺带定的</b>：<br>
+  ① <code>settle.title</code> 改成「识别结果」之后，<b>「证书」这个词就从基础表里消失了</b>——<code>品牌叙事.md §3</code> 那个悬案可以顺势收进主题层（哪套皮肤想用「证书」就在它的说法里写）。
+  这可能是解开那个悬案最省事的办法：基础表不必替它做决定。<br>
+  ② <code>settle.failed</code> 与 <code>auth.failed</code> 现在是同一句「操作失败，请重试」。按《文案工程规范》§二「通用说法复用」，它俩该合成 common 区一条。要不要顺手做（会动到 auth 那两处）？
+</div>
+
+<div class="box">
+  <b>下一步</b>：这两套主题说法（日光图版 = 拆封；清透 = 显影）等你发话再写。本页只动基础表，且<b>未落生产文件</b>。
+</div>
+
+</body>
+</html>

@@ -1,0 +1,145 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<title>me.appearanceLede · 重想</title>
+<style>
+  :root{
+    --paper:#f6f2e9; --ink:#2a241c; --muted:#857a67; --line:#ddd4c2;
+    --warn:#c2703c; --ok:#5c7a4a; --red:#b03a2e; --green:#2F4A3C; --gray:#8b8578;
+    /* clear 皮肤真实色值（themes/clear.css:21-24,187） */
+    --c-bg:#eef3f6; --c-ink:#333b41; --c-muted:#8d979e; --c-line:rgba(120,140,155,.13);
+  }
+  *{box-sizing:border-box}
+  body{margin:0;padding:26px 30px 60px;background:var(--paper);color:var(--ink);
+       font:15px/1.7 "PingFang SC","Microsoft YaHei",system-ui,sans-serif}
+  h1{font-size:20px;margin:0 0 4px}
+  .sub{color:var(--muted);font-size:13px;margin:0 0 6px}
+  .path{font-family:ui-monospace,Consolas,monospace;font-size:11.5px;color:var(--muted);margin:0 0 14px}
+  h2{font-size:15.5px;margin:28px 0 6px;padding-bottom:6px;border-bottom:1px solid var(--line)}
+  .box{background:#fffdf7;border:1px solid var(--line);border-left:3px solid var(--green);
+       padding:11px 14px;margin:10px 0;font-size:13.5px}
+  .box.w{border-left-color:var(--warn)}
+  .box.d{border-left-color:var(--red)}
+  .box b{color:var(--green)} .box.w b{color:var(--warn)} .box.d b{color:var(--red)}
+  code{font-family:ui-monospace,Consolas,monospace;font-size:12px;background:#efe9dc;padding:1px 4px;border-radius:3px}
+
+  /* 真机槽位：clear 皮肤下的外观页 */
+  .slot{background:var(--c-bg);color:var(--c-ink);border-radius:10px;padding:18px 18px 14px;
+        margin:10px 0;max-width:420px}
+  .slot .subhead{font-size:14px;font-weight:600;margin:0 0 10px;color:var(--c-ink)}
+  .slot .lede{color:var(--c-muted);margin:0 0 20px;max-width:42ch;font-size:15px}
+  .slot .row{display:flex;align-items:flex-start;justify-content:space-between;gap:12px;
+             padding:14px 0;border-bottom:1px solid var(--c-line)}
+  .slot .row:last-child{border-bottom:0}
+  .slot .main{display:grid;gap:3px}
+  .slot .hint{color:var(--c-muted);font-size:12.5px;line-height:1.5}
+  .slot .side{color:var(--c-muted);font-size:12.5px;white-space:nowrap}
+  .tagline{display:inline-block;font-size:11.5px;font-weight:600;letter-spacing:.5px;
+           margin-bottom:2px;color:var(--ok)}
+  .tagline.bad{color:var(--red)}
+  .why{font-size:12.5px;color:var(--muted);margin:4px 0 22px;padding-left:2px}
+  .dup{background:#fbe9e3;border-radius:3px;padding:0 3px}
+  .old{color:var(--red)} .new{color:var(--ok)}
+</style>
+</head>
+<body>
+
+<h1>me.appearanceLede · 重想</h1>
+
+<div class="box" style="background:#fffdf7;border:1px solid #ddd4c2;border-left:3px solid #b03a2e;padding:11px 14px;margin:10px 0;font-size:13.5px">
+  <b style="color:#b03a2e">状态：已废弃</b>——这条 key 已被<b>整条删除</b>（提交 <code>dd5a2f4</code>，用户选「删掉这句」：用户已经点进「外观」了，不需要一句开场白）。
+  本页的候选全部作废，只留作过程记录。总览见 <a href="copy-index.html">copy-index</a>。
+</div>
+<p class="sub">1 条 · 创作类叙事句 · 位置：外观页标题下、皮肤列表上</p>
+<p class="path">packages/messages/src/zh.ts:809 · apps/web/src/pages/MeAppearancePage.tsx:43（<code>&lt;p className="lede"&gt;</code>）</p>
+
+<div class="box">
+  <b>它现在干的活</b>：用户已经点进「外观」了，这一句还在解释这个开关是干什么的——这是<b>功能性文本的活</b>，不是叙事句的活。
+  创作类规则里第一条就是「不套功能性规则」，反过来也成立：<b>叙事句不该去干说明的活</b>。
+</div>
+
+<h2>现状 · 两处毛病</h2>
+<div class="slot">
+  <div class="subhead">外观</div>
+  <div class="lede dup">换一套皮肤，换个地方看照片。</div>
+  <div class="row"><span class="main"><span>清透</span><span class="hint">浅冷白底，照片带暖白边</span></span><span class="side">使用中</span></div>
+  <div class="row"><span class="main"><span>日光图版</span><span class="hint">暖米纸底，素版与彩版</span></span></div>
+</div>
+<p class="why">
+  ① <b>两个比喻叠着，都没落地</b>——「皮肤」是一种比喻，「换个地方」是另一种；而照片并没有换地方，换的是底色与纸感。<br>
+  ② <b>没有收益</b>——换了之后我得到什么？句子只说了一个动作，没说换来的是什么。
+</p>
+
+<h2>候选四条</h2>
+
+<div class="tagline bad">现状</div>
+<div class="slot">
+  <div class="subhead">外观</div>
+  <div class="lede old">换一套皮肤，换个地方看照片。</div>
+  <div class="row"><span class="main"><span>清透</span><span class="hint">浅冷白底，照片带暖白边</span></span><span class="side">使用中</span></div>
+  <div class="row"><span class="main"><span>日光图版</span><span class="hint">暖米纸底，素版与彩版</span></span></div>
+</div>
+<p class="why">说明文腔 + 比喻不落地 + 无收益。</p>
+
+<div class="tagline">候选 A · 我的推荐</div>
+<div class="slot">
+  <div class="subhead">外观</div>
+  <div class="lede new">换个光，把这些照片再看一遍。</div>
+  <div class="row"><span class="main"><span>清透</span><span class="hint">浅冷白底，照片带暖白边</span></span><span class="side">使用中</span></div>
+  <div class="row"><span class="main"><span>日光图版</span><span class="hint">暖米纸底，素版与彩版</span></span></div>
+</div>
+<p class="why">
+  把「换皮肤」翻译成用户真会做的事——<b>再看一遍自己的照片</b>。收益落地了（不是换了个设置，是照片重新好看了一遍），
+  而且它悄悄夸了用户的照片<b>值得再看</b>（规则 2）。「光」也不是硬塞的词：两套皮肤的差别本来就是底色冷暖。<br>
+  对照实物：清透是浅冷白纸、日光图版是暖米纸，说「光」比说「地方」贴。
+</p>
+
+<div class="tagline">候选 B</div>
+<div class="slot">
+  <div class="subhead">外观</div>
+  <div class="lede new">给照片换一张纸。</div>
+  <div class="row"><span class="main"><span>清透</span><span class="hint">浅冷白底，照片带暖白边</span></span><span class="side">使用中</span></div>
+  <div class="row"><span class="main"><span>日光图版</span><span class="hint">暖米纸底，素版与彩版</span></span></div>
+</div>
+<p class="why">
+  最实的一条，一个比喻说到底（纸），和下面两行的「底 / 纸」正好接得上。<br>
+  代价：它更接近「说清产品」，情绪少一点；也稍微像在描述操作（换纸），不如 A 有回味。
+</p>
+
+<div class="tagline">候选 C</div>
+<div class="slot">
+  <div class="subhead">外观</div>
+  <div class="lede new">挑一种光，把照片放进去。</div>
+  <div class="row"><span class="main"><span>清透</span><span class="hint">浅冷白底，照片带暖白边</span></span><span class="side">使用中</span></div>
+  <div class="row"><span class="main"><span>日光图版</span><span class="hint">暖米纸底，素版与彩版</span></span></div>
+</div>
+<p class="why">
+  邀请感最强，和下面两行列表咬合（「挑一种」→ 两行就是选项）。<br>
+  代价：「把照片放进去」稍微要读者自己补宾语（放进哪种光里），多一步转念。
+</p>
+
+<div class="tagline">候选 D</div>
+<div class="slot">
+  <div class="subhead">外观</div>
+  <div class="lede new">你收下的照片，配什么光由你定。</div>
+  <div class="row"><span class="main"><span>清透</span><span class="hint">浅冷白底，照片带暖白边</span></span><span class="side">使用中</span></div>
+  <div class="row"><span class="main"><span>日光图版</span><span class="hint">暖米纸底，素版与彩版</span></span></div>
+</div>
+<p class="why">
+  掌控感最强（规则 2 的「给更大的自我」：你是这些照片的编者）。<br>
+  代价：三句里最长，气质偏「宣言」，和这一页日常的设置感略不搭。
+</p>
+
+<div class="box w">
+  <b>我推荐 A</b>：「换个光，把这些照片再看一遍。」<br>
+  理由排序：收益落地（再看一遍）&gt; 比喻单一且贴实物（光＝底色冷暖）&gt; 悄悄夸了用户的照片 &gt; 长度适中、句号收得住。<br>
+  如果你要更"稳、不出错"，选 B；要更强的引导点击，选 C。
+</div>
+
+<p style="margin-top:16px;font-size:13px;color:var(--muted)">
+  本页零改动。你定哪条（或给一句你自己的），我改 <code>zh.ts:809</code> 一条 key，跑 <code>pnpm check:copy</code>，单独提交。
+</p>
+
+</body>
+</html>

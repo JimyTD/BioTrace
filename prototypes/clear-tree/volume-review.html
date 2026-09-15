@@ -1,0 +1,164 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<title>volume 模块 · 现状</title>
+<style>
+  :root{
+    --paper:#f6f2e9; --ink:#2a241c; --muted:#857a67; --line:#ddd4c2;
+    --warn:#c2703c; --ok:#5c7a4a; --red:#b03a2e; --green:#2F4A3C; --gray:#8b8578;
+  }
+  *{box-sizing:border-box}
+  body{margin:0;padding:26px 30px 60px;background:var(--paper);color:var(--ink);
+       font:15px/1.7 "PingFang SC","Microsoft YaHei",system-ui,sans-serif}
+  h1{font-size:20px;margin:0 0 4px}
+  .sub{color:var(--muted);font-size:13px;margin:0 0 6px}
+  .path{font-family:ui-monospace,Consolas,monospace;font-size:11.5px;color:var(--muted);margin:0 0 14px}
+  h2{font-size:15.5px;margin:28px 0 6px;padding-bottom:6px;border-bottom:1px solid var(--line)}
+  .box{background:#fffdf7;border:1px solid var(--line);border-left:3px solid var(--green);
+       padding:11px 14px;margin:10px 0;font-size:13.5px}
+  .box.w{border-left-color:var(--warn)}
+  .box.d{border-left-color:var(--red)}
+  .box b{color:var(--green)} .box.w b{color:var(--warn)} .box.d b{color:var(--red)}
+  code{font-family:ui-monospace,Consolas,monospace;font-size:12px;background:#efe9dc;padding:1px 4px;border-radius:3px}
+
+  .vol{background:#fffdf7;border:1px solid var(--line);border-radius:6px;padding:13px 16px;margin:12px 0}
+  .vol h3{margin:0 0 2px;font-size:16px}
+  .vol .lede{color:var(--muted);font-size:13.5px;margin:0 0 9px}
+  .slots{display:flex;gap:7px;flex-wrap:wrap;margin:8px 0}
+  .slot{border:1px solid var(--line);border-radius:14px;padding:2px 10px;font-size:12.5px;background:#fdfbf5}
+  .say{font-size:13px;margin-top:9px;padding-top:8px;border-top:1px dashed var(--line)}
+  .say .lbl{color:var(--muted);font-size:11.5px;display:block;margin-bottom:2px}
+  .say .s{background:var(--green);color:#EFE9D8;display:inline-block;padding:4px 11px;border-radius:5px;font-size:13.5px}
+  .say .s2{background:#3d5a4a;color:#EFE9D8;display:inline-block;padding:4px 11px;border-radius:5px;font-size:13.5px;margin-top:5px}
+  .fix{color:var(--muted);font-size:12.5px;margin-top:5px}
+  .old{color:var(--red)} .new{color:var(--ok)}
+  table{width:100%;border-collapse:collapse;font-size:13px;background:#fffdf7;margin-top:8px}
+  th,td{border:1px solid var(--line);padding:6px 9px;text-align:left;vertical-align:top}
+  th{background:#efe9dc;font-weight:600;color:var(--muted);font-size:12.5px}
+  td.k{font-family:ui-monospace,Consolas,monospace;font-size:11.5px;color:var(--muted)}
+</style>
+</head>
+<body>
+
+<h1>volume 模块 · 现状</h1>
+<p class="sub">30 条全部是「册」的内容数据。本页只摆事实，未改任何文件</p>
+<p class="path">packages/messages/src/zh.ts 249-281 · CollectionVolumePage.tsx 225-253 · ObservationSettlePage.tsx 51-57</p>
+
+<div class="box">
+  <b>先说性质</b>：这个模块不是界面文案，是<b>内容数据</b>——四本册子的名字、副题、格子名。
+  它有两个出场位置：<b>①</b> 套册页当标题/副题/格子标签；<b>②</b> 开包页被<b>塞进句子里</b>：<code>{volume} · {slot} 已点亮</code>。
+  位置②才是容易翻车的地方——名字在标题里好看，不等于在句子里念得通。
+</div>
+
+<h2>四本册子 · 两个场景各念一遍</h2>
+
+<div class="vol">
+  <h3>潮间带</h3>
+  <p class="lede">赶一次礁石潮：从脚边的小螺，到石头下的惊喜。</p>
+  <div class="slots">
+    <span class="slot">礁石小螺</span><span class="slot">藤壶</span><span class="slot">海蟑螂一类</span>
+    <span class="slot">石缝蟹</span><span class="slot">潮池海葵</span><span class="slot">寄居蟹</span><span class="slot">海星或海胆</span>
+  </div>
+  <div class="say">
+    <span class="lbl">套册页标题</span>
+    <span class="s">潮间带</span>
+    <span class="s2">赶一次礁石潮：从脚边的小螺，到石头下的惊喜。</span>
+  </div>
+  <div class="say">
+    <span class="lbl">开包页 · 名字被塞进句子</span>
+    <span class="s">潮间带 · 寄居蟹 已点亮</span>
+    <span class="s2">「潮间带」整册点亮</span>
+  </div>
+</div>
+
+<div class="vol">
+  <h3>城市野趣</h3>
+  <p class="lede">不出城也能凑一本小图鉴：花坛、墙缝与水边。</p>
+  <div class="slots">
+    <span class="slot">雀形目小鸟</span><span class="slot">访花蜂</span><span class="slot">蜘蛛一类</span>
+    <span class="slot">壁虎一类</span><span class="slot">陆生蜗牛</span><span class="slot">蝶一类</span><span class="slot">蛙或蟾</span>
+  </div>
+  <div class="say">
+    <span class="lbl">套册页标题</span>
+    <span class="s">城市野趣</span>
+    <span class="s2">不出城也能凑一本小图鉴：花坛、墙缝与水边。</span>
+  </div>
+  <div class="say">
+    <span class="lbl">开包页 · 名字被塞进句子</span>
+    <span class="s">城市野趣 · 访花蜂 已点亮</span>
+    <span class="s2">「城市野趣」整册点亮</span>
+  </div>
+</div>
+
+<div class="vol">
+  <h3>林缘遇见</h3>
+  <p class="lede">林边道上，从翅翼到偶尔一闪的兽影。</p>
+  <div class="slots">
+    <span class="slot">林缘小鸟</span><span class="slot">蝶或蛾</span><span class="slot">蜻蜓或豆娘</span>
+    <span class="slot">松鼠</span><span class="slot">蝉</span><span class="slot">中小型食肉</span>
+  </div>
+  <div class="say">
+    <span class="lbl">套册页标题</span>
+    <span class="s">林缘遇见</span>
+    <span class="s2">林边道上，从翅翼到偶尔一闪的兽影。</span>
+  </div>
+  <div class="say">
+    <span class="lbl">开包页 · 名字被塞进句子</span>
+    <span class="s">林缘遇见 · 松鼠 已点亮</span>
+    <span class="s2">「林缘遇见」整册点亮</span>
+  </div>
+  <div class="fix">
+    ⚠ 这条副题<b>有句号</b>，另两条没有。同层级三句，两种标点习惯。
+  </div>
+</div>
+
+<div class="vol">
+  <h3>管道验收册</h3>
+  <p class="lede">仅用于验证套册引擎；正式内容另配。</p>
+  <div class="slots">
+    <span class="slot">雀形目任一种</span><span class="slot">龟鳖目任一种</span>
+  </div>
+  <div class="say">
+    <span class="lbl">套册页标题</span>
+    <span class="s">管道验收册</span>
+    <span class="s2">仅用于验证套册引擎；正式内容另配。</span>
+  </div>
+  <div class="fix">
+    ⚠ 这是<b>测试用的 fixture</b>，不是给用户的册子。它会不会出现在正式界面，我没查，需要你定。
+  </div>
+</div>
+
+<h2>查出来的三处不一致</h2>
+<table>
+<tr><th style="width:30%">不一致</th><th>详情</th></tr>
+<tr>
+  <td>副题标点不统一</td>
+  <td>「赶一次…惊喜。」<b>无句号</b>　「不出城…水边。」<b>无句号</b>　「林边道上…兽影。」<b>有句号</b><br>
+      三条同层级，两种习惯。按你的纪律，非段落性短句一律无句号</td>
+</tr>
+<tr>
+  <td>slot 命名体例不一</td>
+  <td>有<b>物种名</b>（藤壶、寄居蟹、松鼠、蝉）、有<b>「一类」</b>（海蟑螂一类、蜘蛛一类、壁虎一类、蝶一类）、
+      有<b>「或」</b>（海星或海胆、蝶或蛾、蜻蜓或豆娘、蛙或蟾）、有<b>分类学术语</b>（雀形目小鸟、中小型食肉、雀形目任一种）<br>
+      四本体例混杂，看得出是不同时间写的</td>
+</tr>
+<tr>
+  <td>「中小型食肉」不像话</td>
+  <td>它是分类学术语「中小型食肉目/食肉目动物」的简写，但单独念是<b>形容词</b>——
+      「林缘遇见 · 中小型食肉 已点亮」读起来像在说一块肉。这一格装的是黄鼬、豹猫那类</td>
+</tr>
+</table>
+
+<div class="box w">
+  <b>我没把握的地方</b>：slot 名字是「格子装什么」的说明，混用物种名/「一类」/「或」可能是<b>有意的</b>——
+  藤壶格子只认藤壶，海星或海胆格子二选一都算。如果是这样，体例不一是内容设计不是文案问题，我不该动。<br>
+  但<b>「中小型食肉」这格我倾向要改</b>，它在句子里念不通。
+</div>
+
+<p style="margin-top:16px;font-size:13px;color:var(--muted)">
+  本页零改动。要动哪些，你定。
+</p>
+
+</body>
+</html>

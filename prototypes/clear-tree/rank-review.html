@@ -1,0 +1,146 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<title>rank 模块 · 现状</title>
+<style>
+  :root{
+    --paper:#f6f2e9; --ink:#2a241c; --muted:#857a67; --line:#ddd4c2;
+    --warn:#c2703c; --ok:#5c7a4a; --red:#b03a2e; --green:#2F4A3C; --gray:#8b8578;
+  }
+  *{box-sizing:border-box}
+  body{margin:0;padding:26px 30px 60px;background:var(--paper);color:var(--ink);
+       font:15px/1.7 "PingFang SC","Microsoft YaHei",system-ui,sans-serif}
+  h1{font-size:20px;margin:0 0 4px}
+  .sub{color:var(--muted);font-size:13px;margin:0 0 6px}
+  .path{font-family:ui-monospace,Consolas,monospace;font-size:11.5px;color:var(--muted);margin:0 0 14px}
+  h2{font-size:15.5px;margin:28px 0 6px;padding-bottom:6px;border-bottom:1px solid var(--line)}
+  .box{background:#fffdf7;border:1px solid var(--line);border-left:3px solid var(--green);
+       padding:11px 14px;margin:10px 0;font-size:13.5px}
+  .box.w{border-left-color:var(--warn)}
+  .box.d{border-left-color:var(--red)}
+  .box b{color:var(--green)} .box.w b{color:var(--warn)} .box.d b{color:var(--red)}
+  code{font-family:ui-monospace,Consolas,monospace;font-size:12px;background:#efe9dc;padding:1px 4px;border-radius:3px}
+
+  /* 分类链 */
+  .tax{background:#fffdf7;border:1px solid var(--line);border-radius:8px;padding:14px 18px;margin:10px 0;max-width:420px}
+  .tax ol{list-style:none;margin:0;padding:0}
+  .tax li{display:flex;gap:12px;align-items:baseline;padding:4px 0;border-bottom:1px dotted var(--line);font-size:13.5px}
+  .tax li:last-child{border-bottom:none}
+  .tax .r{color:var(--muted);min-width:26px;font-size:12.5px}
+  .tax .n{color:var(--ink)}
+  .tax .la{color:var(--muted);font-size:11.5px;font-style:italic}
+
+  .badge-line{display:inline-block;background:var(--green);color:#EFE9D8;
+              padding:5px 12px;border-radius:5px;font-size:13.5px;margin:5px 5px 0 0}
+  .say{font-size:13px;margin-top:9px;padding-top:8px;border-top:1px dashed var(--line);color:var(--muted)}
+  .say .s{background:#3d5a4a;color:#EFE9D8;display:inline-block;padding:4px 11px;border-radius:5px;font-size:13.5px;margin-top:4px}
+  .lbl{font-size:11.5px;color:var(--muted);display:block;margin-bottom:2px}
+
+  table{width:100%;border-collapse:collapse;font-size:13px;background:#fffdf7;margin-top:8px}
+  th,td{border:1px solid var(--line);padding:6px 9px;text-align:left;vertical-align:top}
+  th{background:#efe9dc;font-weight:600;color:var(--muted);font-size:12.5px}
+  td.k{font-family:ui-monospace,Consolas,monospace;font-size:11.5px;color:var(--muted)}
+  .live{color:var(--ok);font-weight:600}
+  .dead{color:var(--red)}
+  .dim{color:var(--muted)}
+  .ab{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin:8px 0}
+  @media(max-width:900px){.ab{grid-template-columns:1fr}}
+  .side{background:#fffdf7;border:1px solid var(--line);border-radius:6px;padding:11px 13px}
+  .side.now{border-top:2px solid var(--red)}
+  .side.prop{border-top:2px solid var(--ok)}
+  .side .tag{font-size:11.5px;letter-spacing:.5px;margin-bottom:7px;font-weight:600}
+  .side.now .tag{color:var(--red)} .side.prop .tag{color:var(--ok)}
+  .why{font-size:12.5px;color:var(--muted);margin-top:8px;padding-top:7px;border-top:1px dashed var(--line)}
+</style>
+</head>
+<body>
+
+<h1>rank 模块 · 现状</h1>
+<p class="sub">17 条分类阶元名。全部有映射、全部活着——本页零改动</p>
+<p class="path">packages/messages/src/zh.ts 369-385 · index.ts formatRank · ObservationDetailPage.tsx 94/386</p>
+
+<div class="box">
+  <b>先纠正一个我差点犯的错</b>：我一开始搜前端只找到 <code>ObservationDetailPage.tsx</code> 里的 <code>RANK_ORDER</code>，
+  它<b>只有 7 个</b>（界门纲目科属种），于是我差点判定另外 10 条是死 key。<br>
+  接着往下查才发现 <code>packages/messages/src/index.ts</code> 的 <code>formatRank()</code> 里有一张
+  <b>17 条的完整映射表</b>（英文 + 中文两种入口），而且它有 <b>6 个调用点</b>。所以 17 条<b>全部在用</b>，一条都不是死的。
+</div>
+
+<h2>一、详情页分类链（7 个主力阶元）</h2>
+<p class="path">ObservationDetailPage.tsx 94 行 · RANK_ORDER 只走这 7 个</p>
+<div class="tax">
+  <ol>
+    <li><span class="r">界</span><span class="n">动物界 <span class="la">Animalia</span></span></li>
+    <li><span class="r">门</span><span class="n">脊索动物门 <span class="la">Chordata</span></span></li>
+    <li><span class="r">纲</span><span class="n">哺乳纲 <span class="la">Mammalia</span></span></li>
+    <li><span class="r">目</span><span class="n">食肉目 <span class="la">Carnivora</span></span></li>
+    <li><span class="r">科</span><span class="n">鼬科 <span class="la">Mustelidae</span></span></li>
+    <li><span class="r">属</span><span class="n">鼬属 <span class="la">Mustela</span></span></li>
+    <li><span class="r">种</span><span class="n">黄鼬 <span class="la">M. sibirica</span></span></li>
+  </ol>
+</div>
+<div class="say">
+  单字标签，装在每行开头。<b>界门纲目科属种</b>——这是中文生物学<b>固定译名</b>，不是我们造的文案，一个字都不能改。
+</div>
+
+<h2>二、阶元名会被塞进句子</h2>
+<p class="path">formatRank 的 6 个调用点 · album.reliableTo = "可靠到：{rank}"</p>
+<div class="ab">
+  <div class="side now">
+    <div class="tag">六个调用点</div>
+    <div><code>ObservationDetailPage.tsx:386</code> → 详情页</div>
+    <div><code>ObservationSettlePage.tsx:254</code> → 开包页</div>
+    <div><code>TripAlbumPage.tsx:738</code> → 相册格</div>
+    <div><code>TreeScene.ts:2707</code> → 3D 树</div>
+    <div><code>SpeciesTree3D.tsx:31</code> → 树组件</div>
+    <div><code>AdminApp.tsx:835</code> → 后台表格</div>
+    <div class="why">注意后两个：阶元名还会出现在<b>树</b>和<b>表格</b>里，不是只有详情页</div>
+  </div>
+  <div class="side prop">
+    <div class="tag">念起来是这样</div>
+    <span class="lbl">album.reliableTo</span>
+    <span class="badge-line">可靠到：科</span>
+    <span class="badge-line">可靠到：亚种</span>
+    <span class="badge-line">可靠到：总科</span>
+    <span class="badge-line">可靠到：下目</span>
+    <div class="why">
+      17 个阶元名<b>全部会进这个句子</b>。目前念起来都还行——
+      因为「可靠到：X」后面接的就是一个阶元名，语法上成立
+    </div>
+  </div>
+</div>
+
+<h2>三、17 条全表 · 哪 10 条只走 formatRank</h2>
+<table>
+<tr><th style="width:16%">阶元</th><th style="width:22%">分类链（7 条）</th><th style="width:22%">只走 formatRank</th><th>说明</th></tr>
+<tr><td>界 / 门 / 纲 / 目 / 科 / 属 / 种</td><td class="live">✓ 走分类链</td><td class="live">✓ 也走</td><td>两处都用，是主力</td></tr>
+<tr><td>亚种</td><td class="dim">—</td><td class="live">✓</td><td>后端 <code>settle/rules.ts</code> 判定「full」时会用到</td></tr>
+<tr><td>总科 / 亚科 / 族</td><td class="dim">—</td><td class="live">✓</td><td>后端 <code>settle/rules.ts:32</code> 归为「partial」</td></tr>
+<tr><td>下目 / 亚目</td><td class="dim">—</td><td class="live">✓</td><td>只走 formatRank</td></tr>
+<tr><td>总纲 / 亚纲</td><td class="dim">—</td><td class="live">✓</td><td>只走 formatRank</td></tr>
+<tr><td>部 / 域</td><td class="dim">—</td><td class="live">✓</td><td>只走 formatRank</td></tr>
+</table>
+
+<h2>四、我的结论</h2>
+<div class="box">
+  <b>这个模块我建议一条都不改。</b><br><br>
+  ① <b>界门纲目科属种</b>是中文生物学的固定译名（国标级），不是可自由发挥的文案。<br>
+  ② <b>亚种 / 总科 / 亚科 / 族 / 下目 / 亚目 / 总纲 / 亚纲 / 部 / 域</b>同样都是标准译名，
+  跟上面 7 个是同一套体系，改任何一个都会跟专业用法对不上。<br>
+  ③ 它们会进 6 个不同场景（含 3D 树和后台表格），改动的波及面比看起来大。
+</div>
+
+<div class="box w">
+  <b>唯一值得记一笔的</b>：分类链只显示 7 个主力阶元，但 <code>formatRank</code> 能出 17 种。
+  这意味着详情页的「可靠到：X」可能说出 <b>分类链里根本没出现过的阶元</b>（比如「可靠到：下目」，
+  但分类链只有界门纲目科属种）。<br>
+  这是<b>展示不一致</b>，不是文案问题——要么分类链补全，要么 formatRank 收窄。属于产品决策，我不动。
+</div>
+
+<p style="margin-top:16px;font-size:13px;color:var(--muted)">
+  rank 模块：0 条改动建议。下一模块你说哪个。
+</p>
+
+</body>
+</html>

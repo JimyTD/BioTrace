@@ -1,0 +1,246 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<title>trips 模块 · 待拍板</title>
+<style>
+  :root{
+    --paper:#f6f2e9; --ink:#2a241c; --muted:#857a67; --line:#ddd4c2;
+    --warn:#c2703c; --ok:#5c7a4a; --red:#b03a2e; --green:#2F4A3C; --gray:#8b8578;
+  }
+  *{box-sizing:border-box}
+  body{margin:0;padding:26px 30px 60px;background:var(--paper);color:var(--ink);
+       font:15px/1.7 "PingFang SC","Microsoft YaHei",system-ui,sans-serif}
+  h1{font-size:20px;margin:0 0 4px}
+  .sub{color:var(--muted);font-size:13px;margin:0 0 6px}
+  .path{font-family:ui-monospace,Consolas,monospace;font-size:11.5px;color:var(--muted);margin:0 0 14px}
+  h2{font-size:15.5px;margin:30px 0 6px;padding-bottom:6px;border-bottom:1px solid var(--line)}
+  h3{font-size:14px;margin:20px 0 4px}
+  .box{background:#fffdf7;border:1px solid var(--line);border-left:3px solid var(--green);
+       padding:11px 14px;margin:10px 0;font-size:13.5px}
+  .box.w{border-left-color:var(--warn)}
+  .box.d{border-left-color:var(--red)}
+  .box b{color:var(--green)} .box.w b{color:var(--warn)} .box.d b{color:var(--red)}
+  code{font-family:ui-monospace,Consolas,monospace;font-size:12px;background:#efe9dc;padding:1px 4px;border-radius:3px}
+
+  .ab{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin:8px 0}
+  @media(max-width:900px){.ab{grid-template-columns:1fr}}
+  .side{background:#fffdf7;border:1px solid var(--line);border-radius:6px;padding:11px 13px}
+  .side.now{border-top:2px solid var(--red)}
+  .side.prop{border-top:2px solid var(--ok)}
+  .side .tag{font-size:11.5px;letter-spacing:.5px;margin-bottom:7px;font-weight:600}
+  .side.now .tag{color:var(--red)} .side.prop .tag{color:var(--ok)}
+  .why{font-size:12.5px;color:var(--muted);margin-top:8px;padding-top:7px;border-top:1px dashed var(--line)}
+
+  .phone{background:#fdfcf8;border:1px solid var(--line);border-radius:10px;padding:16px 16px 18px;max-width:420px}
+  .phone .ptitle{font-size:19px;margin:0 0 2px}
+  .phone .lede{color:var(--muted);font-size:13.5px;margin:0 0 14px;max-width:42ch}
+  .phone .create{display:grid;grid-template-columns:1fr auto;gap:8px;align-items:center;margin:0 0 12px}
+  .phone .inp{border:1px solid var(--line);border-radius:4px;background:#fff;
+              height:30px;line-height:28px;padding:0 9px;font-size:12.5px;color:#b6ab97}
+  .phone .btn{background:var(--green);color:#fff;border-radius:4px;padding:6px 14px;font-size:13px}
+  .phone .btn.sec{background:#e7e0d1;color:var(--ink)}
+  .phone .join{display:inline-block;background:#e7e0d1;color:var(--ink);border-radius:4px;padding:6px 14px;font-size:13px}
+  .phone .card{background:#efe9dc;border:1px solid var(--line);border-radius:8px;padding:10px 12px;margin-top:12px;max-width:190px}
+  .phone .card .ct{font-size:15px;font-weight:600}
+  .phone .card .cm{color:var(--muted);font-size:12px;margin-top:3px}
+  .phone .empty{padding:24px 6px 8px}
+  .phone .front{aspect-ratio:4/3;border-radius:12px;background:linear-gradient(150deg,#e8e2d4,#d9d2c0);
+                display:grid;place-items:center;padding:0 21%;box-shadow:0 2px 10px rgba(0,0,0,.10)}
+  .phone .cap{margin:0;text-align:center;max-width:14ch;font-size:12.5px;line-height:1.5;color:#5d5748;word-break:keep-all}
+  .lbl{display:inline-block;font-size:11px;letter-spacing:.4px;color:var(--ok);font-weight:600;margin:0 0 6px}
+  .lbl.dim{color:var(--muted);font-weight:400}
+
+  .chk{display:flex;gap:7px;align-items:center;font-size:13px;margin:2px 0 0}
+  .chk i{width:13px;height:13px;border:1px solid var(--gray);border-radius:3px;display:inline-block}
+  .chk i.on{background:var(--green);border-color:var(--green)}
+  .sect{font-size:14px;font-weight:600;margin:0 0 8px}
+  .muted{color:var(--muted);font-size:12.5px;line-height:1.65;margin:6px 0}
+  .dup{background:#fbe9e3;border-radius:3px;padding:0 3px}
+  .old{color:var(--red)} .new{color:var(--ok)} .dim{color:var(--muted)}
+  table{width:100%;border-collapse:collapse;font-size:13px;background:#fffdf7;margin-top:8px}
+  th,td{border:1px solid var(--line);padding:6px 9px;text-align:left;vertical-align:top}
+  th{background:#efe9dc;font-weight:600;color:var(--muted);font-size:12.5px}
+  td.k{font-family:ui-monospace,Consolas,monospace;font-size:11.5px;color:var(--muted)}
+  .keep{font-size:13px;line-height:2;background:#fffdf7;border:1px solid var(--line);border-radius:6px;
+        padding:12px 15px;margin:8px 0}
+  .keep .k{font-family:ui-monospace,Consolas,monospace;font-size:11.5px;color:var(--muted)}
+  .keep b{color:var(--green)}
+</style>
+</head>
+<body>
+
+<h1>trips 模块 · 待拍板</h1>
+<p class="sub">33 → 32 条 · <code>8919ba9</code> 初版 → <code>8106469</code> 按你的措辞 → <code>1a4f552</code> 撤回两条创作类 · 全表 752</p>
+<p class="path">packages/messages/src/zh.ts:62-91, 772-774 · apps/web/src/pages/TripsPage.tsx · TripManagePage.tsx</p>
+
+<h2>一、旅途信息一节（已落，你给的措辞）</h2>
+<div class="ab">
+  <div class="side now">
+    <div class="tag">最初（已废弃）</div>
+    <div class="phone">
+      <div class="chk"><i class="on"></i><span>手填时间与地点</span></div>
+      <div class="muted dup">留空就用照片自动汇总</div>
+      <div class="muted dup">自动汇总：2026-09-01–09-05 · 云南</div>
+      <span class="btn sec dup">保存摘要设置</span>
+    </div>
+    <div class="why">「汇总 / 摘要」都没说对象；「用照片自动汇总」没说算什么；预览两行多余</div>
+  </div>
+  <div class="side prop">
+    <div class="tag">现在生产文件里的</div>
+    <div class="phone">
+      <div class="sect new">旅途信息</div>
+      <div class="chk"><i></i><span>手动编辑时间地点</span></div>
+      <div class="muted">默认使用照片信息</div>
+      <span class="btn sec">保存</span>
+    </div>
+    <div class="why">
+      三句都是名词短语、主语明确：对象（旅途信息）→ 动作（手动编辑时间地点）→ 默认（使用照片信息）。<br>
+      <code>autoPreview</code> / <code>autoPreviewEmpty</code> 已删（连同渲染节点）。
+    </div>
+  </div>
+</div>
+
+<h2>二、两条创作类</h2>
+<div class="box d">
+  <b>我写的那两句已判 0 分并撤回（<code>1a4f552</code>）。</b><br>
+  错在<b>把界面动作说成了事物的本质</b>：「起个名字」是创建流程里的一步，旅途是你真的出了那趟门——「起个名字，就有了」既失真又轻佻；
+  「一段旅途，一个名字」是同一个错，只是轻一点。<br>
+  这条已写进《文案撰写规范》创作类<b>第 8 条</b>。下面两张图是<b>位置演示</b>（位置不变），句子里回到的是<b>原句</b>。
+</div>
+
+<h3>位置 ① · <code>trips.lede</code>（TripsPage.tsx:80）</h3>
+<p class="muted">页头里，紧挨页面标题「旅途」下面、新建表单<b>之前</b>——这一页的门面句（样式 <code>.page-trips .lede</code>）。</p>
+<div class="phone">
+  <div class="lbl">TripsPage.tsx:79-80 · 页头</div>
+  <div class="ptitle">旅途</div>
+  <div class="lede">每一次出门，都是一本新相册。</div>
+  <div class="create"><span class="inp">新建旅途</span><span class="btn sec">创建</span></div>
+  <span class="join">输入共享码加入</span>
+  <div class="card"><div class="ct">川西行</div><div class="cm">12 张照片 · 2026-09-01–09-05 · 云南</div></div>
+</div>
+
+<h3>位置 ② · <code>trips.empty</code>（TripsPage.tsx:147）</h3>
+<p class="muted">只在<b>一条旅途都没有</b>时出现：压在 4:3 卷首图正中，替换掉封面卡片墙（样式 <code>.trip-frontispiece .trip-empty-caption</code>，宽限 14ch、字号更小）。</p>
+<div class="phone">
+  <div class="lbl">TripsPage.tsx:141-149 · 列表为空时</div>
+  <div class="create"><span class="inp">新建旅途</span><span class="btn sec">创建</span></div>
+  <span class="join">输入共享码加入</span>
+  <div class="empty"><div class="front"><p class="cap">还没有旅途。写下名字，翻开第一页。</p></div></div>
+</div>
+
+<h3>B 方向再想三条（待你拍板，未落生产文件）</h3>
+<div class="box">
+  你说 B 好点——我理解成：要「识尽众生，山海入怀」那一族的调子（<b>短句对句、有气魄、给用户分量</b>），不要 A 那种平铺直叙。
+  按这个方向各再想三条，句子更短更收。<b>我倾向 L2 + E3。</b>
+</div>
+
+<div class="ab">
+  <div class="side now">
+    <div class="tag">lede · L1（上一版 B）</div>
+    <div class="phone">
+      <div class="ptitle">旅途</div>
+      <div class="lede">所行之处，皆留于此。</div>
+      <div class="create"><span class="inp">新建旅途</span><span class="btn sec">创建</span></div>
+      <div class="card"><div class="ct">川西行</div><div class="cm">12 张照片 · 2026-09-01–09-05 · 云南</div></div>
+    </div>
+    <div class="why">「留」只说东西在这儿，情绪平</div>
+  </div>
+  <div class="side prop">
+    <div class="tag">lede · L2（我倾向）</div>
+    <div class="phone">
+      <div class="ptitle">旅途</div>
+      <div class="lede new">所行之处，皆归于此。</div>
+      <div class="create"><span class="inp">新建旅途</span><span class="btn sec">创建</span></div>
+      <div class="card"><div class="ct">川西行</div><div class="cm">12 张照片 · 2026-09-01–09-05 · 云南</div></div>
+    </div>
+    <div class="why">「归」比「留」多一层归属——你走过的地方，最后都回到这一页</div>
+  </div>
+</div>
+
+<div class="ab">
+  <div class="side now">
+    <div class="tag">lede · L3</div>
+    <div class="phone">
+      <div class="ptitle">旅途</div>
+      <div class="lede new">行过山海，皆藏于此。</div>
+      <div class="create"><span class="inp">新建旅途</span><span class="btn sec">创建</span></div>
+      <div class="card"><div class="ct">川西行</div><div class="cm">12 张照片 · 2026-09-01–09-05 · 云南</div></div>
+    </div>
+    <div class="why">直接接上定稿 slogan 的「山海」，气魄最足；代价是这一页是日常列表页，可能偏重</div>
+  </div>
+  <div class="side prop">
+    <div class="tag">empty · E1（上一版 B）</div>
+    <div class="phone">
+      <div class="empty"><div class="front"><p class="cap">还没有旅途。下一趟出门，就从这儿开始。</p></div></div>
+    </div>
+    <div class="why">意思对，但两行偏长、偏说明</div>
+  </div>
+</div>
+
+<div class="ab">
+  <div class="side now">
+    <div class="tag">empty · E2</div>
+    <div class="phone">
+      <div class="empty"><div class="front"><p class="cap new">还没有旅途。下一程，等你启程。</p></div></div>
+    </div>
+    <div class="why">对句、短，卷首图上稳；「等你」是这一页在等，不指挥用户</div>
+  </div>
+  <div class="side prop">
+    <div class="tag">empty · E3（我倾向）</div>
+    <div class="phone">
+      <div class="empty"><div class="front"><p class="cap new">还没有旅途。山海未远，等你启程。</p></div></div>
+    </div>
+    <div class="why">同族里气魄最足的一条，与 slogan 的「山海」呼应；八个字，14ch 宽正好一行</div>
+  </div>
+</div>
+
+<h2>三、存疑三处（按你的决定：全部不动）</h2>
+<div class="box">
+  · <code>trips.createLabel</code>「新建旅途」一 key 两用（sr-only 标签 + placeholder）<br>
+  · <code>trips.joinLabel</code>「输入共享码加入」一 key 三用（展开按钮名 + sr-only 标签 + placeholder）<br>
+  · 四条失败兜底 <code>createFailed</code> / <code>joinFailed</code> / <code>deleteFailed</code> / <code>renameFailed</code>——保留原样
+</div>
+
+<h2>四、保留 19 条（逐条展开，供审）</h2>
+<div class="keep">
+<b>锚点 / 按钮（7）</b><br>
+<span class="k">trips.title</span>「旅途」— TripsPage.tsx:79 — 页面名<br>
+<span class="k">trips.createAction</span>「创建」— :95 — 主按钮<br>
+<span class="k">trips.joinAction</span>「加入旅途」— :122 — 提交按钮，带宾语<br>
+<span class="k">trips.joining</span>「加入中…」— :122 — 加载态<br>
+<span class="k">trips.manage</span>「管理旅途」— TripManagePage.tsx:186、TripAlbumPage.tsx:542 — 同一入口的两端<br>
+<span class="k">trips.manageBack</span>「相册」— TripManagePage.tsx:184 — 回退链接，指向旅途相册页；与 <code>album.back</code>「旅途」成对<br>
+<span class="k">trips.delete</span>「删除旅途」— :343 — 危险按钮，宾语明确<br>
+<br>
+<b>改名一节（2）</b><br>
+<span class="k">trips.editTitle</span>「修改标题」— :196 · <span class="k">trips.saveTitle</span>「保存标题」— :206<br>
+<br>
+<b>旅途信息一节（2）</b><br>
+<span class="k">trips.manualDate</span>「时间」— :232 · <span class="k">trips.manualPlace</span>「地点」— :241 — 字段标签<br>
+<br>
+<b>加载（1）</b><br>
+<span class="k">trips.loading</span>「加载旅途…」— TripsPage.tsx:139<br>
+<br>
+<b>共享 / 计数 / 照片（4）</b><br>
+<span class="k">trips.sharedBadge</span>「共享」— TripsPage.tsx:201、TripAlbumPage.tsx:110 — 两字角标<br>
+<span class="k">trips.memberCount</span>「{count} 人同行」— TripAlbumPage.tsx:111<br>
+<span class="k">trips.photoCount</span>「{count} 张照片」— tripMeta.ts:8 · <span class="k">trips.noPhotosYet</span>「还没有照片」— tripMeta.ts:8<br>
+<br>
+<b>删除确认一节（3）</b><br>
+<span class="k">trips.deleteHint</span>「删除会带走这趟旅途下全部观察与照片，不可恢复」— :327 — 后果 + 不可逆<br>
+<span class="k">trips.deletePhraseMismatch</span>「确认语不正确，旅途未删除」— :100 — 说清「没删成」<br>
+<span class="k">trips.deleteConfirmPhrase</span>「我真的要跟这次旅途的回忆说晚安了」— :331 显示、:98/:341 比对、服务端 trips.ts:276 比对 — <b>创作类</b>，前后端同 key，未动
+</div>
+
+<div class="box">
+  <b>跨模块观察（不在本轮动）</b>：<code>onboard.tripLede</code>「出门一趟，就攒下一本新相册。」与 <code>trips.lede</code> 几乎同句，
+  且同样把「旅途」说成「相册」。到 <code>onboard</code> 那轮一并处理。
+</div>
+
+<p style="margin-top:16px;font-size:13px;color:var(--muted)">
+  <b>要你拍的</b>：第二节那一版（「你的每一趟旅途，都在这儿。」/「还没有旅途。记下第一趟出门吧。」）落不落。落我就改这两条 key 并提交；不落就维持原句、标待写。
+</p>
+
+</body>
+</html>

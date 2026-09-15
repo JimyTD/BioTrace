@@ -1,0 +1,148 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<title>对照 · 另一版文案评审</title>
+<style>
+  :root{
+    --paper:#f6f2e9; --ink:#2a241c; --muted:#857a67;
+    --line:#ddd4c2; --warn:#c2703c; --ok:#5c7a4a; --red:#b03a2e; --green:#2F4A3C;
+  }
+  *{box-sizing:border-box}
+  body{margin:0; padding:28px 32px 64px; background:var(--paper); color:var(--ink);
+       font:15px/1.75 "PingFang SC","Microsoft YaHei",system-ui,sans-serif}
+  h1{font-size:20px; margin:0 0 4px}
+  .sub{color:var(--muted); font-size:13px; margin:0 0 8px}
+  h2{font-size:15px; margin:30px 0 12px; padding-bottom:6px; border-bottom:1px solid var(--line)}
+  .box{background:#fffdf7; border:1px solid var(--line); border-left:3px solid var(--warn); padding:12px 15px; margin:14px 0; font-size:13.5px}
+  .box.g{border-left-color:var(--green)}
+  .box.r{border-left-color:var(--red)}
+  .box b{color:var(--warn)} .box.g b{color:var(--green)} .box.r b{color:var(--red)}
+  .box ol,.box ul{margin:8px 0 0; padding-left:20px}
+  .box li{margin:5px 0}
+  .card{background:#fffdf7; border:1px solid var(--line); border-radius:5px; padding:14px 16px; margin-bottom:12px}
+  .say{font-size:19px; margin:0 0 4px; letter-spacing:.02em}
+  .src{font-size:11.5px; color:var(--muted); margin-bottom:10px}
+  .row{display:grid; grid-template-columns:1fr 1fr; gap:12px}
+  @media(max-width:820px){.row{grid-template-columns:1fr}}
+  .good,.bad{font-size:13px; border-radius:4px; padding:9px 11px}
+  .good{background:#eef4ea; border-left:2px solid var(--ok)}
+  .bad{background:#f8ece7; border-left:2px solid var(--red)}
+  .good b{color:var(--ok)} .bad b{color:var(--red)}
+  .verdict{font-size:13px; margin-top:9px; padding-top:8px; border-top:1px dashed var(--line); color:var(--muted)}
+  .verdict b{color:var(--ink)}
+  code{font-family:ui-monospace,Consolas,monospace; font-size:12px; background:#efe9dc; padding:1px 4px; border-radius:3px}
+  .lead{font-size:14px}
+</style>
+</head>
+<body>
+
+<h1>对照 · 另一版文案评审</h1>
+<p class="sub">先评它好在哪，再评问题在哪，最后说「为什么它出得来、我出不来」</p>
+
+<div class="box g">
+  <b>先说结论，不绕</b>：这五条里，<b>有两条的「形态」比我强</b>——完整、敢下判断、像一句能直接贴出去的话。
+  但<b>内容层面，四条经不起品牌与事实的推敲</b>：夸大、套话、跟 BioTrace 的词汇体系打架。
+  <b>真正的差距不在才华，在「敢不敢收手」和「有没有被约束绑住」</b>——见 §三。
+</div>
+
+<h2>一、逐条拆</h2>
+
+<div class="card">
+  <div class="say">旅途识万物，一拍入图鉴。</div>
+  <div class="src">它的「综合推荐」</div>
+  <div class="row">
+    <div class="good"><b>好</b>：对仗、短、有成品感。中文里双句对偶一上，观感立刻像「标语」。</div>
+    <div class="bad"><b>问题</b>：<br>
+      ① <b>「识万物」是假话</b>——app 只认生物，而且会认不出、会降级、认不出的进留影档。把一个会失败的链路写成万能。<br>
+      ② <b>「一拍入图鉴」也不成立</b>——不是每拍都进图鉴。<br>
+      ③ 它自称「押韵顺口」——「物」和「鉴」<b>并不押韵</b>。</div>
+  </div>
+  <div class="verdict"><b>判</b>：形好神不对。它是在真空里写的，不知道这条链路会失败。</div>
+</div>
+
+<div class="card">
+  <div class="say">把沿途遇见的每一个生命，装进你的私人博物图鉴。</div>
+  <div class="src">它的「文艺走心」</div>
+  <div class="row">
+    <div class="good"><b>好</b>：<b>五条里唯一贴 BioTrace 声音的</b>。「沿途遇见的生命」+「博物图鉴」正好落在品牌叙事（十九世纪博物图册）上，收藏的仪式感也对。</div>
+    <div class="bad"><b>问题</b>：<br>
+      ① 「<b>私人</b>」是赘词——图鉴本来就是你的；<br>
+      ② 「每一个」啰嗦，「遇见」已含；<br>
+      ③ 25 字，做 slogan 太长；<br>
+      ④ 「装进」重，品牌既有词汇是「收进 / 收下」。</div>
+  </div>
+  <div class="verdict"><b>判</b>：<b>最接近可用的一条</b>。砍掉「私人」「每一个」、换「装」为「收」，就能进候选。</div>
+</div>
+
+<div class="card">
+  <div class="say">旅途拍照识生物，自动记录，生成专属自然图鉴。</div>
+  <div class="src">它的「功能直白」</div>
+  <div class="row">
+    <div class="good"><b>好</b>：功能点齐全，3 秒看懂。</div>
+    <div class="bad"><b>问题</b>：这不是 slogan，是功能摘要——<b>它自己都标了「适合应用商店简介」</b>。当品牌句用不合格；「识生物」口语别扭。</div>
+  </div>
+  <div class="verdict"><b>判</b>：错位使用。当 ASO 简介可以，当门面句不行。</div>
+</div>
+
+<div class="card">
+  <div class="say">解锁旅途中的隐藏生命，打造你的自然探索日记。</div>
+  <div class="src">它的「探索发现」</div>
+  <div class="row">
+    <div class="good"><b>好</b>：游戏化，对年轻用户有吸引力。</div>
+    <div class="bad"><b>问题</b>：<br>
+      ① 「解锁 / 隐藏 / 打造」是增长套话；<br>
+      ② <b>「日记」跟 app 的词汇体系直接冲突</b>——全 app 是「相册 / 图鉴 / 套册」，没有「日记」。</div>
+  </div>
+  <div class="verdict"><b>判</b>：套话 + 体系打架。最不该用的一条。</div>
+</div>
+
+<div class="card">
+  <div class="say">行遍山海，识遍众生。</div>
+  <div class="src">它的「极简短句」</div>
+  <div class="row">
+    <div class="good"><b>好</b>：极简、有气势、对仗工整。</div>
+    <div class="bad"><b>问题</b>：<br>
+      ① 「行遍山海」——app 的主场景是<b>路边随手拍</b>，不是远行探险，场景错位；<br>
+      ② 「众生」是佛教语，用在生物识别上夸大；<br>
+      ③ 武侠壮游腔，跟 BioTrace「温和 / 博物 / 日常」的气质相反。</div>
+  </div>
+  <div class="verdict"><b>判</b>：形好神不对，且换了整个品牌人格。</div>
+</div>
+
+<h2>二、它比我强的，到底是什么</h2>
+<div class="box">
+  <ol>
+    <li><b>形态完整</b>：每条自带解析、语气自信，像可以直接用的成品。我的候选带「代价是…」，形态是草稿。</li>
+    <li><b>功能信息齐</b>：它把「拍照 → 识别 → 记录 → 图鉴」排全了。我的候选偏意境，功能信息弱。</li>
+    <li><b>敢下判断</b>：它敢用整句、敢对仗、敢下重词。我在每个字上犹豫。</li>
+  </ol>
+</div>
+
+<h2>三、为什么它出得来、我出不来</h2>
+<div class="box r">
+  <ol>
+    <li><b>目标函数不同。</b>它在解「写一句好听的 slogan」——通用任务，海量语料里有现成套路（对仗、押韵、「解锁 / 打造」）。我在解「写一句贴 BioTrace 的句子」——我读了品牌叙事、语感基准、隐喻家族、五大家族禁区，<b>我给自己上了约束</b>。它给通用最优解，我给受约束解。</li>
+    <li><b>无知即自由。</b>它不知道 app 会认错、有留影档、有「册族 / 证书族」这套词。所以它敢写「识万物」「识遍众生」。<b>我知道，所以我不敢——我的「知道」变成了枷锁。</b></li>
+    <li><b>对仗是廉价的高级感。</b>中文双句对偶一上，观感立刻像标语，哪怕内容空。我刻意避开对仗（怕生造），结果显得「不像标语」。这是<b>形态差异被误读成质量差异</b>。</li>
+    <li><b>我把「审」当成了「写」。</b>去句号、禁同义反复、保留品牌锚——这些是<b>评审用的尺子，不是生成用的燃料</b>。基准文档自己写着「判据用于淘汰，不用于生成」，我念着这句话，却拿尺子去造句。</li>
+    <li><b>我怕错。</b>怕被否，所以选最稳的措辞。它没有这个包袱，所以敢下重手。</li>
+  </ol>
+</div>
+
+<h2>四、它的胆 + 我的约束，应该长什么样</h2>
+<div class="box g">
+  正确解不是二选一：<b>学它的形态（完整、敢下判断），守我的约束（品牌声音、事实）</b>。试两条：
+  <ol>
+    <li class="lead"><b>沿途遇见的，都收进图鉴</b>　—　对仗形态，但不用「识万物」，不夸事实。</li>
+    <li class="lead"><b>一路遇见，一册收下</b>　—　它的对仗 + 品牌既有词汇（「收下」是证书族的词）。</li>
+  </ol>
+  这两条也还不是终点，但方向对了：<b>先像一个牌子在说话，再确保它没撒谎。</b>
+</div>
+
+<p style="margin-top:16px; font-size:13px; color:var(--muted)">
+  本页零改动。你定方向，我再往深做。
+</p>
+
+</body>
+</html>
