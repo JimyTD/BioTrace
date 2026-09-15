@@ -194,11 +194,12 @@ export default function CollectionPetCardPage() {
           </div>
           <ListTagRow tags={entry.tags} except={["domesticated"]} />
 
-          <h2 className="section-title">{t("collection.speciesSightings")}</h2>
-          {sightings.length === 0 ? (
-            <p className="muted">{t("collection.petsEmpty")}</p>
-          ) : (
-            <div className="species-sightings">
+          {/* 历次遇见为空时不写任何话：那一格既说不出「数据有误」，也不是真指路
+              （正常流程不产生这个状态）。整节连标题一起不渲染，与物种卡同处置。 */}
+          {sightings.length > 0 ? (
+            <>
+              <h2 className="section-title">{t("collection.speciesSightings")}</h2>
+              <div className="species-sightings">
               {sightings.map((item) => (
                 <button
                   key={item.observationId}
@@ -231,7 +232,8 @@ export default function CollectionPetCardPage() {
                 </button>
               ))}
             </div>
-          )}
+            </>
+          ) : null}
         </>
       ) : null}
     </div>

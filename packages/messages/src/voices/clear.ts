@@ -12,10 +12,14 @@ import type { ThemedMessageKey } from "../zh.js";
  * 仪式感由本表的 open / opening / claim 与 lede 承担。
  *
  * settle.claiming 不覆盖：清透的老文案本来就是「收下 / 收录中…」这一对，基础表照旧。
+ *
+ * collection.lede 是新写的一条（不是老文案）：图鉴页开场句，按《文案撰写规范》创作类第 10 条
+ * 「创作类要发散，不是说明」——不描述这一页有什么，说你和这些收藏的关系；无句号（2026-09-15 用户定）。
  */
 export const clearVoice: Partial<Record<ThemedMessageKey, string>> = {
   "settle.lede": "这趟遇见的生命，现在有名字了。",
   "settle.open": "请过目",
   "settle.opening": "正在显影…",
   "settle.claim": "收下",
+  "collection.lede": "有的是老朋友，有的是新相识",
 };
