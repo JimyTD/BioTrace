@@ -13,9 +13,9 @@ alwaysApply: true
 - **git 是唯一工程来源**：改本地 → push GitHub → 服务器 `git pull --ff-only` → 重建。服务器 `/opt/biotrace` 只作运行态
 - 服务器上 git 操作走代理：`git -c http.proxy=http://127.0.0.1:10809 pull --ff-only`（直连 GitHub 会超时）
 - 日常更新优先 SSH 主通道；TAT MCP / OrcaTerm 只作首次接入、救援和云侧操作。原生 SSH 是 MCP 的降级通道
-- 更新用 `nohup /opt/biotrace/scripts/ops/deploy-server.sh >/dev/null 2>&1 &`，再轮询 `/var/lib/biotrace/deploy.status` 与有限日志；禁止 `tail -f` 或并行部署
+- 更新用 `nohup /opt/biotrace/scripts/ops/deploy-server.sh >/dev/null 2>&1 &`，再轮询 `/var/lib/biotrace/deploy.status` 所指的有限日志；禁止 `tail -f` 或并行部署
 - `docker-compose.override.yml` 必须保留 `deploy/Dockerfile.cn` 与 `extra_hosts: host.docker.internal:host-gateway`（出境代理链路靠它）
-- 更新后验证出境：`curl -s -m 12 -x http://127.0.0.1:10809 https://api.ipify.org` 应为新加坡出口 IP
+- 更新后部署器必须比对实际出口与服务器本地 `/etc/biotrace/ops.env` 的 `BIOTRACE_PROXY_EGRESS_IP`；真实 IP 和节点参数永不入库
 - 用户说「更新服务器」时：按 §7.1 启动部署器，必须等 `result=success`；若相对当前侧载包有 `apps/mobile` 原生壳 / Manifest / 权限 / 插件 / `server-url` 改动，**同一轮还要打新 APK**（tag `android-vX.Y.Z` → Actions → 覆盖 `/opt/biotrace/data/android-release/` 的 `BioTrace.apk` + `latest.json`）。仅 Web/API 改动则不打 APK
 
 ## 禁止

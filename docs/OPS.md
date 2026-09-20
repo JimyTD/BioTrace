@@ -43,7 +43,7 @@ BioTrace 是个人向「旅行自然观察」Web 应用（上传照片 → 云�
 | Nginx 站点 | `/etc/nginx/sites-available/biotrace`（80 端口，静态 + `/api` 反代8787） |
 | 防火墙 | 云侧已放行 22/80/ICMP（**443 待上HTTPS 时再放行**）；系统 ufw inactive |
 
-> ⚠️ 原生 TAT `Timeout` 默认仅 60 秒；本 MCP 已默认拉到 **3600 秒**。超长构建仍建议写日志文件再 `tail`，客户端等待预算耗尽时用返回的 `InvocationId` 调 `get_command_result` 继续轮询。
+> ⚠️ 原生 TAT `Timeout` 默认仅 60 秒；本 MCP 已默认拉到 **3600 秒**。它只用于救援和腾讯云控制面，不用于日常构建；日常构建统一由 SSH 启动的部署器处理。
 
 ### 2.1 双通道运维
 
@@ -426,7 +426,7 @@ nohup /opt/biotrace/scripts/ops/deploy-server.sh >/dev/null 2>&1 &
 
 # 轮询：禁止 tail -f，必须等到 result=success 或 result=failed。
 cat /var/lib/biotrace/deploy.status
-tail -n 80 /var/log/biotrace/deploy-*.log
+tail -n 80 "$(sed -n 's/^log_file=//p' /var/lib/biotrace/deploy.status)"
 
 # 保守完整构建（排查路径判定、根依赖或构建缓存时使用）
 nohup /opt/biotrace/scripts/ops/deploy-server.sh --all >/dev/null 2>&1 &
@@ -561,15 +561,16 @@ cd /opt/biotrace && sudo docker compose logs -f --tail=200 api
 # 备份数据（数据库 + 上传图）
 sudo tar czf /root/biotrace-data-$(date +%F).tgz -C /opt/biotrace data
 
-# 重启 / 停止
+# 日常重启
 sudo docker compose restart
-sudo docker compose down
 
 # 健康检查
 curl -s http://127.0.0.1:8787/api/health
 ```
 
-**建议**：给备份配一个定时任务；`data/uploads` 会随使用增长，注意 40G 磁盘余量。
+> `docker compose down` 不属于日常运维：SSH MCP 已刻意禁止它。仅迁机/灾备恢复等维护窗口可使用，必须先备份并在手册对应步骤中明确恢复方案。
+
+**建议**：给备份配一个定时任务；`data/uploads` 会随使用增长，注意 40G 磁盘余量。部署日志由 `/etc/logrotate.d/biotrace` 保留 14 天并压缩，安装见 [`服务器运维接入.md`](./服务器运维接入.md)。
 
 ### 8.1 管理后台（引导与密钥落盘）
 
@@ -589,7 +590,8 @@ curl -s http://127.0.0.1:8787/api/health
 **数据可无缝迁移**（SQLite 单文件 + 本地图目录，全在 `./data`）：
 
 ```bash
-# 旧机：打包数据
+# 旧机：打包数据。此处是迁机维护窗口的例外，不是日常部署操作；
+# SSH MCP 会拦截 compose down，需通过原生 SSH 显式执行并确认已有备份。
 cd /opt/biotrace && sudo docker compose down
 sudo tar czf /root/biotrace-data.tgz -C /opt/biotrace data
 
@@ -649,7 +651,8 @@ sudo tar czf /root/biotrace-data.tgz -C /opt/biotrace data
 | 现象 | 排查 |
 |------|------|
 | SSH 连不上 | 先用 OrcaTerm/TAT 检查 `/root/.ssh/authorized_keys`、`sshd -T` 和 22 端口；不要先改 sshd。接入步骤见 [`服务器运维接入.md`](./服务器运维接入.md) |
-| 部署一直未完成 | 查 `/var/lib/biotrace/deploy.status` 与 `/var/log/biotrace/deploy-*.log`；若锁未释放，确认对应 PID 是否仍在。禁止重开并行部署 |
+| 部署一直未完成 | 查 `/var/lib/biotrace/deploy.status`，再按其中 `log_file` 读取最后 80 行；若锁未释放，确认对应 PID 是否仍在。禁止重开并行部署 |
+| 部署在代理验收失败 | 对比日志中的 `proxy_egress_ip` 与 `expected_proxy_egress_ip`；SG1 换出口时只更新服务器 `/etc/biotrace/ops.env`，不得把 IP 或节点参数写入 git |
 | TAT MCP 起不来 / 无工具 | 查 `.cursor/mcp.json` 是否存在且密钥非占位；`command` 是否指向可用 `node.exe`；Settings → MCP 看报错。TAT 失效时仍可通过 SSH 部署 |
 | `run_command` 被护栏拦截 | 危险命令需显式 `confirmDangerous`；先 `describe_policy` / `check_agent`；确认实例在白名单 |
 | 构建卡在 apt / deb.debian.org | 用 `deploy/Dockerfile.cn`（已换腾讯云源）；确认 `docker-compose.override.yml` 存在 |
@@ -681,6 +684,8 @@ sudo tar czf /root/biotrace-data.tgz -C /opt/biotrace data
 | `docker-compose.override.yml` | 入库的生产覆盖：①改用 `Dockerfile.cn` 构建；②api 加 `extra_hosts: host.docker.internal:host-gateway`（走宿主机代理） |
 | `scripts/setup_biotrace_ops_machine.ps1` | 开发机 SSH 密钥、SSH MCP 与命令黑名单接入脚本 |
 | `scripts/ops/deploy-server.sh` | 服务器日常部署执行器：加锁、按改动构建、状态/日志与验收 |
+| `deploy/biotrace-ops.env.example` | `/etc/biotrace/ops.env` 模板：登记 SG1 期望出口 IP，真实值不入库 |
+| `deploy/logrotate.biotrace.conf.example` | `/etc/logrotate.d/biotrace` 模板：部署日志按日保留 14 份并压缩 |
 | `deploy/.env.web.production` | 仅服务器本地的 Web `VITE_*` 构建变量；已 gitignore，不能放 API 密钥 |
 | `deploy/Dockerfile.cn` | 国内构建（apt→腾讯云、npm→npmmirror） |
 | `/usr/local/etc/xray/config.json` | 广州机Xray 客户端配置（Reality→SG1 + 本地 10809/10808 入口），§6.5 |

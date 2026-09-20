@@ -8,6 +8,7 @@ STATE_DIR=/var/lib/biotrace
 LOG_DIR=/var/log/biotrace
 LOCK_FILE=/var/lock/biotrace-deploy.lock
 WEB_ROOT=/var/www/biotrace
+OPS_ENV=/etc/biotrace/ops.env
 PHASE=bootstrap
 BEFORE_COMMIT=
 AFTER_COMMIT=
@@ -38,6 +39,7 @@ write_state() {
     printf 'started_at=%s\n' "$STARTED_AT"
     printf 'before_commit=%s\n' "$BEFORE_COMMIT"
     printf 'after_commit=%s\n' "$AFTER_COMMIT"
+    printf 'log_file=%s\n' "$LOG_FILE"
   } > "$temporary"
   mv -f "$temporary" "$STATE_DIR/deploy.status"
 }
@@ -63,6 +65,19 @@ has_changed_path() {
     fi
   done
   return 1
+}
+
+load_ops_config() {
+  if [[ ! -r $OPS_ENV ]]; then
+    fail_deployment "missing server-local operations configuration: $OPS_ENV"
+  fi
+  # This root-owned file contains only host-local operational expectations.
+  # It is deliberately outside git so topology changes do not leak into the repo.
+  # shellcheck disable=SC1090
+  source "$OPS_ENV"
+  if [[ -z ${BIOTRACE_PROXY_EGRESS_IP:-} ]]; then
+    fail_deployment "BIOTRACE_PROXY_EGRESS_IP is required in $OPS_ENV"
+  fi
 }
 
 build_api() {
@@ -111,8 +126,8 @@ verify_runtime() {
   curl -fsS http://127.0.0.1:8787/api/health
   docker compose exec -T api sh -c 'test -n "$HTTPS_PROXY"; getent hosts host.docker.internal'
   proxy_ip=$(curl -fsS -m 12 -x http://127.0.0.1:10809 https://api.ipify.org)
-  test -n "$proxy_ip"
-  printf 'proxy_egress_ip=%s\n' "$proxy_ip"
+  printf 'proxy_egress_ip=%s expected_proxy_egress_ip=%s\n' "$proxy_ip" "$BIOTRACE_PROXY_EGRESS_IP"
+  test "$proxy_ip" = "$BIOTRACE_PROXY_EGRESS_IP"
   curl -fsSI http://127.0.0.1/ | grep -qi '^Cache-Control: no-store'
   test "$(curl -sS -o /dev/null -w '%{http_code}' http://127.0.0.1/assets/nope-not-here.js)" = 404
 }
@@ -133,6 +148,7 @@ fi
 
 cd "$APP_ROOT"
 PHASE=preflight
+load_ops_config
 BEFORE_COMMIT=$(git rev-parse HEAD)
 if [[ -n $(git status --porcelain --untracked-files=no) ]]; then
   git status --short --untracked-files=no >&2

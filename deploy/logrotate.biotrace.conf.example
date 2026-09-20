@@ -1,0 +1,10 @@
+/var/log/biotrace/deploy-*.log {
+    daily
+    rotate 14
+    missingok
+    notifempty
+    compress
+    delaycompress
+    dateext
+    su root root
+}

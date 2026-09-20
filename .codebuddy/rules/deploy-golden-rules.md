@@ -41,7 +41,7 @@
 - **SSH 是日常部署主通道**：使用独立 `biotrace_deploy` 私钥；原生 SSH 是 SSH MCP 的降级通道。
 - **TAT MCP / OrcaTerm 是救援通道**：首次安装公钥、修复 SSH、实例侧操作时使用；不得把它当成唯一部署通道。
 - 日常更新只启动 `/opt/biotrace/scripts/ops/deploy-server.sh`，再读取 `/var/lib/biotrace/deploy.status` 与有限日志。禁止 `tail -f` 和并行运行两个部署器。
-- 部署器会自行检查 tracked 漂移、按改动路径构建、验证健康检查/缓存/真实代理出口。只有 `result=success` 才代表上线成功。
+- 部署器会自行检查 tracked 漂移、按改动路径构建、验证健康检查/缓存/真实代理出口。它必须将出口 IP 与服务器本地 `/etc/biotrace/ops.env` 的 `BIOTRACE_PROXY_EGRESS_IP` 比对；只有 `result=success` 才代表上线成功。
 
 ## 6. 服务器直连 GitHub 不通→ git操作必须走代理
 
