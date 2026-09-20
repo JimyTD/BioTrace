@@ -3,7 +3,7 @@
 > **这是 BioTrace 上线与运维的唯一操作手册**，反映真实落地方案，随版本更新持续维护。
 > **本文件是运维真源。** 架构背景、设计约定与天地图接入坑见文末[附录 A](#附录-a架构背景与设计约定)；业务功能见 [`SPEC.md`](./SPEC.md)。
 >
-> 最后更新：2026-08-20 · 当前阶段：**第二阶段（IP + HTTP + Resend 真实邮箱登录）已上线**；`DEV_AUTH=0`、Resend 走自有验证域名 `jettechdog.icu` 发信；已接入**境外出网代理（广州→新加坡 Xray）**保障 Resend/Gemini 出境；识图回退为 TokenHub 视觉链（见 §6）；运维通道改为 Cursor MCP `tencent-lighthouse`（见 §2.1）；Android APK 为按需制品（见 §7.2）
+> 最后更新：2026-09-20 · 当前阶段：**第二阶段（IP + HTTP + Resend 真实邮箱登录）已上线**；`DEV_AUTH=0`、Resend 走自有验证域名 `jettechdog.icu` 发信；已接入**境外出网代理（广州→新加坡 Xray）**保障 Resend/Gemini 出境；识图回退为 TokenHub 视觉链（见 §6）；日常运维走 SSH，TAT MCP/OrcaTerm 仅作引导与救援（见 §2.1）；Android APK 为按需制品（见 §7.2）
 >
 > 🔒 **更新前必读**：[§7.0 数据来源单一性铁律](#70-铁律数据来源单一性错一次后果严重务必遵守)——git 为唯一工程来源、隐私靠服务器本地 `.env`、禁止 `reset --hard`。
 
@@ -36,7 +36,7 @@ BioTrace 是个人向「旅行自然观察」Web 应用（上传照片 → 云�
 | 系统 | Ubuntu 24.04.4 LTS x86_64，2C / 2G RAM / 40G |
 | swap | 自带 2G（无需再建） |
 | **出境代理机SG1** | 新加坡 `ap-singapore`，跑 Xray VLESS+Reality(TCP:443) + Hysteria2(UDP:8443)。**节点地址与全部密钥参数见其机上 `/root/proxy-setup.md`（保密，不入本仓库）**。BioTrace 仅复用其 Reality 节点做出境，SG1 零改动、零感知（详见 §6.5） |
-| 操作方式 | **Cursor MCP `tencent-lighthouse`**（TAT 免 SSH 执行；当前无 SSH 密钥；命令默认以 root 执行）。MCP 源码在仓库外 `D:/Fun/tencent-lighthouse-mcp/`，本仓只留接入配置，见下方 §2.1 |
+| 操作方式 | **SSH 主通道**（独立 `biotrace_deploy` 私钥）用于日常部署；Cursor MCP `tencent-lighthouse`（TAT）与 Tencent Cloud OrcaTerm 用于首次装公钥、救援与云侧操作。详见下方 §2.1 |
 | 代码目录 | `/opt/biotrace`（GitHub `https://github.com/JimyTD/BioTrace.git`，公开可clone） |
 | 数据目录 | `/opt/biotrace/data`（`biotrace.db` + `uploads/`），Docker 卷 `./data:/data` |
 | 前端产物 | `/var/www/biotrace`（由 Nginx 提供静态） |
@@ -45,7 +45,11 @@ BioTrace 是个人向「旅行自然观察」Web 应用（上传照片 → 云�
 
 > ⚠️ 原生 TAT `Timeout` 默认仅 60 秒；本 MCP 已默认拉到 **3600 秒**。超长构建仍建议写日志文件再 `tail`，客户端等待预算耗尽时用返回的 `InvocationId` 调 `get_command_result` 继续轮询。
 
-### 2.1 Cursor MCP 运维通道（tencent-lighthouse）
+### 2.1 双通道运维
+
+日常部署**优先 SSH**，接入与规范见 [`服务器运维接入.md`](./服务器运维接入.md)。原生 `ssh -i ~/.ssh/biotrace_deploy root@106.53.188.20` 是所有 MCP 的降级通道。SSH MCP 仅提供便利，不能成为唯一依赖。
+
+保留现有 `tencent-lighthouse` TAT MCP：它不是日常部署入口，而是安装/修复 SSH 公钥、SSH 配置故障、云实例查询和其他腾讯云控制面操作的救援通道。OrcaTerm 网页终端是 TAT 也不可用时的最终兜底。
 
 MCP **刻意不进本仓库**，放在 `D:/Fun/tencent-lighthouse-mcp/`。本仓只提供项目级接入模板。
 
@@ -97,7 +101,7 @@ Browser ──直连──► 天地图瓦片（失败则备用浏览器端 key 
 
 ## 4. 从零部署（全新机器复现）
 
-> 已上线机器无需重跑本节。换机 / 重装时按序执行。命令通过 Cursor MCP `tencent-lighthouse` 的 `run_command` 下发（见 §2.1）。
+> 已上线机器无需重跑本节。换机 / 重装时优先通过 SSH 下发；SSH 尚未接入或不可用时，才经 Cursor MCP `tencent-lighthouse` 的 `run_command` 或 OrcaTerm 下发（见 §2.1）。
 
 ### 4.1 安装系统依赖 + Docker（国内镜像源）
 
@@ -417,39 +421,19 @@ curl -s -X POST http://127.0.0.1:8787/api/auth/login -H 'Content-Type: applicati
 > ⚠️ **服务器直连 GitHub 不通**（国内网络），`git pull` 必须**走宿主机 Xray 代理**（:10809）。
 
 ```bash
-cd /opt/biotrace
+# SSH 主通道。脚本自行检查 tracked 漂移、走 Xray pull --ff-only、按本次改动构建，并写状态和日志。
+nohup /opt/biotrace/scripts/ops/deploy-server.sh >/dev/null 2>&1 &
 
-# 0) 更新前必做：确认工作区干净（除.env.production 等gitignore 文件外，不应有 tracked 改动）
-sudo git status -s
-#若出现 tracked 文件的 " M"（已修改），停下来查清楚——那是服务器被手改的信号，
-#    先把改动回填到本地仓库提交，切勿直接 pull / reset。
+# 轮询：禁止 tail -f，必须等到 result=success 或 result=failed。
+cat /var/lib/biotrace/deploy.status
+tail -n 80 /var/log/biotrace/deploy-*.log
 
-# 1) 走代理拉取（直连会超时）。构建/拉取属长任务，用后台跑避免 Lighthouse 命令超时。
-sudo bash -c 'nohup bash -c "cd /opt/biotrace && git -c http.proxy=http://127.0.0.1:10809 pull --ff-only" > gitpull.log 2>&1 &'
-sleep8 && cat gitpull.log      # 看到 Fast-forward / Already up to date 即成功
-
-# 2) 后端有改动 → 重建并重启（走Dockerfile.cn，由 override 自动生效）
-sudo bash -c 'nohup docker compose build api > build.log 2>&1 & echo $! > build.pid'
-tail -f build.log      # 等 Built
-sudo docker compose up -d api
-
-# 3) 前端有改动 → 重新构建并同步
-sudo bash -c 'nohup docker run --rm -v /opt/biotrace:/app -w /app \
-  -e npm_config_registry=https://registry.npmmirror.com node:22-bookworm-slim \
-  bash -lc "corepack enable && pnpm install --frozen-lockfile --filter @biotrace/web... && pnpm --filter @biotrace/web build" \
-  > webbuild.log 2>&1 &'
-tail -f webbuild.log   # 等 built in
-sudo rsync -a --delete apps/web/dist/ /var/www/biotrace/
-sudo chown -R www-data:www-data /var/www/biotrace
-
-# 4) 验证（详见 §10验收清单）
-curl -s http://127.0.0.1:8787/api/health
-sudo docker compose exec -T api sh -c 'echo $HTTPS_PROXY; getent hosts host.docker.internal'  # 代理链路仍在
-curl -sI http://127.0.0.1/ | grep -i cache-control                                   # 必须 no-store
-curl -s -o /dev/null -w '%{http_code}\n' http://127.0.0.1/assets/nope-not-here.js     # 必须 404，不能 200
+# 保守完整构建（排查路径判定、根依赖或构建缓存时使用）
+nohup /opt/biotrace/scripts/ops/deploy-server.sh --all >/dev/null 2>&1 &
 ```
 
-> - 前端产物换名后旧文件立即被 `--delete` 清掉，所以 §4.6 那两条缓存规则是硬要求：`index.html` 必须 `no-store`、`/assets/` 缺失必须 404。缺了它们，Android WebView 会攥着缓存里的旧 `index.html` 去请求已删除的 JS/CSS，被 SPA 兜底成 HTML 后当脚本解析，**App 打开只显示背景且不报任何错**——已踩过一次。
+> - 部署器在同一把 `flock` 锁内完成整个流程，后台任务的退出状态写入 `/var/lib/biotrace/deploy.status`；看到日志里出现 "Fast-forward" 不算成功，必须以 `result=success` 为准。
+> - 前端产物换名后旧文件立即被 `--delete` 清掉，所以 §4.6 那两条缓存规则是硬要求：`index.html` 必须 `no-store`、`/assets/` 缺失必须 404。部署器会先同步资产、最后更新 `index.html`，避免 Android WebView 在发布中间态拿到指向不存在资源的 HTML。
 > - 用 `pull --ff-only`（而非 `reset --hard`）：只快进，若有分叉会**报错而非默默覆盖**，逼你先查清楚，符合铁律 §7.0-3。
 > - 数据库 schema 变更在 API 启动时自动迁移，正常无需手动干预；重大变更前先备份（§8）。
 > - `deploy/.env.production` 已 gitignore，pull 不会覆盖，密钥安全。
@@ -664,8 +648,9 @@ sudo tar czf /root/biotrace-data.tgz -C /opt/biotrace data
 
 | 现象 | 排查 |
 |------|------|
-| 长命令被判 TIMEOUT | 优先走 MCP `tencent-lighthouse`（默认 Timeout 3600s）；仍超时则写日志 + `get_command_result` 轮询；控制台原生集成仍仅约 60s |
-| MCP 起不来 / 无工具 | 查 `.cursor/mcp.json` 是否存在且密钥非占位；`command` 是否指向可用 `node.exe`；Settings → MCP 看报错 |
+| SSH 连不上 | 先用 OrcaTerm/TAT 检查 `/root/.ssh/authorized_keys`、`sshd -T` 和 22 端口；不要先改 sshd。接入步骤见 [`服务器运维接入.md`](./服务器运维接入.md) |
+| 部署一直未完成 | 查 `/var/lib/biotrace/deploy.status` 与 `/var/log/biotrace/deploy-*.log`；若锁未释放，确认对应 PID 是否仍在。禁止重开并行部署 |
+| TAT MCP 起不来 / 无工具 | 查 `.cursor/mcp.json` 是否存在且密钥非占位；`command` 是否指向可用 `node.exe`；Settings → MCP 看报错。TAT 失效时仍可通过 SSH 部署 |
 | `run_command` 被护栏拦截 | 危险命令需显式 `confirmDangerous`；先 `describe_policy` / `check_agent`；确认实例在白名单 |
 | 构建卡在 apt / deb.debian.org | 用 `deploy/Dockerfile.cn`（已换腾讯云源）；确认 `docker-compose.override.yml` 存在 |
 | Docker 装不上（download.docker.com 握手失败）| 用腾讯云 docker-ce 镜像源（§4.1） |
@@ -693,7 +678,10 @@ sudo tar czf /root/biotrace-data.tgz -C /opt/biotrace data
 | `D:/Fun/tencent-lighthouse-mcp/` | MCP 源码与冒烟脚本（仓库外，不污染本仓） |
 | `deploy/.env.production` | 生产环境变量（**gitignore，含密钥，勿提交**） |
 | `docker-compose.yml` | API 服务定义（端口只绑 127.0.0.1:8787，卷./data:/data） |
-| `docker-compose.override.yml` | 本地覆盖：①改用 `Dockerfile.cn` 构建；②api 加 `extra_hosts: host.docker.internal:host-gateway`（走宿主机代理）。**服务器侧文件，非 git 追踪** |
+| `docker-compose.override.yml` | 入库的生产覆盖：①改用 `Dockerfile.cn` 构建；②api 加 `extra_hosts: host.docker.internal:host-gateway`（走宿主机代理） |
+| `scripts/setup_biotrace_ops_machine.ps1` | 开发机 SSH 密钥、SSH MCP 与命令黑名单接入脚本 |
+| `scripts/ops/deploy-server.sh` | 服务器日常部署执行器：加锁、按改动构建、状态/日志与验收 |
+| `deploy/.env.web.production` | 仅服务器本地的 Web `VITE_*` 构建变量；已 gitignore，不能放 API 密钥 |
 | `deploy/Dockerfile.cn` | 国内构建（apt→腾讯云、npm→npmmirror） |
 | `/usr/local/etc/xray/config.json` | 广州机Xray 客户端配置（Reality→SG1 + 本地 10809/10808 入口），§6.5 |
 | `/etc/systemd/system/xray.service` | Xray 开机自启服务 |

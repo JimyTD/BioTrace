@@ -5,6 +5,7 @@
 **/.env.production
 **/.env.production.local
 **/deploy/.env.production
+**/deploy/.env.web.production
 *.pem
 *.jks
 *.keystore
