@@ -26,9 +26,9 @@ const LEGACY_THEME_IDS: Record<string, ThemeId> = {
 };
 
 /** 主题化的静态资源域，对应 public/<域>/<themeId>/。 */
-export type AssetDomain = "volumes" | "trips" | "settle" | "shell" | "collection";
+export type AssetDomain = "trips" | "settle" | "shell" | "collection";
 
-export const ASSET_DOMAINS = ["volumes", "trips", "settle", "shell"] as const satisfies readonly AssetDomain[];
+export const ASSET_DOMAINS = ["trips", "settle", "shell"] as const satisfies readonly AssetDomain[];
 
 /** 界面明暗。结构层据此调少量与底色方向绑定的效果（照片垫、反白描边等）。 */
 export type ColorScheme = "light" | "dark";
@@ -49,7 +49,7 @@ export const THEME_META: Record<ThemeId, ThemeMeta> = {
   /* 清透不铺壳纸纹（--page-texture: none），开包舞台与稀有度也整块换成了自己的组件，
      settle / shell 一张图都读不到。图鉴门面与收集树仰视是清透自备的，只它声明 collection——
      不要把 collection 塞进 ASSET_DOMAINS，否则日光会承诺一个没有文件的域。 */
-  clear: { scheme: "light", assets: ["volumes", "trips", "collection"], voice: "clear" },
+  clear: { scheme: "light", assets: ["trips", "collection"], voice: "clear" },
 };
 
 const STORAGE_KEY = "bt_theme";

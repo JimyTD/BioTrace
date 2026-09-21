@@ -137,15 +137,9 @@
     #b14ef0 360deg
   );
 
-  /* 套册 / 邮票 */
-  --volume-cover-empty: #e7dfd2;
-  --volume-stamp-empty-line: rgba(58, 50, 44, 0.28);
-  /* 空槽印样压低一点，让已点亮的真照片在格子里更跳 */
-  --volume-plate-opacity: 0.92;
-  --volume-complete-line: #d3543c;
-  --volume-complete-soft: #f0ddd4;
-  --volume-complete-ink: #9a4030;
-  --volume-complete-glow: 0 12px 36px rgba(211, 84, 60, 0.16);
+  --media-empty: #e7dfd2;
+  --warm-accent-soft: #f0ddd4;
+  --warm-accent-ink: #9a4030;
 
   /* 旅途封面墙 / 胶片格 */
   --trip-cover-shadow: 0 10px 26px rgba(42, 36, 28, 0.1);
@@ -155,20 +149,17 @@
   --mount-ink: #5c5347;
   --mount-title-ink: #423b31;
   --film-tile-shadow: 0 4px 14px rgba(42, 36, 28, 0.08);
-  /* 套册空格的斜线底纹，与开包礼章落在纸上的影 */
-  --stamp-empty-hatch: rgba(58, 50, 44, 0.05);
-  --ceremony-seal-shadow: drop-shadow(0 2px 6px rgba(42, 36, 28, 0.3));
-  --trip-create-bg: color-mix(in srgb, var(--card) 82%, var(--volume-cover-empty));
-  --trip-share-badge-bg: var(--volume-complete-soft);
-  --trip-share-badge-ink: var(--volume-complete-ink);
-  --trip-pending-veil: color-mix(in srgb, var(--volume-cover-empty) 88%, var(--card));
+  --trip-create-bg: color-mix(in srgb, var(--card) 82%, var(--media-empty));
+  --trip-share-badge-bg: var(--warm-accent-soft);
+  --trip-share-badge-ink: var(--warm-accent-ink);
+  --trip-pending-veil: color-mix(in srgb, var(--media-empty) 88%, var(--card));
   --trip-pending-band-ink: var(--accent);
   --trip-empty-caption: var(--muted);
   /* 卷首图中心那圈象牙色留白上的字 */
   --frontispiece-ink: #5c5347;
 
   /* 我的：名片 / 设置行 */
-  --me-card-bg: color-mix(in srgb, var(--card) 88%, var(--volume-cover-empty));
+  --me-card-bg: color-mix(in srgb, var(--card) 88%, var(--media-empty));
   --me-row-line: var(--line);
 
   /* 开包照片垫 / 未出图时的深底 */

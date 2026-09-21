@@ -147,16 +147,9 @@
     #a63ff0 360deg
   );
 
-  /* 套册（暂为占位功能，沿用现有资源）。
-     空格底提到近白、印样压成水印：原来那档是深灰块 + 不透明剪影，
-     六个格子并排像六块加载占位 */
-  --volume-cover-empty: #f4f8fa;
-  --volume-stamp-empty-line: rgba(90, 115, 135, 0.18);
-  --volume-plate-opacity: 0.22;
-  --volume-complete-line: #d9531e;
-  --volume-complete-soft: #f8e3d0;
-  --volume-complete-ink: #b8410f;
-  --volume-complete-glow: 0 12px 36px rgba(217, 83, 30, 0.16);
+  --media-empty: #f4f8fa;
+  --warm-accent-soft: #f8e3d0;
+  --warm-accent-ink: #b8410f;
 
   /* 照片：暖白卡纸边贴在浅冷白底上，就是被认可的那一半 */
   --trip-cover-shadow:
@@ -172,12 +165,10 @@
   --film-tile-shadow:
     0 1px 2px rgba(70, 90, 105, 0.14),
     0 8px 18px rgba(70, 90, 105, 0.11);
-  --stamp-empty-hatch: rgba(90, 115, 135, 0.05);
-  --ceremony-seal-shadow: drop-shadow(0 2px 6px rgba(70, 90, 105, 0.22));
   --trip-create-bg: var(--card);
-  --trip-share-badge-bg: var(--volume-complete-soft);
-  --trip-share-badge-ink: var(--volume-complete-ink);
-  --trip-pending-veil: color-mix(in srgb, var(--volume-cover-empty) 88%, #ffffff);
+  --trip-share-badge-bg: var(--warm-accent-soft);
+  --trip-share-badge-ink: var(--warm-accent-ink);
+  --trip-pending-veil: color-mix(in srgb, var(--media-empty) 88%, #ffffff);
   --trip-pending-band-ink: var(--accent);
   --trip-empty-caption: var(--muted);
   --frontispiece-ink: #6a6357;
@@ -587,8 +578,7 @@
   box-shadow: var(--shadow);
 }
 
-/* 进度条：底是淡彩、走过的部分是同族的深一档。识图配额用雾蓝，
-   套册进度用苔绿——和各自那行图标同色，扫一眼就知道是一码事 */
+/* 进度条：底是淡彩、走过的部分是同族的深一档。 */
 [data-theme="clear"] .tint-bar {
   display: block;
   background: var(--tint-2-bg);
@@ -597,14 +587,6 @@
 [data-theme="clear"] .tint-bar::before {
   background: var(--tint-2-ink);
   opacity: 0.55;
-}
-
-[data-theme="clear"] .volume-tile-bar {
-  background: var(--tint-1-bg);
-}
-
-[data-theme="clear"] .volume-tile-bar::before {
-  background: var(--tint-1-ink);
 }
 
 /* 勾选行变成开关行：字在左、开关顶到右。DOM 顺序是 input 在前，

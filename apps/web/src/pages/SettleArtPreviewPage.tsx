@@ -2,7 +2,6 @@ import { useCallback, useState } from "react";
 import { Link, useSearchParams } from "react-router-dom";
 import { t, type MessageKey } from "@biotrace/messages";
 import type { Rarity } from "../api";
-import { volumeCeremonyBgUrl, volumeSealCompleteUrl } from "../themes";
 import { themeSlot, type SettleStagePhase } from "../themes/slots";
 
 /**
@@ -114,22 +113,6 @@ export default function SettleArtPreviewPage() {
               {r}
             </button>
           ))}
-        </div>
-      </div>
-
-      <div className="stack">
-        <p className="muted section-kicker">整册点亮</p>
-        <div className="modal-panel volume-ceremony is-complete settle-preview-ceremony">
-          <img
-            className="ceremony-bg"
-            src={volumeCeremonyBgUrl("complete")}
-            alt=""
-          />
-          <img className="ceremony-seal" src={volumeSealCompleteUrl()} alt="" />
-          <div className="ceremony-body stack">
-            <p className="muted section-kicker">整册点亮</p>
-            <p className="volume-ceremony-line">「潮间带」整册点亮（预览）</p>
-          </div>
         </div>
       </div>
 

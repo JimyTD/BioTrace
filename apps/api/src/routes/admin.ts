@@ -33,7 +33,6 @@ import {
   tripMembers,
   trips,
   users,
-  volumeProgress,
 } from "../db/schema.js";
 import { env } from "../env.js";
 import { apiError } from "../errors.js";
@@ -436,7 +435,6 @@ adminRoutes.delete("/users/:id", async (c) => {
   await db.delete(tripMembers).where(eq(tripMembers.userId, u.id));
   await db.delete(sharedCollectionCredits).where(eq(sharedCollectionCredits.userId, u.id));
   await db.delete(collectionEntries).where(eq(collectionEntries.userId, u.id));
-  await db.delete(volumeProgress).where(eq(volumeProgress.userId, u.id));
   await db.delete(identifyDailyUsage).where(eq(identifyDailyUsage.userId, u.id));
   await db.delete(passwordResetTokens).where(eq(passwordResetTokens.email, u.email));
   await db.delete(users).where(eq(users.id, u.id));

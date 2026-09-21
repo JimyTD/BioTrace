@@ -1,4 +1,4 @@
-import { and, desc, eq, inArray, ne } from "drizzle-orm";
+import { and, desc, eq, inArray } from "drizzle-orm";
 import { db } from "../db/index.js";
 import {
   collectionEntries,
@@ -10,18 +10,6 @@ import {
 import { collectibleRankFromTier } from "../rarity/scale-rubric.js";
 import { collectionScientificName } from "../settle/taxon.js";
 import { rebuildPetTaxonForUser } from "./pets.js";
-import {
-  evaluateVolumesForUser,
-  type VolumeEvalResult,
-} from "../volumes/evaluate.js";
-import { loadVolumeConfigs } from "../volumes/load.js";
-import { readVolumeProgress, writeVolumeProgress } from "../volumes/progress.js";
-
-const emptyVolumeEval = (): VolumeEvalResult => ({
-  newlyLit: [],
-  newlyCompletedVolumeIds: [],
-  newlyCompleted: [],
-});
 
 async function memberIdsOfTrip(tripId: string): Promise<string[]> {
   const rows = await db.query.tripMembers.findMany({
@@ -34,7 +22,7 @@ async function memberIdsOfTrip(tripId: string): Promise<string[]> {
 export async function upsertCollectionForUser(userId: string, obs: Observation) {
   if (!obs.taxonKey || obs.status !== "settled") return;
   // 驯养进宠物图鉴、不碰野生卡；野生进现有图鉴。两边都按源观察重算，
-  // 身份从家野翻转时对侧会回缩。套册仍由 grant 里 evaluateVolumesForUser 点亮。
+  // 身份从家野翻转时对侧图鉴会回缩。
   if (obs.domesticated) {
     await rebuildPetTaxonForUser(userId, obs.taxonKey);
     await rebuildCollectionTaxonForUser(userId, obs.taxonKey);
@@ -103,16 +91,13 @@ async function recordCredit(userId: string, obs: Observation) {
 }
 
 /**
- * Grant图鉴 + 套册 to specific users (join backfill) or all current members (settle).
- * If `focusUserId` is set, evaluate that user first and return their volume delta
- * (for settle ceremony UI); other members are still granted afterward.
+ * Grant shared collection progress to specific users (join backfill) or all current members.
  */
 export async function grantSharedProgressForObservation(
   obs: Observation,
   onlyUserIds?: string[],
-  focusUserId?: string,
-): Promise<VolumeEvalResult> {
-  if (obs.status !== "settled" || !obs.taxonKey) return emptyVolumeEval();
+): Promise<void> {
+  if (obs.status !== "settled" || !obs.taxonKey) return;
 
   const memberIds = onlyUserIds ?? (await memberIdsOfTrip(obs.tripId));
   for (const uid of memberIds) {
@@ -122,25 +107,10 @@ export async function grantSharedProgressForObservation(
     }
   }
 
-  let focusEval = emptyVolumeEval();
-  const ordered = focusUserId
-    ? [focusUserId, ...memberIds.filter((id) => id !== focusUserId)]
-    : memberIds;
-  const seen = new Set<string>();
-  for (const uid of ordered) {
-    if (seen.has(uid) || !memberIds.includes(uid)) continue;
-    seen.add(uid);
-    const ev = await evaluateVolumesForUser(uid, obs);
-    if (focusUserId && uid === focusUserId) focusEval = ev;
-  }
-  return focusEval;
 }
 
-export async function grantSharedProgressToAllMembers(
-  obs: Observation,
-  focusUserId?: string,
-): Promise<VolumeEvalResult> {
-  return grantSharedProgressForObservation(obs, undefined, focusUserId);
+export async function grantSharedProgressToAllMembers(obs: Observation): Promise<void> {
+  await grantSharedProgressForObservation(obs);
 }
 
 export async function rebuildCollectionTaxonForUser(userId: string, taxonKey: string) {
@@ -241,34 +211,6 @@ export async function reclaimSharedProgressForUserTrip(userId: string, tripId: s
     await rebuildPetTaxonForUser(userId, taxon);
   }
 
-  // Unlit slots lit only by *others'* photos on this trip (own uploads stay).
-  const othersObs = await db.query.observations.findMany({
-    where: and(eq(observations.tripId, tripId), ne(observations.userId, userId)),
-    columns: { id: true },
-  });
-  const othersObsIds = new Set(othersObs.map((o) => o.id));
-  if (othersObsIds.size === 0 && taxons.length === 0) return;
-
-  const volumes = loadVolumeConfigs();
-  for (const vol of volumes) {
-    const prev = await readVolumeProgress(userId, vol.id);
-    let changed = false;
-    const litSlots = { ...prev.litSlots };
-    for (const [slotId, entry] of Object.entries(litSlots)) {
-      if (entry.observationId && othersObsIds.has(entry.observationId)) {
-        delete litSlots[slotId];
-        changed = true;
-      }
-    }
-    if (!changed) continue;
-    const complete = vol.slots.every((s) => Boolean(litSlots[s.id]));
-    await writeVolumeProgress({
-      userId,
-      volumeId: vol.id,
-      litSlots,
-      completedAt: complete ? prev.completedAt ?? new Date() : null,
-    });
-  }
 }
 
 export async function revokeCreditsForObservation(observationId: string) {
@@ -292,34 +234,4 @@ export async function revokeCreditsForObservation(observationId: string) {
     }
   }
 
-  // Unlit volume slots pointing at this observation for any user who had credit / uploader
-  const volumes = loadVolumeConfigs();
-  const userIds = new Set<string>([...byUser.keys()]);
-  const obs = await db.query.observations.findFirst({
-    where: eq(observations.id, observationId),
-    columns: { userId: true },
-  });
-  if (obs) userIds.add(obs.userId);
-
-  for (const uid of userIds) {
-    for (const vol of volumes) {
-      const prev = await readVolumeProgress(uid, vol.id);
-      let changed = false;
-      const litSlots = { ...prev.litSlots };
-      for (const [slotId, entry] of Object.entries(litSlots)) {
-        if (entry.observationId === observationId) {
-          delete litSlots[slotId];
-          changed = true;
-        }
-      }
-      if (!changed) continue;
-      const complete = vol.slots.every((s) => Boolean(litSlots[s.id]));
-      await writeVolumeProgress({
-        userId: uid,
-        volumeId: vol.id,
-        litSlots,
-        completedAt: complete ? prev.completedAt ?? new Date() : null,
-      });
-    }
-  }
 }

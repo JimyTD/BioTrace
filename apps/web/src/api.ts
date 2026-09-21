@@ -372,7 +372,7 @@ export const api = {
       `/api/observations/${id}${forSettle ? "?forSettle=1" : ""}`,
     ),
   settleObservation: (id: string) =>
-    request<{ observation: Observation; volumes: SettleVolumesResult }>(
+    request<{ observation: Observation }>(
       `/api/observations/${id}/settle`,
       {
         method: "POST",
@@ -403,37 +403,4 @@ export const api = {
     request<{ entry: PetCollectionEntry; sightings: CollectionSighting[] }>(
       `/api/collection/pets/${id}`,
     ),
-  listVolumes: () => request<{ volumes: VolumeListItem[] }>("/api/volumes"),
-};
-
-export type SettleVolumesResult = {
-  newlyLit: Array<{
-    volumeId: string;
-    slotId: string;
-    volumeTitleKey: string;
-    slotTitleKey: string;
-  }>;
-  newlyCompletedVolumeIds: string[];
-  newlyCompleted: Array<{ volumeId: string; titleKey: string }>;
-};
-
-export type VolumeSlotView = {
-  id: string;
-  titleKey: string;
-  lit: boolean;
-  coverObservationId: string | null;
-  coverDisplayUrl: string | null;
-};
-
-export type VolumeListItem = {
-  id: string;
-  sort: number;
-  titleKey: string;
-  ledeKey: string;
-  completed: boolean;
-  completedAt: string | null;
-  litCount: number;
-  totalSlots: number;
-  coverDisplayUrl: string | null;
-  slots: VolumeSlotView[];
 };

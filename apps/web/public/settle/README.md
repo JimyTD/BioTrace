@@ -12,4 +12,4 @@
 
 叠层禁止带纸色底垫。位图：绿幕 `#00FF00` → `python scripts/chroma_key_green.py`（勿对硬边壳用 rembg）。  
 **预览**：打开同目录 [`preview.html`](./preview.html)（静态页，见手册 §7.2）。  
-规范：`docs/features/套册美术分层.md` §7。
+规范：`docs/features/皮肤主题.md` 的资源分层约定。

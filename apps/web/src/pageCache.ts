@@ -1,4 +1,4 @@
-import type { CollectionEntry, PetCollectionEntry, Observation, Trip, VolumeListItem } from "./api";
+import type { CollectionEntry, PetCollectionEntry, Observation, Trip } from "./api";
 
 type AlbumSnap = { trip: Trip; observations: Observation[] };
 type CollectionSnap = {
@@ -7,12 +7,10 @@ type CollectionSnap = {
   kingdomCount?: number;
   entries?: CollectionEntry[];
   petEntries?: PetCollectionEntry[];
-  volumes: VolumeListItem[];
 };
 
 const albums = new Map<string, AlbumSnap>();
 const observations = new Map<string, Observation>();
-const volumes = new Map<string, VolumeListItem>();
 let collection: CollectionSnap | null = null;
 
 function rememberObservations(list: Observation[]) {
@@ -38,17 +36,8 @@ export function peekObservation(id: string): Observation | null {
 
 export function rememberCollection(snap: CollectionSnap) {
   collection = snap;
-  for (const volume of snap.volumes) volumes.set(volume.id, volume);
 }
 
 export function peekCollection(): CollectionSnap | null {
   return collection;
-}
-
-export function rememberVolume(volume: VolumeListItem) {
-  volumes.set(volume.id, volume);
-}
-
-export function peekVolume(id: string): VolumeListItem | null {
-  return volumes.get(id) ?? null;
 }

@@ -44,7 +44,6 @@ features 里完全没有的主题，等它落地后在 features 新建，不是�
 | 识图 / 三档（相遇·未相遇·留影）/ 软档 / 配额 | [`features/识图护栏.md`](../features/识图护栏.md)（+ [`SPEC.md`](../SPEC.md) §1.2） |
 | 皮肤 / 主题 / 动效 / 创作动作 / 前端设计原则 | [`features/皮肤主题.md`](../features/皮肤主题.md) |
 | 物种树（铁律 / 结构 / 渲染） | [`features/物种树.md`](../features/物种树.md) |
-| 套册 / 成就 | [`features/旅行套册.md`](../features/旅行套册.md) |
 | 共享旅途 | [`features/共享旅途.md`](../features/共享旅途.md) |
 | 运维事故 / 部署 | [`OPS.md`](../OPS.md) |
 | 全局规格 / 行为摘要 | [`SPEC.md`](../SPEC.md) |

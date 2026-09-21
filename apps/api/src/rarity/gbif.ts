@@ -101,7 +101,7 @@ function parseMatchPayload(data: Record<string, unknown>): GbifMatchResult {
   };
 }
 
-/** Full `/species/match` (classification + matchType). Used by volumes taxonomy resolve. */
+/** Full `/species/match` (classification + matchType). Used by taxon-key resolution. */
 export async function gbifMatchName(query: MatchQuery): Promise<GbifMatchResult> {
   const params = new URLSearchParams({ name: query.name });
   const rp = rankParam(query.rank);

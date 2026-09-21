@@ -207,11 +207,10 @@ observationRoutes.post("/:id/settle", async (c) => {
     return c.json(err.body, err.status);
   }
 
-  const volumeEval = await grantSharedProgressToAllMembers(updated, user.id);
+  await grantSharedProgressToAllMembers(updated);
 
   return c.json({
     observation: await serializeObs(updated, { redactPending: false }),
-    volumes: volumeEval,
   });
 });
 

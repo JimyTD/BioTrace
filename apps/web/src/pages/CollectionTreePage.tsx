@@ -60,14 +60,12 @@ export default function CollectionTreePage() {
       .then(([col, pets]) => {
         const next = mergeTreeEntries(col.entries, pets.entries);
         setEntries((prev) => (sameTreeIds(prev, next) ? prev : next));
-        const prev = peekCollection();
         rememberCollection({
           entryCount: col.entries.length + pets.entries.length,
           petCount: pets.entries.length,
           kingdomCount: countTreeKingdoms([...col.entries, ...pets.entries]),
           entries: col.entries,
           petEntries: pets.entries,
-          volumes: prev?.volumes ?? [],
         });
       })
       .catch((e) => setError(e instanceof Error ? e.message : t("collection.loadFailed")))

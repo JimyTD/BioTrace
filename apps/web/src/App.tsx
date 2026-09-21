@@ -20,7 +20,6 @@ import CollectionPetsPage from "./pages/CollectionPetsPage";
 import CollectionSpeciesCardPage from "./pages/CollectionSpeciesCardPage";
 import CollectionSpeciesPage from "./pages/CollectionSpeciesPage";
 import CollectionTreePage from "./pages/CollectionTreePage";
-import CollectionVolumePage from "./pages/CollectionVolumePage";
 import LoginPage from "./pages/LoginPage";
 import OnboardInsert from "./components/OnboardInsert";
 import { hasOnboardSeen, markOnboardSeen } from "./onboardSeen";
@@ -126,14 +125,6 @@ function AppShell({
             <Route path="/map" element={<MapPage />} />
             <Route path="/collection" element={<CollectionLayout />}>
               <Route index element={null} />
-              <Route
-                path="volumes/:id"
-                element={
-                  <PageOverlay className="is-volume">
-                    <CollectionVolumePage />
-                  </PageOverlay>
-                }
-              />
             </Route>
             <Route path="/collection/species" element={<SpeciesListLayout />}>
               <Route index element={null} />

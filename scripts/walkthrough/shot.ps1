@@ -1,7 +1,7 @@
 ﻿# 本地走查截图：无头 Edge 打开 dev-login 跳转页，等首屏画完再截。
 # 用法见同目录 README.md。截图产物统一落 .shot/（已 gitignore）。
 param(
-  # 目标路由，如 "/" 或 "/collection/volumes/woodland_edge"
+  # 目标路由，如 "/" 或 "/collection/tree"
   [Parameter(Mandatory = $true)][string]$To,
   [Parameter(Mandatory = $true)][string]$Out,
   # 别往 500 以下调：Windows 无头窗口有最小宽度，更窄会按 500 渲染再裁掉（见 README）

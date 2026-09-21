@@ -1,7 +1,7 @@
 import { useCallback, useEffect, useState } from "react";
 import { Link, useLocation, useNavigate, useParams } from "react-router-dom";
-import { formatRank, hasMessage, t } from "@biotrace/messages";
-import { acceptedScientificIfDifferent, api, type Observation, type SettleVolumesResult } from "../api";
+import { formatRank, t } from "@biotrace/messages";
+import { acceptedScientificIfDifferent, api, type Observation } from "../api";
 import { identifyByLine } from "../identifyLabel";
 import { useBackClose } from "../androidBack";
 import { ListTagRow } from "../components/ListTagRow";
@@ -10,11 +10,6 @@ import { themeSlot } from "../themes/slots";
 import { peekObservation, rememberObservation } from "../pageCache";
 import { petBreedLabel } from "../petIdentity";
 import { peekLiftBackground } from "../photoLiftHandoff";
-import { volumeCeremonyBgUrl, volumeSealCompleteUrl } from "../themes";
-
-function msgKey(key: string): string {
-  return hasMessage(key) ? t(key) : key;
-}
 
 /** 打在片框上的日期。给卡纸型皮肤用，取月-日，和相册格上那行同一个形状。 */
 function stampDate(iso: string | null): string | null {
@@ -22,38 +17,6 @@ function stampDate(iso: string | null): string | null {
   const d = new Date(iso);
   if (Number.isNaN(d.getTime())) return null;
   return `${String(d.getMonth() + 1).padStart(2, "0")}-${String(d.getDate()).padStart(2, "0")}`;
-}
-
-type CeremonyKind = "complete" | "slot";
-
-function buildCeremony(volumes: SettleVolumesResult): {
-  kind: CeremonyKind;
-  line: string;
-} | null {
-  const completed = volumes.newlyCompleted ?? [];
-  if (completed.length > 0) {
-    const volume = msgKey(completed[0]!.titleKey);
-    const line =
-      completed.length === 1
-        ? t("settle.volumeCompleted", { volume })
-        : t("settle.volumeCompletedMore", { volume, count: completed.length });
-    return { kind: "complete", line };
-  }
-
-  const lit = volumes.newlyLit ?? [];
-  if (lit.length === 0) return null;
-  const first = lit[0]!;
-  const volume = msgKey(first.volumeTitleKey);
-  const slot = msgKey(first.slotTitleKey);
-  const line =
-    lit.length === 1
-      ? t("settle.volumeSlotLit", { volume, slot })
-      : t("settle.volumeSlotLitMore", {
-          volume,
-          slot,
-          count: lit.length - 1,
-        });
-  return { kind: "slot", line };
 }
 
 export default function ObservationSettlePage({ userId }: { userId?: string }) {
@@ -66,11 +29,10 @@ export default function ObservationSettlePage({ userId }: { userId?: string }) {
     return cached?.status === "pending_settle" ? cached : null;
   });
   const [error, setError] = useState<string | null>(null);
-  const [phase, setPhase] = useState<"sealed" | "revealing" | "open" | "claimed">("sealed");
+  const [phase, setPhase] = useState<"sealed" | "revealing" | "open">("sealed");
   const [claiming, setClaiming] = useState(false);
   const [reidentifyOpen, setReidentifyOpen] = useState(false);
   const [reidentifying, setReidentifying] = useState(false);
-  const [ceremony, setCeremony] = useState<{ kind: CeremonyKind; line: string } | null>(null);
   useBackClose(() => {
     if (obs) navigate(`/trips/${obs.tripId}`);
     else navigate("/");
@@ -118,20 +80,8 @@ export default function ObservationSettlePage({ userId }: { userId?: string }) {
     setClaiming(true);
     setError(null);
     try {
-      const res = await api.settleObservation(obs.id);
-      const volumes = res.volumes ?? {
-        newlyLit: [],
-        newlyCompletedVolumeIds: [],
-        newlyCompleted: [],
-      };
-      const next = buildCeremony(volumes);
-      if (!next) {
-        navigate(`/trips/${obs.tripId}`, { replace: true });
-        return;
-      }
-      setCeremony(next);
-      setPhase("claimed");
-      setClaiming(false);
+      await api.settleObservation(obs.id);
+      navigate(`/trips/${obs.tripId}`, { replace: true });
     } catch (e) {
       setError(e instanceof Error ? e.message : t("settle.failed"));
       setClaiming(false);
@@ -193,7 +143,6 @@ export default function ObservationSettlePage({ userId }: { userId?: string }) {
   const acceptedSci = acceptedScientificIfDifferent(obs);
   const waitingIdentify = obs.status === "analyzing";
   const sealed = phase === "sealed";
-  const stagePhase = phase === "claimed" ? "open" : phase;
   const SettleStage = themeSlot("settleStage");
 
   return (
@@ -206,7 +155,7 @@ export default function ObservationSettlePage({ userId }: { userId?: string }) {
       <div className={`settle-card ${phase}`}>
         <div className="settle-card-inner">
           <SettleStage
-            phase={stagePhase}
+            phase={phase}
             photoUrl={obs.displayUrl}
             photoAlt={sealed ? "" : title}
             rarity={obs.rarity}
@@ -254,22 +203,18 @@ export default function ObservationSettlePage({ userId }: { userId?: string }) {
                   ) : null}
                   {obs.blurb ? <p className="blurb">{obs.blurb}</p> : null}
 
-                  {phase !== "claimed" ? (
-                    <>
-                      <button className="btn" type="button" disabled={claiming || reidentifying} onClick={onClaim}>
-                        {claiming ? t("settle.claiming") : t("settle.claim")}
-                      </button>
-                      {userId && obs.userId === userId ? (
-                        <button
-                          className="btn secondary"
-                          type="button"
-                          disabled={claiming || reidentifying}
-                          onClick={() => setReidentifyOpen(true)}
-                        >
-                          {reidentifying ? t("detail.reidentifying") : t("detail.reidentify")}
-                        </button>
-                      ) : null}
-                    </>
+                  <button className="btn" type="button" disabled={claiming || reidentifying} onClick={onClaim}>
+                    {claiming ? t("settle.claiming") : t("settle.claim")}
+                  </button>
+                  {userId && obs.userId === userId ? (
+                    <button
+                      className="btn secondary"
+                      type="button"
+                      disabled={claiming || reidentifying}
+                      onClick={() => setReidentifyOpen(true)}
+                    >
+                      {reidentifying ? t("detail.reidentifying") : t("detail.reidentify")}
+                    </button>
                   ) : null}
                 </>
               )}
@@ -289,48 +234,9 @@ export default function ObservationSettlePage({ userId }: { userId?: string }) {
         }}
         onConfirm={onReidentify}
       />
-      {phase !== "claimed" ? (
-        <Link className="btn secondary" to={`/trips/${obs.tripId}`}>
-          {t("settle.backAlbum")}
-        </Link>
-      ) : null}
-
-      {phase === "claimed" && ceremony ? (
-        <div className="modal-backdrop volume-ceremony-backdrop">
-          <div
-            className={`modal-panel volume-ceremony${
-              ceremony.kind === "complete" ? " is-complete" : ""
-            }`}
-          >
-            <img
-              className="ceremony-bg"
-              src={volumeCeremonyBgUrl(ceremony.kind === "complete" ? "complete" : "slot")}
-              alt=""
-            />
-            {ceremony.kind === "complete" ? (
-              <img
-                className="ceremony-seal"
-                src={volumeSealCompleteUrl()}
-                alt=""
-              />
-            ) : null}
-            <div className="ceremony-body stack">
-              <p className="muted section-kicker" id="volume-ceremony-title">
-                {ceremony.kind === "complete"
-                  ? t("settle.volumeCeremonyCompleteTitle")
-                  : t("settle.volumeCeremonyTitle")}
-              </p>
-              <p className="volume-ceremony-line">{ceremony.line}</p>
-              <Link className="btn" to="/collection" replace>
-                {t("settle.volumeToCollection")}
-              </Link>
-              <Link className="btn secondary" to={`/trips/${obs.tripId}`} replace>
-                {t("settle.volumeContinue")}
-              </Link>
-            </div>
-          </div>
-        </div>
-      ) : null}
+      <Link className="btn secondary" to={`/trips/${obs.tripId}`}>
+        {t("settle.backAlbum")}
+      </Link>
     </div>
   );
 }

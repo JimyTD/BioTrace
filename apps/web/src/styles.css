@@ -285,7 +285,7 @@ a.btn {
   gap: 6px;
 }
 
-/* ── 卡纸栅格（旅途相册格 / 旅途封面 / 套册格子 / 开包舞台共用）─────────
+/* ── 卡纸栅格（旅途相册格 / 旅途封面 / 开包舞台共用）──────────────────────
    零件一次渲全，摆在哪由皮肤决定。三列五行：
 
      lip-tl    lip-top      lip-tr
@@ -303,14 +303,12 @@ a.btn {
    零件清单与各面默认摆放见 docs/features/皮肤主题.md §2.3。 */
 .film-tile,
 .trip-cover-slot,
-.stamp-slot,
 .pet-plate {
   container-type: inline-size;
 }
 
 .film-tile-link,
 .trip-cover,
-.stamp,
 .settle-photo-mat,
 .pet-plate {
   position: relative;
@@ -723,7 +721,7 @@ button.trip-cover {
   font-weight: 500;
 }
 
-/* 淡彩进度条。识图配额、套册点亮进度共用同一个零件——
+/* 淡彩进度条。识图配额等进度表达共用同一个零件——
    两处都是「已经用掉／已经集到多少」，没必要各写一份 */
 .tint-bar {
   display: none;
@@ -1508,12 +1506,6 @@ button.film-tile-link {
   background: color-mix(in srgb, var(--cta) 12%, var(--card));
 }
 
-.settle-preview-ceremony {
-  position: relative;
-  width: min(400px, 100%);
-  margin: 0;
-}
-
 .settle-name {
   font-family: var(--font-brand);
   font-size: 1.4rem;
@@ -1528,31 +1520,6 @@ button.film-tile-link {
   to {
     opacity: 0;
     transform: translateY(-6%) scale(1.03);
-  }
-}
-
-.settle-volume-note {
-  margin-top: 4px;
-  padding-top: 12px;
-  border-top: 1px solid var(--line);
-}
-
-.settle-volume-line {
-  margin: 0;
-  font-family: var(--font-brand);
-  font-size: 1.05rem;
-  letter-spacing: -0.01em;
-  animation: settleVolumeIn 420ms ease;
-}
-
-@keyframes settleVolumeIn {
-  from {
-    opacity: 0;
-    transform: translateY(6px);
-  }
-  to {
-    opacity: 1;
-    transform: translateY(0);
   }
 }
 
@@ -2221,251 +2188,6 @@ button.film-tile-link {
   text-transform: uppercase;
 }
 
-.volumes-section {
-  margin-bottom: 0.5rem;
-}
-
-.volume-rail {
-  display: grid;
-  grid-template-columns: repeat(3, minmax(0, 1fr));
-  gap: 12px;
-}
-
-.volume-tile {
-  appearance: none;
-  -webkit-appearance: none;
-  display: grid;
-  gap: 8px;
-  padding: 0;
-  border: 0;
-  background: transparent;
-  text-align: left;
-  color: inherit;
-  font: inherit;
-  cursor: pointer;
-}
-
-.volume-tile.is-open-source .volume-tile-cover {
-  visibility: hidden;
-}
-
-.volume-head {
-  display: grid;
-  grid-template-columns: 72px minmax(0, 1fr);
-  gap: 12px;
-  align-items: start;
-}
-
-.volume-head-cover {
-  width: 72px;
-  aspect-ratio: 4 / 3;
-  object-fit: cover;
-  border-radius: var(--radius-sm);
-  background: var(--volume-cover-empty);
-  box-shadow: var(--trip-cover-shadow);
-}
-
-.volume-tile-cover {
-  position: relative;
-  aspect-ratio: 4 / 3;
-  border-radius: var(--radius-sm);
-  overflow: hidden;
-  background: var(--volume-cover-empty);
-  box-shadow: var(--trip-cover-shadow);
-}
-
-.volume-tile-art,
-.volume-tile-placeholder {
-  position: absolute;
-  inset: 0;
-  width: 100%;
-  height: 100%;
-  display: block;
-  object-fit: cover;
-}
-
-.volume-tile-placeholder {
-  background:
-    linear-gradient(
-      145deg,
-      color-mix(in srgb, var(--cta) 10%, transparent),
-      transparent 55%
-    ),
-    var(--volume-cover-empty);
-}
-
-.volume-tile-placeholder[hidden] {
-  display: none;
-}
-
-.volume-tile-seal {
-  position: absolute;
-  right: 6%;
-  top: 6%;
-  width: 22%;
-  max-width: 48px;
-  height: auto;
-  object-fit: contain;
-  pointer-events: none;
-  z-index: 1;
-  filter: drop-shadow(0 2px 4px color-mix(in srgb, var(--ink) 28%, transparent));
-}
-
-.volume-tile strong {
-  font-family: var(--font-brand);
-  font-size: 1.05rem;
-  letter-spacing: -0.02em;
-}
-
-.stamp-grid {
-  display: grid;
-  grid-template-columns: repeat(3, minmax(0, 1fr));
-  gap: 10px;
-}
-
-/* 邮票格。卡纸是正方，四边各 8%（与 stamp-frame.svg 内窗一致，跨皮肤硬约定）；
-   栅格与线名见上面「卡纸栅格」 */
-.stamp-slot {
-  --mount-lip-top: 8cqw;
-  --mount-lip-right: 8cqw;
-  --mount-lip-bottom: 8cqw;
-  --mount-lip-left: 8cqw;
-  --mount-caption-gap: 4px;
-}
-
-.stamp {
-  text-decoration: none;
-}
-
-button.stamp {
-  appearance: none;
-  -webkit-appearance: none;
-  border: 0;
-  background: transparent;
-  padding: 0;
-  width: 100%;
-  font: inherit;
-  text-align: left;
-  cursor: pointer;
-}
-
-.stamp.is-lift-source {
-  visibility: hidden;
-}
-
-.stamp-lift-layer {
-  position: fixed;
-  inset: 0;
-  z-index: 16;
-  pointer-events: auto;
-}
-
-.stamp-lift-mat {
-  appearance: none;
-  -webkit-appearance: none;
-  position: absolute;
-  inset: 0;
-  border: 0;
-  padding: 0;
-  background: var(--bg0);
-  opacity: 0;
-  cursor: pointer;
-}
-
-.stamp-lift-card {
-  position: absolute;
-  z-index: 1;
-  display: grid;
-  gap: 8px;
-  margin: 0;
-  padding: 0;
-  border: 0;
-  background: transparent;
-  font: inherit;
-  color: inherit;
-  text-align: left;
-  cursor: pointer;
-}
-
-.stamp-lift-card .stamp-caption {
-  color: var(--ink);
-  font-weight: 600;
-  font-size: 0.95rem;
-}
-
-/* 卡纸本体。这格的纸面全由邮票边框画，所以它不画东西，
-   只作抬照片动画量的那只盒子 */
-.stamp-face {
-  grid-row: mount-start / mount-end;
-  grid-column: mount-start / mount-end;
-}
-
-.stamp-photo {
-  grid-area: window;
-  position: relative;
-  aspect-ratio: 1;
-  overflow: hidden;
-  background: var(--volume-cover-empty, var(--surface-wash));
-}
-
-.stamp-photo img {
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
-  object-position: center;
-  display: block;
-}
-
-.stamp-photo-empty {
-  display: block;
-  width: 100%;
-  height: 100%;
-  background:
-    repeating-linear-gradient(
-      -45deg,
-      transparent,
-      transparent 5px,
-      var(--stamp-empty-hatch) 5px,
-      var(--stamp-empty-hatch) 6px
-    );
-}
-
-/* 空槽的素版印样：没集到的位置先印着图，集到了用照片盖住。
-   缺图版的套册由 onError 摘掉这层，露出底下的斜线空槽。 */
-.stamp-plate {
-  position: absolute;
-  inset: 0;
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
-  display: block;
-  opacity: var(--volume-plate-opacity, 1);
-}
-
-.stamp-frame {
-  grid-row: mount-start / mount-end;
-  grid-column: mount-start / mount-end;
-  width: 100%;
-  height: 100%;
-  object-fit: fill;
-  pointer-events: none;
-  user-select: none;
-  z-index: 2;
-}
-
-.stamp-caption {
-  grid-area: below;
-  margin-top: var(--mount-caption-gap);
-  font-size: 0.78rem;
-  color: var(--muted);
-  line-height: 1.25;
-}
-
-.stamp-lit .stamp-caption {
-  color: var(--ink);
-  font-weight: 600;
-}
-
 .species-index {
   display: grid;
   border-radius: var(--radius-lg);
@@ -2492,7 +2214,7 @@ button.stamp {
   height: 48px;
   object-fit: cover;
   border-radius: var(--radius-sm);
-  background: var(--volume-cover-empty);
+  background: var(--media-empty);
   flex-shrink: 0;
 }
 
@@ -2576,7 +2298,7 @@ button.stamp {
   border: 0;
   border-radius: var(--radius-md);
   overflow: hidden;
-  background: var(--volume-cover-empty);
+  background: var(--media-empty);
   box-shadow: var(--trip-cover-shadow);
 }
 
@@ -2629,7 +2351,7 @@ button.species-card-cover {
   aspect-ratio: 1;
   object-fit: cover;
   border-radius: var(--radius-sm);
-  background: var(--volume-cover-empty);
+  background: var(--media-empty);
 }
 
 .species-sighting strong {
@@ -2637,58 +2359,6 @@ button.species-card-cover {
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
-}
-
-.volume-ceremony-backdrop {
-  z-index: 50;
-}
-
-.volume-ceremony {
-  position: relative;
-  width: min(400px, 100%);
-  overflow: hidden;
-  padding: 0;
-  text-align: center;
-  animation: settleVolumeIn 420ms ease;
-}
-
-.volume-ceremony.is-complete {
-  border-color: var(--volume-complete-line, var(--cta));
-  box-shadow: var(--volume-complete-glow);
-}
-
-.ceremony-bg {
-  display: block;
-  width: 100%;
-  aspect-ratio: 4 / 3;
-  object-fit: cover;
-}
-
-.ceremony-seal {
-  position: absolute;
-  top: 10px;
-  right: 10px;
-  width: 26%;
-  max-width: 88px;
-  height: auto;
-  pointer-events: none;
-  filter: var(--ceremony-seal-shadow);
-  z-index: 1;
-}
-
-.ceremony-body {
-  position: relative;
-  z-index: 1;
-  padding: 14px 16px 16px;
-  background: var(--modal-bg);
-}
-
-.volume-ceremony-line {
-  margin: 0;
-  font-family: var(--font-brand);
-  font-size: 1.25rem;
-  letter-spacing: -0.02em;
-  line-height: 1.35;
 }
 
 .trip-book-layer {
@@ -2787,7 +2457,7 @@ button.species-card-cover {
   aspect-ratio: 4 / 3;
   border-radius: var(--radius-sm);
   overflow: hidden;
-  background: var(--volume-cover-empty);
+  background: var(--media-empty);
   box-shadow: var(--trip-cover-shadow);
   opacity: 0;
 }
@@ -2839,7 +2509,7 @@ button.species-card-cover {
   aspect-ratio: 4 / 3;
   border-radius: var(--radius-md);
   overflow: hidden;
-  background: var(--volume-cover-empty);
+  background: var(--media-empty);
   box-shadow: var(--trip-cover-shadow);
 }
 
@@ -2856,7 +2526,7 @@ button.species-card-cover {
   overflow: hidden;
   object-fit: cover;
   display: block;
-  background: var(--volume-cover-empty);
+  background: var(--media-empty);
   box-shadow: var(--trip-cover-shadow);
 }
 

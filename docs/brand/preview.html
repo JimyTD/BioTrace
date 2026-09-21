@@ -240,7 +240,7 @@
       关键在第四行。显影显的是<b>影像</b>，也是<b>身份</b>——遇见时不知道它叫什么，显影之后它有名字了。
       这与 slogan「识尽众生，山海入怀」同构，不是硬凑。
       稀有度是这一格的成色，极稀有档显影时银盐泛虹彩，接得上现有 LR 彩虹徽章；
-      引入警示是随片附的提示条；套册是样片墙上待填的空格。
+      引入警示是随片附的提示条；图鉴承接个人的收录与分类探索。
     </p>
 
     <h3 class="sub">换皮：工艺即皮肤</h3>
@@ -518,7 +518,7 @@
         <img src="./drafts/hue-3-sepia.png" alt="雕版乌贼墨" />
         <h4>三 · 雕版乌贼墨</h4>
         <div class="hex">#4A3524</div>
-        <p class="assoc">19 世纪铜版画油墨色，与现有套册册皮完全同源，一致性最高。风险是过于低调，在启动器一屏彩色里最容易被忽略。</p>
+        <p class="assoc">19 世纪铜版画油墨色，与日光图版的开包美术同源，一致性最高。风险是过于低调，在启动器一屏彩色里最容易被忽略。</p>
         <div class="mini">
           <img src="./drafts/hue-3-sepia.png" alt="" />
           <img class="tiny" src="./drafts/hue-3-sepia.png" alt="" />
@@ -562,7 +562,7 @@
 
     <h3 class="sub">回灌到 App：日常页试算</h3>
     <p class="note">
-      品牌色一旦改动，<code>--cta</code> 按钮、<code>--nav-active-*</code> 激活态、<code>--volume-complete-line</code> 成册线都会跟着变。
+      品牌色一旦改动，<code>--cta</code> 按钮与 <code>--nav-active-*</code> 激活态都会跟着变。
       代码侧改的是 token 值，位图美术里的橙火漆（<code>settle/daylight/pack-sealed.png</code> 等）需要重出。
     </p>
     <div class="screens">
@@ -767,7 +767,7 @@
       <li>各 <code>package.json</code> 均无 <code>description</code> 字段。</li>
       <li>纸纹资源闲置：<code>shell/daylight/page-texture.jpg</code> 有文件，但 <code>--page-texture</code> / <code>--nav-texture</code> 两皮都是 <code>none</code>。</li>
       <li>冷启动跳色：<code>capacitor.config.js</code> 的 splash 背景 <code>#f4f1ea</code> 与 daylight <code>--bg0 #f3efe7</code> 不一致。</li>
-      <li>换色波及的位图美术：<code>settle/daylight/pack-sealed.png</code> 的橙火漆、<code>volumes/daylight/</code> 的成册相关资源需重出。</li>
+      <li>换色波及的位图美术：<code>settle/daylight/pack-sealed.png</code> 的橙火漆需要重出。</li>
       <li>推送未启用（无 <code>google-services.json</code>），通知栏纯白剪影图标暂不需要。</li>
     </ul>
 

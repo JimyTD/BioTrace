@@ -5,7 +5,7 @@ import { useBackClose } from "../androidBack";
 import { paintOnboardBasemap, prefetchOnboardBasemap, projectOnboardLngLat } from "../onboardBasemap";
 import { prefersReducedMotion } from "../motion";
 import PageOverlay from "../PageOverlay";
-import { tripCoverFrameUrl, volumeStampFrameUrl } from "../themes";
+import { tripCoverFrameUrl, tripFilmFrameUrl } from "../themes";
 
 const SAMPLE_PHOTO = "/trips/_sample-photo.jpg";
 
@@ -311,7 +311,7 @@ function OnboardStamp() {
       <div className="onboard-stamp-photo">
         <img src={SAMPLE_PHOTO} alt="" />
       </div>
-      <img className="onboard-stamp-frame" src={volumeStampFrameUrl()} alt="" />
+      <img className="onboard-stamp-frame" src={tripFilmFrameUrl()} alt="" />
     </div>
   );
 }

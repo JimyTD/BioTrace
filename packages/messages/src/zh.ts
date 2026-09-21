@@ -1,7 +1,7 @@
 /**
  * 界面文案主表，物理拆成两区：
  * - zhCore：固定区（纯功能文案）。稀有度档位、状态名、阶元词、名录定义、
- *   错误码译文、admin、套册内容、确认语、模板与占位 key——皮肤 voice 永不可覆盖。
+ *   错误码译文、admin、确认语、模板与占位 key——皮肤 voice 永不可覆盖。
  * - zhFlavor：可文案区（叙事包装）。品牌句、导语、空态、仪式用语——voice 可换说法。
  *
  * 两区末尾合并为 zh。key 全体不变、不增不减，调用方零改动。
@@ -103,7 +103,7 @@ const zhCore = {
   "share.kicking": "移出中…",
   "share.leave": "离开共享旅途",
   "share.leaving": "离开中…",
-  "share.leaveConfirm": "离开后将收回本趟共享带来的图鉴与套册进度；你上传的照片会移到一本同名私有旅途",
+  "share.leaveConfirm": "离开后将收回本趟共享带来的图鉴进度；你上传的照片会移到一本同名私有旅途",
   "share.dissolveHint": "有同行成员时，删除旅途会解散共享：各自带走自己的照片，到一本同名私有旅途，共享进度收回",
   "share.inviteInvalid": "邀请码无效",
   "share.inviteClosed": "这趟旅途暂不允许加入",
@@ -153,14 +153,6 @@ const zhCore = {
   "settle.locationImprecise": "无定位时按中国常见度评定",
   "settle.alertIntroduced": "当地引入/关注种",
   "settle.alertHint": "依据该国公开名录判定",
-  "settle.volumeCeremonyTitle": "点亮一格",
-  "settle.volumeCeremonyCompleteTitle": "整册点亮",
-  "settle.volumeSlotLit": "{volume} · {slot} 已点亮",
-  "settle.volumeSlotLitMore": "{volume} · {slot} 已点亮，另有 {count} 格",
-  "settle.volumeCompleted": "「{volume}」整册点亮",
-  "settle.volumeCompletedMore": "「{volume}」等 {count} 本整册点亮",
-  "settle.volumeToCollection": "去图鉴看看",
-  "settle.volumeContinue": "继续旅途",
 
   "rarity.N": "N · 常见",
   "rarity.R": "R · 少见",
@@ -189,10 +181,6 @@ const zhCore = {
   "identify.provider.mock": "本地模拟",
 
   "collection.loadFailed": "加载图鉴失败",
-  "collection.volumesEmpty": "还没有套册",
-  "collection.volumesLoadFailed": "加载套册失败",
-  "collection.volumeProgress": "{lit}/{total}",
-  "collection.volumeBack": "图鉴",
   "collection.speciesTitle": "已收录",
   "collection.speciesCount": "{count} 种",
   "collection.speciesSearch": "筛选名字",
@@ -230,41 +218,6 @@ const zhCore = {
   // 翻批说「还剩多少」而不是「下一批」：说规模，不说翻页动作
   "tree3d.budNext": "余 {count} 个",
   "tree3d.budPrev": "前 {count} 个",
-
-  // dev fixture only：配置里 enabled:false，正式环境不加载；待分层重构时移出主表
-  "volume.fixture_pipeline.title": "管道验收册",
-  "volume.fixture_pipeline.lede": "仅用于验证套册引擎；正式内容另配。",
-  "volume.fixture_pipeline.slot.passeriformes": "雀形目任一种",
-  "volume.fixture_pipeline.slot.testudines": "龟鳖目任一种",
-
-  "volume.intertidal.title": "潮间带",
-  "volume.intertidal.lede": "赶一次礁石潮：从脚边的小螺，到石头下的惊喜。",
-  "volume.intertidal.slot.rock_snail": "礁石小螺",
-  "volume.intertidal.slot.barnacle": "藤壶",
-  "volume.intertidal.slot.sea_roach": "海蟑螂一类",
-  "volume.intertidal.slot.shore_crab": "石缝蟹",
-  "volume.intertidal.slot.anemone": "潮池海葵",
-  "volume.intertidal.slot.hermit": "寄居蟹",
-  "volume.intertidal.slot.echinoderm": "海星或海胆",
-
-  "volume.urban_wild.title": "城市野趣",
-  "volume.urban_wild.lede": "不出城也能凑一本小图鉴：花坛、墙缝与水边。",
-  "volume.urban_wild.slot.songbird": "雀形目小鸟",
-  "volume.urban_wild.slot.flower_bee": "访花蜂",
-  "volume.urban_wild.slot.spider": "蜘蛛一类",
-  "volume.urban_wild.slot.gecko": "壁虎一类",
-  "volume.urban_wild.slot.land_snail": "陆生蜗牛",
-  "volume.urban_wild.slot.butterfly": "蝶一类",
-  "volume.urban_wild.slot.frog": "蛙或蟾",
-
-  "volume.woodland_edge.title": "林缘遇见",
-  "volume.woodland_edge.lede": "林边道上，从翅翼到偶尔一闪的兽影。",
-  "volume.woodland_edge.slot.forest_bird": "林缘小鸟",
-  "volume.woodland_edge.slot.lepidoptera": "蝶或蛾",
-  "volume.woodland_edge.slot.odonata": "蜻蜓或豆娘",
-  "volume.woodland_edge.slot.squirrel": "松鼠",
-  "volume.woodland_edge.slot.cicada": "蝉",
-  "volume.woodland_edge.slot.small_carnivoran": "中小型食肉",
 
   "map.openTrip": "打开所属旅途",
   "map.loadFailed": "地图加载失败",
@@ -771,8 +724,6 @@ export const zhFlavor = {
   "collection.title": "图鉴",
   "collection.lede": "所见所识，皆录于此",
   "collection.empty": "还没有遇见。去旅途里拍点什么",
-  "collection.volumeDone": "整册点亮",
-  "collection.volumeStampEmpty": "未点亮",
   "collection.speciesSightings": "历次遇见",
   "tree3d.noFootprint": "尚无足迹",
   "tree3d.notCollectedSpecies": "尚未拍到过",

@@ -51,7 +51,7 @@ export default function CollectionPetsPage() {
     >
       <header className="page-head me-sub-head">
         <Link className="text-link" to="/collection">
-          ← {t("collection.volumeBack")}
+          ← {t("common.back")}
         </Link>
         <h1 className="page-title">{t("collection.petsTitle")}</h1>
       </header>

@@ -454,7 +454,7 @@ nohup /opt/biotrace/scripts/ops/deploy-server.sh --all >/dev/null 2>&1 &
 | 需要重打 | 不需要重打 |
 |----------|------------|
 | 改了 `apps/mobile` 原生壳 / Manifest / 权限 | 只改 `apps/web` 前端 |
-| 增删改 Capacitor 插件（如相机、文件选择） | 只改 `apps/api`、套册、文案、识图逻辑 |
+| 增删改 Capacitor 插件（如相机、文件选择） | 只改 `apps/api`、文案、识图逻辑 |
 | 改了 `server-url`（公网源地址变更） | 服务器按 §7.1 pull / 重建后已上线的内容 |
 | 需要抬 `versionCode` 做可覆盖安装的升级包 | 同签名、同公网源下的功能迭代 |
 

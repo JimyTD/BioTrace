@@ -124,15 +124,6 @@ export async function migrate() {
       created_at INTEGER NOT NULL
     );
     CREATE INDEX IF NOT EXISTS idx_password_reset_email ON password_reset_tokens(email);
-    CREATE TABLE IF NOT EXISTS volume_progress (
-      id TEXT PRIMARY KEY NOT NULL,
-      user_id TEXT NOT NULL REFERENCES users(id),
-      volume_id TEXT NOT NULL,
-      lit_slot_ids_json TEXT NOT NULL,
-      completed_at INTEGER,
-      updated_at INTEGER NOT NULL
-    );
-    CREATE UNIQUE INDEX IF NOT EXISTS volume_progress_user_vol ON volume_progress(user_id, volume_id);
     CREATE TABLE IF NOT EXISTS identify_daily_usage (
       user_id TEXT NOT NULL REFERENCES users(id),
       day TEXT NOT NULL,

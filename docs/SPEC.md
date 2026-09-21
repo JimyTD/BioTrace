@@ -15,7 +15,6 @@
 | Cut 4 | 已上线 | 腾讯云轻量；手册 [`OPS.md`](./OPS.md) |
 | Cut 5 | 已上线 | 邮箱+密码主路径（取代魔法链接）；Resend 仅用于找回码；持久会话；见 §5 |
 | Cut 6 | 制品就绪 | Capacitor Android 侧载壳；手册 [`features/Android套壳.md`](./features/Android套壳.md) |
-| 套册成就 | 引擎+三本内容已通 | 配置驱动；拓展手册 [`features/旅行套册.md`](./features/旅行套册.md) |
 | 皮肤主题 | 已落地 | 默认 `clear`（清透，无世界观），备选 `daylight`（日光图版）；手册 [`features/皮肤主题.md`](./features/皮肤主题.md) |
 | 管理后台 | 已落地 | 独立登录；总览/用户/观察/平台密钥/存储/审计；手册 [`features/管理后台.md`](./features/管理后台.md) |
 | 地图补标 | 已完成 | 详情准星补标；`PATCH …/location` 重算国别/引入/稀有度（见 §1.3） |
@@ -23,7 +22,7 @@
 | 识图护栏 | 已收口 | 账号日额度 + 自备 OpenAI 兼容 Key；手册 [`features/识图护栏.md`](./features/识图护栏.md) |
 | 共享旅途 | 已收口 | 邀请码共享相册（≤10）；手册 [`features/共享旅途.md`](./features/共享旅途.md) |
 | 宠物图鉴 | 已收口 | 驯养分轨；手册 [`features/宠物图鉴.md`](./features/宠物图鉴.md) |
-| 后置 | 未做 | 全量灌库、iOS/上架；更多套册策展；好友/Feed |
+| 后置 | 未做 | 全量灌库、iOS/上架；好友/Feed |
 
 本机：`pnpm.cmd dev` → Web `http://127.0.0.1:5173/` · API `http://127.0.0.1:8787`
 
@@ -75,8 +74,8 @@ docs/        筹划 + 本实现规格
 
 - Prompt 要求模型声明 `subject_kind` / `subject_living` / `eligibility`；有坐标时带上离线判定的国家中文名作分布先验（不打天地图）；代码：[`eligibility.ts`](../apps/api/src/identify/eligibility.ts)、[`prompt.ts`](../apps/api/src/identify/prompt.ts)。
 - **相遇**：`living_organism` + `collectible` + 有界（死活不限；含饲养；空壳/海胆壳/完整蟹蜕按该动物；寄居蟹收蟹）→ 正常结算、开包、进图鉴（驯养进宠物图鉴，见 §1.9）。
-- **未相遇**（软档，2026-09-07）：真生物但非野外相遇——影像/印刷（海报、画布、屏幕、直播里的真牛）与馆藏标本（`specimen`）。有身份+有界 → `settled` + `identify_soft_encounter`：识别放行、全套字段保留（含保护级别标签），但**不进**结算/图鉴/套册/物种树；详情页「NC · 未收录」印章占稀有度徽章位（置首），相册格灰徽章「未相遇」。
-- **留影**（2026-09-08）：其余全部——无生物、仅背景、不明、人、器物、没界。`settled` + `identify_keepsake`，复用软档结构故**身份字段不清空**；标题走 `subject_title_zh`（agent 短名），无稀有度/学名/taxonomy，不进图鉴套册树，重识别可翻身。相册中性灰徽章「留影」+ 留影印章「留影 · 不在册」。
+- **未相遇**（软档，2026-09-07）：真生物但非野外相遇——影像/印刷（海报、画布、屏幕、直播里的真牛）与馆藏标本（`specimen`）。有身份+有界 → `settled` + `identify_soft_encounter`：识别放行、全套字段保留（含保护级别标签），但**不进**结算/图鉴/物种树；详情页「NC · 未收录」印章占稀有度徽章位（置首），相册格灰徽章「未相遇」。
+- **留影**（2026-09-08）：其余全部——无生物、仅背景、不明、人、器物、没界。`settled` + `identify_keepsake`，复用软档结构故**身份字段不清空**；标题走 `subject_title_zh`（agent 短名），无稀有度/学名/taxonomy，不进图鉴或物种树，重识别可翻身。相册中性灰徽章「留影」+ 留影印章「留影 · 未收录」。
 - **硬拦红字只留给真故障**：`identify_unavailable` / `identify_quota` / `identify_daily_limit` / `identify_user_key_incomplete`。非故障类（留影/软档/太粗）一律中性灰 `badge.soft` + 陈述句。
 - 过粗（真生物但粗于科）仍用 `identify_too_coarse`，视觉改中性灰。
 - 详情可点进：留影/软档不渲染分类链（taxonomy 为 null 自动跳过）；软档渲染全套识别 UI。
@@ -131,7 +130,7 @@ docs/        筹划 + 本实现规格
 共同出行共享相册（不做好友/Feed）。**手册：[`features/共享旅途.md`](./features/共享旅途.md)**。
 
 - 邀请码 +「允许加入」；上限 10；创建者为管理员（退出顺位继承）。
-- 谁传谁额度；只能删自己的；团员共看、可代开包；开包全员图鉴/套册加点；入伙补算、离团收回。
+- 谁传谁额度；只能删自己的；团员共看、可代开包；开包全员图鉴加点；入伙补算、离团收回。
 - 解散：各自同名私有旅途承接自己的观察。
 
 ## 1.9 驯化位与宠物图鉴（已收口）
@@ -140,7 +139,7 @@ docs/        筹划 + 本实现规格
 
 - 识图：`domesticated` / `breed_zh` / `dom_evidence_zh`。只认生物本体；`null` 折野生。
 - `domesticated=true` 进 `pet_collection_entries`，不进 `collectionEntries`。已收录混排两表；「已收录 N」= 两表之和。
-- 树上挂种级节点，不新开家犬枝。套册照常点，狼和狗同一格。
+- 树上挂种级节点，不新开家犬枝。
 - 判卷键 `(taxonKey, dom)`，缓存 `|dom` 分键，不升 `scale3`。驯养豁免保护名录；引入警报按种照报。
 - 品种库只纠偏，写在该次观察上，卡上不设品种排。空 / 排除词展示「品种不详」；其余非空展示标准名或原文。驯养章出现在相册 / 开包 / 详情 / 图鉴；地图不标。
 - 更新前已拍的照片不回刷。
@@ -362,7 +361,7 @@ Prompt 里的 `country` 已按观察点国家传，没有写死中国。
 | `RARITY_EDGE_SAMPLES` | `3` | 补到几次采样 |
 | `RARITY_THINKING` | `0` | 量表题只要判断不要推理链；开了在免费档极易撞限流 |
 | `RARITY_CALL_DELAY_MS` | `1200` | 同物种相邻两批的间隔，避开约 1 req/s |
-| `GBIF_ENABLED` | `1` | 套册临时锚定 taxonomy + 结算 `taxonKey` 学名锚定。**不**把 occurrence 计数接入稀有度 |
+| `GBIF_ENABLED` | `1` | 结算 `taxonKey` 与图鉴分类链的 GBIF 学名锚定。**不**把 occurrence 计数接入稀有度 |
 
 ### 3.5 引入/关注种警示（与稀有度分通道）
 
@@ -456,30 +455,8 @@ GRIIS 全球主索引 + seed overlay 种级匹配与稀有度分通道、图鉴�
 - cleartext + 相机/相册权限已配；**不上架**；与后端部署不冲突（只读站点）
 - 服务器侧 HTTP 阶段保持 `COOKIE_SECURE=0`，`APP_ORIGIN`/`CORS_ORIGIN` 与壳内地址一致（见 [`OPS.md`](./OPS.md)）
 
-## 7. 旅行套册成就
+## 7. 后置
 
-与稀有度 / 引入分通道。叙事：主题套册、规则槽点亮、**整册灰→彩**；不做凑数里程碑。
-
-**完整手册（策展原则 / 当前目录 / 加册步骤）：[`features/旅行套册.md`](./features/旅行套册.md)**
-
-| 原则 | 含义 |
-|------|------|
-| 配置驱动 | 加册 = `apps/api/data/volumes/*.json` + messages；**不改引擎代码** |
-| 反硬编码 | 槽用 `taxonomy_in` 等规则；业务册名不进 TS 分支 |
-
-- 模块：[`apps/api/src/volumes/`](../apps/api/src/volumes/)
-- 进度表：`volume_progress`
-- 开包后：`evaluateVolumesOnObservation`（先 GBIF 临时锚定 taxonomy，再 `taxonomy_in`）
-- API：`GET /api/volumes`；settle 响应带 `volumes.newlyLit / newlyCompleted*`；收下后有反馈则弹出仪式层（成册优先于点亮槽，无则静默回相册）
-- 进度 `lit_slot_ids_json`：兼容旧 `string[]`；新写 `Record<slotId,{observationId}>`，供邮票封面
-- UI：图鉴第一屏为套册架；点开 `/collection/volumes/:id` 整页邮票内页；已收录 `/collection/species` 为可搜索目录（种多时不默认铺开）
-- 主题资源：`public/volumes/<themeId>/` + `themes/volumeAssets`；见 [`套册美术分层.md`](./features/套册美术分层.md)
-- 已配三本：`intertidal` / `urban_wild` / `woodland_edge`；`fixture-pipeline` 默认关闭
-- DSL 摘要：[`data/volumes/README.md`](../apps/api/data/volumes/README.md)
-
-## 8. 后置
-
-- 套册：更多主题册策展（内容 only）；手绘级替换生成图
 - 稀有度：海外保护级接 IUCN
 - ~~旅途元数据增强（时间 / 地点摘要）~~：已做——自动聚合 + 可选手填覆盖（见旅途列表 / 管理旅途）
 - ~~识图账号日额度 / 自备 Key~~：已做——见 §1.7
@@ -490,7 +467,7 @@ GRIIS 全球主索引 + seed overlay 种级匹配与稀有度分通道、图鉴�
 
 ---
 
-## 9. 文案与术语
+## 8. 文案与术语
 
 - [`packages/messages`](../packages/messages) 为**唯一**用户可见文案表；禁止在 `apps/web` / `apps/api` 业务代码写死中文句子（见 `.cursor/rules/messages-glossary.mdc`）
 - 删除观察用应用内确认弹层（不用 `window.confirm`）
@@ -498,13 +475,13 @@ GRIIS 全球主索引 + seed overlay 种级匹配与稀有度分通道、图鉴�
 
 ---
 
-## 10. Web 皮肤主题
+## 9. Web 皮肤主题
 
 已拆为独立专题：**[`features/皮肤主题.md`](./features/皮肤主题.md)**（token 表、加皮肤清单、明确不做）。
 
 要点：色/字/圆角写在 `themes/<id>.css`，结构只用 `var(--*)`，换物件或演法走槽位，**流程页不写死品牌色、不为换皮分叉页面**。加功能清单见 [`.cursor/rules/web-themes.mdc`](../.cursor/rules/web-themes.mdc)。
 
-## 11. 管理后台
+## 10. 管理后台
 
 独立产品面，与用户登录、共享旅途「管理员」都分开。
 

@@ -4,7 +4,7 @@
 1. 动态拼 key —— formatScaleItemKey / formatScaleBatch / formatScaleListLevel
    这类 `prefix.${x}` 拼接，静态扫不到，整段前缀视为已引用。
 2. 合法例外 —— 模型 Prompt、日志、注释、纯技术原文（messages-glossary.mdc）。
-3. 配置文件声明型引用 —— volumes/*.json 的槽条件文案 key 由数据驱动，
+3. 配置文件声明型引用 —— 数据配置里的文案 key 由数据驱动，
    不在 ts/tsx 里出现也算被用。
 
 用法：python scripts/check-dead-keys.py

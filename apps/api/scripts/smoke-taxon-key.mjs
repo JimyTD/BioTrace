@@ -9,7 +9,7 @@ import {
   gbifRankCoversKey,
   isAcceptedGbifMatch,
   mergeGbifIntoTaxonomy,
-} from "../src/volumes/taxonomy-resolve.ts";
+} from "../src/settle/gbif-taxonomy.ts";
 
 let fail = 0;
 function check(name, ok) {
@@ -54,7 +54,7 @@ const higher = {
   genus: "Passer",
   species: null,
 };
-check("HIGHERRANK still accepted for volumes", isAcceptedGbifMatch(higher) === true);
+check("HIGHERRANK accepted at the matching rank", isAcceptedGbifMatch(higher) === true);
 check("HIGHERRANK genus does not cover species key", gbifRankCoversKey(higher.rank, "species") === false);
 check("HIGHERRANK genus yields no species taxonKey", canonicalForTaxonKey(higher, "species") === null);
 const genusMerged = mergeGbifIntoTaxonomy(emptyTaxonomy(), higher);

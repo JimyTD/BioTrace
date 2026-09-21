@@ -242,22 +242,6 @@ export const identifyDailyUsage = sqliteTable(
   (t) => [primaryKey({ columns: [t.userId, t.day] })],
 );
 
-/** User progress on configurable field volumes (套册). */
-export const volumeProgress = sqliteTable(
-  "volume_progress",
-  {
-    id: text("id").primaryKey(),
-    userId: text("user_id")
-      .notNull()
-      .references(() => users.id),
-    volumeId: text("volume_id").notNull(),
-    litSlotIdsJson: text("lit_slot_ids_json").notNull(),
-    completedAt: integer("completed_at", { mode: "timestamp_ms" }),
-    updatedAt: integer("updated_at", { mode: "timestamp_ms" }).notNull(),
-  },
-  (t) => [uniqueIndex("volume_progress_user_vol").on(t.userId, t.volumeId)],
-);
-
 /** Separate from end-user `users` — admin console only. */
 export const adminUsers = sqliteTable("admin_users", {
   id: text("id").primaryKey(),
@@ -303,7 +287,6 @@ export type CollectionEntry = typeof collectionEntries.$inferSelect;
 export type PetCollectionEntry = typeof petCollectionEntries.$inferSelect;
 export type RarityCacheRow = typeof rarityCache.$inferSelect;
 export type PasswordResetToken = typeof passwordResetTokens.$inferSelect;
-export type VolumeProgress = typeof volumeProgress.$inferSelect;
 export type IdentifyDailyUsage = typeof identifyDailyUsage.$inferSelect;
 export type AdminUser = typeof adminUsers.$inferSelect;
 export type AdminAuditLog = typeof adminAuditLog.$inferSelect;

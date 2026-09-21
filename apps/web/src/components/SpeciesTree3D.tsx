@@ -154,7 +154,7 @@ export default function SpeciesTree3D({
       <div className="tree3d-crumb">
         {onLeave ? (
           <button type="button" className="leave" onClick={onLeave}>
-            ← {t("collection.volumeBack")}
+            ← {t("common.back")}
           </button>
         ) : null}
         <button type="button" className="home" onClick={() => tree && jump(tree.root)}>
