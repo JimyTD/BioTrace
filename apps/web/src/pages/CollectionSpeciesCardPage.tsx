@@ -16,6 +16,7 @@ import {
 import { restoreNamedScroll, saveNamedScroll } from "../scrollMemory";
 import { useRealLocation } from "../realLocation";
 import { speciesEntryName } from "../speciesSearch";
+import { collectionOriginPath } from "../collectionNavigation";
 
 function rarityLabel(r: Rarity) {
   const key = `rarity.${r}`;
@@ -24,11 +25,6 @@ function rarityLabel(r: Rarity) {
 
 function shortDate(iso: string) {
   return new Date(iso).toLocaleDateString();
-}
-
-function treeReturnPath(state: unknown) {
-  const from = (state as { from?: unknown } | null)?.from;
-  return typeof from === "string" && from.startsWith("/collection/tree") ? from : null;
 }
 
 export default function CollectionSpeciesCardPage() {
@@ -126,8 +122,10 @@ export default function CollectionSpeciesCardPage() {
     navigate(`/observations/${observationId}`, { state: liftBackgroundState(location) });
   }
 
-  const fromTree = treeReturnPath(location.state);
-  useBackClose(() => navigate(fromTree ?? "/collection/species"));
+  const origin = collectionOriginPath(location.state);
+  const backTo = origin ?? "/collection/species";
+  const backLabel = origin === "/collection" ? t("collection.title") : origin ? t("collection.treeTitle") : t("collection.speciesTitle");
+  useBackClose(() => navigate(backTo));
   const title = entry ? speciesEntryName(entry, t("detail.unnamed")) : t("collection.speciesTitle");
 
   return (
@@ -136,9 +134,9 @@ export default function CollectionSpeciesCardPage() {
         <button
           className="text-link"
           type="button"
-          onClick={() => navigate(fromTree ?? "/collection/species")}
+          onClick={() => navigate(backTo)}
         >
-          ← {fromTree ? t("collection.treeTitle") : t("collection.speciesTitle")}
+          ← {backLabel}
         </button>
         <h1 className="page-title">{title}</h1>
         {entry?.scientificName && entry.commonName ? (

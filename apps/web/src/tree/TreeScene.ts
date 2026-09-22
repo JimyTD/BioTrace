@@ -575,7 +575,7 @@ export class TreeScene {
 
   stats: SceneStats = { branches: 0, leaves: 0, growMs: 0 };
 
-  constructor(host: HTMLElement, root: TreeNode, ev: TreeSceneEvents, skipIntro = false) {
+  constructor(host: HTMLElement, root: TreeNode, ev: TreeSceneEvents, skipIntro = false, private poster = false) {
     this.root = root;
     this.ev = ev;
     this.cv = document.createElement("canvas");
@@ -586,7 +586,7 @@ export class TreeScene {
     host.appendChild(this.labelHost);
 
     const gl = this.cv.getContext("webgl2", {
-      antialias: true, alpha: false, preserveDrawingBuffer: true,
+      antialias: true, alpha: poster, preserveDrawingBuffer: true,
       powerPreference: "high-performance",
     });
     if (!gl) throw new Error(t("tree3d.webgl2"));
@@ -604,9 +604,16 @@ export class TreeScene {
     /* 进场是镜头从 dist=1 缓到 ovDist。React 18 StrictMode 会把 effect 拆掉再
        建一次，同一段就会播两遍；正式页缓存后再拉 API 也会换掉 entries、重建
        场景。第二次起直接贴上目标距，进场只留第一次。 */
-    if (skipIntro) this.snapCam();
-    this.bindInput();
-    window.addEventListener("resize", this.onResize);
+    if (poster) {
+      // 静态资源只改变取景和背景，不改变定稿的树形；额外留边保护树冠和根系。
+      this.cam.spin = 0;
+      this.camGoal.dist *= 1.16;
+    }
+    if (skipIntro || poster) this.snapCam();
+    if (!poster) {
+      this.bindInput();
+      window.addEventListener("resize", this.onResize);
+    }
     gl.enable(gl.DEPTH_TEST);
     gl.depthFunc(gl.LEQUAL);
     this.raf = requestAnimationFrame((t) => { this.last = t; this.frame(t); });
@@ -2922,7 +2929,8 @@ export class TreeScene {
 
     gl.bindFramebuffer(gl.FRAMEBUFFER, null);
     gl.viewport(0, 0, this.cv.width, this.cv.height);
-    gl.clearColor(BG[0], BG[1], BG[2], 1);
+    if (this.poster) gl.clearColor(0, 0, 0, 0);
+    else gl.clearColor(BG[0], BG[1], BG[2], 1);
     gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
     if (anyBg) {
       /* uKeep：背景层保留多少可见度。0.22 = 隐隐约约看得见别的树枝，
@@ -2945,6 +2953,6 @@ export class TreeScene {
     );
 
     this.updateLabels(VP);
-    this.raf = requestAnimationFrame(this.frame);
+    if (!this.poster) this.raf = requestAnimationFrame(this.frame);
   };
 }

@@ -1,0 +1,38 @@
+<!doctype html>
+<html lang="en">
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Collection theme review</title>
+<style>
+  body { margin: 0; padding: 20px; background: #dfe4e6; color: #303a40; font: 14px system-ui; }
+  main { display: flex; flex-wrap: wrap; gap: 20px; }
+  figure { margin: 0; }
+  figcaption { margin-bottom: 8px; }
+  iframe { border: 0; width: 390px; height: 844px; display: block; }
+  select { font: inherit; margin-bottom: 16px; }
+</style>
+<select aria-label="State">
+  <option>full</option><option>empty</option><option>single</option><option>missing</option>
+  <option>long</option><option>loading</option><option>error</option><option>cached</option>
+  <option>refresh</option><option>pet-error</option><option>broken</option><option>large</option>
+</select>
+<main>
+  <figure><figcaption>Clear</figcaption><iframe title="Clear"></iframe></figure>
+  <figure><figcaption>Daylight</figcaption><iframe title="Daylight"></iframe></figure>
+</main>
+<script>
+  const select = document.querySelector('select');
+  const params = new URLSearchParams(location.search);
+  select.value = params.get('state') || 'full';
+  const width = Math.max(320, Math.min(1440, Number(params.get('width')) || 390));
+  function render() {
+    document.querySelectorAll('iframe').forEach((frame, index) => {
+      frame.style.width = `${width}px`;
+      frame.src = params.has('live') ? '/collection' : `/devpages/collection-preview.html?theme=${index ? 'daylight' : 'clear'}&state=${select.value}&width=${width}`;
+      if (params.has('live') && index) frame.parentElement.hidden = true;
+    });
+  }
+  select.addEventListener('change', render);
+  render();
+</script>
+</html>

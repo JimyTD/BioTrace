@@ -177,6 +177,18 @@
   --me-card-bg: linear-gradient(135deg, #e4efdf 0%, #dee9f2 54%, #f1e2e7 100%);
   --me-row-line: rgba(120, 140, 155, 0.13);
 
+  --collection-mount: #fffefb;
+  --collection-photo-radius: 5px;
+  --collection-photo-border: transparent;
+  --collection-photo-shadow: 0 2px 3px rgba(49, 72, 79, .06), 0 7px 14px rgba(49, 72, 79, .08);
+  --collection-caption: #39474b;
+  --collection-rule: #e4ebec;
+  --collection-count: #76858a;
+  --collection-caption-font: var(--font-meta);
+  --reel-tick: #d8e2e6;
+  --reel-line: #e8eef0;
+  --reel-control: #eaf0f3;
+
   --photo-mat: #e9eff3;
 }
 
@@ -446,75 +458,13 @@
   display: grid;
 }
 
-/* 图鉴两行门：标题仍在上，种脸 / 树门在下。图标在这一页关掉。 */
-[data-theme="clear"] .page-collection .me-row {
+/* 图鉴走片与入口零件，两套皮肤均启用。 */
+[data-theme="clear"] .collection-door > .me-row-icon {
   display: grid;
-  grid-template-columns: minmax(0, 1fr) auto;
-  grid-template-areas:
-    "title side"
-    "art art";
-  align-items: center;
-  gap: 10px 12px;
-  padding: 14px 16px 16px;
 }
-
-[data-theme="clear"] .page-collection .me-row-icon {
-  display: none;
-}
-
-[data-theme="clear"] .page-collection .me-row > span:not([class]) {
-  grid-area: title;
-  flex: unset;
-}
-
-[data-theme="clear"] .page-collection .me-row-side {
-  grid-area: side;
-}
-
-[data-theme="clear"] .page-collection .me-row + .me-row::before {
-  left: 16px;
-}
-
-[data-theme="clear"] .page-collection .collection-faces {
-  grid-area: art;
-  display: grid;
-  grid-template-columns: repeat(4, minmax(0, 1fr));
-  gap: 6px;
-}
-
-[data-theme="clear"] .page-collection .collection-faces:empty {
-  display: none;
-}
-
-[data-theme="clear"] .page-collection .collection-faces img {
+[data-theme="clear"] .collection-tree-door,
+[data-theme="clear"] .reel-rail {
   display: block;
-  width: 100%;
-  aspect-ratio: 1;
-  object-fit: cover;
-  border-radius: var(--radius-sm);
-  border: 2px solid var(--photo-mat);
-  box-shadow: var(--shadow-sm);
-}
-
-[data-theme="clear"] .page-collection .collection-tree-door {
-  grid-area: art;
-  display: block;
-  height: 176px;
-  border-radius: var(--radius-md);
-  overflow: hidden;
-  background: var(--bg1);
-}
-
-[data-theme="clear"] .page-collection .collection-tree-door:empty {
-  display: none;
-}
-
-[data-theme="clear"] .page-collection .collection-tree-door img {
-  display: block;
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
-  object-position: 50% 55%;
 }
 
 /* 仰视收集树不飞封面，把头图占位收掉，免得空出 72px */

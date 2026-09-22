@@ -784,10 +784,270 @@ button.trip-cover {
   gap: 8px;
 }
 
-/* 图鉴门上的种脸与收集树门。零件常在、默认不显示，皮肤要就在自己的 [data-theme] 下打开。 */
-.collection-faces,
+/* 图鉴主页与走片器共用结构，材质由两套皮肤赋值。 */
+.page-collection {
+  min-width: 0;
+  container-type: inline-size;
+}
+.collection-heading {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 18px;
+  margin-bottom: 24px;
+}
+.page-collection .page-title {
+  font-size: 30px;
+  font-weight: 600;
+  line-height: 1.25;
+  letter-spacing: 0;
+  margin: 0 0 8px;
+}
+.page-collection .lede {
+  margin: 0;
+  font-size: 13px;
+  line-height: 1.6;
+  color: var(--collection-count);
+}
+.collection-total {
+  display: grid;
+  text-align: right;
+  padding-top: 1px;
+}
+.collection-total strong {
+  font: 500 28px/1.15 var(--font-brand);
+  font-variant-numeric: tabular-nums;
+}
+.collection-total > span {
+  color: var(--collection-count);
+  font-size: 10px;
+  white-space: nowrap;
+}
+.collection-links {
+  border-top: 1px solid var(--collection-rule);
+  margin-top: 24px;
+}
+.collection-door {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  min-width: 0;
+  min-height: 102px;
+  padding: 8px 0;
+}
+.collection-door + .collection-door {
+  border-top: 1px solid var(--collection-rule);
+}
+.collection-door-copy {
+  display: grid;
+  gap: 4px;
+  margin-right: auto;
+  min-width: 0;
+}
+.collection-door-copy strong {
+  font-size: 16px;
+  font-weight: 500;
+}
+.collection-door-copy > span {
+  font-size: 12px;
+  color: var(--collection-count);
+}
+.collection-door-arrow {
+  width: 22px;
+  flex-shrink: 0;
+  font-size: 18px;
+  text-align: center;
+}
+.collection-door > .me-row-icon {
+  display: none;
+  width: 66px;
+  height: 60px;
+  background: transparent;
+  color: var(--tint-2-ink);
+}
+.collection-door > .me-row-icon svg {
+  width: 27px;
+  height: 27px;
+}
 .collection-tree-door {
   display: none;
+  width: 66px;
+  height: 86px;
+  flex-shrink: 0;
+}
+.collection-tree-door img {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+}
+.collection-empty {
+  margin: 24px 0;
+  color: var(--collection-count);
+  font-size: 14px;
+  line-height: 1.7;
+}
+.collection-load-error { margin-bottom: 20px; }
+.collection-reel {
+  --reel-card-width: 144px;
+  --reel-gap: 18px;
+  --reel-bleed: 0px;
+}
+.page-collection .collection-reel { --reel-bleed: 16px; }
+.reel-window {
+  position: relative;
+  height: 250px;
+  margin-inline: calc(-1 * var(--reel-bleed));
+  overflow: hidden;
+  touch-action: pan-y pinch-zoom;
+  user-select: none;
+  isolation: isolate;
+}
+.reel-track {
+  display: flex;
+  position: absolute;
+  top: 28px;
+  left: 0;
+  gap: var(--reel-gap);
+  will-change: transform;
+}
+.reel-window.is-static .reel-track { width: 100%; justify-content: center; }
+.reel-window.is-movable { cursor: grab; }
+.reel-window.is-movable:active { cursor: grabbing; }
+.reel-slot { width: var(--reel-card-width); flex: none; }
+.collection-reel-card {
+  display: grid;
+  grid-template-rows: 15px auto auto;
+  min-width: 0;
+  padding: 0 7px;
+  border: 1px solid var(--collection-photo-border);
+  border-radius: var(--collection-photo-radius);
+  background: var(--collection-mount);
+  box-shadow: var(--collection-photo-shadow);
+}
+.collection-reel-index {
+  font: 10px/15px var(--font-meta);
+  text-align: right;
+  color: var(--collection-count);
+}
+.collection-reel-photo {
+  aspect-ratio: 1;
+  overflow: hidden;
+  background: var(--media-empty);
+  display: grid;
+  place-items: center;
+}
+.collection-reel-photo img {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+.collection-reel-photo > .me-row-icon {
+  display: grid;
+  background: transparent;
+  color: var(--collection-count);
+}
+.collection-reel-caption {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  grid-template-rows: 21px 17px;
+  column-gap: 6px;
+  align-items: center;
+  padding: 6px 2px 8px;
+  color: var(--collection-caption);
+}
+.collection-reel-name {
+  font-size: 12px;
+  font-weight: 600;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.collection-reel-rank.rarity-badge {
+  font-size: 10px;
+  min-width: 25px;
+  height: 21px;
+  line-height: 21px;
+  padding: 0 5px;
+  text-align: center;
+  border-radius: var(--collection-photo-radius);
+}
+.collection-reel-latin {
+  grid-column: 1 / -1;
+  color: var(--collection-count);
+  font: 10px/1.4 var(--collection-caption-font);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.reel-rail {
+  display: none;
+  position: absolute;
+  inset-inline: 0;
+  height: 6px;
+  pointer-events: none;
+  background: repeating-linear-gradient(to right, var(--reel-tick) 0 4px, transparent 4px 18px);
+  border-block: 1px solid var(--reel-line);
+}
+.reel-rail.is-top { top: 6px; }
+.reel-rail.is-bottom { bottom: 6px; }
+.reel-footer {
+  display: grid;
+  grid-template-columns: minmax(76px, 1fr) auto minmax(0, 1fr);
+  gap: 8px;
+  align-items: center;
+  margin-top: 6px;
+}
+.reel-position {
+  color: var(--collection-count);
+  font: 11px/1.4 var(--font-meta);
+  white-space: nowrap;
+}
+.reel-buttons { display: flex; align-items: center; gap: 2px; }
+.reel-buttons button {
+  display: grid;
+  place-items: center;
+  width: 40px;
+  height: 44px;
+  padding: 0;
+  border: 0;
+  background: transparent;
+  color: var(--ink);
+  cursor: pointer;
+  font: 19px/1 var(--font-sans);
+}
+.reel-buttons .reel-play {
+  border-radius: var(--radius-btn);
+  background: var(--reel-control);
+  height: 36px;
+  width: 36px;
+  font-size: 14px;
+  margin-inline: 4px;
+}
+.reel-buttons button:disabled { opacity: .35; cursor: default; }
+.reel-all {
+  justify-self: end;
+  color: var(--collection-count);
+  font-size: 12px;
+  white-space: nowrap;
+  padding-block: 12px;
+}
+.reel-all span { padding-left: 4px; font-size: 17px; color: var(--ink); }
+.collection-reel :is(a, button):focus-visible,
+.reel-window:focus-visible,
+.collection-door:focus-visible,
+.collection-total:focus-visible {
+  outline: 2px solid var(--accent-border-strong);
+  outline-offset: 4px;
+}
+.collection-door:hover .collection-door-arrow,
+.reel-all:hover { color: var(--cta); }
+@container (min-width: 650px) {
+  .collection-reel { --reel-card-width: 164px; }
+  .reel-window { height: 272px; }
+  .collection-links { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: 40px; }
+  .collection-door + .collection-door { border-top: 0; }
 }
 
 button.me-row {

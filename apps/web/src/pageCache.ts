@@ -11,7 +11,7 @@ type CollectionSnap = {
 
 const albums = new Map<string, AlbumSnap>();
 const observations = new Map<string, Observation>();
-let collection: CollectionSnap | null = null;
+let collection: { userId: string; snap: CollectionSnap } | null = null;
 
 function rememberObservations(list: Observation[]) {
   for (const obs of list) observations.set(obs.id, obs);
@@ -34,10 +34,10 @@ export function peekObservation(id: string): Observation | null {
   return observations.get(id) ?? null;
 }
 
-export function rememberCollection(snap: CollectionSnap) {
-  collection = snap;
+export function rememberCollection(userId: string, snap: CollectionSnap) {
+  collection = { userId, snap };
 }
 
-export function peekCollection(): CollectionSnap | null {
-  return collection;
+export function peekCollection(userId: string): CollectionSnap | null {
+  return collection?.userId === userId ? collection.snap : null;
 }

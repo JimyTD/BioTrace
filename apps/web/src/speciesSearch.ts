@@ -181,7 +181,7 @@ export function filterSpecies(
   return filterNamed(entries, fuse, query);
 }
 
-export function sortSpecies(entries: IndexedSpecies[], sort: SpeciesSort): IndexedSpecies[] {
+export function sortSpecies<T extends SpeciesIndexRow>(entries: readonly T[], sort: SpeciesSort): T[] {
   const copy = [...entries];
   if (sort === "recent") {
     copy.sort((a, b) => Date.parse(b.updatedAt) - Date.parse(a.updatedAt));

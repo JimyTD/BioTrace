@@ -50,4 +50,4 @@ export {
   themeShellBase,
 } from "./shellAssets";
 
-export { collectionTreeDoorUrl, collectionTreeSceneUrl } from "./collectionAssets";
+export { collectionTreeDoorUrl } from "./collectionAssets";

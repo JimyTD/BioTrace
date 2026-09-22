@@ -37,7 +37,7 @@ function mergeTreeEntries(wild: CollectionEntry[], pets: PetCollectionEntry[]): 
   return [...wild.map((e) => toTreeCollectible(e, "wild")), ...pets.map((e) => toTreeCollectible(e, "pet"))];
 }
 
-export default function CollectionTreePage() {
+export default function CollectionTreePage({ userId }: { userId: string }) {
   const splat = useParams()["*"];
   const focusId = useMemo(() => {
     const raw = (splat ?? "").split("/").filter(Boolean)[0];
@@ -45,7 +45,7 @@ export default function CollectionTreePage() {
   }, [splat]);
   const navigate = useNavigate();
   const location = useLocation();
-  const cached = peekCollection();
+  const cached = peekCollection(userId);
   const [entries, setEntries] = useState<TreeCollectible[]>(() =>
     mergeTreeEntries(cached?.entries ?? [], cached?.petEntries ?? []),
   );
@@ -53,14 +53,16 @@ export default function CollectionTreePage() {
   const [loading, setLoading] = useState(() => !cached?.entries);
 
   useEffect(() => {
+    let active = true;
     Promise.all([
       api.listCollection(),
-      api.listPetCollection().catch(() => ({ entries: [] as PetCollectionEntry[] })),
+      api.listPetCollection(),
     ])
       .then(([col, pets]) => {
+        if (!active) return;
         const next = mergeTreeEntries(col.entries, pets.entries);
         setEntries((prev) => (sameTreeIds(prev, next) ? prev : next));
-        rememberCollection({
+        rememberCollection(userId, {
           entryCount: col.entries.length + pets.entries.length,
           petCount: pets.entries.length,
           kingdomCount: countTreeKingdoms([...col.entries, ...pets.entries]),
@@ -68,9 +70,10 @@ export default function CollectionTreePage() {
           petEntries: pets.entries,
         });
       })
-      .catch((e) => setError(e instanceof Error ? e.message : t("collection.loadFailed")))
-      .finally(() => setLoading(false));
-  }, []);
+      .catch((e) => { if (active) setError(e instanceof Error ? e.message : t("collection.loadFailed")); })
+      .finally(() => { if (active) setLoading(false); });
+    return () => { active = false; };
+  }, [userId]);
 
   // 安卓返回键：树里有层级时先退一级，到全树才离开页面
   useBackClose(() => {

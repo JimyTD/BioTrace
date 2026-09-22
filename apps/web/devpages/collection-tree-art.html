@@ -1,0 +1,31 @@
+<!doctype html>
+<html lang="en">
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Collection tree asset</title>
+<style>
+  body { margin: 0; background: #fff; }
+  #tree { width: 720px; height: 800px; }
+  canvas { display: block; width: 100%; height: 100%; }
+  .tree3d-labels { display: none; }
+</style>
+<div id="tree"></div>
+<a id="download" download="collection-tree.png">Export PNG</a>
+<script type="module">
+  import { TreeScene } from "/src/tree/TreeScene.ts";
+  import { buildSpeciesTree } from "/src/tree/treeModel.ts";
+  const tree = buildSpeciesTree([]);
+  const scene = new TreeScene(document.querySelector("#tree"), tree.root, {
+    onPick() {}, onBlank() {}, onFocus() {},
+  }, true, true);
+  requestAnimationFrame(() => {
+    const image = new Image();
+    image.id = "export";
+    image.hidden = true;
+    image.src = document.querySelector("canvas").toDataURL("image/png");
+    document.querySelector("#download").href = image.src;
+    document.body.append(image);
+  });
+  window.addEventListener("pagehide", () => scene.destroy(), { once: true });
+</script>
+</html>

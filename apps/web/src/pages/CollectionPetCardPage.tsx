@@ -17,6 +17,7 @@ import { restoreNamedScroll, saveNamedScroll } from "../scrollMemory";
 import { useRealLocation } from "../realLocation";
 import { speciesEntryName } from "../speciesSearch";
 import { petBreedLabel } from "../petIdentity";
+import { collectionOriginPath } from "../collectionNavigation";
 
 function shortDate(iso: string) {
   return new Date(iso).toLocaleDateString();
@@ -25,11 +26,6 @@ function shortDate(iso: string) {
 function rarityLabel(r: Rarity) {
   const key = `rarity.${r}`;
   return hasMessage(key) ? t(key as MessageKey) : r;
-}
-
-function treeReturnPath(state: unknown) {
-  const from = (state as { from?: unknown } | null)?.from;
-  return typeof from === "string" && from.startsWith("/collection/tree") ? from : null;
 }
 
 export default function CollectionPetCardPage() {
@@ -42,11 +38,11 @@ export default function CollectionPetCardPage() {
       (matchPath("/collection/pets/:id", real.pathname)?.params.id === id ||
         matchPath("/collection/species/pet/:id", real.pathname)?.params.id === id),
   );
-  const fromTree = treeReturnPath(location.state);
+  const origin = collectionOriginPath(location.state);
   const fromSpeciesIndex = Boolean(matchPath("/collection/species/pet/:id", location.pathname));
-  const backTo = fromTree ?? (fromSpeciesIndex ? "/collection/species" : "/collection/pets");
-  const backLabel = fromTree
-    ? t("collection.treeTitle")
+  const backTo = origin ?? (fromSpeciesIndex ? "/collection/species" : "/collection/pets");
+  const backLabel = origin
+    ? t(origin === "/collection" ? "collection.title" : "collection.treeTitle")
     : fromSpeciesIndex
       ? t("collection.speciesTitle")
       : t("collection.petsTitle");

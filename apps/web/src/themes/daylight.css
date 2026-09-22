@@ -162,6 +162,31 @@
   --me-card-bg: color-mix(in srgb, var(--card) 88%, var(--media-empty));
   --me-row-line: var(--line);
 
+  --collection-mount: #fffdf5;
+  --collection-photo-radius: 1px;
+  --collection-photo-border: #e0d8c8;
+  --collection-photo-shadow: 0 2px 5px rgba(42, 36, 28, 0.08);
+  --collection-caption: #3c4338;
+  --collection-rule: #d8d1c3;
+  --collection-count: #7e796b;
+  --collection-caption-font: Georgia, "Times New Roman", serif;
+  --reel-tick: #cfc5b3;
+  --reel-line: #dfd7c9;
+  --reel-control: #e9e1d3;
+
   /* 开包照片垫 / 未出图时的深底 */
   --photo-mat: #2a241c;
 }
+
+[data-theme="daylight"] .collection-door > .me-row-icon {
+  display: grid;
+}
+[data-theme="daylight"] .collection-tree-door,
+[data-theme="daylight"] .reel-rail {
+  display: block;
+}
+[data-theme="daylight"] .collection-reel-caption {
+  border-top: 1px solid var(--collection-rule);
+  margin-top: 7px;
+}
+[data-theme="daylight"] .collection-reel-latin { font-style: italic; }

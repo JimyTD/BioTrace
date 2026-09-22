@@ -50,6 +50,30 @@ powershell -ExecutionPolicy Bypass -File scripts\walkthrough\shot.ps1 `
 
 产物统一放 `.shot/`（gitignore）。
 
+## 图鉴目录
+
+`/devpages/collection-review.html` 并排展示清透和日光，iframe 内使用真实 `CollectionPage`、主题 CSS 与 390×844 竖屏尺寸。
+下拉框可检查有收录、空收录、单张、无封面、长名称、加载、错误与缓存首帧；另有 refresh（延时刷新插入条目）、pet-error（宠物请求失败）、broken（失效封面）、large（5000 条）。数据仅在该独立走查页内替换 API 方法，不写库或账号。
+`?width=320` 检查窄屏，`?width=720` 检查宽屏，`?live=1` 显示当前本地登录账号的正式页面。
+
+静态校验（照片挑选、资源存在、两套 token 对齐）：
+
+```powershell
+pnpm.cmd --filter @biotrace/api exec tsx ../../scripts/walkthrough/collection-check.ts
+pnpm.cmd --filter @biotrace/api exec tsx ../../scripts/walkthrough/reel-check.ts
+```
+
+树入口资源来自 `/devpages/collection-tree-art.html` 的 `Export PNG`。
+它复用 `TreeScene` 的定稿几何，只在 poster 模式下固定镜头、透明底、单帧渲染，不改变正式树的构图或交互。
+将导出的 PNG 作为下面命令的参数（省略时读取 `.shot/collection-tree.png`）：
+
+```powershell
+node scripts/walkthrough/collection-tree.mjs .shot/collection-tree.png
+```
+
+脚本校验非空与透明通道，收掉透明外边并保留安全边距，再生成两套资源包的 720×800 WebP。
+入口图只作预览，树的真实点亮数量仍由页面上的计数和进入后的树展示。正式图鉴首页不创建 WebGL 上下文。
+
 ## 比对
 
 ```powershell

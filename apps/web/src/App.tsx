@@ -41,6 +41,7 @@ import TripsPage from "./pages/TripsPage";
 import { peekLiftBackground } from "./photoLiftHandoff";
 import { RealLocationContext } from "./realLocation";
 import { applyUserTheme, mergePersistedTheme, persistThemeIfUnset } from "./themeAccount";
+import { collectionOriginPath } from "./collectionNavigation";
 
 function TripsShelf({ userId }: { userId: string }) {
   const { id } = useParams();
@@ -56,28 +57,30 @@ function TripsShelf({ userId }: { userId: string }) {
   );
 }
 
-function CollectionLayout() {
+function CollectionLayout({ userId }: { userId: string }) {
   return (
     <>
-      <CollectionPage />
+      <CollectionPage key={userId} userId={userId} />
       <Outlet />
     </>
   );
 }
 
 function SpeciesListLayout() {
+  const fromHome = collectionOriginPath(useLocation().state) === "/collection";
   return (
     <>
-      <CollectionSpeciesPage />
+      {!fromHome ? <CollectionSpeciesPage /> : null}
       <Outlet />
     </>
   );
 }
 
 function PetsListLayout() {
+  const fromHome = collectionOriginPath(useLocation().state) === "/collection";
   return (
     <>
-      <CollectionPetsPage />
+      {!fromHome ? <CollectionPetsPage /> : null}
       <Outlet />
     </>
   );
@@ -123,7 +126,7 @@ function AppShell({
             <Route path="/settle/:id" element={<ObservationSettlePage userId={user.id} />} />
             <Route path="/dev/settle-art" element={<SettleArtPreviewPage />} />
             <Route path="/map" element={<MapPage />} />
-            <Route path="/collection" element={<CollectionLayout />}>
+            <Route path="/collection" element={<CollectionLayout userId={user.id} />}>
               <Route index element={null} />
             </Route>
             <Route path="/collection/species" element={<SpeciesListLayout />}>
@@ -156,8 +159,8 @@ function AppShell({
                 }
               />
             </Route>
-            <Route path="/collection/tree" element={<CollectionTreePage />} />
-            <Route path="/collection/tree/*" element={<CollectionTreePage />} />
+            <Route path="/collection/tree" element={<CollectionTreePage key={user.id} userId={user.id} />} />
+            <Route path="/collection/tree/*" element={<CollectionTreePage key={user.id} userId={user.id} />} />
             <Route
               path="/me"
               element={<MePage user={user} onLogout={() => setUser(null)} onOpenHelp={onOpenHelp} />}
