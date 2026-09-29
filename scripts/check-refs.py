@@ -51,7 +51,6 @@ ALLOW: list[tuple[str, str]] = [
     # 3. 未落地的设计目标路径：表还没建，不是「失效」。
     ("docs/wip/宠物图鉴-玩法脑暴.md", "apps/api/data/domesticated/pairs.json"),
     ("docs/wip/宠物图鉴-玩法脑暴.md", "apps/api/data/domesticated/list.json"),
-    ("docs/wip/待办.md", "apps/api/data/domesticated/pairs.json"),
 ]
 ALLOW_SET = set(ALLOW)
 
