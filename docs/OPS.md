@@ -633,7 +633,7 @@ sudo tar czf /root/biotrace-data.tgz -C /opt/biotrace data
 3. 登录成功并种下 `bt_session`（HTTP 阶段非 Secure）
 4. 创建旅途 → 上传 → 识别中 → 识别完成 → 看看是什么 → 收进图鉴
 5. 有 GPS 的点出现在地图，瓦片正常（控制台无 `[map]` warn）
-6. 识图：Gemini 可调用，或日额尽自动切 GLM
+6. 识图：Gemini 可调用，或日额尽自动切 TokenHub 视觉链
 7. `docker compose restart` 后数据仍在（`/opt/biotrace/data`）
 8. 出境代理：`curl -x http://127.0.0.1:10809 https://api.ipify.org` 返回 SG1 公网 IP（§6.5）
 
@@ -667,7 +667,7 @@ sudo tar czf /root/biotrace-data.tgz -C /opt/biotrace data
 | 容器连不到宿主机代理 | xray 须监听 `0.0.0.0:10809`（非 127）；容器内 `getent hosts host.docker.internal` 需有解析（override 的 extra_hosts）；`HTTPS_PROXY` 已注入 |
 | 服务器重启后代理失效 | 确认 `systemctl is-enabled xray`=enabled、`/etc/iptables/rules.v4` 含 10809 规则（§6.5 ④） |
 | 前端 404 /api | Nginx 未反代 `/api/` 或 API 容器未在 127.0.0.1:8787 |
-| Gemini 全失败 | 先确认代理通（§6.5）；`HTTPS_PROXY` 不可达时看日志；应自动试 GLM |
+| Gemini 全失败 | 先确认代理通（§6.5）；`HTTPS_PROXY` 不可达时看日志；应自动试 TokenHub 视觉链 |
 | 磁盘满 | 展示图在 `data/uploads`；定期备份清理 |
 
 ---

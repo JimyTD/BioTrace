@@ -2,7 +2,7 @@
 
 个人向「旅行自然观察」：选图识别 → 落入旅途相册与地图。
 
-**当前 Android 侧载包版本：`0.1.2`**（[Release](https://github.com/JimyTD/BioTrace/releases/tag/android-v0.1.2) · 发版见 [`docs/OPS.md` §7.2](docs/OPS.md)）  
+**当前 Android 侧载包版本：`0.1.7`**（[Release](https://github.com/JimyTD/BioTrace/releases/tag/android-v0.1.7) · 发版见 [`docs/OPS.md` §7.2](docs/OPS.md)）  
 > 薄壳远程加载站点：日常只更新服务器即可，不必随每次 Web/API 提交重打 APK。
 
 > 文档导航 [`docs/README.md`](docs/README.md)：功能真源 [`docs/SPEC.md`](docs/SPEC.md) · 运维真源 [`docs/OPS.md`](docs/OPS.md) · 专题 [`docs/features/`](docs/features/) · 来时路 [`docs/planning/`](docs/planning/)。
@@ -62,7 +62,7 @@ HTTPS_PROXY=http://127.0.0.1:7890
 ## 仓库结构
 
 ```text
-apps/api             Node + Hono + SQLite(libsql) + Gemini/GLM
+apps/api             Node + Hono + SQLite(libsql) + Gemini/TokenHub
 apps/web             Vite + React + MapLibre
   src/themes/        皮肤主题（默认 clear，备选 daylight）
 packages/messages    统一界面/术语文案（默认 zh）
