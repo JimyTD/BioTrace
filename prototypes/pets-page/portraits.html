@@ -1,0 +1,711 @@
+<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>宠物页 · 标准相墙</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&family=Courier+Prime:wght@400&display=swap"
+      rel="stylesheet"
+    />
+    <style>
+      :root {
+        --sans: "Outfit", system-ui, sans-serif;
+        --type: "Courier Prime", "Courier New", monospace;
+        --ground: radial-gradient(ellipse 130% 90% at 50% 12%, #ffffff 0%, #f8fbfc 42%, #eef3f6 100%);
+        --ink: #333b41;
+        --ink-soft: #5f6a72;
+        --muted: #8d979e;
+        --card-solid: #ffffff;
+        --soft-sm: 0 1px 2px rgba(90, 112, 128, 0.06), 0 4px 10px rgba(90, 112, 128, 0.06);
+        --mount: #f3f0e9;
+        --mount-ink: #6a6357;
+        --accent: #d9531e;
+        --r-sm: 10px;
+        --r-pill: 999px;
+      }
+
+      * {
+        box-sizing: border-box;
+      }
+
+      body {
+        margin: 0;
+        padding: 36px 24px 70px;
+        background: #2c3136;
+        color: #dfe4e8;
+        font-family: var(--sans);
+        -webkit-font-smoothing: antialiased;
+      }
+
+      .doc {
+        max-width: 980px;
+        margin: 0 auto;
+      }
+
+      h1 {
+        font-size: 1.4rem;
+        margin: 0 0 8px;
+        letter-spacing: -0.02em;
+      }
+
+      .lead,
+      .rules {
+        max-width: 820px;
+        line-height: 1.75;
+        color: #a9b2b9;
+        font-size: 0.9rem;
+      }
+
+      .lead {
+        margin: 0;
+      }
+
+      .lead b,
+      .rules b {
+        color: #eef2f5;
+        font-weight: 600;
+      }
+
+      .rules {
+        margin: 14px 0 0;
+        padding: 0 0 0 1.15em;
+        font-size: 0.86rem;
+      }
+
+      .pair {
+        display: flex;
+        gap: 36px 40px;
+        flex-wrap: wrap;
+        margin-top: 28px;
+      }
+
+      .col {
+        display: grid;
+        gap: 8px;
+        justify-items: start;
+      }
+
+      .tag {
+        font-size: 0.72rem;
+        letter-spacing: 0.12em;
+        text-transform: uppercase;
+        color: #8b949b;
+      }
+
+      .case {
+        margin: 0;
+        max-width: 380px;
+        font-size: 0.78rem;
+        line-height: 1.55;
+        color: #98a1a8;
+      }
+
+      .phone {
+        width: 380px;
+        height: 800px;
+        border-radius: 30px;
+        overflow: hidden;
+        background: var(--ground);
+        color: var(--ink);
+        display: flex;
+        flex-direction: column;
+        box-shadow: 0 20px 46px rgba(0, 0, 0, 0.45);
+        position: relative;
+      }
+
+      .topbar {
+        flex: none;
+        padding: 15px 20px 8px;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+      }
+
+      .topbar b {
+        font-size: 0.95rem;
+        font-weight: 600;
+      }
+
+      .topbar .dot {
+        width: 26px;
+        height: 26px;
+        border-radius: var(--r-pill);
+        background: var(--card-solid);
+        box-shadow: var(--soft-sm);
+      }
+
+      .body {
+        flex: 1;
+        overflow: auto;
+        padding: 6px 18px 18px;
+        display: grid;
+        gap: 14px;
+        align-content: start;
+        scrollbar-width: thin;
+      }
+
+      .nav {
+        flex: none;
+        display: grid;
+        grid-template-columns: repeat(4, 1fr);
+        gap: 4px;
+        padding: 8px 12px 14px;
+        background: rgba(255, 255, 255, 0.72);
+      }
+
+      .nav span {
+        padding: 8px 0;
+        text-align: center;
+        font-size: 0.79rem;
+        border-radius: var(--r-pill);
+        color: var(--muted);
+      }
+
+      .nav span.on {
+        color: var(--accent);
+        font-weight: 600;
+        background: #f8e3d0;
+      }
+
+      .back {
+        font-size: 0.95rem;
+        text-decoration: underline;
+        text-underline-offset: 3px;
+        color: var(--ink);
+        padding: 4px 0 0;
+      }
+
+      h2.page {
+        margin: 0;
+        font-size: 1.45rem;
+        font-weight: 700;
+        letter-spacing: -0.03em;
+      }
+
+      .plates {
+        display: grid;
+        gap: 18px;
+        padding-top: 2px;
+      }
+
+      .mount {
+        background: var(--mount);
+        border-radius: 7px;
+        padding: 9px 9px 0;
+        box-shadow:
+          0 1px 2px rgba(70, 90, 105, 0.16),
+          0 10px 22px rgba(70, 90, 105, 0.13);
+      }
+
+      .sheet {
+        display: grid;
+        gap: 4px;
+        aspect-ratio: 16 / 10;
+      }
+
+      .sheet > * {
+        min-width: 0;
+        min-height: 0;
+      }
+
+      .sheet img {
+        display: block;
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+        border-radius: 2px;
+      }
+
+      .sheet.is-1 {
+        grid-template: 1fr / 1fr;
+      }
+      .sheet.is-2 {
+        grid-template: 1fr / 1fr 1fr;
+      }
+      .sheet.is-3 {
+        grid-template-columns: 2fr 1fr;
+        grid-template-rows: 1fr 1fr;
+      }
+      .sheet.is-3 img:first-child {
+        grid-row: 1 / -1;
+      }
+      .sheet.is-4 {
+        grid-template: 1fr 1fr / 1fr 1fr;
+      }
+      .sheet.is-6 {
+        grid-template: 1fr 1fr / 1fr 1fr 1fr;
+      }
+
+      .lip {
+        display: flex;
+        align-items: baseline;
+        gap: 9px;
+        padding: 9px 3px 11px;
+      }
+
+      .lip b {
+        font-size: 1rem;
+        font-weight: 600;
+        letter-spacing: -0.01em;
+        color: #45403a;
+        min-width: 0;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+      }
+
+      .lip span {
+        margin-left: auto;
+        font-family: var(--type);
+        font-size: 0.63rem;
+        letter-spacing: 0.05em;
+        color: var(--mount-ink);
+        opacity: 0.75;
+        white-space: nowrap;
+      }
+
+      .t1 {
+        transform: rotate(-0.4deg);
+      }
+      .t2 {
+        transform: rotate(0.45deg);
+      }
+      .t3 {
+        transform: rotate(-0.25deg);
+      }
+
+      .chapter {
+        display: flex;
+        align-items: baseline;
+        gap: 8px;
+        padding: 10px 2px 4px;
+      }
+
+      .chapter:first-child {
+        padding-top: 2px;
+      }
+
+      .chapter button {
+        appearance: none;
+        border: 0;
+        background: none;
+        padding: 0;
+        font: inherit;
+        font-size: 0.95rem;
+        font-weight: 650;
+        letter-spacing: -0.02em;
+        color: var(--ink);
+        text-decoration: underline;
+        text-underline-offset: 3px;
+        cursor: pointer;
+      }
+
+      .chapter em {
+        font-style: normal;
+        font-family: var(--type);
+        font-size: 0.62rem;
+        letter-spacing: 0.06em;
+        color: var(--muted);
+      }
+
+      .wall {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 14px 12px;
+        padding-bottom: 6px;
+      }
+
+      .portrait {
+        appearance: none;
+        border: 0;
+        background: none;
+        padding: 0;
+        text-align: left;
+        cursor: pointer;
+        color: inherit;
+      }
+
+      .portrait .mount {
+        padding: 7px 7px 0;
+      }
+
+      .portrait .face {
+        aspect-ratio: 4 / 5;
+        overflow: hidden;
+        border-radius: 2px;
+      }
+
+      .portrait img {
+        display: block;
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+        object-position: 50% 18%;
+      }
+
+      .portrait .caption {
+        min-height: 1.7em;
+        padding: 8px 2px 10px;
+        font-size: 0.72rem;
+        line-height: 1.3;
+        color: #45403a;
+        letter-spacing: -0.01em;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+      }
+
+      .portrait .caption.is-place {
+        font-family: var(--type);
+        font-size: 0.58rem;
+        letter-spacing: 0.04em;
+        color: var(--mount-ink);
+        opacity: 0.8;
+      }
+
+      .scrim {
+        position: absolute;
+        inset: 0;
+        background: rgba(28, 32, 36, 0.42);
+        display: none;
+        z-index: 4;
+      }
+
+      .phone.is-open .scrim {
+        display: block;
+      }
+
+      .sheet-card {
+        position: absolute;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        top: 52px;
+        background: var(--ground);
+        z-index: 5;
+        display: none;
+        flex-direction: column;
+        overflow: auto;
+        padding: 8px 18px 24px;
+      }
+
+      .phone.is-open .sheet-card {
+        display: flex;
+      }
+
+      .sheet-card .close {
+        appearance: none;
+        border: 0;
+        background: none;
+        font: inherit;
+        font-size: 0.95rem;
+        text-decoration: underline;
+        text-underline-offset: 3px;
+        color: var(--ink);
+        padding: 8px 0 10px;
+        cursor: pointer;
+        align-self: start;
+      }
+
+      .meet-photo {
+        background: var(--mount);
+        border-radius: 7px;
+        padding: 8px;
+        box-shadow:
+          0 1px 2px rgba(70, 90, 105, 0.16),
+          0 10px 22px rgba(70, 90, 105, 0.13);
+      }
+
+      .meet-photo img {
+        display: block;
+        width: 100%;
+        aspect-ratio: 4 / 5;
+        object-fit: cover;
+        object-position: 50% 18%;
+        border-radius: 3px;
+      }
+
+      .meet-copy {
+        padding: 16px 4px 0;
+        display: grid;
+        gap: 6px;
+      }
+
+      .meet-copy h3 {
+        margin: 0;
+        font-size: 1.25rem;
+        letter-spacing: -0.03em;
+      }
+
+      .meet-copy p {
+        margin: 0;
+        font-size: 0.88rem;
+        color: var(--ink-soft);
+        line-height: 1.5;
+      }
+
+      .meet-copy .hint {
+        margin-top: 10px;
+        font-size: 0.75rem;
+        color: var(--muted);
+      }
+
+      .species-cover {
+        background: var(--mount);
+        border-radius: 7px;
+        padding: 8px;
+      }
+
+      .species-cover img {
+        display: block;
+        width: 100%;
+        aspect-ratio: 16 / 10;
+        object-fit: cover;
+        border-radius: 3px;
+      }
+
+      .marks {
+        display: flex;
+        gap: 8px;
+        align-items: center;
+        padding: 12px 2px 4px;
+        font-size: 0.78rem;
+        color: var(--muted);
+      }
+
+      .dom {
+        display: inline-flex;
+        padding: 2px 8px;
+        border-radius: var(--r-sm);
+        background: #3f5a38;
+        color: #f3f7ee;
+        font-size: 0.7rem;
+        font-weight: 700;
+      }
+
+      .note {
+        margin: 28px 0 0;
+        font-size: 0.84rem;
+        color: #98a1a8;
+        max-width: 820px;
+        line-height: 1.65;
+      }
+
+      a.ext {
+        color: #eef2f5;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="doc">
+      <h1>宠物页 · 标准相墙</h1>
+      <p class="lead">
+        左是<strong>现在线上</strong>：一种一张 16:10 拼贴。右是<strong>提案</strong>：一次遇见一张脸。
+        页名仍叫<b>宠物</b>。右边可以点——点脸进那次遇见，点「猫」进物种卡。
+      </p>
+      <ol class="rules">
+        <li>观看单位换成遇见，不是解锁了哪个种。种还在，只是班牌。</li>
+        <li>竖幅 4:5，裁切偏上，让眼睛留在框里。土猫和布偶一样大。</li>
+        <li>认得出标准品种才写在白边上。橘猫、三花不贴标签，花色在照片里。</li>
+      </ol>
+      <div class="pair">
+        <div class="col">
+          <span class="tag">现在</span>
+          <p class="case">七种七张拼贴。猫十八次也只看见六小格，脸被切开。</p>
+          <div class="phone" id="now"></div>
+        </div>
+        <div class="col">
+          <span class="tag">提案 · 可点</span>
+          <p class="case">同一批照片，按种分班排成标准相。点一张看遇见，点种名看卡。</p>
+          <div class="phone" id="next"></div>
+        </div>
+      </div>
+      <p class="note">
+        示意，未进生产页。旧拼贴对照还在
+        <a class="ext" href="/proto/pets-page/index.html">index.html</a>。
+      </p>
+    </div>
+    <script>
+      const CATS = [
+        "cat-orange.jpg",
+        "cat-grey.jpg",
+        "cat-tabby.jpg",
+        "cat-black.jpg",
+        "cat-calico.jpg",
+        "cat-sleep.jpg",
+      ];
+      const DOGS = ["dog-corgi.jpg", "dog-yellow.jpg", "dog-small.jpg"];
+      const FISH = ["goldfish.jpg", "goldfish-2.jpg"];
+      const RABBITS = ["rabbit-1.jpg", "rabbit-2.jpg", "rabbit-3.jpg"];
+      const HAMSTERS = ["hamster-1.jpg", "hamster-2.jpg", "hamster-3.jpg", "hamster-4.jpg"];
+      const BIRDS = ["bird-1.jpg", "bird-2.jpg"];
+
+      const NOW = [
+        { name: "家猫", count: 18, imgs: CATS, klass: "is-6" },
+        { name: "家犬", count: 3, imgs: DOGS, klass: "is-3" },
+        { name: "金鱼", count: 2, imgs: FISH, klass: "is-2" },
+        { name: "家兔", count: 3, imgs: RABBITS, klass: "is-3" },
+        { name: "仓鼠", count: 4, imgs: HAMSTERS, klass: "is-4" },
+        { name: "虎皮鹦鹉", count: 2, imgs: BIRDS, klass: "is-2" },
+        { name: "红耳龟", count: 1, imgs: ["turtle-1.jpg"], klass: "is-1" },
+      ];
+
+      const CHAPTERS = [
+        {
+          species: "家猫",
+          portraits: [
+            { src: "cat-orange.jpg", breed: null, place: "大理", date: "3 月 12 日", trip: "苍山脚下" },
+            { src: "cat-grey.jpg", breed: "英短蓝猫", place: "昆明", date: "3 月 14 日", trip: "翠湖" },
+            { src: "cat-tabby.jpg", breed: null, place: "香格里拉", date: "4 月 2 日", trip: "独克宗" },
+            { src: "cat-black.jpg", breed: "孟买", place: "丽江", date: "4 月 4 日", trip: "白沙" },
+            { src: "cat-calico.jpg", breed: null, place: "腾冲", date: "4 月 9 日", trip: "和顺" },
+            { src: "cat-sleep.jpg", breed: "布偶", place: "大理", date: "3 月 13 日", trip: "才村" },
+          ],
+        },
+        {
+          species: "家犬",
+          portraits: [
+            { src: "dog-corgi.jpg", breed: "柯基", place: "昆明", date: "3 月 15 日", trip: "滇池" },
+            { src: "dog-yellow.jpg", breed: null, place: "香格里拉", date: "4 月 1 日", trip: "独克宗" },
+            { src: "dog-small.jpg", breed: "中华田园犬", place: "腾冲", date: "4 月 8 日", trip: "和顺" },
+          ],
+        },
+        {
+          species: "金鱼",
+          portraits: [
+            { src: "goldfish.jpg", breed: null, place: "昆明", date: "3 月 16 日", trip: "翠湖" },
+            { src: "goldfish-2.jpg", breed: null, place: "大理", date: "3 月 12 日", trip: "才村" },
+          ],
+        },
+        {
+          species: "家兔",
+          portraits: [
+            { src: "rabbit-1.jpg", breed: "垂耳", place: "丽江", date: "4 月 5 日", trip: "白沙" },
+            { src: "rabbit-2.jpg", breed: null, place: "大理", date: "3 月 13 日", trip: "才村" },
+            { src: "rabbit-3.jpg", breed: null, place: "昆明", date: "3 月 15 日", trip: "翠湖" },
+          ],
+        },
+        {
+          species: "仓鼠",
+          portraits: [
+            { src: "hamster-1.jpg", breed: null, place: "昆明", date: "3 月 16 日", trip: "翠湖" },
+            { src: "hamster-2.jpg", breed: null, place: "大理", date: "3 月 12 日", trip: "苍山脚下" },
+            { src: "hamster-3.jpg", breed: null, place: "丽江", date: "4 月 4 日", trip: "白沙" },
+            { src: "hamster-4.jpg", breed: null, place: "腾冲", date: "4 月 9 日", trip: "和顺" },
+          ],
+        },
+        {
+          species: "虎皮鹦鹉",
+          portraits: [
+            { src: "bird-1.jpg", breed: null, place: "昆明", date: "3 月 14 日", trip: "翠湖" },
+            { src: "bird-2.jpg", breed: null, place: "大理", date: "3 月 13 日", trip: "才村" },
+          ],
+        },
+        {
+          species: "红耳龟",
+          portraits: [{ src: "turtle-1.jpg", breed: null, place: "腾冲", date: "4 月 8 日", trip: "和顺" }],
+        },
+      ];
+
+      const TILT = ["t1", "t2", "t3"];
+
+      function phoneShell(inner, extra = "") {
+        return `<div class="topbar"><b>BioTrace</b><span class="dot"></span></div>
+          <div class="body">${inner}</div>
+          <div class="nav"><span>旅途</span><span>地图</span><span class="on">图鉴</span><span>我的</span></div>
+          ${extra}`;
+      }
+
+      function head() {
+        return `<div><div class="back">← 图鉴</div><h2 class="page">宠物</h2></div>`;
+      }
+
+      document.getElementById("now").innerHTML = phoneShell(
+        head() +
+          `<div class="plates">${NOW.map((p, i) => {
+            const imgs = p.imgs.map((src) => `<img src="${src}" alt="">`).join("");
+            return `<div class="mount ${TILT[i % 3]}">
+              <div class="sheet ${p.klass}">${imgs}</div>
+              <span class="lip"><b>${p.name}</b><span>${p.count} 次</span></span>
+            </div>`;
+          }).join("")}</div>`,
+      );
+
+      const next = document.getElementById("next");
+      let wall = "";
+      CHAPTERS.forEach((ch, ci) => {
+        wall += `<div class="chapter">
+          <button type="button" data-species="${ch.species}">${ch.species}</button>
+          <em>${ch.portraits.length}</em>
+        </div>
+        <div class="wall">`;
+        ch.portraits.forEach((p, i) => {
+          const cap = p.breed
+            ? `<span class="caption">${p.breed}</span>`
+            : `<span class="caption is-place">${p.place}</span>`;
+          wall += `<button type="button" class="portrait" data-ch="${ci}" data-i="${i}">
+            <span class="mount ${TILT[(ci + i) % 3]}">
+              <span class="face"><img src="${p.src}" alt=""></span>
+              ${cap}
+            </span>
+          </button>`;
+        });
+        wall += `</div>`;
+      });
+
+      next.innerHTML =
+        phoneShell(head() + wall, `<div class="scrim" data-close></div><div class="sheet-card" id="sheet"></div>`);
+
+      const sheet = document.getElementById("sheet");
+
+      function closeSheet() {
+        next.classList.remove("is-open");
+        sheet.innerHTML = "";
+      }
+
+      function openMeet(ch, i) {
+        const p = CHAPTERS[ch].portraits[i];
+        const species = CHAPTERS[ch].species;
+        const who = p.breed || species;
+        sheet.innerHTML = `<button class="close" type="button" data-close>← 宠物</button>
+          <div class="meet-photo"><img src="${p.src}" alt=""></div>
+          <div class="meet-copy">
+            <h3>${who}</h3>
+            <p>${p.trip} · ${p.place} · ${p.date}</p>
+          </div>`;
+        next.classList.add("is-open");
+      }
+
+      function openSpecies(name) {
+        const ch = CHAPTERS.find((c) => c.species === name);
+        const cover = ch.portraits[0].src;
+        sheet.innerHTML = `<button class="close" type="button" data-close>← 宠物</button>
+          <h2 class="page">${name}</h2>
+          <div class="species-cover"><img src="${cover}" alt=""></div>
+          <div class="marks"><span class="dom">驯养物种</span><span>首次收录 2026/3/12</span></div>`;
+        next.classList.add("is-open");
+      }
+
+      next.addEventListener("click", (e) => {
+        const t = e.target;
+        if (!(t instanceof Element)) return;
+        if (t.closest("[data-close]")) {
+          closeSheet();
+          return;
+        }
+        const portrait = t.closest(".portrait");
+        if (portrait instanceof HTMLElement && portrait.dataset.ch) {
+          openMeet(Number(portrait.dataset.ch), Number(portrait.dataset.i));
+          return;
+        }
+        const chapter = t.closest(".chapter button");
+        if (chapter instanceof HTMLElement && chapter.dataset.species) {
+          openSpecies(chapter.dataset.species);
+        }
+      });
+    </script>
+  </body>
+</html>

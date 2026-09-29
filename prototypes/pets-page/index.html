@@ -1,0 +1,470 @@
+<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>宠物页 · 版式示例</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&family=Courier+Prime:wght@400&display=swap"
+      rel="stylesheet"
+    />
+    <style>
+      :root {
+        --sans: "Outfit", system-ui, sans-serif;
+        --type: "Courier Prime", "Courier New", monospace;
+        --ground: radial-gradient(ellipse 130% 90% at 50% 12%, #ffffff 0%, #f8fbfc 42%, #eef3f6 100%);
+        --ink: #333b41;
+        --ink-soft: #5f6a72;
+        --muted: #8d979e;
+        --card-solid: #ffffff;
+        --soft-sm: 0 1px 2px rgba(90, 112, 128, 0.06), 0 4px 10px rgba(90, 112, 128, 0.06);
+        --mount: #f3f0e9;
+        --mount-ink: #6a6357;
+        --accent: #d9531e;
+        --r-sm: 10px;
+        --r-pill: 999px;
+        --tag-bg: #3f5a38;
+        --tag-fg: #f3f7ee;
+      }
+
+      * {
+        box-sizing: border-box;
+      }
+
+      body {
+        margin: 0;
+        padding: 36px 24px 70px;
+        background: #2c3136;
+        color: #dfe4e8;
+        font-family: var(--sans);
+        -webkit-font-smoothing: antialiased;
+      }
+
+      .doc {
+        max-width: 1320px;
+        margin: 0 auto;
+      }
+
+      h1 {
+        font-size: 1.4rem;
+        margin: 0 0 8px;
+        letter-spacing: -0.02em;
+      }
+
+      .lead,
+      .rules,
+      .note {
+        max-width: 820px;
+        line-height: 1.75;
+        color: #a9b2b9;
+      }
+
+      .lead {
+        margin: 0;
+        font-size: 0.9rem;
+      }
+
+      .lead b,
+      .rules b {
+        color: #eef2f5;
+        font-weight: 600;
+      }
+
+      .rules {
+        margin: 14px 0 0;
+        padding: 0 0 0 1.15em;
+        font-size: 0.86rem;
+      }
+
+      .pair {
+        display: flex;
+        gap: 36px 40px;
+        flex-wrap: wrap;
+        margin-top: 28px;
+      }
+
+      .col {
+        display: grid;
+        gap: 8px;
+        justify-items: start;
+      }
+
+      .tag {
+        font-size: 0.72rem;
+        letter-spacing: 0.12em;
+        text-transform: uppercase;
+        color: #8b949b;
+      }
+
+      .case {
+        margin: 0;
+        max-width: 380px;
+        font-size: 0.78rem;
+        line-height: 1.55;
+        color: #98a1a8;
+      }
+
+      .phone {
+        width: 380px;
+        height: 800px;
+        border-radius: 30px;
+        overflow: hidden;
+        background: var(--ground);
+        color: var(--ink);
+        display: flex;
+        flex-direction: column;
+        box-shadow: 0 20px 46px rgba(0, 0, 0, 0.45);
+      }
+
+      .topbar {
+        flex: none;
+        padding: 15px 20px 8px;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+      }
+
+      .topbar b {
+        font-size: 0.95rem;
+        font-weight: 600;
+      }
+
+      .topbar .dot {
+        width: 26px;
+        height: 26px;
+        border-radius: var(--r-pill);
+        background: var(--card-solid);
+        box-shadow: var(--soft-sm);
+      }
+
+      .body {
+        flex: 1;
+        overflow: auto;
+        padding: 6px 18px 18px;
+        display: grid;
+        gap: 14px;
+        align-content: start;
+        scrollbar-width: thin;
+      }
+
+      .nav {
+        flex: none;
+        display: grid;
+        grid-template-columns: repeat(4, 1fr);
+        gap: 4px;
+        padding: 8px 12px 14px;
+        background: rgba(255, 255, 255, 0.72);
+      }
+
+      .nav span {
+        padding: 8px 0;
+        text-align: center;
+        font-size: 0.79rem;
+        border-radius: var(--r-pill);
+        color: var(--muted);
+      }
+
+      .nav span.on {
+        color: var(--accent);
+        font-weight: 600;
+        background: #f8e3d0;
+      }
+
+      .back {
+        font-size: 0.95rem;
+        text-decoration: underline;
+        text-underline-offset: 3px;
+        color: var(--ink);
+        padding: 4px 0 0;
+      }
+
+      h2.page {
+        margin: 0;
+        font-size: 1.45rem;
+        font-weight: 700;
+        letter-spacing: -0.03em;
+      }
+
+      .dom {
+        display: inline-flex;
+        width: fit-content;
+        padding: 2px 8px;
+        border-radius: var(--r-sm);
+        background: var(--tag-bg);
+        color: var(--tag-fg);
+        font-size: 0.7rem;
+        font-weight: 700;
+        letter-spacing: 0.02em;
+      }
+
+      .plates {
+        display: grid;
+        gap: 18px;
+        padding-top: 2px;
+      }
+
+      .plate {
+        display: grid;
+        gap: 8px;
+      }
+
+      .mount {
+        background: var(--mount);
+        border-radius: 7px;
+        padding: 9px 9px 0;
+        box-shadow:
+          0 1px 2px rgba(70, 90, 105, 0.16),
+          0 10px 22px rgba(70, 90, 105, 0.13);
+      }
+
+      /* 图窗固定。按张数换内部填法，卡的大小不变。 */
+      .sheet {
+        display: grid;
+        gap: 4px;
+        aspect-ratio: 16 / 10;
+      }
+
+      .sheet > * {
+        min-width: 0;
+        min-height: 0;
+      }
+
+      .sheet img {
+        display: block;
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+        border-radius: 2px;
+      }
+
+      .sheet.is-1 {
+        grid-template: 1fr / 1fr;
+      }
+      .sheet.is-2 {
+        grid-template: 1fr / 1fr 1fr;
+      }
+      .sheet.is-3 {
+        grid-template-columns: 2fr 1fr;
+        grid-template-rows: 1fr 1fr;
+      }
+      .sheet.is-3 img:first-child {
+        grid-row: 1 / -1;
+      }
+      .sheet.is-4 {
+        grid-template: 1fr 1fr / 1fr 1fr;
+      }
+      .sheet.is-5 {
+        grid-template-columns: 2fr 1fr 1fr;
+        grid-template-rows: 1fr 1fr;
+      }
+      .sheet.is-5 img:first-child {
+        grid-row: 1 / -1;
+      }
+      .sheet.is-6 {
+        grid-template: 1fr 1fr / 1fr 1fr 1fr;
+      }
+
+      .lip {
+        display: flex;
+        align-items: baseline;
+        gap: 9px;
+        padding: 9px 3px 11px;
+      }
+
+      .lip b {
+        font-size: 1rem;
+        font-weight: 600;
+        letter-spacing: -0.01em;
+        color: #45403a;
+        min-width: 0;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+      }
+
+      .lip span {
+        margin-left: auto;
+        font-family: var(--type);
+        font-size: 0.63rem;
+        letter-spacing: 0.05em;
+        color: var(--mount-ink);
+        opacity: 0.75;
+        white-space: nowrap;
+      }
+
+      .t1 {
+        transform: rotate(-0.4deg);
+      }
+      .t2 {
+        transform: rotate(0.45deg);
+      }
+      .t3 {
+        transform: rotate(-0.25deg);
+      }
+
+      .meta {
+        display: grid;
+        gap: 5px;
+        padding: 0 2px;
+      }
+
+      .breeds {
+        font-size: 0.82rem;
+        line-height: 1.45;
+        color: var(--ink-soft);
+      }
+
+      .note {
+        margin: 28px 0 0;
+        font-size: 0.84rem;
+        color: #98a1a8;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="doc">
+      <h1>宠物页 · 版式示例</h1>
+      <p class="lead">
+        在<strong>清透</strong>上改宠物页，不是新皮肤。页名仍叫<b>宠物</b>。已收录不改。
+        参照旅途封面那张暖白卡纸：每种一块卡，<b>图窗固定 16:10</b>。
+        猫、狗、鱼、兔、仓鼠、鸟、龟都走同一套填法，不按物种改版式。
+      </p>
+      <ol class="rules">
+        <li>图窗大小不变。变的是里面怎么切开，切开方式只看张数，不看是什么动物。</li>
+        <li>1 张铺满；2 张左右对开；3 张左边一张主图、右边两张小的（三个扁格一排会把脸裁成条）；4 张四宫；5 张主图加四小；6 张及以上六宫，只铺六张，次数写在下沿。</li>
+        <li>不留空槽。空槽看起来像「还差几张集齐」，宠物页没有这种任务。</li>
+        <li>品种只留前三个，多的写「等 N 个」。点进去仍是现在的卡。</li>
+      </ol>
+      <div class="pair" id="cases"></div>
+      <p class="note">照片是示意用的。还没写进正式页面。</p>
+    </div>
+    <script>
+      const CATS = [
+        "cat-orange.jpg",
+        "cat-grey.jpg",
+        "cat-tabby.jpg",
+        "cat-black.jpg",
+        "cat-calico.jpg",
+        "cat-sleep.jpg",
+      ];
+      const DOGS = ["dog-corgi.jpg", "dog-yellow.jpg", "dog-small.jpg"];
+      const FISH = ["goldfish.jpg", "goldfish-2.jpg"];
+      const RABBITS = ["rabbit-1.jpg", "rabbit-2.jpg", "rabbit-3.jpg"];
+      const HAMSTERS = ["hamster-1.jpg", "hamster-2.jpg", "hamster-3.jpg", "hamster-4.jpg"];
+      const BIRDS = ["bird-1.jpg", "bird-2.jpg"];
+      const CAT_BREEDS = [
+        "金渐层",
+        "英短蓝猫",
+        "美国短毛猫",
+        "布偶",
+        "暹罗",
+        "狸花",
+        "孟买",
+        "苏格兰折耳",
+        "挪威森林猫",
+        "波斯",
+        "缅因",
+        "无毛猫",
+        "阿比西尼亚",
+        "俄罗斯蓝猫",
+        "品种不详",
+      ];
+
+      function breedLine(names, cap) {
+        if (names.length <= cap) return names.join(" · ");
+        return names.slice(0, cap).join(" · ") + " 等 " + names.length + " 个";
+      }
+
+      const CASES = [
+        {
+          tag: "1 张 · 铺满",
+          blurb: "红耳龟只拍过一回。铺满整块图窗，和旅途封面同一张卡。",
+          plates: [{ name: "红耳龟", count: 1, imgs: ["turtle-1.jpg"], breeds: "品种不详" }],
+        },
+        {
+          tag: "2 张 · 对开",
+          blurb: "金鱼两张，左右对开。不是因为鱼才两列，两张都这样。",
+          plates: [{ name: "金鱼", count: 2, imgs: FISH, breeds: "品种不详" }],
+        },
+        {
+          tag: "3 张 · 主图",
+          blurb: "家犬三张。左边一张大的，右边两张小的。不用三个扁格排成一行。",
+          plates: [{ name: "家犬", count: 3, imgs: DOGS, breeds: "柯基 · 品种不详" }],
+        },
+        {
+          tag: "4 张 · 四宫",
+          blurb: "仓鼠四张，均分四格。",
+          plates: [{ name: "仓鼠", count: 4, imgs: HAMSTERS, breeds: "品种不详" }],
+        },
+        {
+          tag: "5 张 · 主图",
+          blurb: "五张：左边封面，右边四张小的。",
+          plates: [{ name: "家猫", count: 5, imgs: CATS.slice(0, 5), breeds: "金渐层 · 狸花" }],
+        },
+        {
+          tag: "6 张 · 六宫",
+          blurb: "六张及以上都是六宫。十八次也只铺六张，下沿写次数。",
+          plates: [{ name: "家猫", count: 18, imgs: CATS, breeds: breedLine(CAT_BREEDS, 3) }],
+        },
+        {
+          tag: "混排",
+          blurb: "猫狗鱼兔仓鼠鸟龟都在。卡一样大，只有张数在变。",
+          plates: [
+            { name: "家猫", count: 18, imgs: CATS, breeds: breedLine(CAT_BREEDS, 3) },
+            { name: "家犬", count: 3, imgs: DOGS, breeds: "柯基 · 品种不详" },
+            { name: "金鱼", count: 2, imgs: FISH, breeds: "品种不详" },
+            { name: "家兔", count: 3, imgs: RABBITS, breeds: "垂耳 · 品种不详" },
+            { name: "仓鼠", count: 4, imgs: HAMSTERS, breeds: "品种不详" },
+            { name: "虎皮鹦鹉", count: 2, imgs: BIRDS, breeds: "品种不详" },
+            { name: "红耳龟", count: 1, imgs: ["turtle-1.jpg"], breeds: "品种不详" },
+          ],
+        },
+      ];
+
+      function sheetClass(n) {
+        const k = Math.min(Math.max(n, 1), 6);
+        return "sheet is-" + k;
+      }
+
+      function plateHtml(p, i) {
+        const tilt = ["t1", "t2", "t3"][i % 3];
+        const shown = p.imgs.slice(0, 6);
+        const imgs = shown.map((src) => `<img src="${src}" alt="">`).join("");
+        return `<div class="plate">
+          <div class="mount ${tilt}">
+            <div class="${sheetClass(shown.length)}">${imgs}</div>
+            <span class="lip"><b>${p.name}</b><span>${p.count} 次</span></span>
+          </div>
+          <div class="meta">
+            <span class="dom">驯养物种</span>
+            <span class="breeds">${p.breeds}</span>
+          </div>
+        </div>`;
+      }
+
+      function phoneHtml(c) {
+        return `<div class="col">
+          <span class="tag">${c.tag}</span>
+          <p class="case">${c.blurb}</p>
+          <div class="phone">
+            <div class="topbar"><b>BioTrace</b><span class="dot"></span></div>
+            <div class="body">
+              <div>
+                <div class="back">← 图鉴</div>
+                <h2 class="page">宠物</h2>
+              </div>
+              <div class="plates">${c.plates.map(plateHtml).join("")}</div>
+            </div>
+            <div class="nav">
+              <span>旅途</span><span>地图</span><span class="on">图鉴</span><span>我的</span>
+            </div>
+          </div>
+        </div>`;
+      }
+
+      document.getElementById("cases").innerHTML = CASES.map(phoneHtml).join("");
+    </script>
+  </body>
+</html>

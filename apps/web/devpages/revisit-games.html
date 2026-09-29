@@ -1,0 +1,269 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<title>重逢 · 玩法细节</title>
+<style>
+  :root{--ink:#2F4A3C;--paper:#EFE9D8;--cta:#d3543c;--line:#cfc7b2;--mute:#7c8a80}
+  *{box-sizing:border-box}
+  body{margin:0;background:#e5e0d2;color:var(--ink);
+    font-family:"PingFang SC","Hiragino Sans GB","Microsoft YaHei",system-ui,sans-serif;padding:24px 20px 48px}
+  h1{font-size:20px;margin:0 0 4px;letter-spacing:.5px}
+  .sub{font-size:13px;color:var(--mute);margin:0 0 18px;line-height:1.6}
+  .rail{display:flex;gap:14px;overflow-x:auto;padding-bottom:8px}
+  .phone{width:300px;height:649px;flex:0 0 auto;background:var(--paper);border-radius:22px;
+    border:1px solid #bdb5a0;box-shadow:0 6px 18px rgba(47,74,60,.16);overflow:hidden}
+  .screen{width:390px;height:844px;transform:scale(.769);transform-origin:top left;
+    padding:26px 22px;display:flex;flex-direction:column}
+  .cap{font-size:12px;color:var(--mute);margin:8px 0 0;text-align:center;line-height:1.6}
+  .kicker{font-size:12px;letter-spacing:2px;color:var(--mute)}
+  .title{font-size:26px;font-weight:600;margin:6px 0 2px;line-height:1.3}
+  .lede{font-size:14px;color:var(--mute);line-height:1.7;margin:0 0 16px}
+  .q{font-size:17px;font-weight:600;line-height:1.5;margin:0 0 10px}
+  .meta{font-size:12.5px;color:var(--mute);margin-top:auto;line-height:1.8}
+  .btn{margin-top:12px;background:var(--ink);color:#f3efdf;border:0;border-radius:12px;padding:13px;font-size:15px;width:100%}
+
+  /* 九宫格 */
+  .wrap{position:relative;width:300px;height:300px;border-radius:12px;overflow:hidden;
+    border:1px solid var(--line);margin-bottom:10px;background:#2b3f34;flex:0 0 auto}
+  .wrap .cell{position:absolute;background:#3d5c46;background-size:300% 300%;
+    transition:opacity .25s;box-shadow:inset 0 0 0 .5px rgba(255,255,255,.06)}
+  .wrap .cell.veil{opacity:.14;filter:blur(3px) grayscale(.7)}
+
+  /* 选项：四张你自己的照片 */
+  .picks{display:grid;grid-template-columns:repeat(4,1fr);gap:7px;margin-bottom:10px}
+  .pick{height:74px;border-radius:9px;border:1px solid var(--line);position:relative;overflow:hidden}
+  .pick.sel{border:2px solid var(--cta);box-shadow:0 0 0 2px rgba(211,84,60,.18)}
+  .pick.gone{opacity:.28}
+  .pick.gone::after{content:"";position:absolute;inset:0;background:rgba(47,74,60,.5)}
+  .pick .n{position:absolute;left:4px;top:4px;font-size:10px;color:#fff;background:rgba(47,74,60,.7);
+    width:15px;height:15px;border-radius:50%;text-align:center;line-height:15px}
+  .p1{background:linear-gradient(160deg,#cbbf7e,#7b6b34)}
+  .p2{background:linear-gradient(160deg,#8fb0a2,#3f5f52)}
+  .p3{background:linear-gradient(160deg,#c8a07a,#7d5638)}
+  .p4{background:linear-gradient(160deg,#9fb37f,#4f6637)}
+
+  .tagline{font-size:12px;color:var(--mute);margin:0 0 8px;line-height:1.6}
+
+  .tiles{display:grid;grid-template-columns:1fr 1fr;gap:9px;margin-bottom:12px;flex:0 0 auto}
+  .tile{height:120px;border-radius:10px;border:1px solid var(--line);position:relative;overflow:hidden;
+    display:flex;align-items:flex-end;padding:6px}
+  .tile.sel{border:2px solid var(--cta);box-shadow:0 0 0 2px rgba(211,84,60,.18)}
+  .tile .n{position:absolute;left:6px;top:6px;font-size:11px;color:#fff;background:rgba(47,74,60,.6);
+    width:17px;height:17px;border-radius:50%;text-align:center;line-height:17px}
+  .tile .lb{font-size:11px;color:#fff;background:rgba(47,74,60,.66);padding:2px 7px;border-radius:20px}
+  .t1{background:linear-gradient(160deg,#b9c48e,#5d7a4c)}
+  .t2{background:linear-gradient(160deg,#c2ab84,#7a6440)}
+  .t3{background:linear-gradient(160deg,#b3a98c,#6e6547)}
+  .t4{background:linear-gradient(160deg,#93b6c4,#3f6272)}
+
+  .photo{height:170px;border-radius:12px;border:1px solid var(--line);position:relative;overflow:hidden;margin-bottom:12px;flex:0 0 auto}
+  .photo .tip{position:absolute;left:10px;bottom:8px;font-size:11px;color:#f3efdf;background:rgba(47,74,60,.72);padding:3px 8px;border-radius:20px}
+  .g1{background:linear-gradient(160deg,#8fae86,#3d5c46 60%,#22382c)}
+
+  .wide{max-width:1500px;margin:34px auto 0;background:#f7f3e6;border:1px solid var(--line);
+    border-radius:16px;padding:22px 24px}
+  .wide h2{font-size:15px;margin:24px 0 10px}
+  .wide h2:first-child{margin-top:0}
+  table{border-collapse:collapse;width:100%;font-size:13px;background:#fffdf4;
+    border:1px solid var(--line);border-radius:10px;overflow:hidden}
+  th,td{border-bottom:1px solid var(--line);padding:9px 12px;text-align:left;vertical-align:top;line-height:1.7}
+  th{background:#efe9d8;font-weight:600;white-space:nowrap}
+  tr:last-child td{border-bottom:0}
+  .note{font-size:13px;color:var(--mute);line-height:1.85;margin:12px 0 0}
+  .note b{color:var(--ink)}
+  .fix{background:#fdf3ec}
+</style>
+</head>
+<body>
+
+<h1>重逢 · 玩法细节</h1>
+<p class="sub">猜图：一张照片切九格，<b>先开背景、后开主体</b>，选项是四张你自己拍的照片。<br>
+回想：四张里混进一张不属于这趟的。这版修掉了上一版两个漏洞。</p>
+
+<div class="rail">
+
+  <div>
+    <div class="phone"><div class="screen">
+      <div class="kicker">猜图 3 / 12</div>
+      <p class="q">先给你边角<br>认得出是哪张吗</p>
+      <div class="wrap" id="w1"></div>
+      <p class="tagline">开了 1 格 · 四张都是这趟你拍的</p>
+      <div class="picks">
+        <div class="pick p1"><span class="n">1</span></div>
+        <div class="pick p2"><span class="n">2</span></div>
+        <div class="pick p3"><span class="n">3</span></div>
+        <div class="pick p4"><span class="n">4</span></div>
+      </div>
+      <button class="btn">再开一格</button>
+      <div class="meta">选项不给名字，名字是识图给的</div>
+    </div></div>
+    <p class="cap">① 起始：先开边角格，主体还在遮蔽里</p>
+  </div>
+
+  <div>
+    <div class="phone"><div class="screen">
+      <div class="kicker">猜图 3 / 12</div>
+      <p class="q">开了 4 格<br>主体还没出来</p>
+      <div class="wrap" id="w2"></div>
+      <p class="tagline">开了 4 格 · 排除掉 1 张</p>
+      <div class="picks">
+        <div class="pick p1"><span class="n">1</span></div>
+        <div class="pick p2 sel"><span class="n">2</span></div>
+        <div class="pick p3 gone"><span class="n">3</span></div>
+        <div class="pick p4"><span class="n">4</span></div>
+      </div>
+      <button class="btn">再开一格</button>
+      <div class="meta">排除过的划掉</div>
+    </div></div>
+    <p class="cap">② 中途：背景先铺开，主体留最后</p>
+  </div>
+
+  <div>
+    <div class="phone"><div class="screen">
+      <div class="kicker">猜图 3 / 12</div>
+      <p class="q">开到第 7 格<br>主体出来了</p>
+      <div class="wrap" id="w3"></div>
+      <p class="tagline">开了 7 格 · 剩两张，二选一</p>
+      <div class="picks">
+        <div class="pick p1 gone"><span class="n">1</span></div>
+        <div class="pick p2 sel"><span class="n">2</span></div>
+        <div class="pick p3 gone"><span class="n">3</span></div>
+        <div class="pick p4"><span class="n">4</span></div>
+      </div>
+      <button class="btn">认出来了</button>
+      <div class="meta">最后才轮到主体</div>
+    </div></div>
+    <p class="cap">③ 关键格：主体在最后才揭</p>
+  </div>
+
+  <div>
+    <div class="phone"><div class="screen">
+      <div class="kicker">猜中了</div>
+      <div class="title">开了 7 格</div>
+      <div class="photo g1"><div class="tip">原照片</div></div>
+      <p class="lede" style="margin-top:12px">2024 年 7 月 · 四川 九寨<br>溪边一棵树上</p>
+      <button class="btn">回到那次遇见</button>
+      <div class="meta" style="margin-top:12px">不给分，把照片还给你</div>
+    </div></div>
+    <p class="cap">④ 揭晓：说「开了几格」，不判对错</p>
+  </div>
+
+  <div>
+    <div class="phone"><div class="screen">
+      <div class="kicker">回想 2 / 5</div>
+      <p class="q">四张都是你拍的<br>有一张不在这趟</p>
+      <div class="tiles">
+        <div class="tile t1"><span class="n">1</span><span class="lb">噪鹛科</span></div>
+        <div class="tile t2"><span class="n">2</span><span class="lb">噪鹛科</span></div>
+        <div class="tile t3"><span class="n">3</span><span class="lb">噪鹛科</span></div>
+        <div class="tile t4"><span class="n">4</span><span class="lb">鹟科</span></div>
+      </div>
+      <p class="tagline">三张同科，一张不同科</p>
+      <div class="meta">不标名字，只标科</div>
+    </div></div>
+    <p class="cap">⑤ 回想：动物A科×3 + 动物B科×1</p>
+  </div>
+
+  <div>
+    <div class="phone"><div class="screen">
+      <div class="kicker">回想 3 / 5</div>
+      <p class="q">这四张同科<br>有一张不在这趟</p>
+      <div class="tiles">
+        <div class="tile t1"><span class="n">1</span><span class="lb">噪鹛科</span></div>
+        <div class="tile t2"><span class="n">2</span><span class="lb">噪鹛科</span></div>
+        <div class="tile t3"><span class="n">3</span><span class="lb">噪鹛科</span></div>
+        <div class="tile t4" style="background:linear-gradient(160deg,#b3a98c,#6e6547)"><span class="n">4</span><span class="lb">噪鹛科</span></div>
+      </div>
+      <p class="tagline">四张全同科，靠种区分</p>
+      <div class="meta">够多种时才出这档</div>
+    </div></div>
+    <p class="cap">⑥ 回想·难档：动物A科里的 A种 / B种</p>
+  </div>
+
+  <div>
+    <div class="phone"><div class="screen">
+      <div class="kicker">找到了</div>
+      <div class="title">第 4 张<br>不在这趟</div>
+      <div class="photo t4" style="background:linear-gradient(160deg,#93b6c4,#3f6272)"><div class="tip">原照片</div></div>
+      <p class="lede" style="margin-top:12px">它拍自 莫干山 那趟<br>那边你也遇见过它</p>
+      <button class="btn">去莫干山那趟</button>
+      <div class="meta" style="margin-top:12px">只说哪一趟，不给日期</div>
+    </div></div>
+    <p class="cap">⑦ 回想揭晓：把另一趟旅途带出来</p>
+  </div>
+
+</div>
+
+<div class="wide">
+  <h2>修掉的两个漏洞</h2>
+  <table>
+    <tr><th>上一版</th><th>毛病</th><th>这版</th></tr>
+    <tr class="fix">
+      <td>四个<b>名字</b>选项，点错划掉</td>
+      <td>划掉 3 个剩下的必然对，「猜」退化成「排除」，最多点三次一定答对</td>
+      <td>选项换成<b>四张你自己拍的照片</b>。划掉只能靠开格认出局部，不能靠排除法推出来</td>
+    </tr>
+    <tr class="fix">
+      <td>先开<b>信息量最大</b>的格子</td>
+      <td>很可能第一格就是鸟头，一眼认出，后八格全废</td>
+      <td>改成<b>信息量升序</b>开：先开天空地面这些背景，主体留最后，每开一格都在靠近</td>
+    </tr>
+  </table>
+
+  <h2>为什么选项不能是名字</h2>
+  <p class="note">
+    中名是<b>识图模型起的</b>，用户从来没记过。让他从四个中名里挑，考的是「你记不记得 AI 给它起的名字」——
+    跟从 <code>blurb</code> 里抠词是同一个毛病，只是换个字段背。
+    换成四张自己的照片，考的是「你对这趟路上拍的东西有没有印象」，这才是你亲眼见过的。
+  </p>
+
+  <h2>回想：混入什么</h2>
+  <table>
+    <tr><th>情况</th><th>混进来的</th><th>难度</th></tr>
+    <tr><td>这趟里这个科只有一种</td><td>动物B科（不同科）</td><td>易：认得出科就行</td></tr>
+    <tr><td>这趟里这个科有多种</td><td>动物A科里的另一个种</td><td>难：要分到种</td></tr>
+    <tr><td>都不够</td><td>不出这题</td><td>—</td></tr>
+  </table>
+  <p class="note">
+    不混纯风景、不混明显不同界的——那是一眼题，没有「想一下」的过程。
+    揭晓只说「它拍自哪一趟」，把另一趟旅途带出来，不给日期。
+  </p>
+
+  <h2>共通</h2>
+  <table>
+    <tr><th>项</th><th>怎么定</th></tr>
+    <tr><td>题源</td><td>已 settled、有 taxonKey 的记录，一次识图都不调</td></tr>
+    <tr><td>开格顺序</td><td>九宫格按「颜色方差 × 边缘密度」<b>升序</b>开。9 张真实照片实测分数 82～2854，能分开</td></tr>
+    <tr><td>记分</td><td>只在这张照片上说「开了几格」。不累计、不排行、不判输</td></tr>
+    <tr><td>门槛</td><td>猜图要 4 张以上；回想要有第二趟旅途。不够就入口不出现</td></tr>
+    <tr><td>重题</td><td>答过的进冷却，短期内不再出</td></tr>
+  </table>
+  <p class="note">
+    「重逢」只是这个功能区的名字，指答完把原照片翻出来，不是玩法名。嫌绕可以换。
+  </p>
+</div>
+
+<script>
+  const src = "linear-gradient(150deg,#b9c48e 0%,#6f8f5a 38%,#3d5c46 62%,#22382c 100%)";
+  function render(id, open){
+    const el = document.getElementById(id);
+    if(!el) return;
+    for(let r=0;r<3;r++) for(let c=0;c<3;c++){
+      const i = r*3+c;
+      const d = document.createElement("div");
+      d.className = "cell" + (open.includes(i) ? "" : " veil");
+      d.style.left = (c*33.34)+"%"; d.style.top = (r*33.34)+"%";
+      d.style.width = "33.34%"; d.style.height = "33.34%";
+      d.style.backgroundImage = src;
+      d.style.backgroundPosition = (c*50)+"% "+(r*50)+"%";
+      el.appendChild(d);
+    }
+  }
+  // 升序开：先四角/边（背景），中心(4)最后
+  render("w1",[0]);
+  render("w2",[0,2,6,8]);
+  render("w3",[0,1,2,3,6,7,8]);
+</script>
+</body>
+</html>

@@ -55,6 +55,7 @@
 | 文件 | 内容 |
 |------|------|
 | [`wip/宠物图鉴-玩法脑暴.md`](./wip/宠物图鉴-玩法脑暴.md) | 宠物图鉴驯化名录与叙事方案、待拍板项；**讨论中，非 SPEC** |
+| [`wip/设计资产索引.md`](./wip/设计资产索引.md) | 图鉴 / 旅途 / 宠物原型与「重逢」玩法稿的入口、用途和保留理由；**资产索引，非 SPEC** |
 | [`wip/settle-rarity-spotlight-demo.html`](./wip/settle-rarity-spotlight-demo.html) | 开包稀有度演出视觉基准；**长期参照物，非 SPEC** |
 
 ## 仓库里其它文档

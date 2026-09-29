@@ -1,0 +1,16 @@
+[data-theme="clear"] {
+  --concept-paper: #fffefb;
+  --concept-paper-ink: #39474b;
+  --concept-secondary: #76858a;
+  --concept-border: #e4ebec;
+  --concept-edge: transparent;
+  --concept-radius: 5px;
+  --concept-shadow: 0 2px 3px rgba(49, 72, 79, .06), 0 10px 22px rgba(49, 72, 79, .09);
+  --concept-hover-shadow: 0 3px 6px rgba(49, 72, 79, .08), 0 14px 28px rgba(49, 72, 79, .14);
+  --concept-caption-font: var(--font-meta);
+  --concept-tilt-odd: -.7deg;
+  --concept-tilt-even: .65deg;
+  --concept-chip-radius: 5px;
+  --concept-pet-radius: 50%;
+  --concept-bar-bg: #e7edef;
+}

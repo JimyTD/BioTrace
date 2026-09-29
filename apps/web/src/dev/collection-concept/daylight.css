@@ -1,0 +1,18 @@
+[data-theme="daylight"] {
+  --concept-paper: #fffdf5;
+  --concept-paper-ink: #3c4338;
+  --concept-secondary: #7e796b;
+  --concept-border: #d8d1c3;
+  --concept-edge: #e0d8c8;
+  --concept-radius: 1px;
+  --concept-shadow: 0 2px 6px rgba(73, 61, 36, .08);
+  --concept-hover-shadow: 0 5px 16px rgba(73, 61, 36, .13);
+  --concept-caption-font: Georgia, "Times New Roman", serif;
+  --concept-tilt-odd: 0deg;
+  --concept-tilt-even: 0deg;
+  --concept-chip-radius: 1px;
+  --concept-pet-radius: 2px;
+  --concept-bar-bg: #e5e0d5;
+}
+[data-theme="daylight"] .concept-caption { border-top: 1px solid var(--concept-border); margin-top: 7px; }
+[data-theme="daylight"] .concept-latin { font-style: italic; }

@@ -1,0 +1,16 @@
+.concept-home .collection-reel { --reel-bleed: 20px; }
+.concept-home.is-reel-home .concept-secondary { display: block; margin-top: 24px; }
+.is-reel-home .concept-door { min-height: 102px; gap: 16px; padding: 8px 0; }
+.is-reel-home .concept-door + .concept-door { border-top: 1px solid var(--concept-border); }
+.is-reel-home .concept-door > .me-row-icon { display: grid; width: 66px; height: 60px; background: transparent; color: var(--tint-2-ink); }
+.is-reel-home .concept-door > .me-row-icon svg { width: 27px; height: 27px; }
+.is-reel-home .concept-door-copy strong { font-size: 16px; }
+.is-reel-home .concept-door-copy > span { font-size: 12px; }
+.is-reel-home .concept-tree-thumb { width: 66px; height: 86px; }
+@container (min-width: 650px) {
+  .concept-home.is-reel-home .concept-secondary { display: grid; }
+  .is-reel-home .concept-door + .concept-door { border-top: 0; }
+}
+@media (max-width: 360px) {
+  .concept-home .collection-reel { --reel-bleed: 16px; }
+}

@@ -1,0 +1,620 @@
+<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>宠物页 · 窗</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&family=Courier+Prime:wght@400&display=swap"
+      rel="stylesheet"
+    />
+    <style>
+      :root {
+        --sans: "Outfit", system-ui, sans-serif;
+        --type: "Courier Prime", "Courier New", monospace;
+        --ground: radial-gradient(ellipse 130% 90% at 50% 12%, #ffffff 0%, #f8fbfc 42%, #eef3f6 100%);
+        --ink: #333b41;
+        --muted: #8d979e;
+        --card-solid: #ffffff;
+        --soft-sm: 0 1px 2px rgba(90, 112, 128, 0.06), 0 4px 10px rgba(90, 112, 128, 0.06);
+        --mount: #f3f0e9;
+        --mount-ink: #6a6357;
+        --accent: #d9531e;
+        --r-pill: 999px;
+      }
+
+      * {
+        box-sizing: border-box;
+      }
+
+      body {
+        margin: 0;
+        padding: 36px 24px 70px;
+        background: #2c3136;
+        color: #dfe4e8;
+        font-family: var(--sans);
+        -webkit-font-smoothing: antialiased;
+      }
+
+      .doc {
+        max-width: 980px;
+        margin: 0 auto;
+      }
+
+      h1 {
+        font-size: 1.4rem;
+        margin: 0 0 8px;
+        letter-spacing: -0.02em;
+      }
+
+      .lead,
+      .rules,
+      .note {
+        max-width: 820px;
+        line-height: 1.75;
+        color: #a9b2b9;
+      }
+
+      .lead {
+        margin: 0;
+        font-size: 0.9rem;
+      }
+
+      .lead b,
+      .rules b {
+        color: #eef2f5;
+        font-weight: 600;
+      }
+
+      .rules {
+        margin: 14px 0 0;
+        padding: 0 0 0 1.15em;
+        font-size: 0.86rem;
+      }
+
+      .pair {
+        display: flex;
+        gap: 36px 40px;
+        flex-wrap: wrap;
+        margin-top: 28px;
+      }
+
+      .col {
+        display: grid;
+        gap: 8px;
+        justify-items: start;
+      }
+
+      .tag {
+        font-size: 0.72rem;
+        letter-spacing: 0.12em;
+        text-transform: uppercase;
+        color: #8b949b;
+      }
+
+      .case {
+        margin: 0;
+        max-width: 380px;
+        font-size: 0.78rem;
+        line-height: 1.55;
+        color: #98a1a8;
+      }
+
+      .phone {
+        width: 380px;
+        height: 800px;
+        border-radius: 30px;
+        overflow: hidden;
+        background: var(--ground);
+        color: var(--ink);
+        display: flex;
+        flex-direction: column;
+        box-shadow: 0 20px 46px rgba(0, 0, 0, 0.45);
+        position: relative;
+        user-select: none;
+      }
+
+      .topbar {
+        flex: none;
+        padding: 15px 20px 8px;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+      }
+
+      .topbar b {
+        font-size: 0.95rem;
+        font-weight: 600;
+      }
+
+      .topbar .dot {
+        width: 26px;
+        height: 26px;
+        border-radius: var(--r-pill);
+        background: var(--card-solid);
+        box-shadow: var(--soft-sm);
+      }
+
+      .head {
+        flex: none;
+        padding: 0 20px 10px;
+      }
+
+      .back {
+        font-size: 0.95rem;
+        text-decoration: underline;
+        text-underline-offset: 3px;
+        color: var(--ink);
+      }
+
+      h2.page {
+        margin: 2px 0 0;
+        font-size: 1.45rem;
+        font-weight: 700;
+        letter-spacing: -0.03em;
+      }
+
+      .room {
+        flex: 1;
+        min-height: 0;
+        padding: 0 18px 12px;
+        display: flex;
+      }
+
+      .window {
+        flex: 1;
+        min-height: 0;
+        display: grid;
+        grid-template-rows: 10px minmax(0, 1fr) 52px;
+        grid-template-columns: 10px minmax(0, 1fr) 10px;
+        background: var(--mount);
+        border-radius: 8px;
+        box-shadow:
+          0 1px 2px rgba(70, 90, 105, 0.14),
+          0 14px 28px rgba(70, 90, 105, 0.12);
+      }
+
+      .glass {
+        grid-column: 2;
+        grid-row: 2;
+        position: relative;
+        overflow: hidden;
+        border-radius: 2px;
+        background:
+          linear-gradient(180deg, #d9e4ea 0%, #eef3f6 55%, #f3f0e9 100%);
+        box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.35);
+        cursor: grab;
+        touch-action: pan-y;
+      }
+
+      .glass:active {
+        cursor: grabbing;
+      }
+
+      .glass img {
+        position: absolute;
+        inset: 0;
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+        object-position: 50% 18%;
+        pointer-events: none;
+      }
+
+      .glass img.is-in {
+        animation: approach 480ms cubic-bezier(0.22, 1, 0.32, 1) both;
+      }
+
+      .glass img.is-out-left {
+        animation: leaveLeft 340ms ease both;
+      }
+
+      .glass img.is-out-right {
+        animation: leaveRight 340ms ease both;
+      }
+
+      @keyframes approach {
+        from {
+          opacity: 0;
+          transform: scale(0.94) translateY(18px);
+          filter: blur(6px);
+        }
+        to {
+          opacity: 1;
+          transform: none;
+          filter: none;
+        }
+      }
+
+      @keyframes leaveLeft {
+        to {
+          opacity: 0;
+          transform: translateX(-28%) scale(0.98);
+        }
+      }
+
+      @keyframes leaveRight {
+        to {
+          opacity: 0;
+          transform: translateX(28%) scale(0.98);
+        }
+      }
+
+      .sill {
+        grid-column: 1 / -1;
+        grid-row: 3;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        padding: 0 14px 2px;
+        min-width: 0;
+      }
+
+      .sill button {
+        appearance: none;
+        border: 0;
+        background: none;
+        padding: 0;
+        font: inherit;
+        font-size: 0.92rem;
+        font-weight: 600;
+        letter-spacing: -0.02em;
+        color: #45403a;
+        text-decoration: underline;
+        text-underline-offset: 3px;
+        cursor: pointer;
+        min-width: 0;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+      }
+
+      .sill .who {
+        font-size: 0.92rem;
+        font-weight: 600;
+        letter-spacing: -0.02em;
+        color: #45403a;
+      }
+
+      .sill em {
+        font-style: normal;
+        font-family: var(--type);
+        font-size: 0.58rem;
+        letter-spacing: 0.08em;
+        color: var(--mount-ink);
+        opacity: 0.7;
+        white-space: nowrap;
+      }
+
+      .empty-copy {
+        position: absolute;
+        inset: 0;
+        display: grid;
+        place-items: end center;
+        padding: 0 20px 28px;
+        font-size: 0.82rem;
+        line-height: 1.55;
+        color: #7a858c;
+        text-align: center;
+        pointer-events: none;
+      }
+
+      .nav {
+        flex: none;
+        display: grid;
+        grid-template-columns: repeat(4, 1fr);
+        gap: 4px;
+        padding: 8px 12px 14px;
+        background: rgba(255, 255, 255, 0.72);
+      }
+
+      .nav span {
+        padding: 8px 0;
+        text-align: center;
+        font-size: 0.79rem;
+        border-radius: var(--r-pill);
+        color: var(--muted);
+      }
+
+      .nav span.on {
+        color: var(--accent);
+        font-weight: 600;
+        background: #f8e3d0;
+      }
+
+      .sheet-card {
+        position: absolute;
+        inset: 52px 0 0;
+        background: var(--ground);
+        z-index: 5;
+        display: none;
+        flex-direction: column;
+        overflow: auto;
+        padding: 8px 18px 24px;
+      }
+
+      .phone.is-open .sheet-card {
+        display: flex;
+      }
+
+      .sheet-card .close {
+        appearance: none;
+        border: 0;
+        background: none;
+        font: inherit;
+        font-size: 0.95rem;
+        text-decoration: underline;
+        text-underline-offset: 3px;
+        color: var(--ink);
+        padding: 8px 0 10px;
+        cursor: pointer;
+        align-self: start;
+      }
+
+      .meet-photo {
+        background: var(--mount);
+        border-radius: 7px;
+        padding: 8px;
+        box-shadow:
+          0 1px 2px rgba(70, 90, 105, 0.16),
+          0 10px 22px rgba(70, 90, 105, 0.13);
+      }
+
+      .meet-photo img {
+        display: block;
+        width: 100%;
+        aspect-ratio: 4 / 5;
+        object-fit: cover;
+        object-position: 50% 18%;
+        border-radius: 3px;
+      }
+
+      .meet-copy {
+        padding: 16px 4px 0;
+        display: grid;
+        gap: 6px;
+      }
+
+      .meet-copy h3 {
+        margin: 0;
+        font-size: 1.25rem;
+        letter-spacing: -0.03em;
+      }
+
+      .meet-copy p {
+        margin: 0;
+        font-size: 0.88rem;
+        color: #5f6a72;
+        line-height: 1.5;
+      }
+
+      .species-cover img {
+        display: block;
+        width: 100%;
+        aspect-ratio: 16 / 10;
+        object-fit: cover;
+        border-radius: 3px;
+      }
+
+      .species-cover {
+        background: var(--mount);
+        border-radius: 7px;
+        padding: 8px;
+      }
+
+      .marks {
+        display: flex;
+        gap: 8px;
+        align-items: center;
+        padding: 12px 2px 4px;
+        font-size: 0.78rem;
+        color: var(--muted);
+      }
+
+      .dom {
+        display: inline-flex;
+        padding: 2px 8px;
+        border-radius: 10px;
+        background: #3f5a38;
+        color: #f3f7ee;
+        font-size: 0.7rem;
+        font-weight: 700;
+      }
+
+      .note {
+        margin: 28px 0 0;
+        font-size: 0.84rem;
+      }
+
+      a.ext {
+        color: #eef2f5;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="doc">
+      <h1>宠物页 · 窗</h1>
+      <p class="lead">
+        左是<strong>空窗子</strong>。右是<strong>有人走到玻璃跟前</strong>。
+        在右边那面玻璃上<strong>左右拖</strong>换一只；<b>点这张脸</b>进那次遇见；<b>点窗台上的名字</b>进物种卡。
+        页名仍叫<b>宠物</b>。没有缩略图墙。
+      </p>
+      <ol class="rules">
+        <li>一次一只。集合不摊开。</li>
+        <li>照片还是照片，没有 3D 身体。</li>
+        <li>认得出品种才写品种；橘猫、三花只写种名，花色在照片里。</li>
+      </ol>
+      <div class="pair">
+        <div class="col">
+          <span class="tag">空</span>
+          <p class="case">还没有家养遇见。窗子在，玻璃是空的。</p>
+          <div class="phone" id="empty"></div>
+        </div>
+        <div class="col">
+          <span class="tag">可拖</span>
+          <p class="case">左右拖换一只过来。点脸、点窗台名字。</p>
+          <div class="phone" id="live"></div>
+        </div>
+      </div>
+      <p class="note">
+        示意，未进生产页。拼贴对照
+        <a class="ext" href="/proto/pets-page/index.html">index.html</a>
+        · 标准相墙
+        <a class="ext" href="/proto/pets-page/portraits.html">portraits.html</a>。
+      </p>
+    </div>
+    <script>
+      const FACES = [
+        { src: "cat-orange.jpg", species: "家猫", breed: null, place: "大理", date: "3 月 12 日", trip: "苍山脚下" },
+        { src: "cat-grey.jpg", species: "家猫", breed: "英短蓝猫", place: "昆明", date: "3 月 14 日", trip: "翠湖" },
+        { src: "cat-tabby.jpg", species: "家猫", breed: null, place: "香格里拉", date: "4 月 2 日", trip: "独克宗" },
+        { src: "cat-black.jpg", species: "家猫", breed: "孟买", place: "丽江", date: "4 月 4 日", trip: "白沙" },
+        { src: "cat-calico.jpg", species: "家猫", breed: null, place: "腾冲", date: "4 月 9 日", trip: "和顺" },
+        { src: "cat-sleep.jpg", species: "家猫", breed: "布偶", place: "大理", date: "3 月 13 日", trip: "才村" },
+        { src: "dog-corgi.jpg", species: "家犬", breed: "柯基", place: "昆明", date: "3 月 15 日", trip: "滇池" },
+        { src: "dog-yellow.jpg", species: "家犬", breed: null, place: "香格里拉", date: "4 月 1 日", trip: "独克宗" },
+        { src: "dog-small.jpg", species: "家犬", breed: "中华田园犬", place: "腾冲", date: "4 月 8 日", trip: "和顺" },
+        { src: "goldfish.jpg", species: "金鱼", breed: null, place: "昆明", date: "3 月 16 日", trip: "翠湖" },
+        { src: "rabbit-1.jpg", species: "家兔", breed: "垂耳", place: "丽江", date: "4 月 5 日", trip: "白沙" },
+        { src: "hamster-1.jpg", species: "仓鼠", breed: null, place: "昆明", date: "3 月 16 日", trip: "翠湖" },
+        { src: "bird-1.jpg", species: "虎皮鹦鹉", breed: null, place: "昆明", date: "3 月 14 日", trip: "翠湖" },
+        { src: "turtle-1.jpg", species: "红耳龟", breed: null, place: "腾冲", date: "4 月 8 日", trip: "和顺" },
+      ];
+
+      function chrome(room, extra = "") {
+        return `<div class="topbar"><b>BioTrace</b><span class="dot"></span></div>
+          <div class="head"><div class="back">← 图鉴</div><h2 class="page">宠物</h2></div>
+          <div class="room">${room}</div>
+          <div class="nav"><span>旅途</span><span>地图</span><span class="on">图鉴</span><span>我的</span></div>
+          ${extra}`;
+      }
+
+      document.getElementById("empty").innerHTML = chrome(`
+        <div class="window">
+          <div class="glass"><span class="empty-copy">还没有宠物收录。<br>拍到家养动物就会出现在这里。</span></div>
+          <div class="sill"><span class="who"></span></div>
+        </div>
+      `);
+
+      const live = document.getElementById("live");
+      live.innerHTML =
+        chrome(
+          `<div class="window">
+            <div class="glass" id="glass"></div>
+            <div class="sill">
+              <button type="button" id="sillName"></button>
+              <em id="sillMark"></em>
+            </div>
+          </div>`,
+          `<div class="sheet-card" id="sheet"></div>`,
+        );
+
+      const glass = document.getElementById("glass");
+      const sillName = document.getElementById("sillName");
+      const sillMark = document.getElementById("sillMark");
+      const sheet = document.getElementById("sheet");
+      let i = 1;
+      let busy = false;
+
+      function labelOf(face) {
+        return face.breed || face.species;
+      }
+
+      function show(idx, dir) {
+        const face = FACES[idx];
+        const prev = glass.querySelector("img");
+        const img = document.createElement("img");
+        img.src = face.src;
+        img.alt = labelOf(face);
+        if (dir) img.className = "is-in";
+        if (prev && dir) {
+          prev.className = dir === 1 ? "is-out-left" : "is-out-right";
+          prev.addEventListener("animationend", () => prev.remove(), { once: true });
+        } else if (prev) {
+          prev.remove();
+        }
+        glass.appendChild(img);
+        sillName.textContent = labelOf(face);
+        sillMark.textContent = face.species === labelOf(face) ? "" : face.species;
+      }
+
+      function go(delta) {
+        if (busy) return;
+        const next = (i + delta + FACES.length) % FACES.length;
+        if (next === i) return;
+        busy = true;
+        i = next;
+        show(i, delta);
+        window.setTimeout(() => {
+          busy = false;
+        }, 360);
+      }
+
+      show(i, 0);
+
+      let startX = 0;
+      let tracking = false;
+      let moved = false;
+
+      glass.addEventListener("pointerdown", (e) => {
+        if (live.classList.contains("is-open")) return;
+        tracking = true;
+        moved = false;
+        startX = e.clientX;
+        glass.setPointerCapture(e.pointerId);
+      });
+
+      glass.addEventListener("pointermove", (e) => {
+        if (!tracking) return;
+        if (Math.abs(e.clientX - startX) > 12) moved = true;
+      });
+
+      glass.addEventListener("pointerup", (e) => {
+        if (!tracking) return;
+        tracking = false;
+        const dx = e.clientX - startX;
+        if (Math.abs(dx) > 48) {
+          go(dx < 0 ? 1 : -1);
+          return;
+        }
+        if (!moved) openMeet();
+      });
+
+      function openMeet() {
+        const face = FACES[i];
+        sheet.innerHTML = `<button class="close" type="button" data-close>← 宠物</button>
+          <div class="meet-photo"><img src="${face.src}" alt=""></div>
+          <div class="meet-copy">
+            <h3>${labelOf(face)}</h3>
+            <p>${face.trip} · ${face.place} · ${face.date}</p>
+          </div>`;
+        live.classList.add("is-open");
+      }
+
+      function openSpecies() {
+        const face = FACES[i];
+        const cover = FACES.find((f) => f.species === face.species)?.src ?? face.src;
+        sheet.innerHTML = `<button class="close" type="button" data-close>← 宠物</button>
+          <h2 class="page">${face.species}</h2>
+          <div class="species-cover"><img src="${cover}" alt=""></div>
+          <div class="marks"><span class="dom">驯养物种</span><span>首次收录 2026/3/12</span></div>`;
+        live.classList.add("is-open");
+      }
+
+      sillName.addEventListener("click", (e) => {
+        e.stopPropagation();
+        openSpecies();
+      });
+
+      live.addEventListener("click", (e) => {
+        const t = e.target;
+        if (t instanceof Element && t.closest("[data-close]")) {
+          live.classList.remove("is-open");
+          sheet.innerHTML = "";
+        }
+      });
+    </script>
+  </body>
+</html>

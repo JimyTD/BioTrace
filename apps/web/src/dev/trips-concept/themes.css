@@ -1,0 +1,38 @@
+[data-theme="clear"] {
+  --journey-paper: #fffefb;
+  --journey-sheet: #f3f4f1;
+  --journey-sheet-edge: #dce1df;
+  --journey-binding: #e6ebe8;
+  --journey-cover-border: #fcfdfb;
+  --journey-empty: #e9f0f0;
+  --journey-empty-ink: #7d9797;
+  --journey-rule: #e1e9ec;
+  --journey-secondary: #74828a;
+  --journey-title-ink: #303e43;
+  --journey-hover: #eef4f5;
+  --journey-cover-shadow: 0 2px 4px rgba(47, 70, 81, .07), 0 8px 14px rgba(47, 70, 81, .12);
+  --journey-radius: 4px;
+  --journey-review-bg: #e8eef0;
+  --journey-icon-filter: invert(25%) sepia(9%) saturate(703%) hue-rotate(151deg);
+  --journey-date-font: var(--font-sans);
+  --journey-modal-shadow: 0 18px 70px rgba(26, 43, 50, .18);
+}
+[data-theme="daylight"] {
+  --journey-paper: #fffaf0;
+  --journey-sheet: #f1e9da;
+  --journey-sheet-edge: #d8cdb7;
+  --journey-binding: #d8ccae;
+  --journey-cover-border: #f3ecdb;
+  --journey-empty: #e6e7d8;
+  --journey-empty-ink: #828c6b;
+  --journey-rule: #dcd3c2;
+  --journey-secondary: #807663;
+  --journey-title-ink: #374333;
+  --journey-hover: #ede6d8;
+  --journey-cover-shadow: 0 2px 4px rgba(73, 61, 36, .07), 0 7px 13px rgba(73, 61, 36, .10);
+  --journey-radius: 1px;
+  --journey-review-bg: #e4ded2;
+  --journey-icon-filter: invert(25%) sepia(10%) saturate(819%) hue-rotate(51deg);
+  --journey-date-font: Georgia, "Times New Roman", serif;
+  --journey-modal-shadow: 0 18px 70px rgba(55, 48, 29, .18);
+}
