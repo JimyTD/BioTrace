@@ -31,7 +31,7 @@ const FAN_LEN = [0, S * 0.5, S * 0.255, S * 0.15, S * 0.088];
 const FAN_SPREAD = [0, 1.0, 0.72, 0.58, 0.5];
 const MAXREL = 4;
 /**
- * 大扇出的展开态怎么摆（见 docs/features/物种树.md 结构议题附录）。
+ * 大扇出的展开态怎么摆（见 docs/features/物种树.md「展开态（现行）」）。
  *
  * - **`on`（缺省）** 全部子级都成枝、枝端补叶丛、**不按收集褪色**、标签照摆。
  * - **`off`** 改造前：`FAN_BATCH = 8` 分页 + 枝梢「上一批 / 下一批」。留着并排比。
@@ -1918,8 +1918,8 @@ export class TreeScene {
    * 改造后：**全摆**，一个不藏。分页降为兜底，只在超出 FAN_CAP 时出现。
    *
    * `off` 是改造前：`FAN_BATCH = 8` 分页，其余藏起来靠枝梢那对芽翻。结构议题
-   * §3.1 判过这个方向与「树的隐喻」冲突 —— 落地成一枚白药丸摆在画面正中，
-   * 读作翻页控件。
+   * 旧版这个方向与「树的隐喻」冲突 —— 落地成一枚白药丸摆在画面正中，
+   * 读作翻页控件。现行规则见 docs/features/物种树.md。
    */
   private pickKids(kidsAll: TreeNode[], rel: number) {
     const ordered = orderKids(kidsAll);
