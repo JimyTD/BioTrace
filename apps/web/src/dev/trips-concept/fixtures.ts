@@ -1,4 +1,4 @@
-import { t } from "@biotrace/messages";
+import { draftText } from "./copy";
 import type { Trip } from "../../api";
 
 export type PreviewTrip = Trip & { samplePhotos?: string[] };
@@ -11,11 +11,11 @@ const trip = (id: string, title: string, dateSummary: string, placeSummary: stri
 
 export function sampleTrips(state: string): PreviewTrip[] {
   const rows = [
-    trip("jiuzhai", t("tripsDraft.jiuzhai"), "2026.09.18 — 09.21", t("tripsDraft.sichuan"), 48, photo("mushroom"), 3),
-    trip("coast", t("tripsDraft.coast"), "2026.08.24 — 08.26", t("tripsDraft.xiamen"), 126, photo("dragonfly"), 2),
-    trip("park", t("tripsDraft.park"), "2026.08.09", t("tripsDraft.hangzhou"), 17, photo("squirrel")),
-    trip("next", t("tripsDraft.emptyTrip"), "", "", 0, null),
-    trip("long", t("tripsDraft.longTitle"), "2026.07.12 — 07.18", t("tripsDraft.jiangxi"), 236, photo("butterfly")),
+    trip("jiuzhai", draftText("jiuzhai"), "2026.09.18 — 09.21", draftText("sichuan"), 48, photo("mushroom"), 3),
+    trip("coast", draftText("coast"), "2026.08.24 — 08.26", draftText("xiamen"), 126, photo("dragonfly"), 2),
+    trip("park", draftText("park"), "2026.08.09", draftText("hangzhou"), 17, photo("squirrel")),
+    trip("next", draftText("emptyTrip"), "", "", 0, null),
+    trip("long", draftText("longTitle"), "2026.07.12 — 07.18", draftText("jiangxi"), 236, photo("butterfly")),
   ];
   if (state === "empty") return [];
   if (state === "single") return rows.slice(0, 1);

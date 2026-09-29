@@ -1,5 +1,5 @@
 import type { CollectionEntry, PetCollectionEntry } from "../../api";
-import { t } from "@biotrace/messages";
+import { draftCopy } from "./copy";
 
 const entry = (id: string, name: string, scientificName: string, rarity: CollectionEntry["rarity"], image: string, kingdom: string): CollectionEntry => ({
   id, taxonKey: scientificName, commonName: name, scientificName, rarity,
@@ -10,14 +10,14 @@ const entry = (id: string, name: string, scientificName: string, rarity: Collect
 
 // Visual-review specimens, not identification results or user collection records.
 export const sampleEntries = [
-  entry("butterfly", t("collectionDraft.sampleButterfly"), "Lepidoptera", "SR", "/themes/_demo/demo-photo-butterfly.jpg", "Animalia"),
-  entry("mushroom", t("collectionDraft.sampleMushroom"), "Agaricales", "R", "/themes/_demo/demo-photo-mushroom.jpg", "Fungi"),
-  entry("squirrel", t("collectionDraft.sampleSquirrel"), "Sciuridae", "R", "/themes/_demo/demo-photo-squirrel.jpg", "Animalia"),
-  entry("dragonfly", t("collectionDraft.sampleDragonfly"), "Odonata", "N", "/themes/_demo/demo-photo-dragonfly.jpg", "Animalia"),
-  entry("bird", t("collectionDraft.sampleBird"), "Aves", "R", "/themes/_demo/demo-photo-bird.jpg", "Animalia"),
+  entry("butterfly", draftCopy.sampleButterfly, "Lepidoptera", "SR", "/themes/_demo/demo-photo-butterfly.jpg", "Animalia"),
+  entry("mushroom", draftCopy.sampleMushroom, "Agaricales", "R", "/themes/_demo/demo-photo-mushroom.jpg", "Fungi"),
+  entry("squirrel", draftCopy.sampleSquirrel, "Sciuridae", "R", "/themes/_demo/demo-photo-squirrel.jpg", "Animalia"),
+  entry("dragonfly", draftCopy.sampleDragonfly, "Odonata", "N", "/themes/_demo/demo-photo-dragonfly.jpg", "Animalia"),
+  entry("bird", draftCopy.sampleBird, "Aves", "R", "/themes/_demo/demo-photo-bird.jpg", "Animalia"),
 ];
 
 export const samplePets: PetCollectionEntry[] = [
-  { ...entry("cat", t("collectionDraft.sampleCat"), "Felis catus", "N", "/proto/pets-page/cat-orange.jpg", "Animalia"), tags: ["domesticated"] },
-  { ...entry("dog", t("collectionDraft.sampleDog"), "Canis lupus", "N", "/proto/pets-page/dog-corgi.jpg", "Animalia"), tags: ["domesticated"] },
+  { ...entry("cat", draftCopy.sampleCat, "Felis catus", "N", "/proto/pets-page/cat-orange.jpg", "Animalia"), tags: ["domesticated"] },
+  { ...entry("dog", draftCopy.sampleDog, "Canis lupus", "N", "/proto/pets-page/dog-corgi.jpg", "Animalia"), tags: ["domesticated"] },
 ];

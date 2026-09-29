@@ -7,6 +7,7 @@ import { applyTheme, isThemeId, type ThemeId } from "../../themes/core";
 import { captureCoverBox, setOpenBookHandoff } from "../../openBookHandoff";
 import TripBookLayer, { OpenBookCloseContext } from "../../components/TripBookLayer";
 import { sampleTrips, type PreviewTrip } from "./fixtures";
+import { draftText } from "./copy";
 import "../../styles.css";
 import "../../themes/clear.css";
 import "../../themes/daylight.css";
@@ -74,12 +75,12 @@ function CreateDialog({ close, add }: { close: () => void; add: (trip: PreviewTr
   }
   return <dialog ref={dialogRef} className="journey-dialog" aria-labelledby="journey-dialog-title" onCancel={close} onClick={event => { if (event.target === event.currentTarget) close(); }}>
     <div className="journey-dialog-body">
-      <div className="journey-dialog-head"><h2 id="journey-dialog-title">{t(mode === "new" ? "trips.createLabel" : "trips.joinAction")}</h2><button type="button" className="journey-icon-button" title={t("tripsDraft.close")} aria-label={t("tripsDraft.close")} onClick={close}><Icon name="x" /></button></div>
-      <div className="journey-modes" role="group" aria-label={t("tripsDraft.add")}><button type="button" aria-pressed={mode === "new"} onClick={() => { setMode("new"); setValue(""); setError(false); }}>{t("trips.createLabel")}</button><button type="button" aria-pressed={mode === "join"} onClick={() => { setMode("join"); setValue(""); setError(false); }}>{t("trips.joinAction")}</button></div>
+      <div className="journey-dialog-head"><h2 id="journey-dialog-title">{t(mode === "new" ? "trips.createLabel" : "trips.joinAction")}</h2><button type="button" className="journey-icon-button" title={draftText("close")} aria-label={draftText("close")} onClick={close}><Icon name="x" /></button></div>
+      <div className="journey-modes" role="group" aria-label={draftText("add")}><button type="button" aria-pressed={mode === "new"} onClick={() => { setMode("new"); setValue(""); setError(false); }}>{t("trips.createLabel")}</button><button type="button" aria-pressed={mode === "join"} onClick={() => { setMode("join"); setValue(""); setError(false); }}>{t("trips.joinAction")}</button></div>
       <form onSubmit={submit}>
         <label htmlFor="preview-title">{t(mode === "new" ? "trips.createLabel" : "trips.joinLabel")}</label>
         <input id="preview-title" className="input" autoFocus value={value} autoComplete="off" onChange={event => { setValue(event.target.value); setError(false); }} />
-        {mode === "join" ? <p className="journey-demo-code">{t("tripsDraft.sampleCode")} <code>DEMO26</code></p> : null}
+        {mode === "join" ? <p className="journey-demo-code">{draftText("sampleCode")} <code>DEMO26</code></p> : null}
         {error ? <p className="error">{t("share.inviteInvalid")}</p> : null}
         <button className="btn" disabled={!value.trim()} type="submit">{t(mode === "new" ? "trips.createAction" : "trips.joinAction")}</button>
       </form>
@@ -108,7 +109,7 @@ function AlbumPreview({ trip }: { trip: PreviewTrip }) {
 function PhotoView({ photo, close }: { photo: string; close: () => void }) {
   const ref = useRef<HTMLDialogElement>(null);
   useEffect(() => { ref.current?.showModal(); }, []);
-  return <dialog ref={ref} className="journey-photo-dialog" onCancel={close} onClick={close}><button type="button" className="journey-icon-button" aria-label={t("tripsDraft.close")} title={t("tripsDraft.close")} onClick={close}><Icon name="x" /></button><img src={photo} alt="" /></dialog>;
+  return <dialog ref={ref} className="journey-photo-dialog" onCancel={close} onClick={close}><button type="button" className="journey-icon-button" aria-label={draftText("close")} title={draftText("close")} onClick={close}><Icon name="x" /></button><img src={photo} alt="" /></dialog>;
 }
 
 function Shelf({ trips, add, loading, error }: { trips: PreviewTrip[]; add: (trip: PreviewTrip) => void; loading: boolean; error: boolean }) {
@@ -125,12 +126,12 @@ function Shelf({ trips, add, loading, error }: { trips: PreviewTrip[]; add: (tri
     <div className="page-trips journey-shelf" inert={!!id}>
       <header className="journey-heading">
         <div><h1>{t("trips.title")}</h1><p>{t("trips.lede")}</p></div>
-        <div className="journey-heading-actions"><button type="button" className="journey-icon-button" aria-label={t("tripsDraft.search")} title={t("tripsDraft.search")} aria-expanded={search} onClick={() => { setSearch(open => !open); setQuery(""); }}><Icon name={search ? "x" : "search"} /></button><button type="button" className="journey-icon-button is-add" aria-label={t("tripsDraft.add")} title={t("tripsDraft.add")} onClick={() => setCreating(true)}><Icon name="plus" /></button></div>
+        <div className="journey-heading-actions"><button type="button" className="journey-icon-button" aria-label={draftText("search")} title={draftText("search")} aria-expanded={search} onClick={() => { setSearch(open => !open); setQuery(""); }}><Icon name={search ? "x" : "search"} /></button><button type="button" className="journey-icon-button is-add" aria-label={draftText("add")} title={draftText("add")} onClick={() => setCreating(true)}><Icon name="plus" /></button></div>
       </header>
-      {search ? <div className="journey-search"><Icon name="search" /><input ref={input} value={query} onChange={event => setQuery(event.target.value)} placeholder={t("tripsDraft.search")} aria-label={t("tripsDraft.search")} /></div> : null}
-      <div className="journey-index-head"><span>{t("tripsDraft.count", { count: trips.length })}</span></div>
+      {search ? <div className="journey-search"><Icon name="search" /><input ref={input} value={query} onChange={event => setQuery(event.target.value)} placeholder={draftText("search")} aria-label={draftText("search")} /></div> : null}
+      <div className="journey-index-head"><span>{draftText("count", { count: trips.length })}</span></div>
       {loading ? <p className="journey-empty">{t("trips.loading")}</p> : error ? <p className="error">{t("common.loadFailed")}</p> : <div className="journey-list">{visible.map((trip, index) => <Entry key={trip.id} trip={trip} index={index} activeId={id} />)}</div>}
-      {!loading && !error && !visible.length ? <div className="journey-empty"><p>{t(trips.length ? "tripsDraft.noMatch" : "trips.empty")}</p>{!trips.length && <button className="btn" onClick={() => setCreating(true)}>{t("trips.createLabel")}</button>}</div> : null}
+      {!loading && !error && !visible.length ? <div className="journey-empty"><p>{trips.length ? draftText("noMatch") : t("trips.empty")}</p>{!trips.length && <button className="btn" onClick={() => setCreating(true)}>{t("trips.createLabel")}</button>}</div> : null}
     </div>
     {creating ? <CreateDialog close={() => setCreating(false)} add={add} /> : null}
     {current ? <TripBookLayer key={current.id} tripId={current.id}><AlbumPreview trip={current} /></TripBookLayer> : null}
@@ -159,7 +160,7 @@ function App() {
   }
   const shelf = <Shelf trips={trips} loading={loading} error={error} add={trip => { setTrips(rows => [trip, ...rows]); navigate("/"); }} />;
   return <div className="journey-workbench">
-    <aside className="journey-reviewbar" aria-label={t("tripsDraft.title")}><span>{t("tripsDraft.title")}</span><select aria-label={t("tripsDraft.theme")} value={theme} onChange={event => changeTheme(event.target.value)}><option value="clear">{t("theme.clear")}</option><option value="daylight">{t("theme.daylight")}</option></select><select aria-label={t("tripsDraft.data")} value={source} onChange={event => changeSource(event.target.value)}>{(["samples", "single", "many", "empty", "long", "live"] as const).map(key => <option value={key} key={key}>{t(`tripsDraft.${key}`)}</option>)}</select><a href="/">{t("tripsDraft.original")} ↗</a></aside>
+    <aside className="journey-reviewbar" aria-label={draftText("title")}><span>{draftText("title")}</span><select aria-label={draftText("theme")} value={theme} onChange={event => changeTheme(event.target.value)}><option value="clear">{t("theme.clear")}</option><option value="daylight">{t("theme.daylight")}</option></select><select aria-label={draftText("data")} value={source} onChange={event => changeSource(event.target.value)}>{(["samples", "single", "many", "empty", "long", "live"] as const).map(key => <option value={key} key={key}>{draftText(key)}</option>)}</select><a href="/">{draftText("original")} ↗</a></aside>
     <div className="app-shell"><header className="app-topbar"><span className="app-wordmark">BioTrace</span></header><main className="content"><Routes><Route path="/" element={shelf} /><Route path="/trips/:id" element={shelf} /></Routes></main><nav className="nav"><Link className="active" to="/">{t("nav.trips")}</Link><a href="/map">{t("nav.map")}</a><a href="/collection">{t("nav.collection")}</a><a href="/me">{t("nav.me")}</a></nav></div>
   </div>;
 }

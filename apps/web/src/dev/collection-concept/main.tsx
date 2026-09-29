@@ -11,6 +11,7 @@ import { collectionTreeDoorUrl } from "../../themes/collectionAssets";
 import { countTreeKingdoms } from "../../treeBuild";
 import { buildSpeciesFuse, filterSpecies, indexSpecies, petToIndexRow, sortSpecies, speciesEntryName, wildToIndexRow, type SpeciesIndexRow, type SpeciesSort } from "../../speciesSearch";
 import { sampleEntries, samplePets } from "./fixtures";
+import { draftCopy } from "./copy";
 import { CollectionReel } from "../../components/CollectionReel";
 import { CollectionReelCard } from "../../components/CollectionReelCard";
 import "../../styles.css";
@@ -160,11 +161,11 @@ function ConceptApp() {
     window.history.replaceState(window.history.state, "", url);
   }
   return <div className="concept-workbench">
-    <aside className="concept-reviewbar" aria-label={t("collectionDraft.title")}>
-      <span>{t("collectionDraft.title")}</span>
-      <select aria-label={t("collectionDraft.theme")} value={theme} onChange={e => changeTheme(e.target.value)}><option value="clear">{t("theme.clear")}</option><option value="daylight">{t("theme.daylight")}</option></select>
-      <select aria-label={t("collectionDraft.data")} value={source} onChange={e => changeSource(e.target.value)}><option value="sample">{t("collectionDraft.sample")}</option><option value="live">{t("collectionDraft.live")}</option></select>
-      <a href="/collection">{t("collectionDraft.original")} ↗</a>
+    <aside className="concept-reviewbar" aria-label={draftCopy.title}>
+      <span>{draftCopy.title}</span>
+      <select aria-label={draftCopy.theme} value={theme} onChange={e => changeTheme(e.target.value)}><option value="clear">{t("theme.clear")}</option><option value="daylight">{t("theme.daylight")}</option></select>
+      <select aria-label={draftCopy.data} value={source} onChange={e => changeSource(e.target.value)}><option value="sample">{draftCopy.sample}</option><option value="live">{draftCopy.live}</option></select>
+      <a href="/collection">{draftCopy.original} ↗</a>
     </aside>
     <div className="concept-app" data-theme={theme}>
       <header className="concept-brand"><span>BioTrace</span></header>
