@@ -83,6 +83,9 @@ export type Observation = {
   confidence: number | null;
   taxonomy: Taxonomy | null;
   blurb: string | null;
+  habitatZh: string | null;
+  habitZh: string | null;
+  phenologyZh: string | null;
   notes: string | null;
   error: string | null;
   settleTier: SettleTier | null;
@@ -95,6 +98,8 @@ export type Observation = {
   taxonKey: string | null;
   identifyProvider: string | null;
   identifyModel?: string | null;
+  /** 模型原始不合格理由；软档理由展示读这一项。 */
+  identifyReason?: string | null;
   /** 驯化位；待开包时为 false。旧观察缺省 false。 */
   domesticated?: boolean;
   breedZh?: string | null;

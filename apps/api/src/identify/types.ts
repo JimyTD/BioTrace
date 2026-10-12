@@ -42,7 +42,15 @@ export type IdentifyResult = {
   taxonomy: Taxonomy;
   confidence_0_to_1: number;
   finest_reliable_rank: string;
+  /** 物种名片：1 句最鲜明的辨识特征，不承担照片鉴定依据。 */
   blurb_zh: string;
+  /** 通常在哪里出现；无可靠内容时为空。 */
+  habitat_zh: string;
+  /** 如何取食、活动、生长或与其他生命发生关系；无可靠内容时为空。 */
+  habit_zh: string;
+  /** 出现、开花、结果、繁殖或流行的季节规律；无可靠内容时为空。 */
+  phenology_zh: string;
+  /** 识别说明：先说照片依据，再说不确定；供用户理解本次识别。 */
   notes: string;
   subject_kind: SubjectKind;
   subject_living: boolean;

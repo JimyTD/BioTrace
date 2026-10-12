@@ -14,18 +14,19 @@ export function mockIdentifyResult(input: IdentifyInput): IdentifyResult {
   taxonomy.genus = { name_la: "Passer", name_zh: "麻雀属" };
   taxonomy.species = { name_la: "Passer montanus", name_zh: "树麻雀" };
 
-  const note = input.description?.trim()
-    ? `mock; desc=${input.description.trim().slice(0, 80)}`
-    : "mock identify (IDENTIFY_MOCK=1)";
-
   return {
     common_name_zh: "假识图·树麻雀",
     scientific_name: "Passer montanus",
     taxonomy,
     confidence_0_to_1: 0.91,
     finest_reliable_rank: "species",
-    blurb_zh: "这是本地假识图结果，未调用云端模型。",
-    notes: note,
+    blurb_zh: "头顶栗褐、面颊有黑斑的小型鸟。",
+    habitat_zh: "村镇、农田、公园和灌丛",
+    habit_zh: "白天活动，常成小群，以种子为主也吃昆虫",
+    phenology_zh: "留鸟，全年可见",
+    notes: input.description?.trim()
+      ? `本地假识图；依据用户描述：${input.description.trim().slice(0, 40)}。`
+      : "本地假识图，未调用云端模型；仅用于开发验证。",
     subject_kind: "living_organism",
     subject_living: true,
     eligibility: "collectible",

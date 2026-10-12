@@ -85,6 +85,12 @@ export const observations = sqliteTable(
     confidence: real("confidence"),
     taxonomyJson: text("taxonomy_json"),
     blurb: text("blurb"),
+    /** 生态习性：通常在哪里出现。 */
+    habitatZh: text("habitat_zh"),
+    /** 生态习性：如何获取营养、活动、生长或与其他生命发生关系。 */
+    habitZh: text("habit_zh"),
+    /** 生态习性：出现、开花、结果、繁殖或流行的季节规律。 */
+    phenologyZh: text("phenology_zh"),
     notes: text("notes"),
     error: text("error"),
     settleTier: text("settle_tier", { enum: ["full", "weak", "none"] }),

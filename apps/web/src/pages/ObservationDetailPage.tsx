@@ -54,15 +54,13 @@ function locationText(obs: Observation) {
   return obs.locationLabel || `${obs.lat!.toFixed(5)}, ${obs.lng!.toFixed(5)}`;
 }
 
-/**
- * 软档理由句：识图作业把模型的 ineligibility_reason_zh 写进 notes 首段
- * （prompt 定义「不合格时必填」，故正常必有）。有就显示模型原话；
- * 没有（老数据）就不显示理由块——模型必填的字段不为它准备兜底话。
- */
+/** 软档理由句：模型原始不合格理由，保留在 identifyReason 作审计与展示。 */
 function softReasonText(obs: Observation): string | null {
+  const reason = (obs.identifyReason ?? "").trim();
+  if (reason) return reason;
+  /* 兼容旧数据：旧版把理由写在 notes 首段。 */
   const notes = (obs.notes ?? "").trim();
-  if (!notes) return null;
-  return notes.split("·")[0]?.trim() || null;
+  return notes ? notes.split("·")[0]?.trim() || null : null;
 }
 
 /**
@@ -71,8 +69,10 @@ function softReasonText(obs: Observation): string | null {
  * 这里回读出来当这张照片的注；notes 空（老数据）就不显示这行。
  */
 function keepsakeReasonText(obs: Observation): string | null {
-  const notes = (obs.notes ?? "").trim();
-  return notes || null;
+  const reason = (obs.identifyReason ?? "").trim();
+  if (reason) return reason;
+  /* 兼容旧数据：旧版把留影理由写在 notes。 */
+  return (obs.notes ?? "").trim() || null;
 }
 
 function TaxonomyList({
@@ -112,6 +112,30 @@ function TaxonomyList({
         </li>
       ) : null}
     </ol>
+  );
+}
+
+function EcologyList({ obs }: { obs: Observation }) {
+  const rows = [
+    { label: t("detail.habitat"), value: obs.habitatZh },
+    { label: t("detail.habit"), value: obs.habitZh },
+    { label: t("detail.phenology"), value: obs.phenologyZh },
+  ].filter((row) => Boolean(row.value?.trim()));
+
+  if (rows.length === 0) return null;
+
+  return (
+    <section className="detail-block">
+      <h2 className="section-title">{t("detail.ecology")}</h2>
+      <dl className="ecology-list">
+        {rows.map((row) => (
+          <div className="ecology-row" key={row.label}>
+            <dt>{row.label}</dt>
+            <dd>{row.value}</dd>
+          </div>
+        ))}
+      </dl>
+    </section>
   );
 }
 
@@ -446,6 +470,8 @@ export default function ObservationDetailPage({ userId }: { userId?: string }) {
       ) : obs.description ? (
         <p className="muted detail-caption">{obs.description}</p>
       ) : null}
+
+      {!noCatalogEntry ? <EcologyList obs={obs} /> : null}
 
       {showTaxonomy ? (
         <section className="detail-block">

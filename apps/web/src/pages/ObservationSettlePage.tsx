@@ -202,6 +202,14 @@ export default function ObservationSettlePage({ userId }: { userId?: string }) {
                     <p className="muted">{t("settle.locationImprecise")}</p>
                   ) : null}
                   {obs.blurb ? <p className="blurb">{obs.blurb}</p> : null}
+                  {[obs.habitatZh, obs.habitZh, obs.phenologyZh]
+                    .filter((value): value is string => Boolean(value?.trim()))
+                    .slice(0, 2)
+                    .map((value, index) => (
+                      <p className="muted settle-ecology" key={index}>
+                        {value}
+                      </p>
+                    ))}
 
                   <button className="btn" type="button" disabled={claiming || reidentifying} onClick={onClaim}>
                     {claiming ? t("settle.claiming") : t("settle.claim")}

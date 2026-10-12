@@ -1964,6 +1964,35 @@ button.film-tile-link {
   line-height: 1.55;
 }
 
+.ecology-list {
+  display: grid;
+  gap: 9px;
+  margin: 0;
+}
+
+.ecology-row {
+  display: grid;
+  grid-template-columns: 3.5rem 1fr;
+  gap: 10px;
+  align-items: start;
+}
+
+.ecology-row dt {
+  color: var(--accent);
+  font-size: 0.8rem;
+  font-weight: 600;
+}
+
+.ecology-row dd {
+  margin: 0;
+  font-size: 0.95rem;
+  line-height: 1.5;
+}
+
+.settle-ecology {
+  margin: 0;
+}
+
 .card img {
   width: 100%;
   aspect-ratio: 1;

@@ -1,0 +1,499 @@
+<!doctype html>
+<html lang="zh-CN" data-demo-theme="clear">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>BioTrace 生命档案对比演示</title>
+    <style>
+      :root {
+        color-scheme: light;
+        --demo-bg: #edf2f4;
+        --demo-ink: #1f2d33;
+        --demo-muted: #6b7a80;
+        --demo-line: rgba(70, 95, 105, 0.18);
+        --demo-shadow: 0 24px 60px rgba(38, 58, 66, 0.14);
+      }
+
+      [data-demo-theme="clear"] {
+        --bg: #f4f7f8;
+        --card: rgba(255, 255, 255, 0.9);
+        --ink: #243037;
+        --muted: #728087;
+        --line: rgba(120, 140, 155, 0.18);
+        --accent: #3a555f;
+        --accent-soft: #e8eef0;
+        --cta: #d85a2c;
+        --radius-lg: 18px;
+        --radius-md: 14px;
+        --radius-sm: 10px;
+        --photo-radius: 16px;
+      }
+
+      [data-demo-theme="daylight"] {
+        --bg: #eee6d8;
+        --card: #faf8f3;
+        --ink: #2a4033;
+        --muted: #786e61;
+        --line: rgba(42, 64, 51, 0.16);
+        --accent: #6b4c2d;
+        --accent-soft: #eee4d5;
+        --cta: #b85a2c;
+        --radius-lg: 14px;
+        --radius-md: 11px;
+        --radius-sm: 8px;
+        --photo-radius: 3px;
+      }
+
+      * {
+        box-sizing: border-box;
+      }
+
+      body {
+        margin: 0;
+        min-width: 880px;
+        background:
+          radial-gradient(circle at 18% 0%, rgba(255, 255, 255, 0.78), transparent 34%),
+          var(--demo-bg);
+        color: var(--demo-ink);
+        font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      }
+
+      button {
+        font: inherit;
+      }
+
+      .demo-shell {
+        width: min(1080px, calc(100vw - 48px));
+        margin: 0 auto;
+        padding: 32px 0 54px;
+      }
+
+      .demo-head {
+        display: flex;
+        align-items: flex-end;
+        justify-content: space-between;
+        gap: 28px;
+        margin-bottom: 22px;
+      }
+
+      .demo-kicker {
+        margin: 0 0 6px;
+        color: var(--demo-muted);
+        font-size: 12px;
+        font-weight: 700;
+        letter-spacing: 0.12em;
+        text-transform: uppercase;
+      }
+
+      .demo-head h1 {
+        margin: 0;
+        font-size: 28px;
+        letter-spacing: -0.02em;
+      }
+
+      .demo-head p {
+        max-width: 600px;
+        margin: 8px 0 0;
+        color: var(--demo-muted);
+        line-height: 1.65;
+      }
+
+      .theme-switch {
+        display: flex;
+        flex: none;
+        gap: 6px;
+        padding: 5px;
+        border: 1px solid var(--demo-line);
+        border-radius: 999px;
+        background: rgba(255, 255, 255, 0.7);
+      }
+
+      .theme-switch button {
+        border: 0;
+        border-radius: 999px;
+        padding: 8px 14px;
+        background: transparent;
+        color: var(--demo-muted);
+        cursor: pointer;
+      }
+
+      .theme-switch button[aria-pressed="true"] {
+        background: var(--demo-ink);
+        color: #fff;
+      }
+
+      .compare-grid {
+        display: grid;
+        grid-template-columns: repeat(2, 390px);
+        justify-content: center;
+        gap: 34px;
+      }
+
+      .phone-column {
+        display: grid;
+        justify-items: center;
+        gap: 12px;
+      }
+
+      .phone-label {
+        display: flex;
+        align-items: baseline;
+        justify-content: space-between;
+        width: 390px;
+      }
+
+      .phone-label strong {
+        font-size: 15px;
+      }
+
+      .phone-label span {
+        color: var(--demo-muted);
+        font-size: 12px;
+      }
+
+      .phone {
+        width: 390px;
+        height: 844px;
+        overflow: hidden;
+        border: 1px solid rgba(46, 66, 74, 0.14);
+        border-radius: 30px;
+        background: var(--bg);
+        box-shadow: var(--demo-shadow);
+      }
+
+      .phone-scroll {
+        height: 100%;
+        overflow: auto;
+        padding: 18px 18px 34px;
+        color: var(--ink);
+      }
+
+      .top-row {
+        display: flex;
+        justify-content: space-between;
+        margin-bottom: 14px;
+        color: var(--accent);
+        font-size: 13px;
+      }
+
+      .hero {
+        display: block;
+        width: 100%;
+        aspect-ratio: 4 / 3;
+        object-fit: cover;
+        border-radius: var(--photo-radius);
+        background: var(--accent-soft);
+      }
+
+      .page-title {
+        margin: 18px 0 3px;
+        font-size: 28px;
+        line-height: 1.12;
+      }
+
+      .scientific {
+        margin: 0;
+        color: var(--muted);
+        font-family: Georgia, serif;
+        font-size: 14px;
+        font-style: italic;
+      }
+
+      .marks {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 8px;
+        align-items: center;
+        margin-top: 12px;
+      }
+
+      .rarity,
+      .soft-tag {
+        display: inline-flex;
+        align-items: center;
+        min-height: 26px;
+        border-radius: 999px;
+        padding: 3px 10px;
+        font-size: 12px;
+        font-weight: 700;
+      }
+
+      .rarity {
+        background: #dfeaf7;
+        color: #315e92;
+      }
+
+      .soft-tag {
+        background: var(--accent-soft);
+        color: var(--accent);
+        font-weight: 500;
+      }
+
+      .section {
+        display: grid;
+        gap: 8px;
+        margin-top: 22px;
+      }
+
+      .section.is-new {
+        position: relative;
+      }
+
+      .section.is-new::before {
+        position: absolute;
+        top: 3px;
+        right: 0;
+        content: "新增";
+        border-radius: 999px;
+        padding: 2px 7px;
+        background: var(--cta);
+        color: #fff;
+        font-size: 10px;
+        font-weight: 700;
+      }
+
+      .section-title {
+        margin: 0;
+        font-size: 16px;
+      }
+
+      .blurb,
+      .plain-copy {
+        margin: 0;
+        line-height: 1.62;
+      }
+
+      .habit-list,
+      .taxonomy,
+      .facts {
+        display: grid;
+        gap: 9px;
+        margin: 0;
+        padding: 0;
+      }
+
+      .habit,
+      .tax-row,
+      .fact {
+        display: grid;
+        grid-template-columns: 62px 1fr;
+        gap: 10px;
+        align-items: start;
+      }
+
+      .habit dt,
+      .fact dt {
+        color: var(--accent);
+        font-size: 12px;
+        font-weight: 700;
+      }
+
+      .habit dd,
+      .fact dd {
+        margin: 0;
+        font-size: 14px;
+        line-height: 1.48;
+      }
+
+      .taxonomy {
+        list-style: none;
+      }
+
+      .tax-row {
+        grid-template-columns: 48px 1fr;
+      }
+
+      .tax-rank {
+        color: var(--accent);
+        font-size: 12px;
+        font-weight: 700;
+      }
+
+      .tax-name {
+        font-size: 14px;
+      }
+
+      .muted {
+        color: var(--muted);
+      }
+
+      .record {
+        padding-top: 16px;
+        border-top: 1px solid var(--line);
+      }
+
+      .record .fact {
+        grid-template-columns: 78px 1fr;
+      }
+
+      .diff-note {
+        width: 390px;
+        min-height: 72px;
+        margin: 0;
+        color: var(--demo-muted);
+        font-size: 13px;
+        line-height: 1.6;
+      }
+
+      .demo-foot {
+        max-width: 820px;
+        margin: 22px auto 0;
+        color: var(--demo-muted);
+        font-size: 12px;
+        line-height: 1.7;
+        text-align: center;
+      }
+    </style>
+  </head>
+  <body>
+    <main class="demo-shell">
+      <header class="demo-head">
+        <div>
+          <p class="demo-kicker">WIP preview</p>
+          <h1>详情页生命档案对比</h1>
+          <p>
+            左边是当前页面，右边是最小调整方案。演示页只放在 <code>docs/wip/</code>，不进入
+            <code>public/</code>，不影响正式站。
+          </p>
+        </div>
+        <div class="theme-switch" aria-label="皮肤对照">
+          <button type="button" data-theme-choice="clear" aria-pressed="true">清透</button>
+          <button type="button" data-theme-choice="daylight" aria-pressed="false">日光图版</button>
+        </div>
+      </header>
+
+      <section class="compare-grid">
+        <article class="phone-column">
+          <div class="phone-label">
+            <strong>当前</strong>
+            <span>简介较长，识别备注在记录里</span>
+          </div>
+          <div class="phone">
+            <div class="phone-scroll">
+              <div class="top-row"><span>← 返回</span><span>地图</span></div>
+              <img class="hero" src="assets/demo-photo-bird.jpg" alt="" />
+              <h2 class="page-title">树麻雀</h2>
+              <p class="scientific">Passer montanus</p>
+              <div class="marks">
+                <span class="rarity">SR · 稀有</span>
+                <span class="soft-tag">已可靠到 种</span>
+              </div>
+
+              <section class="section">
+                <h3 class="section-title">简介</h3>
+                <p class="blurb">
+                  树麻雀是雀形目雀科麻雀属的一种小型鸟类。它常活动于人类居住区附近，食性较杂，种子、谷物和昆虫都会取食。分布广泛，适应性强，是许多地方最常见的鸟类之一。
+                </p>
+              </section>
+
+              <section class="section">
+                <h3 class="section-title">分类</h3>
+                <ol class="taxonomy">
+                  <li class="tax-row"><span class="tax-rank">界</span><span class="tax-name">动物界 <span class="muted">· Animalia</span></span></li>
+                  <li class="tax-row"><span class="tax-rank">门</span><span class="tax-name">脊索动物门 <span class="muted">· Chordata</span></span></li>
+                  <li class="tax-row"><span class="tax-rank">纲</span><span class="tax-name">鸟纲 <span class="muted">· Aves</span></span></li>
+                  <li class="tax-row"><span class="tax-rank">目</span><span class="tax-name">雀形目 <span class="muted">· Passeriformes</span></span></li>
+                  <li class="tax-row"><span class="tax-rank">科</span><span class="tax-name">雀科 <span class="muted">· Passeridae</span></span></li>
+                  <li class="tax-row"><span class="tax-rank">属</span><span class="tax-name">麻雀属 <span class="muted">· Passer</span></span></li>
+                  <li class="tax-row"><span class="tax-rank">种</span><span class="tax-name">树麻雀 <span class="muted">· Passer montanus</span></span></li>
+                </ol>
+              </section>
+
+              <section class="section record">
+                <h3 class="section-title">记录</h3>
+                <dl class="facts">
+                  <div class="fact"><dt>拍摄时间</dt><dd>2026/10/12 09:18</dd></div>
+                  <div class="fact"><dt>位置</dt><dd>江西 · 井冈山</dd></div>
+                  <div class="fact"><dt>识别</dt><dd>Gemini · gemini-3.6-flash</dd></div>
+                  <div class="fact"><dt>识别备注</dt><dd>识别到种；未见明显混淆特征。</dd></div>
+                </dl>
+              </section>
+            </div>
+          </div>
+          <p class="diff-note">
+            现在的简介同时承担了分类、生境、食性和常见度；识别备注在记录末尾，标题更像技术附注。
+          </p>
+        </article>
+
+        <article class="phone-column">
+          <div class="phone-label">
+            <strong>最小调整方案</strong>
+            <span>只加生态习性，其他尽量少动</span>
+          </div>
+          <div class="phone">
+            <div class="phone-scroll">
+              <div class="top-row"><span>← 返回</span><span>地图</span></div>
+              <img class="hero" src="assets/demo-photo-bird.jpg" alt="" />
+              <h2 class="page-title">树麻雀</h2>
+              <p class="scientific">Passer montanus</p>
+              <div class="marks">
+                <span class="rarity">SR · 稀有</span>
+                <span class="soft-tag">已可靠到 种</span>
+              </div>
+
+              <section class="section">
+                <h3 class="section-title">简介</h3>
+                <p class="blurb">头顶栗褐、面颊有黑斑的小型鸟。</p>
+              </section>
+
+              <section class="section is-new">
+                <h3 class="section-title">生态习性</h3>
+                <dl class="habit-list">
+                  <div class="habit"><dt>生境</dt><dd>村镇、农田、公园和灌丛</dd></div>
+                  <div class="habit"><dt>习性</dt><dd>白天活动，常成小群，以种子为主也吃昆虫</dd></div>
+                  <div class="habit"><dt>物候</dt><dd>留鸟，全年可见</dd></div>
+                </dl>
+              </section>
+
+              <section class="section">
+                <h3 class="section-title">分类</h3>
+                <ol class="taxonomy">
+                  <li class="tax-row"><span class="tax-rank">界</span><span class="tax-name">动物界 <span class="muted">· Animalia</span></span></li>
+                  <li class="tax-row"><span class="tax-rank">门</span><span class="tax-name">脊索动物门 <span class="muted">· Chordata</span></span></li>
+                  <li class="tax-row"><span class="tax-rank">纲</span><span class="tax-name">鸟纲 <span class="muted">· Aves</span></span></li>
+                  <li class="tax-row"><span class="tax-rank">目</span><span class="tax-name">雀形目 <span class="muted">· Passeriformes</span></span></li>
+                  <li class="tax-row"><span class="tax-rank">科</span><span class="tax-name">雀科 <span class="muted">· Passeridae</span></span></li>
+                  <li class="tax-row"><span class="tax-rank">属</span><span class="tax-name">麻雀属 <span class="muted">· Passer</span></span></li>
+                  <li class="tax-row"><span class="tax-rank">种</span><span class="tax-name">树麻雀 <span class="muted">· Passer montanus</span></span></li>
+                </ol>
+              </section>
+
+              <section class="section record">
+                <h3 class="section-title">记录</h3>
+                <dl class="facts">
+                  <div class="fact"><dt>拍摄时间</dt><dd>2026/10/12 09:18</dd></div>
+                  <div class="fact"><dt>位置</dt><dd>江西 · 井冈山</dd></div>
+                  <div class="fact"><dt>识别</dt><dd>Gemini · gemini-3.6-flash</dd></div>
+                  <div class="fact"><dt>识别说明</dt><dd>照片可见栗色头顶、黑色颊斑与短圆锥喙，与树麻雀相符；单张照片难以核对年龄与亚种。</dd></div>
+                </dl>
+              </section>
+            </div>
+          </div>
+          <p class="diff-note">
+            简介缩短为物种名片；生态习性独立成三行；识别备注只改名为识别说明，仍留在记录中的原位。
+          </p>
+        </article>
+      </section>
+
+      <p class="demo-foot">
+        对比页使用示意 token，用来核对信息层级和密度，不代表最终皮肤细节。实际实现继续使用现有主题 token
+        与共享结构，不新增槽位。
+      </p>
+    </main>
+
+    <script>
+      const root = document.documentElement;
+      const buttons = [...document.querySelectorAll("[data-theme-choice]")];
+
+      for (const button of buttons) {
+        button.addEventListener("click", () => {
+          const theme = button.dataset.themeChoice;
+          root.dataset.demoTheme = theme;
+          for (const item of buttons) {
+            item.setAttribute("aria-pressed", String(item === button));
+          }
+        });
+      }
+    </script>
+  </body>
+</html>

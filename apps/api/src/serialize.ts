@@ -122,6 +122,9 @@ export function serializeObservation(
     confidence: redact ? null : obs.confidence,
     taxonomy,
     blurb: redact ? null : obs.blurb,
+    habitatZh: redact ? null : obs.habitatZh,
+    habitZh: redact ? null : obs.habitZh,
+    phenologyZh: redact ? null : obs.phenologyZh,
     notes: redact ? null : obs.notes,
     error: obs.error,
     settleTier: obs.settleTier,
@@ -138,6 +141,7 @@ export function serializeObservation(
     taxonKey: redact ? null : obs.taxonKey,
     identifyProvider: redact ? null : obs.identifyProvider ?? null,
     identifyModel: redact ? null : obs.identifyModel ?? null,
+    identifyReason: redact ? null : obs.identifyReason ?? null,
     domesticated: redact ? false : Boolean(obs.domesticated),
     breedZh:
       redact || !obs.domesticated ? null : displayBreedLabel(obs.taxonKey, obs.breedZh),

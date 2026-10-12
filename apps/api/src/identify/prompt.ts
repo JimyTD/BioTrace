@@ -71,8 +71,11 @@ ${identifyLocationLines(input)}
    - subject_title_zh（留影短标题，一行内，不超过 12 字；见下方第 2 条末的说明）
    - confidence_0_to_1（0~1 数字）
    - finest_reliable_rank（living_organism/specimen/depiction_or_media 时：可靠最细阶元如 family/genus/species；其余不合格时空字符串）
-   - blurb_zh（living_organism/specimen/depiction_or_media 时：针对 finest_reliable_rank 的中文科普短文，3～4 行；其余不合格时可空）
-   - notes（识别不确定性等简短技术备注）
+   - blurb_zh（living_organism/specimen/depiction_or_media 时：针对 finest_reliable_rank 的一句话物种名片，20～60 字；只写最鲜明、最有辨识度的特征。不要重复分类阶元，不要写生境、习性、物候，不要写用途、食用性、保护级别、稀有度或文化含义；其余不合格时可空）
+   - habitat_zh（通常在哪里出现；只写分类单元的一般生境，不引用本张照片作为生境证据；没有可靠内容时填空字符串）
+   - habit_zh（如何取食、活动、生长或与其他生命发生关系；动物可写食性与活动，植物可写生长方式，真菌可写营养方式，其他类群按最合适的生态事实写；没有可靠内容时填空字符串）
+   - phenology_zh（出现、开花、结果、繁殖或流行的季节规律；没有可靠内容时填空字符串）
+   - notes（识别说明：先说照片中实际可见、且支持当前结论的特征，再说不确定性、混淆点或阶元局限。例：「照片可见栗色头顶与黑色颊斑，与树麻雀相符；单张照片难以核对年龄与亚种。」只能写照片、用户描述或时空信息中真正提供的依据；没有可见依据时只写不确定性；两句合计不超过 60 字）
    - subject_title_zh：不合格（not_collectible）时的画面短标题，一行内、不超过 12 字。
      用途：照片照样留在相册，只是不进图鉴，需要个称呼当标题。
      写法：写画面里主体是什么，用名词短语，不加书名号、不加引号、不加标点、不要解释。
@@ -100,7 +103,8 @@ ${identifyLocationLines(input)}
    是仿制品（玩具、雕像）→ artifact_or_toy。分不清标本还是玩具 → artifact_or_toy。
 5. 合格但不确定种级时：finest_reliable_rank 最高只给到 genus 或 family，species 可为 null，不要编造异域种。
 6. 若提供了国家，优先考虑该国野外可能出现的类群（仅对合格个体）。图中形态与当地分布明显冲突时，宁可停在属/科，不要编造该国没有的种。无国家时不要按中国常见种硬猜。
-7. 驯化位自检：输出前确认 domesticated=true 时 dom_evidence_zh 写的是 L1 生物本体（物种/品种外观），不是项圈或室内。对不上就改成 null。`;
+7. 生态习性与简介都按已识别分类单元书写，不把单张照片当天气、季节或生活史证据；没有把握的项必须留空，不要为凑满而编造。
+8. 驯化位自检：输出前确认 domesticated=true 时 dom_evidence_zh 写的是 L1 生物本体（物种/品种外观），不是项圈或室内。对不上就改成 null。`;
 }
 
 export function extractIdentifyJson(text: string): IdentifyResult {
@@ -141,6 +145,9 @@ export function extractIdentifyJson(text: string): IdentifyResult {
     confidence_0_to_1: Number(parsed.confidence_0_to_1 ?? 0),
     finest_reliable_rank: String(parsed.finest_reliable_rank ?? ""),
     blurb_zh: String(parsed.blurb_zh ?? "").trim(),
+    habitat_zh: String(parsed.habitat_zh ?? "").trim(),
+    habit_zh: String(parsed.habit_zh ?? "").trim(),
+    phenology_zh: String(parsed.phenology_zh ?? "").trim(),
     notes: String(parsed.notes ?? ""),
     subject_kind: normalizeSubjectKind(parsed.subject_kind),
     subject_living,

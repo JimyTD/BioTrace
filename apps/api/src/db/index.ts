@@ -66,6 +66,9 @@ export async function migrate() {
       confidence REAL,
       taxonomy_json TEXT,
       blurb TEXT,
+      habitat_zh TEXT,
+      habit_zh TEXT,
+      phenology_zh TEXT,
       notes TEXT,
       error TEXT,
       created_at INTEGER NOT NULL,
@@ -133,6 +136,9 @@ export async function migrate() {
   `);
 
   await ensureColumn("observations", "blurb", "blurb TEXT");
+  await ensureColumn("observations", "habitat_zh", "habitat_zh TEXT");
+  await ensureColumn("observations", "habit_zh", "habit_zh TEXT");
+  await ensureColumn("observations", "phenology_zh", "phenology_zh TEXT");
   await ensureColumn("observations", "settle_tier", "settle_tier TEXT");
   await ensureColumn("observations", "rarity", "rarity TEXT");
   await ensureColumn("observations", "country_code", "country_code TEXT");
