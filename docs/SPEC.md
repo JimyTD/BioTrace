@@ -303,7 +303,7 @@ docs/        筹划 + 本实现规格
 
 | 模型 | 差异 |
 |------|------|
-| `glm-5.2` / `glm-5.1` | 发 `thinking: disabled` 可关思考（约 1s）；不发则默认开思考 |
+| `glm-5.2` | 发 `thinking: disabled` 可关思考（约 1s）；不发则默认开思考。`glm-5.1` 已于 2026-11 下线，不再入默认链 |
 | `kimi-k3` | 只接受 `temperature: 0.6`；必须发 `thinking: disabled`，不发则默认开思考（实测约 80s） |
 | `glm-5.3` | 始终思考，带 `thinking` 字段一律 400（连它自己提示的 low/high/max 也不认），只能不发 |
 | TokenHub 网关 | `401006`（endpoint is inactive）是瞬态，码里带 "401" 会被通用分类器误判成鉴权失败，已单独归为可重试 |
@@ -356,7 +356,7 @@ Prompt 里的 `country` 已按观察点国家传，没有写死中国。
 |------|------|------|
 | `TOKENHUB_API_KEY` | — | 稀有度量表、识图回退与标定共用；不能填 Coding Plan 的 `sk-sp-` Key。也可在管理后台「平台密钥」填，后台值覆盖 env |
 | `IDENTIFY_VL_MODELS` | `glm-5v-turbo,kimi-k2.6,hy-vision-2.0-instruct` | 识图回退视觉链，按序降级 |
-| `RARITY_TEXT_MODELS` | `glm-5.2,kimi-k3,glm-5.1,glm-5.3` | 模型优先级链，按序降级；能关思考的在前，`glm-5.3` 垫底 |
+| `RARITY_TEXT_MODELS` | `glm-5.2,kimi-k3,glm-5.3` | 模型优先级链，按序降级；能关思考的在前，`glm-5.3` 垫底 |
 | `RARITY_SAMPLES` | `1` | 每物种采样次数（1 次采样 = 3 次调用） |
 | `RARITY_EDGE_MARGIN` | `0.2` | 离档位界不超过这个距离就补采样 |
 | `RARITY_EDGE_SAMPLES` | `3` | 补到几次采样 |

@@ -31,12 +31,12 @@ type VlQuirks = { temperature: number; sendThinking: boolean };
  * 没登记的走默认（temperature 0.1、不发 thinking）。
  */
 const MODEL_QUIRKS: Record<string, VlQuirks> = {
-  // 2026-08-24 实测：必须发 thinking:disabled（不发则默认开思考，约 6s）。
-  "glm-5v-turbo": { temperature: 0.1, sendThinking: true },
+  // 2026-11-27 实测：发 thinking:disabled 被 MaaS 400001 拒；不发字段可出货。
+  "glm-5v-turbo": { temperature: 0.1, sendThinking: false },
   // 关思考只接受 temperature 0.6；不发 thinking 字段则只接受 temperature 1。
   "kimi-k2.6": { temperature: 0.6, sendThinking: true },
-  // 发不发 thinking 都无推理链，耗时一样。不发以免个别网关 400。
-  "hy-vision-2.0-instruct": { temperature: 0.1, sendThinking: false },
+  // 2026-11-27 实测：不发 thinking 回空 content；发 thinking:disabled 才有正文。
+  "hy-vision-2.0-instruct": { temperature: 0.1, sendThinking: true },
 };
 
 const health = new Map<string, ModelHealth>();
